@@ -259,7 +259,7 @@ TentaGL.glSizeBytes = function(type){
  * @param {GLenum}
  * @return {GLenum}
  */
-TentaGL.glSizeBytes = function(type){
+TentaGL.glUnitType = function(type){
   switch(type) {
     case 0x1400: // "BYTE"
       return 0x1400;

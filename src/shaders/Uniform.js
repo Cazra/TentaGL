@@ -48,11 +48,56 @@ TentaGL.Uniform.prototype.getLocation = function() {
 
 
 /** 
- * Returns the current value of the Uniform.
+ * Returns the current value of this Uniform in the GL context.
  * @return {any} see getUniform at http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.10
  */
 TentaGL.Uniform.prototype.get = function(gl) {
   gl.getUniform(this._glProg, this._location);
+};
+
+
+/** 
+ * Sets the value of this Uniform in the GL context.
+ * @param {WebGLRenderingContext} gl
+ * @param {typed array} valueArray  A typed array of the appropriate type and 
+ *      length for the variable.
+ */
+TentaGL.Uniform.prototype.set = function(gl, valueArray) {
+  switch(this._type) {
+    case gl.FLOAT:
+      gl.uniform1fv(this._location, valueArray);
+      break;
+    case gl.FLOAT_VEC2:
+      gl.uniform2fv(this._location, valueArray);
+      break;
+    case gl.FLOAT_VEC3:
+      gl.uniform3fv(this._location, valueArray);
+      break;
+    case gl.FLOAT_VEC4:
+      gl.uniform4fv(this._location, valueArray);
+      break;
+    case gl.INT:
+      gl.uniform1iv(this._location, valueArray);
+      break;
+    case gl.INT_VEC2:
+      gl.uniform2iv(this._location, valueArray);
+      break;
+    case gl.INT_VEC3:
+      gl.uniform3iv(this._location, valueArray);
+      break;
+    case gl.INT_VEC4:
+      gl.uniform4iv(this._location, valueArray);
+      break;
+    case gl.FLOAT_MAT2:
+      gl.uniformMatrix2fv(this._location, false, valueArray);
+      break;
+    case gl.FLOAT_MAT3:
+      gl.uniformMatrix3fv(this._location, false, valueArray);
+      break;
+    case gl.FLOAT_MAT4:
+      gl.uniformMatrix4fv(this._location, false, valueArray);
+      break;
+  }
 };
 
 

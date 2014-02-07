@@ -37,7 +37,10 @@
 TentaGL.ShaderProgram = function(gl, vertSrc, fragSrc) {
   var vert = this._compileShader(gl, gl.VERTEX_SHADER, vertSrc);
   var frag = this._compileShader(gl, gl.FRAGMENT_SHADER, fragSrc);
-  this.glProg = this._linkProgram(gl, vert, frag);
+  
+  this._glProg = this._linkProgram(gl, vert, frag);
+  this.uniforms = this._initUniforms(gl);
+  this.attributes = this._initAttributess(gl);
 };
 
 TentaGL.ShaderProgram.prototype = {
@@ -104,19 +107,19 @@ TentaGL.ShaderProgram.prototype = {
    * @return {WebGLProgram}
    */
   getWebGLProgram:function() {
-    return this.glProg;
+    return this._glProg;
   },
   
   
   /** Deletes this ProgramShader from the WebGL context. */
   deleteMe:function(gl) {
-    gl.deleteProgram(this.glProg);
+    gl.deleteProgram(this._glProg);
   },
   
   
   /** Sets the WebGL context to use this ShaderProgram. */
   useMe:function(gl) {
-    gl.useProgram(this.glProg);
+    gl.useProgram(this._glProg);
     
     // TODO: enable the vertex attributes defined for this ShaderProgram.
   },
@@ -127,7 +130,7 @@ TentaGL.ShaderProgram.prototype = {
    * @return {GLint}
    */
   getAttribLocation:function(gl, name) {
-    return gl.getAttribLocation(this.glProg, name);
+    return gl.getAttribLocation(this._glProg, name);
   },
   
   
@@ -136,7 +139,56 @@ TentaGL.ShaderProgram.prototype = {
    * @return {WebGLUniformLocation}
    */
   getUniformLocation:function(gl, name) {
-    return gl.getUniformLocation(this.glProg, name);
-  }
+    return gl.getUniformLocation(this._glProg, name);
+  },
   
+  
+  /**
+   * Initializes and returns the uniform variables for the program, mapped by
+   * name.
+   * @param {WebGLRenderingContext} gl
+   */
+  _initUniforms:function(gl) {
+    var uniMap = {};
+    var numVars = gl.getProgramParameter(this._glProg, gl.ACTIVE_UNIFORMS);
+    console.log("# Active Uniforms: " + numVars);
+    
+    for(var i = 0; i < numVars; i++) {
+      var info = gl.getActiveUniform(this._glProg, i);
+      var name = info.name;
+      var location = gl.getUniformLocation(this._glProg, name);
+      var uni = new TentaGL.Uniform(info, this._glProg, location);
+      
+      console.log("Uniform " + i + ": " + info.name + ", type " + TentaGL.glTypeName(info.type) + ", size " + info.size + ", byteSize " + uni.getSizeBytes() + ", unitSize " + uni.getSizeUnits());
+      
+      uniMap[name] = uni;
+    }
+    
+    return uniMap;
+  },
+  
+  
+  /**
+   * Initializes and returns the vertex attribute variables for the program,
+   *  mapped by name.
+   * @param {WebGLRenderingContext} gl
+   */
+  _initAttributess:function(gl) {
+    var attrMap = {};
+    var numVars = gl.getProgramParameter(this._glProg, gl.ACTIVE_ATTRIBUTES);
+    console.log("# Active Attributes: " + numVars);
+    
+    for(var i = 0; i < numVars; i++) {
+      var info = gl.getActiveAttrib(this._glProg, i);
+      var name = info.name;
+      var location = gl.getAttribLocation(this._glProg, name);
+      var attr = new TentaGL.Uniform(info, this._glProg, location);
+      
+      console.log("Attribute " + i + ": " + info.name + ", type " + TentaGL.glTypeName(info.type) + ", size " + info.size + ", byteSize " + attr.getSizeBytes() + ", unitSize " + attr.getSizeUnits());
+      
+      attrMap[name] = attr;
+    }
+    
+    return attrMap;
+  }
 };
