@@ -28,24 +28,17 @@ function extractSrc(scriptID) {
 
 /** Initializes and returns the shader program for this program. */
 function initShaderProgram(gl) {
-  
   var vertSrc = extractSrc("vshader");
   var fragSrc = extractSrc("fshader");
-  
-  // Load the shader program.
-  var program = TentaGL.ShaderLib.add(gl, "simpleShader", vertSrc, fragSrc);
-  var glProg = program.getWebGLProgram();
-
-  // Enable vertex attributes.
-  gl.enableVertexAttribArray(program.getAttribLocation(gl, "vertexPos"));
+  TentaGL.ShaderLib.add(gl, "simpleShader", vertSrc, fragSrc);
 }
 
 
 
 /** Sets the uniform variables in the shader program for the projection and model-view matrices. */
 function setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix) {
-  gl.uniformMatrix4fv(shaderProgram.getUniformLocation(gl, "pMatrix"), false, pMatrix);
-  gl.uniformMatrix4fv(shaderProgram.getUniformLocation(gl, "mvMatrix"), false, mvMatrix);
+  shaderProgram.setUniValue(gl, "pMatrix", pMatrix);
+  shaderProgram.setUniValue(gl, "mvMatrix", mvMatrix);
 }
 
 
@@ -112,16 +105,18 @@ function drawScene(gl) {
   
   // Draw the triangle.
   mat4.translate(mvMatrix, [-1.5, 0, -7]);
-  gl.bindBuffer(gl.ARRAY_BUFFER, triangle);
-  gl.vertexAttribPointer(shaderProgram.getAttribLocation(gl, "vertexPos"), triangle.itemSize, gl.FLOAT, false, 0, 0);
   setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
+  
+  gl.bindBuffer(gl.ARRAY_BUFFER, triangle);
+  shaderProgram.setAttrValue(gl, "vertexPos", 0, 0);
   gl.drawArrays(triangle.primType, 0, triangle.numItems);
   
   // Draw the square.
   mat4.translate(mvMatrix, [3, 0, 0]);
-  gl.bindBuffer(gl.ARRAY_BUFFER, square);
-  gl.vertexAttribPointer(shaderProgram.getAttribLocation(gl, "vertexPos"), square.itemSize, gl.FLOAT, false, 0, 0);
   setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
+  
+  gl.bindBuffer(gl.ARRAY_BUFFER, square);
+  shaderProgram.setAttrValue(gl, "vertexPos", 0, 0);
   gl.drawArrays(square.primType, 0, square.numItems);
 }
 

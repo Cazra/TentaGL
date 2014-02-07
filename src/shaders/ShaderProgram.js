@@ -39,8 +39,8 @@ TentaGL.ShaderProgram = function(gl, vertSrc, fragSrc) {
   var frag = this._compileShader(gl, gl.FRAGMENT_SHADER, fragSrc);
   
   this._glProg = this._linkProgram(gl, vert, frag);
-  this.uniforms = this._initUniforms(gl);
-  this.attributes = this._initAttributess(gl);
+  this._uniforms = this._initUniforms(gl);
+  this._attributes = this._initAttributes(gl);
 };
 
 TentaGL.ShaderProgram.prototype = {
@@ -119,9 +119,16 @@ TentaGL.ShaderProgram.prototype = {
   
   /** Sets the WebGL context to use this ShaderProgram. */
   useMe:function(gl) {
+    // Disable the variables of the program previously being used. 
+    var previous = TentaGL.ShaderLib.current(gl);
+    if(previous !== undefined) {
+      previous._disableAllAttrs(gl);
+    }
+    
     gl.useProgram(this._glProg);
     
-    // TODO: enable the vertex attributes defined for this ShaderProgram.
+    // Enable the vertex attributes defined for this ShaderProgram.
+    this._enableAllAttrs(gl);
   },
   
   
@@ -173,7 +180,7 @@ TentaGL.ShaderProgram.prototype = {
    *  mapped by name.
    * @param {WebGLRenderingContext} gl
    */
-  _initAttributess:function(gl) {
+  _initAttributes:function(gl) {
     var attrMap = {};
     var numVars = gl.getProgramParameter(this._glProg, gl.ACTIVE_ATTRIBUTES);
     console.log("# Active Attributes: " + numVars);
@@ -182,7 +189,7 @@ TentaGL.ShaderProgram.prototype = {
       var info = gl.getActiveAttrib(this._glProg, i);
       var name = info.name;
       var location = gl.getAttribLocation(this._glProg, name);
-      var attr = new TentaGL.Uniform(info, this._glProg, location);
+      var attr = new TentaGL.Attribute(info, this._glProg, location);
       
       console.log("Attribute " + i + ": " + info.name + ", type " + TentaGL.glTypeName(info.type) + ", size " + info.size + ", byteSize " + attr.getSizeBytes() + ", unitSize " + attr.getSizeUnits());
       
@@ -190,5 +197,89 @@ TentaGL.ShaderProgram.prototype = {
     }
     
     return attrMap;
-  }
+  },
+  
+  
+  /** 
+   * Returns a Uniform variable for the program, given its name.
+   * @param {string} name
+   * @return {TentaGL.Uniform}
+   */
+  getUniform:function(name) {
+    return this._uniforms[name];
+  },
+  
+  /**
+   * Returns an Attribute variable for the program, given its name.
+   * @param {string} name
+   * @return {TentaGL.Attribute}
+   */
+  getAttribute:function(name) {
+    return this._attributes[name];
+  },
+  
+  /** 
+   * Returns the value of a Uniform variable.
+   * @param {WebGLRenderingContext} gl
+   * @param {string} name
+   * @return {any} see getUniform at http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.10
+   */
+  getUniValue:function(gl, name) {
+    var uniform = this._uniforms[name];
+    return uniform.get(gl);
+  },
+  
+  /** 
+   * Sets the value of a Uniform variable.
+   * @param {WebGLRenderingContext} gl
+   * @param {string} name
+   * @param {typed array} valueArray   A typed array of the appropriate type and 
+   *      length for the variable.
+   */
+  setUniValue:function(gl, name, valueArray) {
+    var uniform = this._uniforms[name];
+    uniform.set(gl, valueArray);
+  },
+  
+  
+  /** 
+   * Sets a vertex Attribute to read from the currently bound array buffer with
+   * the specified stride and offset.
+   * @param {WebGLRenderingContext} gl
+   * @param {string} name
+   * @param {GLint} bufferStride    The byte offset between consecutive 
+   *      attributes of this type in the bound buffer. If 0, then the attributes
+   *      are understood to be sequential.
+   * @param {GLint} bufferOffset    The offset of the first attribute of this 
+   *      type in the bound buffer.
+   */
+  setAttrValue:function(gl, name, bufferStride, bufferOffset) {
+    var attribute = this._attributes[name];
+    attribute.set(gl, bufferStride, bufferOffset);
+  },
+  
+  
+  /** 
+   * Enables all vertex attributes for this program.
+   * @param {WebGLRenderingContext} gl
+   */
+  _enableAllAttrs:function(gl) {
+    for(var name in this._attributes) {
+      var attr = this._attributes[name];
+      gl.enableVertexAttribArray(attr.getLocation());
+    }
+  },
+  
+  
+  /** 
+   * Disables all vertex attributes for this program.
+   * @param {WebGLRenderingContext} gl
+   */
+  _disableAllAttrs:function(gl) {
+    for(var name in this._attributes) {
+      var attr = this._attributes[name];
+      gl.disableVertexAttribArray(attr.getLocation());
+    }
+  },
 };
+

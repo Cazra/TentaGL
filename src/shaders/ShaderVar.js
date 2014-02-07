@@ -25,6 +25,7 @@
 /** 
  * Constructs an object representing a variable in a ShaderProgram.
  * The purpose of this is to serve as a super-type for Attribute and Uniform.
+ * @constructor
  * @param {WebGLActiveInfo } info   Information about the variable returned 
  *      return from a getActiveAttrib or getActiveUniform call.
  * @param {WebGLProgram} glProg   The program containing the variable.

@@ -24,6 +24,7 @@
 
 /** 
  * Constructs an object representing a uniform variable in a ShaderProgram.
+ * @constructor
  * @param {WebGLActiveInfo } info   Information about the variable returned 
  *      return from a getActiveAttrib or getActiveUniform call.
  * @param {WebGLProgram} glProg   The program containing the variable.

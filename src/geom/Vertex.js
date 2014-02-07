@@ -1,0 +1,216 @@
+/* 
+ @preserve Copyright (c) 2014 Stephen "Cazra" Lindberg
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ The Software shall be used for Good, not Evil.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+*/
+
+
+/** 
+ * Constructs a Vertex given its XYZ coordinates. A fourth homogeneous
+ * coordinate is also created, set to 1 to allow for translation affine
+ * transformations on the vertex.
+ * Most types of data for a vertex are stored as vec2s, vec3s, or vec4s from 
+ * the gl-matrix.js framework. In essence though, these are just Float32Arrays.
+ * When first constructed, the vertex only has a field for its xyz coordinates.
+ * Other fields such as its normal vector and color get added on as they 
+ * become used.
+ * @constructor
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z
+ */
+TentaGL.Vertex = function(x, y, z) {
+  this._xyz = vec4.fromValues(x, y, z, 1);
+}
+
+TentaGL.Vertex.prototype = {
+  
+  constructor:TentaGL.Vertex, 
+  
+  /** 
+   * Returns a copy of the vertex's homogeneous XYZW coordinates. 
+   * @return {vec4}
+   */
+  getXYZ:function() {
+    return vec4.clone(this._xyz);
+  },
+  
+  /** 
+   * Sets the vertex's XYZ coordinates.
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} z
+   */
+  setXYZ:function(x, y, z) {
+    this._xyz[0] = x;
+    this._xyz[1] = y;
+    this._xyz[2] = z;
+  },
+  
+  
+  /**
+   * Returns the vertex's X coordinate.
+   * @return {Number}
+   */
+  getX:function() {
+    return this._xyz[0];
+  },
+  
+  /**
+   * Returns the vertex's Y coordinate.
+   * @return {Number}
+   */
+  getY:function() {
+    return this._xyz[1];
+  },
+  
+  /**
+   * Returns the vertex's Z coordinate.
+   * @return {Number}
+   */
+  getZ:function() {
+    return this._xyz[2];
+  },
+  
+  
+  
+  /** 
+   * Sets the vertex's X coordinate. 
+   * @param {Number} x
+   */
+  setX:function(x) {
+    this._xyz[0] = x;
+  },
+  
+  /** 
+   * Sets the vertex's Y coordinate. 
+   * @param {Number} y
+   */
+  setY:function(y) {
+    this._xyz[1] = y;
+  },
+  
+  /** 
+   * Sets the vertex's Z coordinate. 
+   * @param {Number} z
+   */
+  setZ:function(z) {
+    this._xyz[2] = z;
+  },
+  
+  
+  /** 
+   * Gets the Color for this vertex. If a Color hasn't been set for it, then 
+   * a color representing opaque black will be returned.
+   * @return {TentaGL.Color}
+   */
+  getColor:function() {
+    if(this._color === undefined) {
+      this._color = new TentaGL.Color();
+    }
+    return this._color;
+  },
+  
+  /** 
+   * Sets the color for this vertex.
+   * @param {TentaGL.Color} color
+   */
+  setColor:function(color) {
+    this._color = color;
+  },
+  
+  
+  /** 
+   * Returns a copy of this vertex's surface normal vector. If this vertex's 
+   * surface normal vector has not yet been defined, an Error is thrown.
+   * This vector might not be normalized.
+   * @return {vec3}
+   */
+  getNormal:function() {
+    if(this._normal === undefined) {
+      var msg = "Vertex surface normal has not been defined.";
+      throw Error(msg);
+    }
+    else {
+      return vec3.clone(this._normal);
+    }
+  },
+  
+  /** 
+   * Sets the surface normal vector for this vertex. 
+   * @param {Number} x  Normalized x component.
+   * @param {Number} y  Normalized y component.
+   * @param {Number} z  Normalized z component.
+   */
+  setNormal:function(x, y, z) {
+    this._normal = vec3.fromValues(x, y, z);
+  },
+  
+  
+  /** 
+   * Returns a copy of this vertex's surface tangental vector. If this vertex's
+   * surface tangental vector has not yet been defined, an Error is thrown.
+   * This vector might not be normalized.
+   * @return {vec3}
+   */
+  getTangental:function() {
+    if(this._tangental === undefined) {
+      var msg = "Vertex surface tangental has not been defined.";
+      throw Error(msg);
+    }
+    else {
+      return vec3.clone(this._tangental);
+    }
+  },
+  
+  /** 
+   * Sets the surface tangental vertex of this vertex, using the texture 
+   * coordinates of this vertex and two vertices it shares a polygon with.
+   * @param {TentaGL.Vertex} v2
+   * @param {TentaGL.Vertex} v3
+   */
+  setTangental:function(v2, v3) {
+    var u = vec3.fromValues(v2.getX() - this.getX(), 
+                            v2.getY() - this.getY(), 
+                            v2.getZ() - this.getZ());
+    var v = vec3.fromValues(v3.getX() - this.getX(), 
+                            v3.getY() - this.getY(), 
+                            v3.getZ() - this.getZ());
+    
+    var su = v2.getTexS() - this.getTexS();
+    var sv = v3.getTexS() - this.getTexS();
+    var tu = v2.getTexT() - this.getTexT();
+    var tv - v3.getTexT() - this.getTextT();
+    var dst = tv*su - tu*sv;
+    if(dst == 0) {
+      this._tangental = vec3.fromValues(1, 0, 0);
+    }
+    else {
+      this._tangental = vec3.create();
+      vec3.scale(this._tangental, u, tv);
+      vec3.sub(this._tangental, this._tangental(), vec3.scale(vec3.create(), v, tu));
+      vec3.scale(this._tangental, this._tangental, 1/dst);
+    }
+  }
+
+
+};
+

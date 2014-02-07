@@ -24,6 +24,7 @@
 
 /** 
  * Constructs an object representing a vertex attribute in a ShaderProgram.
+ * @constructor
  * @param {WebGLActiveInfo } info   Information about the variable returned 
  *      return from a getActiveAttrib or getActiveUniform call.
  * @param {WebGLProgram} glProg   The program containing the variable.
@@ -46,5 +47,21 @@ TentaGL.Attribute.prototype.getLocation = function() {
   return this._location;
 };
 
+
+
+/** 
+ * Sets the attribute to use the currently bound array buffer.
+ * @param {WebGLRenderingContext} gl
+ * @param {GLint} bufferStride    The byte offset between consecutive 
+ *      attributes of this type in the bound buffer. If 0, then the attributes
+ *      are understood to be sequential.
+ * @param {GLint} bufferOffset    The offset of the first attribute of this 
+ *      type in the bound buffer.
+ */
+TentaGL.Attribute.prototype.set = function(gl, bufferStride, bufferOffset) {
+  gl.vertexAttribPointer(this._location, this.getSizeUnits(),  
+                        this.getUnitType(), false, 
+                        bufferStride, bufferOffset);
+};
 
 

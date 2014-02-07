@@ -76,8 +76,6 @@ TentaGL.ShaderLib = {
    * @return {TentaGL.ShaderProgram} The shader program now being used.
    */
   use:function(gl, name) {
-    // TODO: Disable the previously used program's vertex attributes.
-    
     var program = this[name];
     program.useMe(gl);
     
