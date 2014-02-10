@@ -92,7 +92,7 @@ TentaGL.Color.prototype = {
     this._rgba[1] = g;
     this._rgba[2] = b;
     
-    if(a !=== undefined) {
+    if(a !== undefined) {
       this._rgba[3] = a;
     }
     return this;
@@ -154,7 +154,7 @@ TentaGL.Color.prototype = {
     var g = ((argb >>> 8) & 0x000000FF);
     var b = (argb & 0x000000FF);
     
-    return setRGBA(r, g, b, a);
+    return this.setRGBA(r, g, b, a);
   },
    
   /** 
@@ -173,25 +173,25 @@ TentaGL.Color.prototype = {
     var m = b-chroma;
     
     if(hp >= 0 && hp < 1) {
-      return setRGBA(chroma + m, x + m, m, a);
+      return this.setRGBA(chroma + m, x + m, m, a);
     }
     else if(hp >= 1 && hp < 2) {
-      return setRGBA(x + m, chroma + m, m, a);
+      return this.setRGBA(x + m, chroma + m, m, a);
     }
     else if(hp >= 2 && hp < 3) {
-      return setRGBA(m, chroma + m, x + m, a);
+      return this.setRGBA(m, chroma + m, x + m, a);
     }
     else if(hp >= 3 && hp < 4) {
-      return setRGBA(m, x + m, chroma + m, a);
+      return this.setRGBA(m, x + m, chroma + m, a);
     }
     else if(hp >= 4 && hp < 5) {
-      return setRGBA(x + m, m, chroma + m, a);
+      return this.setRGBA(x + m, m, chroma + m, a);
     }
     else if(hp >= 5 && hp < 6) {
-      return setRGBA(chroma + m, m, x + m, a);
+      return this.setRGBA(chroma + m, m, x + m, a);
     }
     else {
-      return setRGBA(m, m, m, a);
+      return this.setRGBA(m, m, m, a);
     }
   },
   
@@ -244,7 +244,7 @@ TentaGL.Color.prototype = {
    * @return {Number}
    */
   getHue:function() {
-    return getHSBA()[0];
+    return this.getHSBA()[0];
   },
   
   /** 
@@ -252,7 +252,7 @@ TentaGL.Color.prototype = {
    * @return {Number}
    */
   getSaturation:function() {
-    return getHSBA()[1];
+    return this.getHSBA()[1];
   },
   
   /** 
@@ -260,7 +260,7 @@ TentaGL.Color.prototype = {
    * @return {Number}
    */
   getBrightness:function() {
-    return getHSBA()[2];
+    return this.getHSBA()[2];
   }
 
 };

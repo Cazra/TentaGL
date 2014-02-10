@@ -97,14 +97,14 @@ function drawScene(gl) {
   
   // Construct the perspective matrix.
   var pMatrix = mat4.create();
-  mat4.perspective(45, gl.viewWidth/gl.viewHeight, 0.1, 100, pMatrix);
+  mat4.perspective(pMatrix, 45, gl.viewWidth/gl.viewHeight, 0.1, 100);
   
   // Construct the model-view matrix.
   var mvMatrix = mat4.create();
   mat4.identity(mvMatrix);
   
   // Draw the triangle.
-  mat4.translate(mvMatrix, [-1.5, 0, -7]);
+  mat4.translate(mvMatrix, mvMatrix, [-1.5, 0, -7]);
   setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
   
   gl.bindBuffer(gl.ARRAY_BUFFER, triangle);
@@ -112,7 +112,7 @@ function drawScene(gl) {
   gl.drawArrays(triangle.primType, 0, triangle.numItems);
   
   // Draw the square.
-  mat4.translate(mvMatrix, [3, 0, 0]);
+  mat4.translate(mvMatrix, mvMatrix, [3, 0, 0]);
   setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
   
   gl.bindBuffer(gl.ARRAY_BUFFER, square);

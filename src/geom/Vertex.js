@@ -139,6 +139,47 @@ TentaGL.Vertex.prototype = {
   
   
   /** 
+   * Returns a copy of this vertex's 2D texture coordinates array.
+   * If this vertex's 2D texture coordinates are undefined, an Error is thrown.
+   * @return {vec2}
+   */
+  getTexST:function() {
+    if(this._texST === undefined) {
+      var msg = "Vertex 2D texture coordinates have not been defined.";
+      throw Error(msg);
+    }
+    else {
+      return vec2.clone(this._texST);
+    }
+  },
+  
+  /**
+   * Sets the 2D texture coordinates for this vertex.
+   * @param {Number} s
+   * @param {Number} t
+   */
+  setTexST:function(s, t) {
+    this._texST = vec2.fromValues(s, t);
+  },
+  
+  /** 
+   * Returns the vertex's 2D texture coordinate S. 
+   * @return {Number}
+   */
+  getTexS:function() {
+    return this._texST[0];
+  },
+  
+  /** 
+   * Returns the vertex's 2D texture coordinate T. 
+   * @return {Number}
+   */
+  getTexT:function() {
+    return this._texST[1];
+  },
+  
+  
+  /** 
    * Returns a copy of this vertex's surface normal vector. If this vertex's 
    * surface normal vector has not yet been defined, an Error is thrown.
    * This vector might not be normalized.
@@ -165,6 +206,8 @@ TentaGL.Vertex.prototype = {
   },
   
   
+  
+  
   /** 
    * Returns a copy of this vertex's surface tangental vector. If this vertex's
    * surface tangental vector has not yet been defined, an Error is thrown.
@@ -182,12 +225,12 @@ TentaGL.Vertex.prototype = {
   },
   
   /** 
-   * Sets the surface tangental vertex of this vertex, using the texture 
+   * Computes (but doesn't set) the surface tangental vertex of this vertex, using the texture 
    * coordinates of this vertex and two vertices it shares a polygon with.
    * @param {TentaGL.Vertex} v2
    * @param {TentaGL.Vertex} v3
    */
-  setTangental:function(v2, v3) {
+  computeTangental:function(v2, v3) {
     var u = vec3.fromValues(v2.getX() - this.getX(), 
                             v2.getY() - this.getY(), 
                             v2.getZ() - this.getZ());
@@ -198,17 +241,67 @@ TentaGL.Vertex.prototype = {
     var su = v2.getTexS() - this.getTexS();
     var sv = v3.getTexS() - this.getTexS();
     var tu = v2.getTexT() - this.getTexT();
-    var tv - v3.getTexT() - this.getTextT();
+    var tv = v3.getTexT() - this.getTexT();
     var dst = tv*su - tu*sv;
     if(dst == 0) {
-      this._tangental = vec3.fromValues(1, 0, 0);
+      return vec3.fromValues(1, 0, 0);
     }
     else {
-      this._tangental = vec3.create();
-      vec3.scale(this._tangental, u, tv);
-      vec3.sub(this._tangental, this._tangental(), vec3.scale(vec3.create(), v, tu));
-      vec3.scale(this._tangental, this._tangental, 1/dst);
+      var tang = vec3.create();
+      vec3.scale(tang, u, tv);
+      vec3.sub(tang, tang, vec3.scale(vec3.create(), v, tu));
+      vec3.scale(tang, tang, 1/dst);
+      return tang;
     }
+  },
+  
+  
+  /** 
+   * Sets the tangental vector for this vertex. It is advised to set this by 
+   * using the result values from a call to computeTangental.
+   * @param {Number} x
+   * @param {Number} y
+   * @param {Number} z
+   */
+  setTangental:function(x, y, z) {
+    this._tangental = vec3.fromValues(x, y, z);
+  },
+  
+  
+  /**
+   * Returns a new Vertex resulting from this Vertex being transformed by 
+   * an affine transformation matrix.
+   * @param {mat4} transform  The affine transformation matrix being applied to
+   *      this vertex.
+   * @return {TentaGL.Vertex} The transformed copy of this vertex.
+   */
+  transform:function(transform) {
+    var xyz = vec4.transformMat4(vec4.create(), this.getXYZ(), transform);
+    var result = new TentaGL.Vertex(xyz[0], xyz[1], xyz[2]);
+    
+    if(this._normal !== undefined) {
+      // We need to turn normal from a vec3 into a vec4 before it can be matrix-multiplied.
+      var normal = this.getNormal();
+      normal = vec4.fromValues(normal[0], normal[1], normal[2], 0);
+      normal = vec4.transformMat4(normal, normal, transform);
+      result.setNormal(normal[0], normal[1], normal[2]);
+    }
+    
+    if(this._tangental !== undefined) {
+      // We need to turn tangental from a vec3 into a vec4 before it can be matrix-multiplied.
+      var tang = this.getTangental();
+      tang = vec4.fromValues(tang[0], tang[1], tang[2], 0);
+      tang = vec4.transformMat4(tang, tang, transform);
+      result.setTangental(tang[0], tang[1], tang[2]);
+    }
+    
+    if(this._texST !== undefined) {
+      result.setTexST(this.getTexS(), this.getTexT());
+    }
+    
+    result.setColor(this.getColor());
+    
+    return result;
   }
 
 
