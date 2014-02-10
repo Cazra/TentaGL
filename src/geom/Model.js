@@ -36,6 +36,70 @@ TentaGL.Model.prototype = {
 
   constructor:TentaGL.Model,
   
+  //////// Cached VBO data
+  
+  /** 
+   * Deletes the cached vertex data buffers from GL memory. 
+   * It is important that this method is called before disposing of this model.
+   */
+  cleanBuffers:function(gl) {
+    if(this._dataBuffer !== undefined) {
+      gl.deleteBuffer(this._dataBuffer);
+      this._dataBuffer = undefined;
+    }
+    
+    if(this._elemBuffer !== undefined) {
+      gl.deleteBuffer(this._elemBuffer);
+      this._elemBuffer = undefined;
+    }
+  },
+  
+  /** 
+   * Creates and fills the GL buffers containing the vertex attribute and index
+   * data for VBO rendering this model. 
+   */
+  setVBOData:function(gl, data) {
+    this.cleanBuffers(gl);
+    
+    this._dataBuffer = gl.createBuffer();
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+    
+    this._elemBuffer = gl.createBuffer();
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this._indices), gl.STATIC_DATA);
+    this._elemBuffer.length = this._indices.length;
+  },
+  
+  /** 
+   * Returns the cached buffer containing the packed vertex attributes 
+   * for this model.
+   * @return {WebGLBuffer}
+   */
+  getDataBuffer:function() {
+    if(this._dataBuffer === undefined) {
+      throw Error("Model VBO data is undefined.");
+    }
+    return this._dataBuffer;
+  },
+  
+  /** 
+   * Returns the cached buffer containing the vertex indices 
+   * for this model.
+   * @return {WebGLBuffer}
+   */
+  getElemBuffer:function() {
+    if(this._dataBuffer === undefined) {
+      throw Error("Model VBO data is undefined.");
+    }
+    return this._elemBuffer;
+  },
+  
+  /** 
+   * Returns the number of vertex indices defining the faces of this model. 
+   * @return {int}
+   */
+  getIndexCount:function() {
+    return this._indices.length;
+  },
   
   //////// Vertex operations
   
@@ -254,17 +318,6 @@ TentaGL.Model.prototype = {
     }
   },
   
-  
-  
-  /** 
-   * Sets the color for all the vertices in the model.
-   * @param {TentaGL.Color} color
-   */
-  setColor:function(color) {
-    for(var i = 0; i < this._vertices.length; i++) {
-      this._vertices[i].setColor(color);
-    }
-  },
   
   
   /**

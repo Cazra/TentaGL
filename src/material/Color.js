@@ -26,6 +26,8 @@
 /** 
  * Constructs an opaque, black Color. See the auxillary constructor methods 
  * for creating other colors using various color models.
+ * Any shader using this material must have a vec4 uniform variable named 
+ * color to receive its RGBA values.
  * @constructor
  */
 TentaGL.Color = function() {
@@ -261,6 +263,16 @@ TentaGL.Color.prototype = {
    */
   getBrightness:function() {
     return this.getHSBA()[2];
+  },
+  
+  
+  /** 
+   * Sets up the currently bound ShaderProgram so that its vec4
+   * uniform variable "color" is set to this color's RGBA values.
+   * @param {WebGLRenderingContext} gl
+   */
+  useMe:function(gl) {
+    TentaGL.ShaderLib.current(gl).setUniValue(gl, "color", this._rgba);
   }
 
 };

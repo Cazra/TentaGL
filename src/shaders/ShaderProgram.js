@@ -72,7 +72,7 @@ TentaGL.ShaderProgram.prototype = {
       // Alert the user of any compile errors for the shader.
       if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         var msg = gl.getShaderInfoLog(shader);
-        throw Error("Failed to compile shader " + id + ":\n" + msg);
+        throw Error("Failed to compile shader :\n" + msg);
       }
       
       return shader;
@@ -218,6 +218,32 @@ TentaGL.ShaderProgram.prototype = {
     return this._attributes[name];
   },
   
+  
+  /** 
+   * Returns a list of this program's uniform variable names.
+   * @return {Array: string}
+   */
+  getUniNames:function() {
+    var result = [];
+    for(var i in this._uniforms) {
+      result.push(i);
+    }
+    return result;
+  },
+  
+  /** 
+   * Returns a list of this program's attribute variable names.
+   * @return {Array: string}
+   */
+  getAttrNames:function() {
+    var result = [];
+    for(var i in this._attributes) {
+      result.push(i);
+    }
+    return result;
+  },
+  
+  
   /** 
    * Returns the value of a Uniform variable.
    * @param {WebGLRenderingContext} gl
@@ -253,10 +279,40 @@ TentaGL.ShaderProgram.prototype = {
    * @param {GLint} bufferOffset    The offset of the first attribute of this 
    *      type in the bound buffer.
    */
-  setAttrValue:function(gl, name, bufferStride, bufferOffset) {
+  bindAttr:function(gl, name, bufferStride, bufferOffset) {
     var attribute = this._attributes[name];
     attribute.set(gl, bufferStride, bufferOffset);
   },
+  
+  
+  /** 
+   * Sets which method in TentaGL.Vertex's prototype is used to get the data
+   * for the specified attribute.
+   * @param {string} name   The attribute's name.
+   * @param {Function} getterFunc   Vertex's getter function returning the 
+   *      typed array corresponding to the attribute.
+   */
+  setAttrGetter:function(name, getterFunc) {
+    this._attributes[name].setGetter(getterFunc);
+  },
+  
+  
+  /** 
+   * Returns the total byte stride needed for a tightly packed buffer to  
+   * contain the data for all this program's attribute data.
+   * @return {int}
+   */
+  getAttrStride:function() {
+    if(this._totalStride === undefined) {
+      this._totalStride = 0;
+      for(var attrName in this._attributes) {
+        var attr = this._attributes[attrName];
+        this._totalStride += attr.getSizeBytes();
+      }
+    }
+    return this._totalStride;
+  },
+  
   
   
   /** 

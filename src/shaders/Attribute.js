@@ -65,3 +65,18 @@ TentaGL.Attribute.prototype.set = function(gl, bufferStride, bufferOffset) {
 };
 
 
+/** 
+ * Assigns which Vertex prototype function for returns the typed data array   
+ * for this Attribute. E.G.: If this is an attribute for the vertex's position,
+ * the user should call thisAttribute.setGetter(TentaGL.Vertex.prototype.getXYZ).
+ * For each Attribute in a ShaderProgram, this method should be used to 
+ * specify the corresponding Vertex getter function for the Attribute after the
+ * ShaderProgram is loaded, but before it is used to render anything.
+ * @param {Function} getter  The Vertex prototype getter function that
+ *      returns a typed array corresponding to this Attribute.
+ */
+TentaGL.Attribute.prototype.setGetter = function(getter) {
+  this._getterFunc = getter;
+};
+
+

@@ -118,27 +118,6 @@ TentaGL.Vertex.prototype = {
   
   
   /** 
-   * Gets the Color for this vertex. If a Color hasn't been set for it, then 
-   * a color representing opaque black will be returned.
-   * @return {TentaGL.Color}
-   */
-  getColor:function() {
-    if(this._color === undefined) {
-      this._color = new TentaGL.Color();
-    }
-    return this._color;
-  },
-  
-  /** 
-   * Sets the color for this vertex.
-   * @param {TentaGL.Color} color
-   */
-  setColor:function(color) {
-    this._color = color;
-  },
-  
-  
-  /** 
    * Returns a copy of this vertex's 2D texture coordinates array.
    * If this vertex's 2D texture coordinates are undefined, an Error is thrown.
    * @return {vec2}

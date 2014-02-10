@@ -30,9 +30,16 @@ function extractSrc(scriptID) {
 function initShaderProgram(gl) {
   var vertSrc = extractSrc("vshader");
   var fragSrc = extractSrc("fshader");
-  TentaGL.ShaderLib.add(gl, "simpleShader", vertSrc, fragSrc);
+  var shaderProgram = TentaGL.ShaderLib.add(gl, "simpleShader", vertSrc, fragSrc);
+  
+  shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
 }
 
+
+/** Initialize the materials used by the application. */
+function initMaterials(gl) {
+  TentaGL.MaterialLib.put("myColor", TentaGL.Color.RGBA(1, 0, 0, 1));
+}
 
 
 /** Sets the uniform variables in the shader program for the projection and model-view matrices. */
@@ -85,6 +92,7 @@ function initSquareBuffer(gl) {
 function drawScene(gl) {
   
   var shaderProgram = TentaGL.ShaderLib.use(gl, "simpleShader");
+  TentaGL.MaterialLib.use(gl, "myColor");
   
   // Clear the background. 
   gl.clearColor(0, 0, 0, 1); // Black
@@ -108,7 +116,7 @@ function drawScene(gl) {
   setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
   
   gl.bindBuffer(gl.ARRAY_BUFFER, triangle);
-  shaderProgram.setAttrValue(gl, "vertexPos", 0, 0);
+  shaderProgram.bindAttr(gl, "vertexPos", 0, 0);
   gl.drawArrays(triangle.primType, 0, triangle.numItems);
   
   // Draw the square.
@@ -116,7 +124,7 @@ function drawScene(gl) {
   setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
   
   gl.bindBuffer(gl.ARRAY_BUFFER, square);
-  shaderProgram.setAttrValue(gl, "vertexPos", 0, 0);
+  shaderProgram.bindAttr(gl, "vertexPos", 0, 0);
   gl.drawArrays(square.primType, 0, square.numItems);
 }
 
@@ -128,6 +136,7 @@ function webGLStart() {
 //  var canvas = document.getElementById("glCanvas");
   var gl = TentaGL.createGL("container");
   initShaderProgram(gl);
+  initMaterials(gl);
   
   drawScene(gl);
 }
