@@ -33,12 +33,17 @@ function initShaderProgram(gl) {
   var shaderProgram = TentaGL.ShaderLib.add(gl, "simpleShader", vertSrc, fragSrc);
   
   shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+  shaderProgram.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
+  shaderProgram.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
 }
 
 
 /** Initialize the materials used by the application. */
 function initMaterials(gl) {
   TentaGL.MaterialLib.put("myColor", TentaGL.Color.RGBA(1, 0, 0, 1));
+  
+  var coinBlock = TentaGL.Texture.Image(gl, "../../images/sampleTex.png");
+  TentaGL.MaterialLib.put("coinBlock", coinBlock);
 }
 
 
@@ -49,59 +54,52 @@ function setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix) {
 }
 
 
-/** Inits and returns the buffer data for the triangle's vertex position data. */
-function initTriangleBuffer(gl) {
-  var buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  var vertices = [
-     0,  1,  0,
-    -1, -1,  0,
-     1, -1,  0
-  ];
-  
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-  buffer.itemSize = 3;
-  buffer.numItems = 3;
-  buffer.primType = gl.TRIANGLES;
-  
-  return buffer;
+function createTriangle() {
+  var triangle = TentaGL.Model.Triangle([ 0, 1, 0],
+                                        [-1,-1, 0],
+                                        [ 1,-1, 0]);
+  return triangle;
 }
 
 
-/** Inits and returns the buffer data for the square's vertex position data. */
-function initSquareBuffer(gl) {
-  var buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  var vertices = [
-     1,  1,  0,
-    -1,  1,  0,
-     1, -1,  0,
-    -1, -1,  0
-  ];
+function createSquare() {
+  var flipY = mat4.create(); //mat4.scale(mat4.create(), mat4.create(), [1, -1, 1]);
+  var square = TentaGL.Model.Cube(2, 2, 2).cloneCentered().transform(flipY);
   
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-  buffer.itemSize = 3;
-  buffer.numItems = 4;
-  buffer.primType = gl.TRIANGLE_STRIP;
-  
-  return buffer;
+  return square;
 }
+
+
+/** Waits for all resources to finish loading before starting the application. */
+function launchWhenReady(gl) {
+  if(TentaGL.MaterialLib.allLoaded()) {
+    console.log("ready!");
+    drawScene(gl);
+  }
+  else {
+    console.log("not ready.");
+    setTimeout(function(){launchWhenReady(gl);}, 100);
+  }
+}
+
 
 
 /** Draws the scene with the triangle and square. */
 function drawScene(gl) {
   
   var shaderProgram = TentaGL.ShaderLib.use(gl, "simpleShader");
-  TentaGL.MaterialLib.use(gl, "myColor");
+  TentaGL.MaterialLib.use(gl, "coinBlock");
   
   // Clear the background. 
   gl.clearColor(0, 0, 0, 1); // Black
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.enable(gl.DEPTH_TEST);
   
-  // Get the vertex buffers for our shapes.
-  var triangle = initTriangleBuffer(gl);
-  var square = initSquareBuffer(gl);
+//  gl.enable(gl.CULL_FACE);
+  
+  // Get the models for our shapes.
+  var triangle = createTriangle();
+  var square = createSquare();
   
   // Construct the perspective matrix.
   var pMatrix = mat4.create();
@@ -114,18 +112,12 @@ function drawScene(gl) {
   // Draw the triangle.
   mat4.translate(mvMatrix, mvMatrix, [-1.5, 0, -7]);
   setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
-  
-  gl.bindBuffer(gl.ARRAY_BUFFER, triangle);
-  shaderProgram.bindAttr(gl, "vertexPos", 0, 0);
-  gl.drawArrays(triangle.primType, 0, triangle.numItems);
+  TentaGL.VBORenderer.render(gl, triangle);
   
   // Draw the square.
   mat4.translate(mvMatrix, mvMatrix, [3, 0, 0]);
   setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
-  
-  gl.bindBuffer(gl.ARRAY_BUFFER, square);
-  shaderProgram.bindAttr(gl, "vertexPos", 0, 0);
-  gl.drawArrays(square.primType, 0, square.numItems);
+  TentaGL.VBORenderer.render(gl, square);
 }
 
 
@@ -138,5 +130,8 @@ function webGLStart() {
   initShaderProgram(gl);
   initMaterials(gl);
   
-  drawScene(gl);
+  console.log("KeyboardEvent: " + KeyboardEvent);
+  
+  //setTimeout(function(){drawScene(gl)}, 1000);
+  launchWhenReady(gl);
 }

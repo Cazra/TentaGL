@@ -39,7 +39,7 @@ TentaGL.Texture = function(gl, srcType) {
     srcType === TentaGL.Texture.SRC_VIDEO) {
     
     this._srcType = srcType;
-    this._location = gl.createTexture();
+    this._location = TentaGL.Texture.createGLTexture(gl);
     this._loaded = false;
   }
   else {
@@ -59,7 +59,7 @@ TentaGL.Texture.prototype = {
    */
   _handleOnLoad:function(gl, src) {
     gl.bindTexture(gl.TEXTURE_2D, this._location);
-    gl.texSubImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
     this._loaded = true;
   },
   
@@ -77,6 +77,14 @@ TentaGL.Texture.prototype = {
    */
   getLocation:function() {
     return this._location;
+  },
+  
+  /** 
+   * Returns true iff the resource for this texture has finished loading.
+   * @return {Boolean}
+   */
+  isLoaded:function() {
+    return this._loaded;
   },
   
   /** 
@@ -187,13 +195,34 @@ TentaGL.Texture.SRC_VIDEO = 4;
 
 
 /** 
+ * Creates an initially empty texture in GL memory. By default, this texture 
+ * Displays as solid red and has its min-mag filters set to gl.NEAREST.
+ * @param {WebGLRenderingContext} gl
+ * @return {WebGLTexture}
+ */
+TentaGL.Texture.createGLTexture = function(gl) {
+  var tex = gl.createTexture();
+  
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  var loadingPixData = new Uint8Array([255, 0, 0, 255]);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, loadingPixData);
+  
+  // Use gl.NEAREST by default for min-mag filters.
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+  return tex;
+};
+
+
+
+/** 
  * Returns a new Texture constructed from an image. 
  * @param {WebGLRenderingContext} gl
  * @param {string} imagePath  The filepath to the image.
  * @return {TentaGL.Texture}
  */
-TentaGL.Texture.Image(gl, imagePath) = function() {
-  var result = TentaGL.Texture(gl, TentaGL.Texture.SRC_IMAGE);
+TentaGL.Texture.Image = function(gl, imagePath) {
+  var result = new TentaGL.Texture(gl, TentaGL.Texture.SRC_IMAGE);
   var img = new Image();
   img.onload = function() {
     result._handleOnLoad(gl, img);

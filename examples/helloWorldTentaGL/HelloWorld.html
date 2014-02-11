@@ -6,44 +6,64 @@
 <script id="fshader" type="x-shader/x-fragment">  
   precision mediump float;
   
+  uniform sampler2D tex;
+  
   varying vec4 v_color;
+  varying vec2 texCoords;
   
   // All fragments are colored white.
   void main(void) {
-    gl_FragColor = v_color;
+    gl_FragColor = texture2D(tex, texCoords); //v_color;
   }
 </script>
 
 <script id="vshader" type="x-shader/x-vertex">
-  attribute vec3 vertexPos;
+  attribute vec4 vertexPos;
+  attribute vec3 vertexNormal;
+  attribute vec2 vertexTexCoords;
 
   uniform mat4 mvMatrix;
   uniform mat4 pMatrix;
   uniform vec4 color;
   
   varying vec4 v_color;
+  varying vec2 texCoords;
 
   // pass-through shader.
   void main(void) {
-    gl_Position = pMatrix * mvMatrix * vec4(vertexPos, 1.0);
+    gl_Position = pMatrix * mvMatrix * vertexPos;
+    texCoords = vertexTexCoords;
+    
+    vec3 normal = vertexNormal;
     v_color = color;
   }
 </script>
 
 <script type="text/javascript" src="../../libs/gl-matrix-min.js"></script>
 <script type="text/javascript" src="../../src/TentaGL.js"></script>
-<script type="text/javascript" src="../../src/shaders/ShaderLib.js"></script>
-<script type="text/javascript" src="../../src/shaders/ShaderProgram.js"></script>
-<script type="text/javascript" src="../../src/shaders/ShaderVar.js"></script>
-<script type="text/javascript" src="../../src/shaders/Uniform.js"></script>
-<script type="text/javascript" src="../../src/shaders/Attribute.js"></script>
+
 <script type="text/javascript" src="../../src/geom/Model.js"></script>
 <script type="text/javascript" src="../../src/geom/Vertex.js"></script>
+<script type="text/javascript" src="../../src/geom/shapes/Cube.js"></script>
+<script type="text/javascript" src="../../src/geom/shapes/Plane.js"></script>
 <script type="text/javascript" src="../../src/geom/shapes/Triangle.js"></script>
-<script type="text/javascript" src="../../src/material/MaterialLib.js"></script>
+
+<script type="text/javascript" src="../../src/input/Keyboard.js"></script>
+
 <script type="text/javascript" src="../../src/material/Color.js"></script>
-<script type="text/javascript" src="../../src/renderer/VBORenderer.js"></script>
+<script type="text/javascript" src="../../src/material/MaterialLib.js"></script>
+<script type="text/javascript" src="../../src/material/Texture.js"></script>
+
 <script type="text/javascript" src="../../src/renderer/VBOCache.js"></script>
+<script type="text/javascript" src="../../src/renderer/VBORenderer.js"></script>
+
+<script type="text/javascript" src="../../src/shaders/ShaderVar.js"></script>
+<script type="text/javascript" src="../../src/shaders/Attribute.js"></script>
+<script type="text/javascript" src="../../src/shaders/ShaderLib.js"></script>
+<script type="text/javascript" src="../../src/shaders/ShaderProgram.js"></script>
+<script type="text/javascript" src="../../src/shaders/Uniform.js"></script>
+
+<script type="text/javascript" src="../../src/util/Debug.js"></script>
 <script type="text/javascript" src="HelloWorld.js"></script>
 
 </head>

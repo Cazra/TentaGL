@@ -39,6 +39,23 @@ TentaGL.Color.prototype = {
   
   constructor:TentaGL.Color,
   
+  
+  /** 
+   * Materials are required to provide a clean({WebGLRenderingContext}) method. 
+   * For Color, no GL resources are used though, so this does nothing.
+   */
+  clean:function(gl) {
+    // No clean-up needed.
+  },
+  
+  /** 
+   * Returns true.
+   * @return {Boolean}
+   */
+  isLoaded:function() {
+    return true;
+  },
+  
   /** 
    * Returns a copy of the color's normalized RGBA components. 
    * @return {vec4}

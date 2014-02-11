@@ -32,7 +32,7 @@ TentaGL.VBORenderer = {
    * @param {TentaGL.Model} model   The model being rendered.
    */
   render:function(gl, model) {
-    var program = ShaderLib.current(gl);
+    var program = TentaGL.ShaderLib.current(gl);
     
     // Get the data buffers for the model and program, creating them if necessary.
     var vboData = TentaGL.VBOCache.get(gl, model, program);
@@ -45,16 +45,20 @@ TentaGL.VBORenderer = {
     var attrs = program.getAttributes();
     for(var i=0; i < attrs.length; i++) {
       var attr = attrs[i];
+      console.log("binding attr: " + attr.getName() + ", loc: " + attr.getLocation() + ", unitSize: " + attr.getSizeUnits() + ", unitType: " + TentaGL.glTypeName(attr.getUnitType()) + ", stride: " + program.getAttrStride() + ", offset: " + offset);
+      
+      
       gl.vertexAttribPointer( attr.getLocation(), 
                               attr.getSizeUnits(), attr.getUnitType(), 
                               false, 
                               program.getAttrStride(), offset);
-      offset += attr.getByteSize();
+      offset += attr.getSizeBytes();
     }
     
     // Bind the index data and draw.
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);
-    gl.drawElements(gl.GL_TRIANGLES, model.getIndexCount(), gl.UNSIGNED_SHORT, 0);
+    console.log(model.numIndices());
+    gl.drawElements(gl.TRIANGLES, model.numIndices(), gl.UNSIGNED_SHORT, 0);
   }
   
 };

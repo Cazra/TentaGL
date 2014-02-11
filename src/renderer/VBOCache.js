@@ -37,8 +37,8 @@ TentaGL.VBOCache = {
    * @return {WebGLRenderingContext} gl
    */
   clean:function(gl) {
-    for(var model in this._vboData) {
-      this._vboData[model].clean(gl);
+    for(var id in this._vboData) {
+      this._vboData[id].clean(gl);
     }
     this._vboData = {};
   },
@@ -48,12 +48,17 @@ TentaGL.VBOCache = {
    * ShaderProgram. If the data doesn't exist, then it is created and cached.
    */
   get:function(gl, model, shader) {
-    var vbo = this._vboData[model];
-    if(vbo === undefined || vbo.getShader() !== shader) {
-      this._vboData[model] = new VBOData(gl, model, shader);
-    }
+    var id = model.getID();
     
-    return this._vboData[model];
+    var vbo = this._vboData[id];
+    if(vbo === undefined || vbo.getShader() !== shader) {
+      this._vboData[id] = new TentaGL.VBOData(gl, model, shader);
+    }
+    else {
+      console.log("Already has model");
+    } 
+    
+    return this._vboData[id];
   },
   
   /** 
@@ -62,9 +67,10 @@ TentaGL.VBOCache = {
    * @param {TentaGL.Model} model
    */
   remove:function(gl, model) {
-    var vbo = this._vboData[model];
+    var id = model.getID();
+    var vbo = this._vboData[id];
     vbo.clean(gl);
-    delete this._vboData[model];
+    delete this._vboData[id];
   }
 };
 
@@ -88,24 +94,33 @@ TentaGL.VBOData = function(gl, model, shader) {
   var vertices = model.getVertices();
   for(var i=0; i < vertices.length; i++) {
     var vertex = vertices[i];
+    console.log("vertex " + i);
     
     var attrs = shader.getAttributes();
     for(var j=0; j < attrs.length; j++) {
       var attr = attrs[j];
-      attrData = attrData.concat(attr.getValues(vertex));
+      var values = attr.getValues(vertex);
+      console.log("  attr " + attr.getName() + " value: " + TentaGL.Debug.arrayString(values));
+    //  attrData = attrData.concat(values);
+      
+      for(var k=0; k<values.length; k++) {
+        attrData.push(values[k]);
+      }
     }
   }
   
   this._attrBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, this._attrBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(attrData), gl.STATIC_DRAW);
-  
+  console.log("Attr data array: " + attrData);
   
   var elemData = model.getIndices();
   
   this._elemBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._elemBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(elemData), gl.STATIC_DRAW);
+  
+  console.log("Elem data array: " + elemData);
   
   this._shader = shader;
 };

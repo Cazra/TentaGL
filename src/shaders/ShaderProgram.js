@@ -288,6 +288,9 @@ TentaGL.ShaderProgram.prototype = {
    */
   setUniValue:function(gl, name, valueArray) {
     var uniform = this._uniforms[name];
+    if(uniform === undefined) {
+      throw Error("Uniform variable " + name + " doesn't exist.");
+    }
     uniform.set(gl, valueArray);
   },
   

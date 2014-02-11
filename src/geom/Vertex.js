@@ -161,7 +161,6 @@ TentaGL.Vertex.prototype = {
   /** 
    * Returns a copy of this vertex's surface normal vector. If this vertex's 
    * surface normal vector has not yet been defined, an Error is thrown.
-   * This vector might not be normalized.
    * @return {vec3}
    */
   getNormal:function() {
@@ -175,13 +174,15 @@ TentaGL.Vertex.prototype = {
   },
   
   /** 
-   * Sets the surface normal vector for this vertex. 
+   * Sets the surface normal vector for this vertex. The stored vector becomes 
+   * normalized.
    * @param {Number} x  Normalized x component.
    * @param {Number} y  Normalized y component.
    * @param {Number} z  Normalized z component.
    */
   setNormal:function(x, y, z) {
     this._normal = vec3.fromValues(x, y, z);
+    this._normal = vec3.normalize(this._normal, this._normal);
   },
   
   
@@ -190,7 +191,6 @@ TentaGL.Vertex.prototype = {
   /** 
    * Returns a copy of this vertex's surface tangental vector. If this vertex's
    * surface tangental vector has not yet been defined, an Error is thrown.
-   * This vector might not be normalized.
    * @return {vec3}
    */
   getTangental:function() {
@@ -237,26 +237,44 @@ TentaGL.Vertex.prototype = {
   
   /** 
    * Sets the tangental vector for this vertex. It is advised to set this by 
-   * using the result values from a call to computeTangental.
+   * using the result values from a call to computeTangental. The stored
+   * vector becomes normalized.
    * @param {Number} x
    * @param {Number} y
    * @param {Number} z
    */
   setTangental:function(x, y, z) {
     this._tangental = vec3.fromValues(x, y, z);
+    this._tangental = vec3.normalize(this._tangental, this._tangental);
+  },
+  
+  
+  /** 
+   * Returns a deep clone of this Vertex. 
+   * @return {TentaGL.Vertex}
+   */
+  clone:function() {
+    return this.transform(mat4.create());
   },
   
   
   /**
    * Returns a new Vertex resulting from this Vertex being transformed by 
-   * an affine transformation matrix.
+   * an affine transformation matrix. This is essentially a transformed deep 
+   * clone.
    * @param {mat4} transform  The affine transformation matrix being applied to
    *      this vertex.
    * @return {TentaGL.Vertex} The transformed copy of this vertex.
    */
   transform:function(transform) {
+    console.log("transform vertex!");
+    console.log("  transform: " + TentaGL.Debug.arrayString(transform));
+    console.log("  old XYZ: " + this.getX() + ", " + this.getY() + ", " + this.getZ());
+    
     var xyz = vec4.transformMat4(vec4.create(), this.getXYZ(), transform);
     var result = new TentaGL.Vertex(xyz[0], xyz[1], xyz[2]);
+    
+    console.log("  new XYZ: " + xyz[0] + ", " + xyz[1] + ", " + xyz[2]);
     
     if(this._normal !== undefined) {
       // We need to turn normal from a vec3 into a vec4 before it can be matrix-multiplied.
@@ -277,8 +295,6 @@ TentaGL.Vertex.prototype = {
     if(this._texST !== undefined) {
       result.setTexST(this.getTexS(), this.getTexT());
     }
-    
-    result.setColor(this.getColor());
     
     return result;
   }

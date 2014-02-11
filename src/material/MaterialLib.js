@@ -88,6 +88,17 @@ TentaGL.MaterialLib = {
     }
     
     material.useMe(gl);
+  },
+  
+  
+  /** Returns true iff all the Materials in the library are loaded. */
+  allLoaded:function() {
+    for(var name in this._materials) {
+      if(!this._materials[name].isLoaded()) {
+        return false;
+      }
+    }
+    return true;
   }
   
   

@@ -36,6 +36,32 @@ TentaGL.Model.prototype = {
 
   constructor:TentaGL.Model,
   
+  //////// ID data
+  
+  /** 
+   * Gets the unique ID for caching this model in a map. 
+   * If the model didn't have an Id already assigned to it, a unique anonymous
+   * ID is created.
+   * @return {string}
+   */
+  getID:function() {
+    if(this._id === undefined) {
+      this._id = TentaGL.Model.createID();
+    }
+    return this._id;
+  },
+  
+  /** 
+   * Sets the unique ID for caching this model in a map. 
+   * @param {string} id
+   * @return {TentaGL.Model} this
+   */
+  setID:function(id) {
+    this._id = id;
+    return this;
+  },
+  
+  
   //////// Element index data
   
   /** 
@@ -293,7 +319,8 @@ TentaGL.Model.prototype = {
   
   /**
    * Returns the model's centroid point. This is simply the average of all the 
-   * model's vertex points' xyz coordinates.
+   * model's vertex points' xyz coordinates, and may not necessarily also be
+   * its center of volume.
    * @return {vec4} The centroid point, with the 4th coordinate being 1 to
    *      allow it to be transformed by affine translation transformations.
    */
@@ -356,6 +383,90 @@ TentaGL.Model.prototype = {
     }
     
     return this.getFaceCentroids()[index];
+  },
+  
+  
+  //////// Instance operations
+  
+  /** 
+   * Returns a clone of this model. 
+   * @return {TentaGL.Model}
+   */
+  clone:function() {
+    return this.transform(mat4.create());
+  },
+  
+  
+  /** 
+   * Returns a clone of this model transformed by some affine 
+   * transformation matrix. 
+   * @param {mat4} transform
+   * @return {TentaGL.Model}
+   */
+  transform:function(transform) {
+    var model = new TentaGL.Model();
+    
+    // transform-clone vertices
+    for(var i=0; i<this._vertices.length; i++) {
+      model.addVertex(this._vertices[i].transform(transform));
+    }
+    
+    // clone faces
+    for(var i=0; i<this._indices.length; i+=3) {
+      model.addFace(this._indices[i], this._indices[i+1], this._indices[i+2]);
+    }
+    
+    return model;
+  },
+  
+  
+  /** 
+   * Returns a clone of this model with its origin at the original model's 
+   * centroid.
+   * @return {TentaGL.Model}
+   */
+  cloneCentered:function() {
+    var xyz = this.getModelCentroid();
+    return this.transform(mat4.translate(mat4.create(), mat4.create(), [-xyz[0], -xyz[1], -xyz[2]]));
+  },
+  
+  /** 
+   * Returns a clone of this model merged with another model. 
+   * @param {TentaGL.Model} model
+   * @return {TentaGL.Model}
+   */
+  merge:function(model) {
+    var result = this.clone();
+    
+    var indexOffset = result.numVertices();
+    
+    for(var i=0; i<model._vertices.length; i++) {
+      result.addVertex(model._vertices[i]);
+    }
+    
+    for(var i=0; i<model._indices.length; i+=3) {
+      var i1 = indexOffset + model._indices[i];
+      var i2 = indexOffset + model._indices[i+1];
+      var i3 = indexOffset + model._indices[i+2];
+      
+      result.addFace(i1, i2, i3);
+    }
+    
+    return result;
   }
 };
+
+TentaGL.Model._nextID = 0;
+
+/**
+ * Creates a unique string ID that can be assigned to a model 
+ * via Model.setID({string}).
+ * @return {string}
+ */
+TentaGL.Model.createID = function() {
+  var id = "anonID" + TentaGL.Model._nextID;
+  TentaGL.Model._nextID++;
+  return id;
+};
+
 
