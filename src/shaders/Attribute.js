@@ -80,3 +80,19 @@ TentaGL.Attribute.prototype.setGetter = function(getter) {
 };
 
 
+/** 
+ * Extracts this attribute's values from a Vertex. 
+ * @param {TentaGL.Vertex} vertex
+ * @return {Typed Array} A typed array of the appropriate size and type for 
+ *      this attribute.
+ */
+TentaGL.Attribute.prototype.getValues = function(vertex) {
+  var result = this._getterFunc.call(vertex);
+  
+  if(result.length != this.getSizeUnits()) {
+    throw Error("Vertex attribute " + this.getName() + " is wrong size: " + result.length + ". Expected: " + this.getSizeUnits());
+  }
+  
+  return result;
+};
+

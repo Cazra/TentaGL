@@ -34,18 +34,17 @@ TentaGL.VBORenderer = {
   render:function(gl, model) {
     var program = ShaderLib.current(gl);
     
-    // Update the model's cached VBO data if necessary.
-    // TODO
-    
-    var dataBuffer = // TODO
-    var elemBuffer = // TODO
+    // Get the data buffers for the model and program, creating them if necessary.
+    var vboData = TentaGL.VBOCache.get(gl, model, program);
+    var attrBuffer = vboData.getAttrBuffer();
+    var elemBuffer = vboData.getElemBuffer();
     
     // Bind the vertex data.
-    gl.bindBuffer(gl.ARRAY_BUFFER, dataBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, attrBuffer);
     var offset = 0;
-    var attrNames = program.getAttrNames();
-    for(var i=0; i < attrNames.length; i++) {
-      var attr = program.getAttribute(attrNames[i]);
+    var attrs = program.getAttributes();
+    for(var i=0; i < attrs.length; i++) {
+      var attr = attrs[i];
       gl.vertexAttribPointer( attr.getLocation(), 
                               attr.getSizeUnits(), attr.getUnitType(), 
                               false, 
@@ -56,9 +55,7 @@ TentaGL.VBORenderer = {
     // Bind the index data and draw.
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);
     gl.drawElements(gl.GL_TRIANGLES, model.getIndexCount(), gl.UNSIGNED_SHORT, 0);
-    
-    _lastShaders[model] = program;
-  },
+  }
   
 };
 

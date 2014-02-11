@@ -26,8 +26,8 @@
 /** 
  * Constructs an opaque, black Color. See the auxillary constructor methods 
  * for creating other colors using various color models.
- * Any shader using this material must have a vec4 uniform variable named 
- * color to receive its RGBA values.
+ * If a ShaderProgram uses a Color as a Material, that Shader must have a 
+ * uniform vec4 "color" to store the Color's RGBA values.
  * @constructor
  */
 TentaGL.Color = function() {

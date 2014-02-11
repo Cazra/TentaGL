@@ -220,6 +220,31 @@ TentaGL.ShaderProgram.prototype = {
   
   
   /** 
+   * Returns a list of this program's uniform variables. 
+   * @return {Array: TentaGL.Uniform}
+   */
+  getUniforms:function() {
+    var result = [];
+    for(var i in this._uniforms) {
+      result.push(this._uniforms[i]);
+    }
+    return result;
+  },
+  
+  /** 
+   * Returns a list of this program's attribute variables.
+   * @return {Array: TentaGL.Attribute}
+   */
+  getAttributes:function() {
+    var result = [];
+    for(var i in this._attributes) {
+      result.push(this._attributes[i]);
+    }
+    return result;
+  },
+  
+  
+  /** 
    * Returns a list of this program's uniform variable names.
    * @return {Array: string}
    */
@@ -242,7 +267,6 @@ TentaGL.ShaderProgram.prototype = {
     }
     return result;
   },
-  
   
   /** 
    * Returns the value of a Uniform variable.

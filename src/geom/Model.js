@@ -36,69 +36,19 @@ TentaGL.Model.prototype = {
 
   constructor:TentaGL.Model,
   
-  //////// Cached VBO data
-  
-  /** 
-   * Deletes the cached vertex data buffers from GL memory. 
-   * It is important that this method is called before disposing of this model.
-   */
-  cleanBuffers:function(gl) {
-    if(this._dataBuffer !== undefined) {
-      gl.deleteBuffer(this._dataBuffer);
-      this._dataBuffer = undefined;
-    }
-    
-    if(this._elemBuffer !== undefined) {
-      gl.deleteBuffer(this._elemBuffer);
-      this._elemBuffer = undefined;
-    }
-  },
-  
-  /** 
-   * Creates and fills the GL buffers containing the vertex attribute and index
-   * data for VBO rendering this model. 
-   */
-  setVBOData:function(gl, data) {
-    this.cleanBuffers(gl);
-    
-    this._dataBuffer = gl.createBuffer();
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
-    
-    this._elemBuffer = gl.createBuffer();
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this._indices), gl.STATIC_DATA);
-    this._elemBuffer.length = this._indices.length;
-  },
-  
-  /** 
-   * Returns the cached buffer containing the packed vertex attributes 
-   * for this model.
-   * @return {WebGLBuffer}
-   */
-  getDataBuffer:function() {
-    if(this._dataBuffer === undefined) {
-      throw Error("Model VBO data is undefined.");
-    }
-    return this._dataBuffer;
-  },
-  
-  /** 
-   * Returns the cached buffer containing the vertex indices 
-   * for this model.
-   * @return {WebGLBuffer}
-   */
-  getElemBuffer:function() {
-    if(this._dataBuffer === undefined) {
-      throw Error("Model VBO data is undefined.");
-    }
-    return this._elemBuffer;
-  },
+  //////// Element index data
   
   /** 
    * Returns the number of vertex indices defining the faces of this model. 
    * @return {int}
    */
-  getIndexCount:function() {
+  numIndices:function() {
     return this._indices.length;
+  },
+  
+  /** Returns a copy of this model's element index array. */
+  getIndices:function() {
+    return this._indices.slice(0, this._indices.length);
   },
   
   //////// Vertex operations
@@ -167,6 +117,13 @@ TentaGL.Model.prototype = {
     return this._indices[i];
   },
   
+  /**
+   * Returns the number of faces defined in this model.
+   * @return {int}
+   */
+  numFaces:function() {
+    return Math.floor(this._indices.length/3);
+  },
   
   /** 
    * Adds 3 indices to the model's list of indices to describe a triangular 
@@ -301,8 +258,22 @@ TentaGL.Model.prototype = {
     return this._faceNormals;
   },
   
+  
+  /** 
+   * Gets the surface normal vector for the specified face in the model.
+   * @param {int} index   The index for the face in the model.
+   * @return {vec3} 
+   */
+  getFaceNormal:function(index) {
+    if(index < 0 || index >= this.numFaces()) {
+      throw Error("Face index out of bounds: " + index);
+    }
+    
+    return this.getFaceNormals()[index];
+  },
+  
   /**
-   * Computes the tangental vectors for each vertex in the model.
+   * Computes and stores the tangental vectors for each vertex in the model.
    * The texture coordinates for the vertices must be defined, or this 
    * will produce an error.
    */
@@ -326,7 +297,7 @@ TentaGL.Model.prototype = {
    * @return {vec4} The centroid point, with the 4th coordinate being 1 to
    *      allow it to be transformed by affine translation transformations.
    */
-  getCentroid:function() {
+  getModelCentroid:function() {
     if(this._centroid === undefined) {
       var x = 0;
       var y = 0;
@@ -351,7 +322,8 @@ TentaGL.Model.prototype = {
   
   /** 
    * Returns the centroid points for each face in the model.
-   * @return {Array: vec4}
+   * @return {Array: vec4} The centroid points, in xyz coordinates with a fourth
+   *    coordinate set to 1 to allow translation affine transformations.
    */
   getFaceCentroids:function() {
     if(this._faceCentroids === undefined) {
@@ -370,6 +342,20 @@ TentaGL.Model.prototype = {
       }
     }
     return this._faceCentroids;
+  },
+  
+  /** 
+   * Returns the centroid point for the specified face in the model. 
+   * @param {int} index   The index of the face in the model.
+   * @return {vec4} The centroid point, with the 4th coordinate being 1 to
+   *      allow it to be transformed by affine translation transformations.
+   */
+  getFaceCentroid:function(index) {
+    if(index < 0 || index >= this.numFaces()) {
+      throw Error("Face index out of bounds: " + index);
+    }
+    
+    return this.getFaceCentroids()[index];
   }
 };
 
