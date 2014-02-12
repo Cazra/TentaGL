@@ -47,10 +47,10 @@ function initMaterials(gl) {
 }
 
 
-/** Sets the uniform variables in the shader program for the projection and model-view matrices. */
-function setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix) {
-  shaderProgram.setUniValue(gl, "pMatrix", pMatrix);
-  shaderProgram.setUniValue(gl, "mvMatrix", mvMatrix);
+/** Initializes and returns the Camera for the scene. */
+function initCamera() {
+  var camera = new TentaGL.Camera([3, 3, 3], [0, 0, 0]);
+  return camera;
 }
 
 
@@ -71,24 +71,25 @@ function createSquare() {
 
 
 /** Waits for all resources to finish loading before starting the application. */
-function launchWhenReady(gl) {
+function launchWhenReady(gl, camera) {
   if(TentaGL.MaterialLib.allLoaded()) {
     console.log("ready!");
-    drawScene(gl);
+    drawScene(gl, camera);
   }
   else {
     console.log("not ready.");
-    setTimeout(function(){launchWhenReady(gl);}, 100);
+    setTimeout(function(){launchWhenReady(gl, camera);}, 100);
   }
 }
 
 
 
 /** Draws the scene with the triangle and square. */
-function drawScene(gl) {
+function drawScene(gl, camera) {
   
   var shaderProgram = TentaGL.ShaderLib.use(gl, "simpleShader");
   TentaGL.MaterialLib.use(gl, "coinBlock");
+  camera.bindTo(gl, "camTrans", gl.canvas.width/gl.canvas.height);
   
   // Clear the background. 
   gl.clearColor(0, 0, 0, 1); // Black
@@ -100,23 +101,16 @@ function drawScene(gl) {
   // Get the models for our shapes.
   var triangle = createTriangle();
   var square = createSquare();
-  
-  // Construct the perspective matrix.
-  var pMatrix = mat4.create();
-  mat4.perspective(pMatrix, 45, gl.viewWidth/gl.viewHeight, 0.1, 100);
-  
-  // Construct the model-view matrix.
-  var mvMatrix = mat4.create();
-  mat4.identity(mvMatrix);
+  var modelTrans;
   
   // Draw the triangle.
-  mat4.translate(mvMatrix, mvMatrix, [-1.5, 0, -7]);
-  setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
+  modelTrans = mat4.translate(mat4.create(), mat4.create(), [-1.5, 0, 0]);
+  TentaGL.ShaderLib.current(gl).setUniValue(gl, "modelTrans", modelTrans);
   TentaGL.VBORenderer.render(gl, triangle);
   
   // Draw the square.
-  mat4.translate(mvMatrix, mvMatrix, [3, 0, 0]);
-  setMatrixUnis(gl, shaderProgram, mvMatrix, pMatrix);
+  modelTrans = mat4.translate(mat4.create(), mat4.create(), [1.5, 0, 0]);
+  TentaGL.ShaderLib.current(gl).setUniValue(gl, "modelTrans", modelTrans);
   TentaGL.VBORenderer.render(gl, square);
 }
 
@@ -130,9 +124,9 @@ function webGLStart() {
   initShaderProgram(gl);
   initMaterials(gl);
   
-  console.log(gl.canvas);
   var keyboard = new TentaGL.Keyboard(document.getElementById("container"));
+  var camera = initCamera();
   
   //setTimeout(function(){drawScene(gl)}, 1000);
-  launchWhenReady(gl);
+  launchWhenReady(gl, camera);
 }

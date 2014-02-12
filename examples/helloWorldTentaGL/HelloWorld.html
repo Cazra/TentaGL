@@ -22,8 +22,8 @@
   attribute vec3 vertexNormal;
   attribute vec2 vertexTexCoords;
 
-  uniform mat4 mvMatrix;
-  uniform mat4 pMatrix;
+  uniform mat4 modelTrans;
+  uniform mat4 camTrans;
   uniform vec4 color;
   
   varying vec4 v_color;
@@ -31,7 +31,7 @@
 
   // pass-through shader.
   void main(void) {
-    gl_Position = pMatrix * mvMatrix * vertexPos;
+    gl_Position = camTrans * modelTrans * vertexPos;
     texCoords = vertexTexCoords;
     
     vec3 normal = vertexNormal;
@@ -41,6 +41,9 @@
 
 <script type="text/javascript" src="../../libs/gl-matrix-min.js"></script>
 <script type="text/javascript" src="../../src/TentaGL.js"></script>
+<script type="text/javascript" src="../../src/math/Math.js"></script>
+
+<script type="text/javascript" src="../../src/camera/Camera.js"></script>
 
 <script type="text/javascript" src="../../src/geom/Model.js"></script>
 <script type="text/javascript" src="../../src/geom/Vertex.js"></script>
