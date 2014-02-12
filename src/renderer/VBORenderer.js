@@ -45,7 +45,7 @@ TentaGL.VBORenderer = {
     var attrs = program.getAttributes();
     for(var i=0; i < attrs.length; i++) {
       var attr = attrs[i];
-      console.log("binding attr: " + attr.getName() + ", loc: " + attr.getLocation() + ", unitSize: " + attr.getSizeUnits() + ", unitType: " + TentaGL.glTypeName(attr.getUnitType()) + ", stride: " + program.getAttrStride() + ", offset: " + offset);
+    //  console.log("binding attr: " + attr.getName() + ", loc: " + attr.getLocation() + ", unitSize: " + attr.getSizeUnits() + ", unitType: " + TentaGL.glTypeName(attr.getUnitType()) + ", stride: " + program.getAttrStride() + ", offset: " + offset);
       
       
       gl.vertexAttribPointer( attr.getLocation(), 
@@ -57,7 +57,7 @@ TentaGL.VBORenderer = {
     
     // Bind the index data and draw.
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);
-    console.log(model.numIndices());
+  //  console.log(model.numIndices());
     gl.drawElements(gl.TRIANGLES, model.numIndices(), gl.UNSIGNED_SHORT, 0);
   }
   

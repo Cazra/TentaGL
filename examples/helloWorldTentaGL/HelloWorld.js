@@ -130,7 +130,8 @@ function webGLStart() {
   initShaderProgram(gl);
   initMaterials(gl);
   
-  console.log("KeyboardEvent: " + KeyboardEvent);
+  console.log(gl.canvas);
+  var keyboard = new TentaGL.Keyboard(document.getElementById("container"));
   
   //setTimeout(function(){drawScene(gl)}, 1000);
   launchWhenReady(gl);

@@ -94,14 +94,13 @@ TentaGL.VBOData = function(gl, model, shader) {
   var vertices = model.getVertices();
   for(var i=0; i < vertices.length; i++) {
     var vertex = vertices[i];
-    console.log("vertex " + i);
+  //  console.log("vertex " + i);
     
     var attrs = shader.getAttributes();
     for(var j=0; j < attrs.length; j++) {
       var attr = attrs[j];
       var values = attr.getValues(vertex);
-      console.log("  attr " + attr.getName() + " value: " + TentaGL.Debug.arrayString(values));
-    //  attrData = attrData.concat(values);
+    //  console.log("  attr " + attr.getName() + " value: " + TentaGL.Debug.arrayString(values));
       
       for(var k=0; k<values.length; k++) {
         attrData.push(values[k]);
@@ -112,7 +111,7 @@ TentaGL.VBOData = function(gl, model, shader) {
   this._attrBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, this._attrBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(attrData), gl.STATIC_DRAW);
-  console.log("Attr data array: " + attrData);
+//  console.log("Attr data array: " + attrData);
   
   var elemData = model.getIndices();
   
@@ -120,7 +119,7 @@ TentaGL.VBOData = function(gl, model, shader) {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._elemBuffer);
   gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(elemData), gl.STATIC_DRAW);
   
-  console.log("Elem data array: " + elemData);
+//  console.log("Elem data array: " + elemData);
   
   this._shader = shader;
 };

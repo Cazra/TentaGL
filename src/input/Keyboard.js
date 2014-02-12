@@ -25,11 +25,86 @@
 
 /** 
  * Constructs a Keyboard input object for an Application.
+ * @constructor
+ * @param {DOM div element} The div element containing the WebGL Canvas. For 
+ *      the div to be able to receive focus, set its "tabindex" attribute to 
+ *      not -1.
  */
-TentaGL.Keyboard = function() {
+TentaGL.Keyboard = function(container) {
   
+  this._isPressed = [];
+  this._justPressed = [];
+  this._justReleased = [];
+  this._repPressed = [];
   
+  this._pressedSinceLast = [];
+  
+  var self = this; // Closure magic!
+  
+  container.onkeydown = function(evt) {
+    console.log("key down: " + evt.keyCode);
+    self._pressedSinceLast[evt.keyCode] = true;
+  };
+  
+  container.onkeyup = function(evt) {
+    console.log("key up: " + evt.keyCode);
+    self._pressedSinceLast[evt.keyCode] = false;
+  };
 };
+
+
+
+TentaGL.Keyboard.prototype = {
+  constructor:TentaGL.Keyboard,
+  
+  /** Polls for updated keyboard input state. */
+  poll:function() {
+    this._justPressed = [];
+    this._justReleased = [];
+    this._repPressed = [];
+    
+    // Check for keys released.
+    for(var keyCode in this._isPressed) {
+      if(this._isPressed[keyCode] && !this._pressedSinceLast[keyCode]) {
+        this._isPressed[keyCode] = false;
+        this._justReleased[keyCode] = true;
+      }
+    }
+    
+    // Check for keys pressed.
+    for(var keyCode in this._pressedSinceLast) {
+      if(!this._isPressed[keyCode]) {
+        this._justPressed[keyCode] = true;
+      }
+      this._isPressed[keyCode] = true;
+      this._repPressed[keyCode] = true;
+    }
+    
+    this._pressedSinceLast = [];
+  },
+  
+  /** Returns whether a key is currently pressed. */
+  isPressed:function(keyCode) {
+    return (this._isPressed[keyCode] || false);
+  },
+  
+  /** Returns whether a key was just pressed. */
+  justPressed:function(keyCode) {
+    return (this._justPressed[keyCode] || false);
+  },
+  
+  /** Returns whether a key was just released. */
+  justReleased:function(keyCode) {
+    return (this._justReleased[keyCode] || false);
+  },
+  
+  /** Returns whether a key was just pressed or is repeat-pressing. */
+  isPressedRepeating:function(keyCode) {
+    return (this._repPressed[keyCode] || false);
+  }
+};
+
+
 
 /** A global collection of constants for keyboard keycodes. */
 var KeyCode = {
@@ -129,4 +204,7 @@ var KeyCode = {
   BRACERIGHT : 221,
   QUOTE : 222
 };
+
+
+
 

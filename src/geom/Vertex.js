@@ -267,14 +267,14 @@ TentaGL.Vertex.prototype = {
    * @return {TentaGL.Vertex} The transformed copy of this vertex.
    */
   transform:function(transform) {
-    console.log("transform vertex!");
-    console.log("  transform: " + TentaGL.Debug.arrayString(transform));
-    console.log("  old XYZ: " + this.getX() + ", " + this.getY() + ", " + this.getZ());
+  //  console.log("transform vertex!");
+  //  console.log("  transform: " + TentaGL.Debug.arrayString(transform));
+  //  console.log("  old XYZ: " + this.getX() + ", " + this.getY() + ", " + this.getZ());
     
     var xyz = vec4.transformMat4(vec4.create(), this.getXYZ(), transform);
     var result = new TentaGL.Vertex(xyz[0], xyz[1], xyz[2]);
     
-    console.log("  new XYZ: " + xyz[0] + ", " + xyz[1] + ", " + xyz[2]);
+  //  console.log("  new XYZ: " + xyz[0] + ", " + xyz[1] + ", " + xyz[2]);
     
     if(this._normal !== undefined) {
       // We need to turn normal from a vec3 into a vec4 before it can be matrix-multiplied.
