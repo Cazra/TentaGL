@@ -26,6 +26,8 @@
  /** 
   * The singleton root object for TentaGL. All other object types in TentaGL
   * are accessed through this.
+  * It also has some utilities for creating the GL context and modifying
+  * some custom properties of it that TentaGL uses.
   */
 var TentaGL = { 
   
@@ -36,33 +38,20 @@ var TentaGL = {
   versionMinor:1,
   
   /** 
-   * Initializes and returns a WebGL context used inside an empty DOM div element,
-   * given that element's ID. The returned WebGL context also gains the
-   * properties viewWidth and viewHeight which are the width and height of the 
-   * canvas it is created in.
-   * @param {string} divID  The ID of the DOM div element that will contain the 
-   *    WebGL context.
-   * @param {WebGLContextAttributes} attrs   attributes used to get the WebGL 
-   *    context. Unless new values are specified in this argument, the default 
-   *    values for the WebGLContextAttributes will be used. 
+   * Initializes and returns a WebGL context for a canvas element.
+   * @param {DOM Canvas element} canvas  The canvas element we're making a 
+   *      WebGL context for.
+   * @param {WebGLContextAttributes} attrs   Optional. attributes used to get  
+   *    the WebGL context. If not provided, the default values for the
+   *     WebGLContextAttributes will be used. 
    *    See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.2
    * @return {WebGLRenderingContext }  The WebGL rendering context.
    */
-  createGL: function(divID, attrs) {
-    console.log("TentaGL version " + this.versionMajor + "." + this.versionMinor);
-    
-    // attrs cannot be undefined.
+  createGL: function(canvas, attrs) {
     attrs = attrs || {};
     
     // An Error will be thrown if the user's browser doesn't support WebGL.
     try {
-      var container = document.getElementById(divID);
-      
-      // Create a canvas and add it to the div.
-      var canvas = document.createElement("canvas", attrs);
-      container.appendChild(canvas);
-      canvas.width = container.offsetWidth;
-      canvas.height = container.offsetHeight;
       
       // Create the WebGL context for the canvas.
       var gl = canvas.getContext("webgl", attrs) || canvas.getContext("experimental-webgl", attrs);
@@ -75,6 +64,21 @@ var TentaGL = {
       var msg = "Error creating WebGL context: " + e.toString();
       throw Error(msg);
     }
+  },
+  
+  
+  /** 
+   * Produces a Canvas element and adds it to a div container. 
+   * The canvas's dimensions are the same as its container's.
+   * @param {DOM div element} container
+   * @return {DOM canvas element}
+   */
+  createCanvas: function(container) {
+    var canvas = document.createElement("canvas");
+    container.appendChild(canvas);
+    canvas.width = container.offsetWidth;
+    canvas.height = container.offsetHeight;
+    return canvas;
   }
 };
 

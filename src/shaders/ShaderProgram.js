@@ -29,15 +29,17 @@
  * and an Error is thrown.
  * @constructor
  * @param {WebGLRenderingContext} gl  The WebGL context.
+ * @param {string} id   A unique ID for this program in the ShaderLib.
  * @param {string} vertSrc  The source code string for the program's 
  *    vertex shader.
  * @param {string} fragSrc  The source code string for the program's
  *    fragment shader.
  */
-TentaGL.ShaderProgram = function(gl, vertSrc, fragSrc) {
+TentaGL.ShaderProgram = function(gl, id, vertSrc, fragSrc) {
   var vert = this._compileShader(gl, gl.VERTEX_SHADER, vertSrc);
   var frag = this._compileShader(gl, gl.FRAGMENT_SHADER, fragSrc);
   
+  this._id = id;
   this._glProg = this._linkProgram(gl, vert, frag);
   this._uniforms = this._initUniforms(gl);
   this._attributes = this._initAttributes(gl);
@@ -46,6 +48,15 @@ TentaGL.ShaderProgram = function(gl, vertSrc, fragSrc) {
 TentaGL.ShaderProgram.prototype = {
   
   constructor: TentaGL.ShaderProgram,
+  
+  /** 
+   * Returns the ID for this shader program.
+   * @return {string}
+   */
+  getID:function() {
+    return this._id;
+  },
+  
   
   /** 
    * Compiles a source code for either a vertex shader or fragment shader. 
@@ -363,6 +374,98 @@ TentaGL.ShaderProgram.prototype = {
       var attr = this._attributes[name];
       gl.disableVertexAttribArray(attr.getLocation());
     }
+  },
+  
+  
+  //////// TentaGL supported uniforms
+  
+  //// MVPTrans
+  
+  /** 
+   * Sets the value of the mat4 uniform variable bound to store the model-view-
+   * projection transformation matrix.
+   * An error is thrown if a uniform hasn't been bound to the sprites' model 
+   * transform matrices.
+   * @param {WebGLRenderingContext} gl
+   * @param {typed array} value   A typed array of the appropriate type and 
+   *      length for the variable.
+   */
+  setMVPTransUniValue:function(gl, value) {
+    this._uniforms[this._mvpUniName].set(gl, value);
+  },
+  
+  /** 
+   * Binds the mat4 uniform variable with the specified name in this  
+   * ShaderProgram to store the model-view-projection transformation matrix.
+   * An error is thrown if the specified uniform doesn't exist in this program.
+   * @param {string} uniName
+   */
+  bindMVPTransUni:function(uniName) {
+    if(!this._uniforms[uniName]) {
+      throw Error("Uniform variable " + uniName + " doesn't exist.");
+    }
+    this._mvpUniName = uniName;
+  },
+  
+  
+  //// NormalTrans
+  
+  /** 
+   * Sets the value of the mat3 uniform variable bound to store the  
+   * normal transformation matrix.
+   * An error is thrown if a uniform hasn't been bound to the sprites' model 
+   * transform matrices.
+   * @param {WebGLRenderingContext} gl
+   * @param {typed array} value   A typed array of the appropriate type and 
+   *      length for the variable.
+   */
+  setNormalTransUniValue:function(gl, value) {
+    this._uniforms[this._normalUniName].set(gl, value);
+  },
+  
+  /** 
+   * Binds the mat3 uniform variable with the specified name in this  
+   * ShaderProgram to store the normal transformation matrix.
+   * An error is thrown if the specified uniform doesn't exist in this program.
+   * @param {string} uniName
+   */
+  bindNormalTransUni:function(uniName) {
+    if(!this._uniforms[uniName]) {
+      throw Error("Uniform variable " + uniName + " doesn't exist.");
+    }
+    this._normalUniName = uniName;
+  },
+  
+  
+  //// Opacity
+  
+  /** 
+   * Sets the value of the float uniform variable bound to store opacity.
+   * An error is thrown if a uniform hasn't been bound to the sprites' model 
+   * transform matrices.
+   * @param {WebGLRenderingContext} gl
+   * @param {typed array} value   A typed array of the appropriate type and 
+   *      length for the variable.
+   */
+  setOpacityUniValue:function(gl, value) {
+    var uni = this._uniforms[this._opacityUniName];
+    if(uni) {
+      uni.set(gl, value);
+    }
+  },
+  
+  
+  /** 
+   * Binds the float uniform variable with the specified name in this
+   * ShaderProgram to store the opacity.
+   * An error is thrown if the specified uniform doesn't exist in this program.
+   * @param {string} uniName
+   */
+  bindOpacityUni:function(uniName) {
+    if(!this._uniforms[uniName]) {
+      throw Error("Uniform variable " + uniName + " doesn't exist.");
+    }
+    this._opacityUniName = uniName;
   },
 };
 

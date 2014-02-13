@@ -58,7 +58,7 @@ TentaGL.VBORenderer = {
     // Bind the index data and draw.
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);
   //  console.log(model.numIndices());
-    gl.drawElements(gl.TRIANGLES, model.numIndices(), gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(gl.TRIANGLES, vboData.numIndices(), gl.UNSIGNED_SHORT, 0);
   }
   
 };

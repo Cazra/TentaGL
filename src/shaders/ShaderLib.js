@@ -45,7 +45,7 @@ TentaGL.ShaderLib = {
    * @return {TentaGL.ShaderProgram} The created ShaderProgram.
    */
   add:function(gl, name, vertSrc, fragSrc) {
-    var program = new TentaGL.ShaderProgram(gl, vertSrc, fragSrc);
+    var program = new TentaGL.ShaderProgram(gl, name, vertSrc, fragSrc);
     var glProg = program.getWebGLProgram();
     
     this[name] = program;
@@ -88,9 +88,7 @@ TentaGL.ShaderLib = {
    */
   current:function(gl) {
     var glProg = gl.getParameter(gl.CURRENT_PROGRAM);
-    var program = this[glProg];
-    
-    return program;
+    return this[glProg];;
   }
 };
 

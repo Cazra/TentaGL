@@ -89,5 +89,45 @@ TentaGL.Math = {
    */
   clamp:function(value, min, max) {
     return Math.min(max, Math.max(value, min));
+  },
+  
+  
+  /** 
+   * Produces a concatenated rotation matrix of the form 
+   * Ry*Rx*Rz.
+   */
+  mat4RotYXZ:function(angleY, angleX, angleZ) {
+    var m = mat4.create();
+    
+    var cx = Math.cos(angleX);
+    var sx = Math.sin(angleX);
+    
+    var cy = Math.cos(angleY);
+    var sy = Math.sin(angleY);
+    
+    var cz = Math.cos(angleZ);
+    var sz = Math.sin(angleZ);
+    
+    m[0] = cx*cz + sx*sy*sz;
+    m[1] = cx*sz;
+    m[2] = -sy*cz + cy*sx*sz;
+    m[3] = 0;
+    
+    m[4] = -cy*sz + sx*sy*cz;
+    m[5] = cx*cz;
+    m[6] = sy*sz + sx*cy*cz;
+    m[7] = 0;
+    
+    m[8] = sy*cx;
+    m[9] = -sx;
+    m[10] = cx*cy;
+    m[11] = 0;
+    
+    m[12] = 0;
+    m[13] = 0;
+    m[14] = 0;
+    m[15] = 1;
+    
+    return m;
   }
 };

@@ -28,6 +28,11 @@
  * 3D space) at the specified world coordinates.
  * Most sprite properties are only useful if the ShaderProgram provides uniform
  * variables to use them. 
+ *
+ * However, TentaGL requires shaders to mind a mvpTrans uniform and a 
+ * normalTrans uniform. This should be done through the ShaderProgram's 
+ * bindMVPTransUni and bindNormalTransUni methods after the 
+ * ShaderProgram is created, but before any sprites are rendered.
  * @constructor
  * @param {Number} xyz  Optional. If the sprite's world coordinates aren't 
  *      provided, they will be set to [0, 0, 0].
@@ -152,6 +157,9 @@ TentaGL.Sprite.prototype = {
    * @return {Number}
    */
   getAngleX:function() {
+    if(this._angleX === undefined) {
+      return 0;
+    }
     return this._angleX;
   },
   
@@ -169,6 +177,9 @@ TentaGL.Sprite.prototype = {
    * @return {Number}
    */
   getAngleY:function() {
+    if(this._angleY === undefined) {
+      return 0;
+    }
     return this._angleY;
   },
   
@@ -186,6 +197,9 @@ TentaGL.Sprite.prototype = {
    * @return {Number}
    */
   getAngleZ:function() {
+    if(this._angleZ === undefined) {
+      return 0;
+    }
     return this._angleZ;
   },
   
@@ -230,6 +244,9 @@ TentaGL.Sprite.prototype = {
    * @return {Number}
    */
   getScaleX:function() {
+    if(this._scaleXYZ === undefined) {
+      return 1;
+    }
     return this._scaleXYZ[0];
   },
   
@@ -238,6 +255,9 @@ TentaGL.Sprite.prototype = {
    * @return {Number}
    */
   getScaleY:function() {
+    if(this._scaleXYZ === undefined) {
+      return 1;
+    }
     return this._scaleXYZ[1];
   },
   
@@ -246,6 +266,9 @@ TentaGL.Sprite.prototype = {
    * @return {Number}
    */
   getScaleZ:function() {
+    if(this._scaleXYZ === undefined) {
+      return 1;
+    }
     return this._scaleXYZ[2];
   },
   
@@ -270,8 +293,68 @@ TentaGL.Sprite.prototype = {
    */
   setScaleUni:function(coeff) {
     this._scaleUni = coeff;
-  }
+  },
   
+  
+  //////// Model transform
+  
+  
+  /** 
+   * Produces and returns the sprite's model transform.
+   * @return {mat4}
+   */
+  getModelTransform:function() {
+    var m = mat4.create();
+    var i = mat4.create();
+    m = mat4.mul(m, m, mat4.translate(mat4.create(), i, this.getXYZ()));
+    
+    m = mat4.mul(m, m, mat4.rotateY(mat4.create(), i, this.getAngleY()));
+    m = mat4.mul(m, m, mat4.rotateX(mat4.create(), i, this.getAngleX()));
+    m = mat4.mul(m, m, mat4.rotateZ(mat4.create(), i, this.getAngleZ()));
+    
+    m = mat4.mul(m, m, mat4.scale(mat4.create(), i, 
+                                  [ this.getScaleX()*this.getScaleUni(), 
+                                    this.getScaleY()*this.getScaleUni(),
+                                    this.getScaleZ()*this.getScaleUni()]));
+    return m;
+  },
+  
+  
+  //////// Rendering
+  
+  /** 
+   * Sets up the concatenated model transform for the sprite and renders it. 
+   * During rendering, gl gains a new normalMat field containing the current 
+   * model transform. This allows Sprites to also be used as transform nodes
+   * in a scene graph.
+   */
+  render:function(gl) {
+    if(!this.isVisible()) {
+      return;
+    }
+    
+    // save the original matrix.
+    var origMat = gl.modelViewMat || mat4.create();
+    
+    // Set the concatenated model transform matrix and draw the sprite.
+    gl.modelViewMat = mat4.mul(mat4.create(), origMat, this.getModelTransform());
+    var normalTrans = mat3.normalFromMat4(mat3.create(), gl.modelViewMat);
+    var mvpTrans = mat4.mul(mat4.create(), gl.projMat, gl.modelViewMat);
+    
+    TentaGL.ShaderLib.current(gl).setMVPTransUniValue(gl, mvpTrans);
+    TentaGL.ShaderLib.current(gl).setNormalTransUniValue(gl, normalTrans);
+    
+    this.draw(gl);
+    
+    // restore the original matrix.
+    gl.modelViewMat = origMat;
+  },
+  
+  /** 
+   * Sets the materials for and draws the Models making up this sprite. 
+   * Override this. 
+   */
+  draw:function(gl) {}
 };
 
 

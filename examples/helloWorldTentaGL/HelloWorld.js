@@ -35,6 +35,10 @@ function initShaderProgram(gl) {
   shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
   shaderProgram.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
   shaderProgram.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+  
+  shaderProgram.bindMVPTransUni("mvpTrans");
+  shaderProgram.bindNormalTransUni("normalTrans");
+//  shaderProgram.bindOpacityUni("opacity");
 }
 
 
@@ -49,22 +53,38 @@ function initMaterials(gl) {
 
 /** Initializes and returns the Camera for the scene. */
 function initCamera() {
-  var camera = new TentaGL.Camera([3, 3, 3], [0, 0, 0]);
+  var camera = new TentaGL.Camera([0, 0, 10], [0, 0, 0]);
   return camera;
 }
 
 
-function createTriangle() {
-  var triangle = TentaGL.Model.Triangle([ 0, 1, 0],
+
+function createTriangleSprite(xyz) {
+  var triangle = new TentaGL.Sprite(xyz);
+  triangle.model = TentaGL.Model.Triangle([ 0, 1, 0],
                                         [-1,-1, 0],
                                         [ 1,-1, 0]);
+  triangle.draw = function(gl) {
+    TentaGL.VBORenderer.render(gl, this.model);
+  };
   return triangle;
 }
 
 
-function createSquare() {
-  var flipY = mat4.create(); //mat4.scale(mat4.create(), mat4.create(), [1, -1, 1]);
-  var square = TentaGL.Model.Cube(2, 2, 2).cloneCentered().transform(flipY);
+function createSquareSprite(xyz) {
+  var square = new TentaGL.Sprite(xyz);
+  square.model = TentaGL.Model.Cube(2, 2, 2).cloneCentered();
+  square.draw = function(gl) {
+    TentaGL.VBORenderer.render(gl, this.model);
+  };
+  
+//  square.setAngleX(TentaGL.TAU/8);
+//  square.setAngleY(TentaGL.TAU/8);
+//  square.setAngleZ(TentaGL.TAU/8);
+  
+  square.setScaleUni(2);
+  
+  square.setOpacity(1);
   
   return square;
 }
@@ -89,7 +109,9 @@ function drawScene(gl, camera) {
   
   var shaderProgram = TentaGL.ShaderLib.use(gl, "simpleShader");
   TentaGL.MaterialLib.use(gl, "coinBlock");
-  camera.bindTo(gl, "camTrans", gl.canvas.width/gl.canvas.height);
+  
+  var aspect = gl.canvas.width/gl.canvas.height;
+  camera.useMe(gl, aspect);
   
   // Clear the background. 
   gl.clearColor(0, 0, 0, 1); // Black
@@ -99,19 +121,14 @@ function drawScene(gl, camera) {
 //  gl.enable(gl.CULL_FACE);
   
   // Get the models for our shapes.
-  var triangle = createTriangle();
-  var square = createSquare();
-  var modelTrans;
+  var triangleSprite = createTriangleSprite([-1.5, 0, 0]);
+  var squareSprite = createSquareSprite([1.5, 0, 0]);
   
   // Draw the triangle.
-  modelTrans = mat4.translate(mat4.create(), mat4.create(), [-1.5, 0, 0]);
-  TentaGL.ShaderLib.current(gl).setUniValue(gl, "modelTrans", modelTrans);
-  TentaGL.VBORenderer.render(gl, triangle);
+  triangleSprite.render(gl);
   
   // Draw the square.
-  modelTrans = mat4.translate(mat4.create(), mat4.create(), [1.5, 0, 0]);
-  TentaGL.ShaderLib.current(gl).setUniValue(gl, "modelTrans", modelTrans);
-  TentaGL.VBORenderer.render(gl, square);
+  squareSprite.render(gl);
 }
 
 
@@ -119,8 +136,12 @@ function drawScene(gl, camera) {
  * Initializes and runs the WebGL Hello World program.
  */
 function webGLStart() {
-//  var canvas = document.getElementById("glCanvas");
-  var gl = TentaGL.createGL("container");
+  
+  
+  var container = document.getElementById("container");
+  
+  var canvas = TentaGL.createCanvas(container);
+  var gl = TentaGL.createGL(canvas);
   initShaderProgram(gl);
   initMaterials(gl);
   
@@ -129,4 +150,35 @@ function webGLStart() {
   
   //setTimeout(function(){drawScene(gl)}, 1000);
   launchWhenReady(gl, camera);
+  
+  
+  
+  /*
+  var app = new TentaGL.Application(container);
+  
+  app.initShaders = function() {
+    var vertSrc = extractSrc("vshader");
+    var fragSrc = extractSrc("fshader");
+    var shaderProgram = TentaGL.ShaderLib.add(this.getGL(), "simpleShader", vertSrc, fragSrc);
+    
+    shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+    shaderProgram.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
+    shaderProgram.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+    
+    shaderProgram.bindMVPTransUni("mvpTrans");
+    shaderProgram.bindNormalTransUni("normalTrans");
+  //  shaderProgram.bindOpacityUni("opacity");
+  };
+  
+  app.initMaterials = function() {
+    TentaGL.MaterialLib.put("myColor", TentaGL.Color.RGBA(1, 0, 0, 1));
+    
+    var coinBlock = TentaGL.Texture.Image(this.getGL(), "../../images/sampleTex.png");
+    TentaGL.MaterialLib.put("coinBlock", coinBlock);
+  };
+  
+  this.
+  
+  app.start();
+  */
 }

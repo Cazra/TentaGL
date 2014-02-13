@@ -6,6 +6,7 @@
 <script id="fshader" type="x-shader/x-fragment">  
   precision mediump float;
   
+  uniform float opacity;
   uniform sampler2D tex;
   
   varying vec4 v_color;
@@ -18,12 +19,13 @@
 </script>
 
 <script id="vshader" type="x-shader/x-vertex">
-  attribute vec4 vertexPos;
+  
   attribute vec3 vertexNormal;
   attribute vec2 vertexTexCoords;
+  attribute vec4 vertexPos;
 
-  uniform mat4 modelTrans;
-  uniform mat4 camTrans;
+  uniform mat4 mvpTrans;
+  uniform mat3 normalTrans;
   uniform vec4 color;
   
   varying vec4 v_color;
@@ -31,10 +33,11 @@
 
   // pass-through shader.
   void main(void) {
-    gl_Position = camTrans * modelTrans * vertexPos;
-    texCoords = vertexTexCoords;
     
-    vec3 normal = vertexNormal;
+    texCoords = vertexTexCoords;
+    gl_Position = mvpTrans * vertexPos;
+    
+    vec3 normal = normalTrans*vertexNormal;
     v_color = color;
   }
 </script>
@@ -42,6 +45,8 @@
 <script type="text/javascript" src="../../libs/gl-matrix-min.js"></script>
 <script type="text/javascript" src="../../src/TentaGL.js"></script>
 <script type="text/javascript" src="../../src/math/Math.js"></script>
+
+<script type="text/javascript" src="../../src/app/Application.js"></script>
 
 <script type="text/javascript" src="../../src/camera/Camera.js"></script>
 
@@ -58,7 +63,10 @@
 <script type="text/javascript" src="../../src/material/Texture.js"></script>
 
 <script type="text/javascript" src="../../src/renderer/VBOCache.js"></script>
+<script type="text/javascript" src="../../src/renderer/VBOData.js"></script>
 <script type="text/javascript" src="../../src/renderer/VBORenderer.js"></script>
+
+<script type="text/javascript" src="../../src/sprite/Sprite.js"></script>
 
 <script type="text/javascript" src="../../src/shaders/ShaderVar.js"></script>
 <script type="text/javascript" src="../../src/shaders/Attribute.js"></script>

@@ -24,16 +24,15 @@
 
 
 /** 
- * The VBOCache maintains a cache of VBO data for Models and the ShaderPrograms 
- * they are rendered with. 
+ * A singleton for loading and caching VBO data for models. 
  */
-TentaGL.VBOCache = {
+TentaGL.ModelLib = {
   
-  /** A mapping of Models to VBOData objects. */
+  /** A mapping of model IDs to their VBO data. */
   _vboData:{},
   
   /** 
-   * Removes all the cached VBO data from GL memory and from this cache. 
+   * Removes all the cached VBO data from GL memory and from this library. 
    * @return {WebGLRenderingContext} gl
    */
   clean:function(gl) {
@@ -44,41 +43,18 @@ TentaGL.VBOCache = {
   },
   
   
-  /** Adds (or replaces) a model to the cache with the specified ID, createing its VBO data in the process.*/
-  add:function(gl, id, model) {
-  
-  },
-  
-  
-  
-  /**
-   * Gets the cached vertex data for some Model being rendered with some 
-   * ShaderProgram. If the data doesn't exist, then it is created and cached.
-   */
-  get:function(gl, model, shader) {
-    var id = model.getID();
-    
-    var vbo = this._vboData[id];
-    if(vbo === undefined || vbo.getShader() !== shader) {
-      this._vboData[id] = new TentaGL.VBOData(gl, model, shader);
-    }
-    else {
-      console.log("Already has model");
-    } 
-    
-    return this._vboData[id];
-  },
-  
   /** 
-   * Removes the VBO data for the specified model from the cache and GL memory. 
+   * Creates and adds the VBO data for a model to the library, intended to be 
+   * used only with the specified shader. (This may change once I figure out 
+   * some way to allow different shaders to use the same VBOs)
    * @param {WebGLRenderingContext} gl
-   * @param {TentaGL.Model} model
+   * @param {string} modelID  The uniqueID that 
    */
-  remove:function(gl, model) {
-    var id = model.getID();
-    var vbo = this._vboData[id];
-    vbo.clean(gl);
-    delete this._vboData[id];
+  add:function(gl, modelID, model, shader) {
+    var shader = TentaGL.ShaderLib[shaderID];
+    var vbo = new VBOData(gl, model, shader);
+    this._vboData
   }
+  
 };
 

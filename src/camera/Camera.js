@@ -295,37 +295,45 @@ TentaGL.Camera.prototype = {
   //////// Camera transforms
   
   /** 
-   * Returns the perspective-view matrix for this camera. 
+   * Returns the projection-view matrix for this camera. 
    * @param {Number} aspect   The aspect ratio of our viewport.
-   * @return {mat4} The perspective-view transform matrix.
+   * @return {mat4} The projection-view transform matrix.
    */
   getTransform:function(aspect) {
-    var look = mat4.lookAt(mat4.create(), this._eye, this._center, this._up);
-    
-    if(this._mode = TentaGL.Camera.PERSP) {
-      var pers = mat4.perspective(mat4.create(), this.getZoomedFOVY(), aspect, this.getZNear(), this.getZFar());
-      return mat4.mul(mat4.create(), pers, look);
-    }
-    else {
-      return look;
-    }
+    return mat4.mul(mat4.create(), this.getProjectionTransform(aspect), this.getViewTransform());
   },
   
   
-  
-  //////// ShaderProgram vars
+  /** 
+   * Returns the view matrix for this camera. 
+   * @return {mat4}
+   */
+  getViewTransform:function() {
+    return mat4.lookAt(mat4.create(), this._eye, this._center, this._up);
+  },
   
   /** 
-   * Binds this camera's transform to the specified mat4 uniform variable 
-   * in the shader currently being used.
-   * @param {WebGLRenderingContext} gl
-   * @param {string} uniName  The name of the mat4 uniform variable that will
-   *      contain the camera transform.
+   * Returns the projection matrix for this camera.
    * @param {Number} aspect   The aspect ratio of our viewport.
+   * @return {mat4}
    */
-  bindTo:function(gl, uniName, aspect) {
-    TentaGL.ShaderLib.current(gl).setUniValue(gl, uniName, this.getTransform(aspect));
+  getProjectionTransform:function(aspect) {
+    if(this._mode == TentaGL.Camera.PERSP) {
+      return mat4.perspective(mat4.create(), this.getZoomedFOVY(), aspect, 
+                              this.getZNear(), this.getZFar());
+    }
+    else {
+      return mat4.create();
+    }
+  },
+  
+  //////// Shader binding
+  
+  useMe:function(gl, aspect) {
+    gl.projMat = this.getProjectionTransform(aspect);
+    gl.modelViewMat = this.getViewTransform();
   }
+  
   
 };
 
