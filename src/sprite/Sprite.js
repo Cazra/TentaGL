@@ -26,10 +26,16 @@
 /** 
  * Constructs a sprite (some transformable entity existing at a point in 
  * 3D space) at the specified world coordinates.
+ * Most sprite properties are only useful if the ShaderProgram provides uniform
+ * variables to use them. 
  * @constructor
- * @param {Number} xyz
+ * @param {Number} xyz  Optional. If the sprite's world coordinates aren't 
+ *      provided, they will be set to [0, 0, 0].
  */
 TentaGL.Sprite = function(xyz) {
+  if(xyz === undefined) {
+    xyz = [0, 0, 0];
+  }
   this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2]);
   
   //this._scaleXYZ = [1, 1, 1];
@@ -48,9 +54,224 @@ TentaGL.Sprite.prototype = {
   
   constructor:TentaGL.Sprite,
   
-  /** Returns true iff this sprite's visibility flag is true. */
+  
+  //////// Visibility
+  
+  /** 
+   * Returns true iff this sprite's visibility flag is true. 
+   * @return {Boolean}
+   */
   isVisible:function() {
     return this._isVisible;
+  },
+  
+  
+  /** 
+   * Returns the sprite's opacity level. This value is in the range [0,1], 
+   * where 0 is completely transparent and 1 is completely opaque.
+   */
+  getOpacity:function() {
+    if(this._opacity === undefined) {
+      return 1;
+    }
+    return this._opacity;
+  },
+  
+  /** 
+   * Sets the sprite's opacity level. This value is clamped to the range 
+   * [0, 1], where 0 is completely transparent and 1 is completely opaque.
+   * @param {Number} opacity
+   */
+  setOpacity:function(opacity) {
+    this._opacity = TentaGL.Math.clamp(opacity, 0, 1);
+  },
+  
+  
+  /** 
+   * Assigns the value of the sprite's opacity to a float uniform value in
+   * the ShaderProgram currently in use.
+   * @param {WebGLRenderingContext} gl
+   * @param {string} uniName  The name of the uniform variable the opacity is
+   *      bound to.
+   */
+  useOpacity:function(gl, uniName) {
+    ShaderLib.current(gl).setUniValue(gl, uniName, this.getOpacity());
+  },
+  
+  
+  //////// Position
+  
+  /** 
+   * Returns the Sprite's XYZ coordinates.
+   * @return {vec4}
+   */
+  getXYZ:function() {
+    return this._xyz;
+  },
+  
+  /** 
+   * Sets the Sprite's XYZ coordinates.
+   * param {vec3} xyz
+   */
+  setXYZ:function(xyz) {
+    this._xyz[0] = xyz[0];
+    this._xyz[1] = xyz[1];
+    this._xyz[2] = xyz[2];
+  },
+  
+  /**
+   * Returns the Sprites X coordinate.
+   * @return {Number}
+   */
+  getX:function() {
+    return this._xyz[0];
+  },
+  
+  /**
+   * Returns the Sprites Y coordinate.
+   * @return {Number}
+   */
+  getY:function() {
+    return this._xyz[1];
+  },
+  
+  /**
+   * Returns the Sprites Z coordinate.
+   * @return {Number}
+   */
+  getZ:function() {
+    return this._xyz[2];
+  },
+  
+  
+  //////// Euclid angles
+  
+  /** 
+   * Returns the angle of rotation of this sprite, in  radians, about its 
+   * X axis.
+   * @return {Number}
+   */
+  getAngleX:function() {
+    return this._angleX;
+  },
+  
+  /** 
+   * Sets the angle of rotation of this sprite, in radians, about its X axis.
+   * @param {Number} angle
+   */
+  setAngleX:function(angle) {
+    this._angleX = angle;
+  },
+  
+  /** 
+   * Returns the angle of rotation of this sprite, in  radians, about its 
+   * Y axis.
+   * @return {Number}
+   */
+  getAngleY:function() {
+    return this._angleY;
+  },
+  
+  /** 
+   * Sets the angle of rotation of this sprite, in radians, about its Y axis.
+   * @param {Number} angle
+   */
+  setAngleY:function(angle) {
+    this._angleY = angle;
+  },
+  
+  /** 
+   * Returns the angle of rotation of this sprite, in  radians, about its 
+   * Z axis.
+   * @return {Number}
+   */
+  getAngleZ:function() {
+    return this._angleZ;
+  },
+  
+  /** 
+   * Sets the angle of rotation of this sprite, in radians, about its Z axis.
+   * @param {Number} angle
+   */
+  setAngleZ:function(angle) {
+    this._angleZ = angle;
+  },
+  
+  
+  
+  //////// Quaterion TODO
+  
+  
+  
+  
+  //////// Scale
+  
+  /** 
+   * Returns the sprite's scales along its X, Y, and Z axes.
+   * @return {vec3}
+   */
+  getScaleXYZ:function() {
+    if(this._scaleXYZ === undefined) {
+      return vec3.fromValues(1, 1, 1);
+    }
+    return this._ScaleXYZ;
+  },
+  
+  /** 
+   * Sets the sprite's scales along its X, Y, and Z axes.
+   * @param {vec3} xyz
+   */
+  setScaleXYZ:function(xyz) {
+    this._scaleXYZ = vec3.fromValues(xyz[0], xyz[1], xyz[2]);;
+  },
+  
+  /** 
+   * Returns the X component of the sprite's scale.
+   * @return {Number}
+   */
+  getScaleX:function() {
+    return this._scaleXYZ[0];
+  },
+  
+  /**
+   * Returns the Y component of the sprite's scale.
+   * @return {Number}
+   */
+  getScaleY:function() {
+    return this._scaleXYZ[1];
+  },
+  
+  /** 
+   * Returns the Z component of the sprite's scale.
+   * @return {Number}
+   */
+  getScaleZ:function() {
+    return this._scaleXYZ[2];
+  },
+  
+  /** 
+   * Returns the uniform scale value of the sprite. 
+   * In the sprite's scale transform, this multiplies the axial scale values
+   * of the sprite.
+   * @return {Number}
+   */
+  getScaleUni:function() {
+    if(this._scaleUni === undefined) {
+      return 1;
+    }
+    return this._scaleUni;
+  },
+  
+  /** 
+   * Sets the uniform scale value of the sprite.
+   * In the sprite's scale transform, this multiplies the axial scale values
+   * of the sprite.
+   * @param {Number} coeff
+   */
+  setScaleUni:function(coeff) {
+    this._scaleUni = coeff;
   }
+  
 };
+
 

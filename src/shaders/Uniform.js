@@ -61,12 +61,13 @@ TentaGL.Uniform.prototype.get = function(gl) {
  * Sets the value of this Uniform in the GL context.
  * @param {WebGLRenderingContext} gl
  * @param {typed array} valueArray  A typed array of the appropriate type and 
- *      length for the variable.
+ *      length for the variable. In the case of a size 1 INT or FLOAT variable,
+ *      
  */
 TentaGL.Uniform.prototype.set = function(gl, valueArray) {
   switch(this._type) {
     case gl.FLOAT:
-      gl.uniform1fv(this._location, valueArray);
+      gl.uniform1f(this._location, valueArray);
       break;
     case gl.FLOAT_VEC2:
       gl.uniform2fv(this._location, valueArray);
@@ -78,7 +79,7 @@ TentaGL.Uniform.prototype.set = function(gl, valueArray) {
       gl.uniform4fv(this._location, valueArray);
       break;
     case gl.INT:
-      gl.uniform1iv(this._location, valueArray);
+      gl.uniform1i(this._location, valueArray);
       break;
     case gl.INT_VEC2:
       gl.uniform2iv(this._location, valueArray);
