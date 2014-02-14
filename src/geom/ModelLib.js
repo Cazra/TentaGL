@@ -48,12 +48,37 @@ TentaGL.ModelLib = {
    * used only with the specified shader. (This may change once I figure out 
    * some way to allow different shaders to use the same VBOs)
    * @param {WebGLRenderingContext} gl
-   * @param {string} modelID  The uniqueID that 
+   * @param {string} modelID  The uniqueID that identifies the VBO data for the 
+   *      model in this library.
+   * @param {TentaGL.Model} model   The model that the VBO data will be 
+   *      produced from.
+   * @param {associative arry: {int} -> {TentaGL.AttrProfile}} attrProfileSet  
+   *      Optional.
+   *      The set of attributes to be stored in the model's VBO data.
+   *      A model's VBO data can be rendered by a shader program only
+   *      by a shader program only if the program's AttrProfile is a subset 
+   *      of the VBO data's AttrProfile.
+   *      If this isn't provided, it will automatically use the default set from
+   *      TentaGL.getDefaultAttrProfileSet().
    */
-  add:function(gl, modelID, model, shader) {
-    var shader = TentaGL.ShaderLib[shaderID];
-    var vbo = new VBOData(gl, model, shader);
-    this._vboData
+  add:function(gl, modelID, model, attrProfileSet) {
+  //  console.log("Creating VBO for " + modelID + " with profiles set ");
+  //  console.log(attrProfileSet);
+    var vbo = new TentaGL.VBOData(gl, model, attrProfileSet);
+    this._vboData[modelID] = vbo;
+  },
+  
+  
+  /** 
+   * Returns the VBOData for the specified model ID. 
+   * @param {string} modelID
+   * @return {TentaGL.VBOData}
+   */
+  get:function(modelID) {
+    if(this._vboData[modelID] === undefined) {
+      throw Error("ModelLib does not contain VBOData for " + modelID + ".");
+    }
+    return this._vboData[modelID];
   },
   
   

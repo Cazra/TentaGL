@@ -29,27 +29,49 @@
  * @constructor
  * @param {WebGLContextRenderer} gl
  * @param {TentaGL.Model} model  The model we're creating the data for.
- * @param {TentaGL.ShaderProgram} shader  The shader program with which the 
- *      model's VBO data is being created.
+ * @param {associative arry: {int} -> {TentaGL.AttrProfile}} attrProfileSet
  */
-TentaGL.VBOData = function(gl, model, shader) {
+TentaGL.VBOData = function(gl, model, attrProfileSet) {
+  
+//  console.log("Creating VBO data");
   
   var attrData = [];
+  this._byteOffsets = {};
   var vertices = model.getVertices();
+  
+//  console.log(vertices.length);
+  
   for(var i=0; i < vertices.length; i++) {
     var vertex = vertices[i];
-  //  console.log("vertex " + i);
     
+  //  console.log(vertex);
+    
+    /*
     var attrs = shader.getAttributes();
     for(var j=0; j < attrs.length; j++) {
       var attr = attrs[j];
       var values = attr.getValues(vertex);
-    //  console.log("  attr " + attr.getName() + " value: " + TentaGL.Debug.arrayString(values));
       
       for(var k=0; k<values.length; k++) {
         attrData.push(values[k]);
       }
     }
+    */
+    var offset = 0;
+    for(var j in attrProfileSet) {
+      var attr = attrProfileSet[j];
+      var values = attr.getValues(vertex);
+      
+    //  console.log("  " + attr.id() + " : " + TentaGL.Debug.arrayString(values));
+      
+      this._byteOffsets[j] = offset;
+      offset += attr.sizeBytes();
+      
+      for(var k=0; k<values.length; k++) {
+        attrData.push(values[k]);
+      }
+    }
+    
   }
   
   this._attrBuffer = gl.createBuffer();
@@ -66,7 +88,8 @@ TentaGL.VBOData = function(gl, model, shader) {
   
 //  console.log("Elem data array: " + elemData);
   
-  this._shader = shader;
+  this._attrSet = attrProfileSet;
+  this._stride = TentaGL.AttrProfiles.getStride(attrProfileSet);
 };
 
 
@@ -95,6 +118,28 @@ TentaGL.VBOData.prototype = {
   /** Returns the number of indices in the element index buffer. */
   numIndices:function() {
     return this._numIndices;
+  },
+  
+  
+  /** 
+   * Gets the byte offset for an AttrProfile in this data.
+   * An Error is thrown if data is not available in the VBO for the AttrProfile.
+   * @param {TentaGL.AttrProfile} attrProfile
+   */
+  getOffset:function(attrProfile) {
+    var id = attrProfile.id();
+    if(this._byteOffsets[id] === undefined) {
+      throw Error("VBOData does not contain data for AttrProfile: " + attrProfile.toString());
+    }
+    else {
+      return this._byteOffsets[id];
+    }
+  },
+  
+  
+  /** Returns the byte stride for this VBO data. */
+  getStride:function() {
+    return this._stride;
   },
   
   

@@ -29,30 +29,30 @@ TentaGL.VBORenderer = {
   /** 
    * Renders a Model with the ShaderProgram and Material currently in use. 
    * @param {WebGLRenderingContext} gl
-   * @param {TentaGL.Model} model   The model being rendered.
+   * @param {string} modelID   The ID for the VBO data from ModelLib being rendered.
    */
-  render:function(gl, model) {
+  render:function(gl, modelID) {
     var program = TentaGL.ShaderLib.current(gl);
     
     // Get the data buffers for the model and program, creating them if necessary.
-    var vboData = TentaGL.VBOCache.get(gl, model, program);
+    var vboData = TentaGL.ModelLib.get(modelID);
     var attrBuffer = vboData.getAttrBuffer();
     var elemBuffer = vboData.getElemBuffer();
+    var stride = vboData.getStride();
     
     // Bind the vertex data.
     gl.bindBuffer(gl.ARRAY_BUFFER, attrBuffer);
-    var offset = 0;
     var attrs = program.getAttributes();
     for(var i=0; i < attrs.length; i++) {
       var attr = attrs[i];
-    //  console.log("binding attr: " + attr.getName() + ", loc: " + attr.getLocation() + ", unitSize: " + attr.getSizeUnits() + ", unitType: " + TentaGL.glTypeName(attr.getUnitType()) + ", stride: " + program.getAttrStride() + ", offset: " + offset);
+      var offset = vboData.getOffset(attr.getProfile());
+//      console.log("binding attr: " + attr.getName() + ", loc: " + attr.getLocation() + ", unitSize: " + attr.getSizeUnits() + ", unitType: " + TentaGL.glTypeName(attr.getUnitType()) + ", stride: " + stride + ", offset: " + offset);
       
       
       gl.vertexAttribPointer( attr.getLocation(), 
                               attr.getSizeUnits(), attr.getUnitType(), 
                               false, 
-                              program.getAttrStride(), offset);
-      offset += attr.getSizeBytes();
+                              stride, offset);
     }
     
     // Bind the index data and draw.

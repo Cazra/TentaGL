@@ -93,9 +93,6 @@ TentaGL.Model.Plane = function(w, h, flipY) {
   // Create faces.
   model.addFaceQuad(0, 1, 2, 3);
   
-  // Compute tangental vectors.
-  model.computeVertexTangentals();
-  
   return model;
 };
 

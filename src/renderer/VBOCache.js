@@ -26,6 +26,7 @@
 /** 
  * The VBOCache maintains a cache of VBO data for Models and the ShaderPrograms 
  * they are rendered with. 
+ * @deprecated  See ModelLib.
  */
 TentaGL.VBOCache = {
   

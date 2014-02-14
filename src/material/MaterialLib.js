@@ -51,7 +51,7 @@ TentaGL.MaterialLib = {
    * @param {TentaGL.Material} material
    * @return {TentaGL.Material} The material added to the library.
    */
-  put:function(name, material) {
+  add:function(name, material) {
     if(this._materials[name] !== undefined) {
       throw Error("Material " + name + " already exists.");
     }

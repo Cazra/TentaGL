@@ -32,10 +32,12 @@ TentaGL.Application = function(container, attrs) {
   console.log("TentaGL version " + this.versionMajor + "." + this.versionMinor);
   
   this._container = container;
-  this._gl = TentaGL.createGL(container, attrs);
+  var canvas = TentaGL.createCanvas(container);
+  this._gl = TentaGL.createGL(canvas, attrs);
   this._canvas = this._gl.canvas;
   
-  
+  this._keyboard = new TentaGL.Keyboard(container);
+  this._mouse = new TentaGL.Mouse(container);
 };
 
 
@@ -45,9 +47,8 @@ TentaGL.Application.prototype = {
   
   /** Starts the application loop. */
   start:function() {
-    this._lastTimestamp = Date.now();
-    initResources();
-    run(this._lastTimestamp);
+    this.initResources();
+    this.run(0);
   },
   
   /** 
@@ -55,12 +56,25 @@ TentaGL.Application.prototype = {
    * iteration so that the application tries to run at 60 frames per second. 
    */
   run:function(timestamp) {
-    console.log("running. Time since last frame: " + (timestamp - this._lastTimestamp));
+    // Initialize timing on the first frame.
+    if(!this._lastTimestamp) {
+      this._lastTimestamp = timestamp;
+      this._lastFPSTimestamp = timestamp;
+      this._fpsCount = 0;
+    }
+    
+    // FPS counter
+    if(timestamp - this._lastFPSTimestamp > 1000) {
+      console.log("running. FPS: " + this._fpsCount);
+      this._lastFPSTimestamp = timestamp;
+      this._fpsCount = 0;
+    }
     
     this.update();
     
     this._lastTimestamp = timestamp;
-    requestAnimationFrame(this.run);
+    this._fpsCount++;
+    requestAnimationFrame(this.run.bind(this));
   },
   
   

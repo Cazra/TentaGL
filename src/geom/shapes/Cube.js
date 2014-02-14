@@ -81,9 +81,6 @@ TentaGL.Model.Cube = function(w, h, d) {
   makeSide([w,0,d], [0,0,-d], [0,h,0]); // right
   makeSide([0,0,0], [0,0,d], [0,h,0]); // left
   
-  // Compute tangental vectors.
-  model.computeVertexTangentals();
-  
   return model;
 };
 

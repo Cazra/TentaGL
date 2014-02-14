@@ -99,13 +99,15 @@ TentaGL.Attribute.prototype.getValues = function(vertex) {
 
 
 /** 
- * Returns the matchable profile for this attribute. 
+ * Returns the profile data for this attribute. 
+ * @return {TentaGL.AttrProfile}
  */
 TentaGL.Attribute.prototype.getProfile = function() {
   if(!this._profile) {
-    this._profile = new TentaGL.AttributeProfile(this.getUnitType(),
-                                                this.getSizeUnits(),
-                                                this._getterFunc);
+    this._profile = new TentaGL.AttrProfile(TentaGL.UNKNOWN,
+                                            this.getUnitType(),
+                                            this.getSizeUnits(),
+                                            this._getterFunc);
   }
   return this._profile;
 };

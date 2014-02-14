@@ -208,6 +208,7 @@ TentaGL.Vertex.prototype = {
    * coordinates of this vertex and two vertices it shares a polygon with.
    * @param {TentaGL.Vertex} v2
    * @param {TentaGL.Vertex} v3
+   * @return {vec3}
    */
   computeTangental:function(v2, v3) {
     var u = vec3.fromValues(v2.getX() - this.getX(), 
@@ -239,12 +240,10 @@ TentaGL.Vertex.prototype = {
    * Sets the tangental vector for this vertex. It is advised to set this by 
    * using the result values from a call to computeTangental. The stored
    * vector becomes normalized.
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} z
+   * @param {vec3} xyz
    */
-  setTangental:function(x, y, z) {
-    this._tangental = vec3.fromValues(x, y, z);
+  setTangental:function(xyz) {
+    this._tangental = vec3.fromValues(xyz[0], xyz[1], xyz[2]);
     this._tangental = vec3.normalize(this._tangental, this._tangental);
   },
   

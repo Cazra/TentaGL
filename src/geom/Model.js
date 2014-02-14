@@ -173,6 +173,14 @@ TentaGL.Model.prototype = {
     this._indices.push(v1);
     this._indices.push(v2);
     this._indices.push(v3);
+    
+    // compute the tangentals for each vertex in this face.
+    var vert1 = this._vertices[v1];
+    var vert2 = this._vertices[v2];
+    var vert3 = this._vertices[v3];
+    vert1.setTangental(vert1.computeTangental(vert2, vert3));
+    vert2.setTangental(vert2.computeTangental(vert3, vert1));
+    vert3.setTangental(vert3.computeTangental(vert1, vert2));
   },
   
   
@@ -296,23 +304,6 @@ TentaGL.Model.prototype = {
     }
     
     return this.getFaceNormals()[index];
-  },
-  
-  /**
-   * Computes and stores the tangental vectors for each vertex in the model.
-   * The texture coordinates for the vertices must be defined, or this 
-   * will produce an error.
-   */
-  computeVertexTangentals:function() {
-    for(var i = 2; i < this._indices.length; i++) {
-      var v1 = this._vertices[this._indices[i-2]];
-      var v2 = this._vertices[this._indices[i-1]];
-      var v3 = this._vertices[this._indices[i]];
-      
-      v1.computeTangental(v2, v3);
-      v2.computeTangental(v3, v1);
-      v3.computeTangental(v1, v2);
-    }
   },
   
   
