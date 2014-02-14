@@ -54,7 +54,20 @@ TentaGL.ModelLib = {
     var shader = TentaGL.ShaderLib[shaderID];
     var vbo = new VBOData(gl, model, shader);
     this._vboData
-  }
+  },
+  
+  
+  /** 
+   * Removes the VBO data for the specified model from the 
+   * ModelLib and GL memory. 
+   * @param {WebGLRenderingContext} gl
+   * @param {string} modelID
+   */
+  remove:function(gl, modelID) {
+    var vbo = this._vboData[modelID];
+    vbo.clean(gl);
+    delete this._vboData[modelID];
+  },
   
 };
 

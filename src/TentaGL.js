@@ -311,3 +311,8 @@ TentaGL.glUnitType = function(type){
 };
 
 
+
+TentaGL.GL_BYTE = 0x1400;
+TentaGL.GL_SHORT = 0x1402;
+TentaGL.GL_INT = 0x1404;
+TentaGL.GL_FLOAT = 0x1406;
