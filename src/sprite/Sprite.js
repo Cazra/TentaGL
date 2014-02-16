@@ -304,21 +304,207 @@ TentaGL.Sprite.prototype = {
    * @return {mat4}
    */
   getModelTransform:function() {
-    var m = mat4.create();
-    var i = mat4.create();
-    m = mat4.mul(m, m, mat4.translate(mat4.create(), i, this.getXYZ()));
+  //  var m = mat4.create();
+  //  var i = mat4.create();
+  //  m = mat4.mul(m, m, mat4.translate(mat4.create(), i, this.getXYZ()));
     
-    m = mat4.mul(m, m, mat4.rotateY(mat4.create(), i, this.getAngleY()));
-    m = mat4.mul(m, m, mat4.rotateX(mat4.create(), i, this.getAngleX()));
-    m = mat4.mul(m, m, mat4.rotateZ(mat4.create(), i, this.getAngleZ()));
+    m = this.getTRotYXZSTransform();
     
-    m = mat4.mul(m, m, mat4.scale(mat4.create(), i, 
-                                  [ this.getScaleX()*this.getScaleUni(), 
-                                    this.getScaleY()*this.getScaleUni(),
-                                    this.getScaleZ()*this.getScaleUni()]));
+  //  m = mat4.mul(m, m, this.getRotYXZSTransform());
+    
+  //  m = mat4.mul(m, m, mat4.scale(mat4.create(), i, 
+  //                                [ this.getScaleX()*this.getScaleUni(), 
+  //                                  this.getScaleY()*this.getScaleUni(),
+  //                                  this.getScaleZ()*this.getScaleUni()]));
     return m;
   },
   
+  
+  getTRotYXZSTransform:function() {
+    var tx = this.getX();
+    var ty = this.getY();
+    var tz = this.getZ();
+    
+    var sx = Math.sin(this.getAngleX());
+    var cx = Math.cos(this.getAngleX());
+    
+    var sy = Math.sin(this.getAngleY());
+    var cy = Math.cos(this.getAngleY());
+    
+    var sz = Math.sin(this.getAngleZ());
+    var cz = Math.cos(this.getAngleZ());
+    
+    var scaleX = this.getScaleX()*this.getScaleUni();
+    var scaleY = this.getScaleY()*this.getScaleUni();
+    var scaleZ = this.getScaleZ()*this.getScaleUni();
+    
+    var m = TentaGL.mat4Recyclable; //mat4.create();
+    m[0] = scaleX*(cy*cz + sy*sx*sz);
+    m[1] = scaleX*(cx*sz);
+    m[2] = scaleX*(cy*sx*cz - sy*cz);
+    m[3] = 0;
+    
+    m[4] = scaleY*(sy*sx*cz - cy*sz);
+    m[5] = scaleY*(cx*cz);
+    m[6] = scaleY*(sy*sz + cy*sx*cz);
+    m[7] = 0;
+    
+    m[8] = scaleZ*(sy*cx);
+    m[9] = scaleZ*(-sx);
+    m[10] = scaleZ*(cy*cx);
+    m[11] = 0;
+    
+    m[12] = tx;
+    m[13] = ty;
+    m[14] = tz;
+    m[15] = 1;
+    
+    return m;
+  },
+  
+  
+  getRotYXZSTransform:function() {
+    var sx = Math.sin(this.getAngleX());
+    var cx = Math.cos(this.getAngleX());
+    
+    var sy = Math.sin(this.getAngleY());
+    var cy = Math.cos(this.getAngleY());
+    
+    var sz = Math.sin(this.getAngleZ());
+    var cz = Math.cos(this.getAngleZ());
+    
+    var scaleX = this.getScaleX()*this.getScaleUni();
+    var scaleY = this.getScaleY()*this.getScaleUni();
+    var scaleZ = this.getScaleZ()*this.getScaleUni();
+    
+    var m = mat4.create();
+    m[0] = scaleX*(cy*cz + sy*sx*sz);
+    m[1] = scaleX*(cx*sz);
+    m[2] = scaleX*(cy*sx*cz - sy*cz);
+    
+    m[4] = scaleY*(sy*sx*cz - cy*sz);
+    m[5] = scaleY*(cx*cz);
+    m[6] = scaleY*(sy*sz + cy*sx*cz);
+    
+    m[8] = scaleZ*(sy*cx);
+    m[9] = scaleZ*(-sx);
+    m[10] = scaleZ*(cy*cx);
+    
+    return m;
+  },
+  
+  
+  getRotYXZTransform:function() {
+    var sx = Math.sin(this.getAngleX());
+    var cx = Math.cos(this.getAngleX());
+    
+    var sy = Math.sin(this.getAngleY());
+    var cy = Math.cos(this.getAngleY());
+    
+    var sz = Math.sin(this.getAngleZ());
+    var cz = Math.cos(this.getAngleZ());
+    
+    var m = mat4.create();
+    m[0] = cy*cz + sy*sx*sz;
+    m[1] = cx*sz;
+    m[2] = -sy*cz + cy*sx*cz;
+    
+    m[4] = -cy*sz + sy*sx*cz;
+    m[5] = cx*cz;
+    m[6] = sy*sz + cy*sx*cz;
+    
+    m[8] = sy*cx;
+    m[9] = -sx;
+    m[10] = cy*cx;
+    
+    return m;
+  },
+  
+  getRotXTransform:function() {
+    var sx = Math.sin(this.getAngleX());
+    var cx = Math.cos(this.getAngleX());
+    
+    var m = mat4.create();
+    m[0] = 1;
+    m[1] = 0;
+    m[2] = 0;
+    
+    m[4] = 0;
+    m[5] = cx;
+    m[6] = sx;
+    
+    m[8] = 0;
+    m[9] = -sx;
+    m[10] = cx;
+    
+    return m;
+  },
+  
+  getRotYTransform:function() {
+    var sy = Math.sin(this.getAngleY());
+    var cy = Math.cos(this.getAngleY());
+    
+    var m = mat4.create();
+    
+    m[0] = cy;
+    m[1] = 0;
+    m[2] = -sy;
+    
+    m[4] = 0;
+    m[5] = 1;
+    m[6] = 0;
+    
+    m[8] = sy;
+    m[9] = 0;
+    m[10] = cy;
+    
+    return m;
+  },
+  
+  getRotZTransform:function() {
+    var sz = Math.sin(this.getAngleZ());
+    var cz = Math.cos(this.getAngleZ());
+    
+    var m = mat4.create();
+    
+    m[0] = cz;
+    m[1] = sz;
+    m[2] = 0;
+    
+    m[4] = -sz;
+    m[5] = cz;
+    m[6] = 0;
+    
+    m[8] = 0;
+    m[9] = 0;
+    m[10] = 1;
+    
+    return m;
+  },
+  
+  getRotXZTransform:function() {
+    var sx = Math.sin(this.getAngleX());
+    var cx = Math.cos(this.getAngleX());
+    
+    var sz = Math.sin(this.getAngleZ());
+    var cz = Math.cos(this.getAngleZ());
+    
+    var m = mat4.create();
+    
+    m[0] = cz;
+    m[1] = cx*sz;
+    m[2] = sx*sz;
+    
+    m[4] = -sz;
+    m[5] = cx*cz;
+    m[6] = sx*cz;
+    
+    m[8] = 0;
+    m[9] = -sx;
+    m[10] = cx;
+    
+    return m;
+  },
   
   //////// Rendering
   
@@ -337,9 +523,9 @@ TentaGL.Sprite.prototype = {
     var origMat = gl.modelViewMat || mat4.create();
     
     // Set the concatenated model transform matrix and draw the sprite.
-    gl.modelViewMat = mat4.mul(mat4.create(), origMat, this.getModelTransform());
-    var normalTrans = mat3.normalFromMat4(mat3.create(), gl.modelViewMat);
-    var mvpTrans = mat4.mul(mat4.create(), gl.projMat, gl.modelViewMat);
+    gl.modelViewMat = mat4.mul(TentaGL.mat4Recyclable, origMat, this.getModelTransform());
+    var normalTrans = mat3.normalFromMat4(TentaGL.mat3Recyclable, gl.modelViewMat);
+    var mvpTrans = mat4.mul(TentaGL.mat4Recyclable, gl.projMat, gl.modelViewMat);
     
     TentaGL.ShaderLib.current(gl).setMVPTransUniValue(gl, mvpTrans);
     TentaGL.ShaderLib.current(gl).setNormalTransUniValue(gl, normalTrans);

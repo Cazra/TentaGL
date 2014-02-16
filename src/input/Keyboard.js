@@ -26,11 +26,14 @@
 /** 
  * Constructs a Keyboard input object for an Application.
  * @constructor
- * @param {DOM div element} The div element containing the WebGL Canvas. For 
+ * @param {DOM div element} container  The div element containing the WebGL Canvas. For 
  *      the div to be able to receive focus, set its "tabindex" attribute to 
  *      not -1.
  */
 TentaGL.Keyboard = function(container) {
+  
+  console.log("created keyboard");
+  console.log(container);
   
   this._isPressed = [];
   this._justPressed = [];
@@ -38,18 +41,22 @@ TentaGL.Keyboard = function(container) {
   this._repPressed = [];
   
   this._pressedSinceLast = [];
+  this._releasedSinceLast = [];
   
   var self = this; // Closure magic!
   
-  container.onkeydown = function(evt) {
+  var keyDownHandler = function(evt) {
     console.log("key down: " + evt.keyCode);
     self._pressedSinceLast[evt.keyCode] = true;
   };
   
-  container.onkeyup = function(evt) {
+  var keyUpHandler = function(evt) {
     console.log("key up: " + evt.keyCode);
-    self._pressedSinceLast[evt.keyCode] = false;
+    self._releasedSinceLast[evt.keyCode] = true;
   };
+  
+  container.addEventListener("keydown", keyDownHandler, false);
+  container.addEventListener("keyup", keyUpHandler, false);
 };
 
 
@@ -63,14 +70,6 @@ TentaGL.Keyboard.prototype = {
     this._justReleased = [];
     this._repPressed = [];
     
-    // Check for keys released.
-    for(var keyCode in this._isPressed) {
-      if(this._isPressed[keyCode] && !this._pressedSinceLast[keyCode]) {
-        this._isPressed[keyCode] = false;
-        this._justReleased[keyCode] = true;
-      }
-    }
-    
     // Check for keys pressed.
     for(var keyCode in this._pressedSinceLast) {
       if(!this._isPressed[keyCode]) {
@@ -80,8 +79,19 @@ TentaGL.Keyboard.prototype = {
       this._repPressed[keyCode] = true;
     }
     
+    // Check for keys released.
+    for(var keyCode in this._releasedSinceLast) {
+      if(this._isPressed[keyCode]) {
+        this._justReleased[keyCode] = true;
+      }
+      this._isPressed[keyCode] = false;
+    }
+    
     this._pressedSinceLast = [];
+    this._releasedSinceLast = [];
   },
+  
+  
   
   /** Returns whether a key is currently pressed. */
   isPressed:function(keyCode) {

@@ -65,6 +65,9 @@ TentaGL.Uniform.prototype.get = function(gl) {
  *      
  */
 TentaGL.Uniform.prototype.set = function(gl, valueArray) {
+  TentaGL.Uniform.setters[this._type].call(this, gl, valueArray);
+  
+  /*
   switch(this._type) {
     case gl.FLOAT:
       gl.uniform1f(this._location, valueArray);
@@ -100,9 +103,23 @@ TentaGL.Uniform.prototype.set = function(gl, valueArray) {
       gl.uniformMatrix4fv(this._location, false, valueArray);
       break;
   }
+  */
 };
 
 
 
 
 
+TentaGL.Uniform.setters = [];
+TentaGL.Uniform.setters[TentaGL.GL_FLOAT] = function(gl, valueArray) { gl.uniform1f(this._location, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_FLOAT_VEC2] = function(gl, valueArray) { gl.uniform2fv(this._location, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_FLOAT_VEC3] = function(gl, valueArray) { gl.uniform3fv(this._location, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_FLOAT_VEC4] = function(gl, valueArray) { gl.uniform4fv(this._location, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_INT] = function(gl, valueArray) { gl.uniform1i(this._location, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_INT_VEC2] = function(gl, valueArray) { gl.uniform2iv(this._location, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_INT_VEC3] = function(gl, valueArray) { gl.uniform3iv(this._location, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_INT_VEC4] = function(gl, valueArray) { gl.uniform4iv(this._location, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_FLOAT_MAT2] = function(gl, valueArray) { gl.uniformMatrix2fv(this._location, false, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_FLOAT_MAT3] = function(gl, valueArray) { gl.uniformMatrix3fv(this._location, false, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_FLOAT_MAT4] = function(gl, valueArray) { gl.uniformMatrix4fv(this._location, false, valueArray); };
+TentaGL.Uniform.setters[TentaGL.GL_SAMPLER_2D] = function(gl, valueArray) { gl.uniform1i(this._location, valueArray); };

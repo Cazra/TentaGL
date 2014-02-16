@@ -70,6 +70,7 @@ TentaGL.Application.prototype = {
       this._fpsCount = 0;
     }
     
+    this._keyboard.poll();
     this.update();
     
     this._lastTimestamp = timestamp;

@@ -78,7 +78,7 @@ TentaGL.ShaderLib = {
   use:function(gl, name) {
     var program = this[name];
     program.useMe(gl);
-    
+    this._currentProgram = program;
     return program;
   },
   
@@ -87,8 +87,9 @@ TentaGL.ShaderLib = {
    * @return {TentaGL.ShaderProgram}
    */
   current:function(gl) {
-    var glProg = gl.getParameter(gl.CURRENT_PROGRAM);
-    return this[glProg];;
+    return this._currentProgram;
+    //var glProg = gl.getParameter(gl.CURRENT_PROGRAM);
+    //return this[glProg];
   }
 };
 

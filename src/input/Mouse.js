@@ -46,16 +46,10 @@ TentaGL.Mouse = function(container) {
   
   container.onmousedown = function(evt) {
     console.log(evt);
-    
-    evt.stopPropagation();
-    evt.preventDefault();
   };
   
   container.onmouseup = function(evt) {
     console.log(evt);
-    
-    evt.stopPropagation();
-    evt.preventDefault();
   };
 };
 

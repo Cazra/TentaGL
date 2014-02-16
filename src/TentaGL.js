@@ -264,6 +264,8 @@ TentaGL.glSizeBytes = function(type){
  * @return {GLenum}
  */
 TentaGL.glUnitType = function(type){
+  return TentaGL._glUnitTypes[type];
+  /*
   switch(type) {
     case 0x1400: // "BYTE"
       return 0x1400;
@@ -308,11 +310,57 @@ TentaGL.glUnitType = function(type){
     default:
       return -1;
   }
+  */
 };
+
+TentaGL._glUnitTypes = [];
+TentaGL._glUnitTypes[0x1400] = 0x1400; // BYTE
+TentaGL._glUnitTypes[0x1401] = 0x1401; // UNSIGNED_BYTE
+TentaGL._glUnitTypes[0x1402] = 0x1402; // SHORT
+TentaGL._glUnitTypes[0x1403] = 0x1403; // UNSIGNED_SHORT
+TentaGL._glUnitTypes[0x1404] = 0x1404; // INT
+TentaGL._glUnitTypes[0x1405] = 0x1405; // UNSIGNED_INT
+TentaGL._glUnitTypes[0x1406] = 0x1406; // FLOAT
+TentaGL._glUnitTypes[0x8B50] = 0x1406; // FLOAT_VEC2
+TentaGL._glUnitTypes[0x8B51] = 0x1406; // FLOAT_VEC3
+TentaGL._glUnitTypes[0x8B52] = 0x1406; // FLOAT_VEC4
+TentaGL._glUnitTypes[0x8B53] = 0x1404; // INT_VEC2
+TentaGL._glUnitTypes[0x8B54] = 0x1404; // INT_VEC3
+TentaGL._glUnitTypes[0x8B55] = 0x1404; // INT_VEC4
+TentaGL._glUnitTypes[0x8B56] = 0x8B56; // BOOL - bools have the same size as a uint: 32-bits.
+TentaGL._glUnitTypes[0x8B57] = 0x8B56; // BOOL_VEC2
+TentaGL._glUnitTypes[0x8B58] = 0x8B56; // BOOL_VEC3
+TentaGL._glUnitTypes[0x8B59] = 0x8B56; // BOOL_VEC4
+TentaGL._glUnitTypes[0x8B5A] = 0x1406; // FLOAT_MAT2
+TentaGL._glUnitTypes[0x8B5B] = 0x1406; // FLOAT_MAT3
+TentaGL._glUnitTypes[0x8B5C] = 0x1406; // FLOAT_MAT4
+
 
 
 
 TentaGL.GL_BYTE = 0x1400;
+TentaGL.GL_UNSIGNED_BYTE = 0x1401;
 TentaGL.GL_SHORT = 0x1402;
+TentaGL.GL_UNSIGNED_SHORT = 0x1403;
 TentaGL.GL_INT = 0x1404;
+TentaGL.GL_UNSIGNED_INT = 0x1405;
 TentaGL.GL_FLOAT = 0x1406;
+TentaGL.GL_FLOAT_VEC2 = 0x8B50;
+TentaGL.GL_FLOAT_VEC3 = 0x8B51;
+TentaGL.GL_FLOAT_VEC4 = 0x8B52;
+TentaGL.GL_INT_VEC2 = 0x8B53;
+TentaGL.GL_INT_VEC3 = 0x8B54;
+TentaGL.GL_INT_VEC4 = 0x8B55;
+TentaGL.GL_BOOL = 0x8B56;
+TentaGL.GL_BOOL_VEC2 = 0x8B57;
+TentaGL.GL_BOOL_VEC3 = 0x8B58;
+TentaGL.GL_BOOL_VEC4 = 0x8B59;
+TentaGL.GL_FLOAT_MAT2 = 0x8B5A;
+TentaGL.GL_FLOAT_MAT3 = 0x8B5B;
+TentaGL.GL_FLOAT_MAT4 = 0x8B5C;
+TentaGL.GL_SAMPLER_2D = 0x8B5E;
+TentaGL.GL_SAMPLER_CUBE = 0x8B60;
+
+TentaGL.mat3Recyclable = mat3.create();
+TentaGL.mat4Recyclable = mat4.create();
+

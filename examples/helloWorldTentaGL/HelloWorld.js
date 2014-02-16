@@ -44,13 +44,7 @@ function createSquareSprite(xyz) {
     TentaGL.VBORenderer.render(gl, "cube");
   };
   
-//  square.setAngleX(TentaGL.TAU/8);
-  square.setAngleY(TentaGL.TAU/8);
-//  square.setAngleZ(TentaGL.TAU/8);
-  
-  square.setScaleUni(1.2);
-  
-  square.setOpacity(1);
+  square.setScaleUni(0.25);
   
   return square;
 };
@@ -107,13 +101,38 @@ function drawScene() {
 //  gl.enable(gl.CULL_FACE);
   
   // Draw the triangle.
-  this.triangleSprite.render(gl);
+//  this.triangleSprite.render(gl);
+  
+  if(this._keyboard.isPressed(KeyCode.UP)) {
+    console.log("pressed up");
+    this.drX -= 0.001;
+  }
+  if(this._keyboard.isPressed(KeyCode.Z)) {
+    console.log("pressed Z");
+    this.drZ += 0.001;
+  }
+  
+  if(this._keyboard.justPressed(KeyCode.Q)) {
+    console.log("pressed Q");
+    this.drX *= -1;
+  }
+  
+  this.rX += this.drX;
+  this.rY += this.drY;
+  this.rZ += this.drZ;
   
   // Draw the square.
-  this.squareSprite.render(gl);
-  this.squareSprite.setAngleY(this.squareSprite.getAngleY() + 0.01);
-  this.squareSprite.setAngleX(this.squareSprite.getAngleX() + 0.005);
-  this.squareSprite.setAngleZ(this.squareSprite.getAngleZ() + 0.001);
+//  this.squareSprite.render(gl);
+//  this.squareSprite.setAngleY(this.rY);
+//  this.squareSprite.setAngleX(this.rX);
+
+  for(var i = 0; i < this.sprites.length; i++) {
+    var sprite = this.sprites[i];
+    sprite.setAngleY(this.rY);
+    sprite.setAngleX(this.rX);
+    sprite.setAngleZ(this.rZ);
+    sprite.render(gl);
+  }
 };
 
 
@@ -123,12 +142,29 @@ function createApp(container) {
   app.initShaders = initShaders;
   app.initMaterials = initMaterials;
   app.initModels = initModels;
+  app.update = drawScene;
   
   app.camera = new TentaGL.Camera([0, 0, 10], [0, 0, 0]);
-  app.triangleSprite = createTriangleSprite([-1.5, 0, 0]);
-  app.squareSprite = createSquareSprite([1.5, 0, 0]);
+  app.rX = 0;
+  app.drX = 0;
+  app.rY = 0;
+  app.drY = 0.01;
+  app.rZ = 0;
+  app.drZ = 0;
+//  app.triangleSprite = createTriangleSprite([-1.5, 0, 0]);
+//  app.squareSprite = createSquareSprite([1.5, 0, 0]);
+  app.sprites = [];
+  for(var i = -5; i < 5; i++) {
+    for(var j = -5; j < 5; j++) {
+      for(var k = -5; k < 5; k++) {
+        app.sprites.push(createSquareSprite([i, j, k]));
+        app.sprites.push(createSquareSprite([i + 0.5, j, k]));
+        app.sprites.push(createSquareSprite([i, j + 0.5, k]));
+        app.sprites.push(createSquareSprite([i + 0.5, j + 0.5, k]));
+      }
+    }
+  }
   
-  app.update = drawScene;
   
   return app;
 }
