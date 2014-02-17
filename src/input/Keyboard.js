@@ -31,10 +31,6 @@
  *      not -1.
  */
 TentaGL.Keyboard = function(container) {
-  
-  console.log("created keyboard");
-  console.log(container);
-  
   this._isPressed = [];
   this._justPressed = [];
   this._justReleased = [];
@@ -46,12 +42,12 @@ TentaGL.Keyboard = function(container) {
   var self = this; // Closure magic!
   
   var keyDownHandler = function(evt) {
-    console.log("key down: " + evt.keyCode);
+  //  console.log("key down: " + evt.keyCode);
     self._pressedSinceLast[evt.keyCode] = true;
   };
   
   var keyUpHandler = function(evt) {
-    console.log("key up: " + evt.keyCode);
+  // console.log("key up: " + evt.keyCode);
     self._releasedSinceLast[evt.keyCode] = true;
   };
   
@@ -81,9 +77,7 @@ TentaGL.Keyboard.prototype = {
     
     // Check for keys released.
     for(var keyCode in this._releasedSinceLast) {
-      if(this._isPressed[keyCode]) {
-        this._justReleased[keyCode] = true;
-      }
+      this._justReleased[keyCode] = true;
       this._isPressed[keyCode] = false;
     }
     

@@ -117,6 +117,31 @@ function drawScene() {
     this.drX *= -1;
   }
   
+  if(this._keyboard.justPressed(KeyCode.R)) {
+    this.camera.resetOrientation();
+  }
+  
+  if(this._mouse.justLeftReleased() && this._mouse.leftClickCount() > 1) {
+    console.log(this._mouse.leftClickCount());
+  }
+  
+  if(this._mouse.scrollUpAmount() > 0) {
+    console.log("scroll up: " + this._mouse.scrollUpAmount());
+    for(var i = 0; i < this._mouse.scrollUpAmount(); i++) {
+      this.camera.setDist(this.camera.getDist() * 9/10);
+    }
+  }
+  
+  if(this._mouse.scrollDownAmount() > 0) {
+    console.log("scroll down: " + this._mouse.scrollDownAmount());
+    for(var i = 0; i < this._mouse.scrollDownAmount(); i++) {
+      this.camera.setDist(this.camera.getDist() * 10/9);
+    }
+  }
+  
+  
+  this.camera.controlWithMouse(this._mouse, this.getWidth(), this.getHeight());
+  
   this.rX += this.drX;
   this.rY += this.drY;
   this.rZ += this.drZ;
@@ -144,7 +169,8 @@ function createApp(container) {
   app.initModels = initModels;
   app.update = drawScene;
   
-  app.camera = new TentaGL.Camera([0, 0, 10], [0, 0, 0]);
+  app.camera = new TentaGL.ArcballCamera([0, 0, 10], [0, 0, 0]);
+//  app.arcball = new TentaGL.ArcballCamera([0, 0, 10], [0, 0, 0]);
   app.rX = 0;
   app.drX = 0;
   app.rY = 0;

@@ -341,7 +341,7 @@ TentaGL.Sprite.prototype = {
     var m = TentaGL.mat4Recyclable; //mat4.create();
     m[0] = scaleX*(cy*cz + sy*sx*sz);
     m[1] = scaleX*(cx*sz);
-    m[2] = scaleX*(cy*sx*cz - sy*cz);
+    m[2] = scaleX*(cy*sx*sz - sy*cz);
     m[3] = 0;
     
     m[4] = scaleY*(sy*sx*cz - cy*sz);
@@ -380,7 +380,7 @@ TentaGL.Sprite.prototype = {
     var m = mat4.create();
     m[0] = scaleX*(cy*cz + sy*sx*sz);
     m[1] = scaleX*(cx*sz);
-    m[2] = scaleX*(cy*sx*cz - sy*cz);
+    m[2] = scaleX*(cy*sx*sz - sy*cz);
     
     m[4] = scaleY*(sy*sx*cz - cy*sz);
     m[5] = scaleY*(cx*cz);
@@ -407,9 +407,9 @@ TentaGL.Sprite.prototype = {
     var m = mat4.create();
     m[0] = cy*cz + sy*sx*sz;
     m[1] = cx*sz;
-    m[2] = -sy*cz + cy*sx*cz;
+    m[2] = cy*sx*sz - sy*cz;
     
-    m[4] = -cy*sz + sy*sx*cz;
+    m[4] = sy*sx*cz - cy*sz;
     m[5] = cx*cz;
     m[6] = sy*sz + cy*sx*cz;
     

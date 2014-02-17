@@ -71,6 +71,7 @@ TentaGL.Application.prototype = {
     }
     
     this._keyboard.poll();
+    this._mouse.poll();
     this.update();
     
     this._lastTimestamp = timestamp;

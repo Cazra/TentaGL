@@ -111,6 +111,7 @@ TentaGL.Camera.prototype = {
   },
   
   
+  
   //////// Center location
   
   
@@ -327,13 +328,48 @@ TentaGL.Camera.prototype = {
     }
   },
   
+  
+
   //////// Shader binding
   
   useMe:function(gl, aspect) {
     gl.projMat = this.getProjectionTransform(aspect);
     gl.modelViewMat = this.getViewTransform();
-  }
+  },
   
+  
+  
+  //////// Misc.
+  
+  /** 
+   * Gets the vector from center to eye. 
+   * @return {vec3}
+   */
+  getLookVector:function() {
+    return vec3.subtract(vec3.create(), this._eye, this._center);
+  },
+  
+  
+  /** 
+   * Returns the distance of the eye from the center.
+   * @return {Number}
+   */
+  getDist:function() {
+    return vec3.length(this.getLookVector());
+  },
+  
+  
+  /** 
+   * Sets the distance from the eye to the center without changing the 
+   * orientation. 
+   */
+  setDist:function(dist) {
+    var lookVec = this.getLookVector();
+    vec3.scale(lookVec, lookVec, dist/vec3.length(lookVec));
+    
+    vec3.add(this._eye, this._center, lookVec);
+    console.log(this._eye);
+  }
   
 };
 
