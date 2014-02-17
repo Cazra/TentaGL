@@ -158,9 +158,9 @@ function createApp(container) {
     for(var j = -5; j < 5; j++) {
       for(var k = -5; k < 5; k++) {
         app.sprites.push(createSquareSprite([i, j, k]));
-        app.sprites.push(createSquareSprite([i + 0.5, j, k]));
-        app.sprites.push(createSquareSprite([i, j + 0.5, k]));
-        app.sprites.push(createSquareSprite([i + 0.5, j + 0.5, k]));
+      //  app.sprites.push(createSquareSprite([i + 0.5, j, k]));
+      //  app.sprites.push(createSquareSprite([i, j + 0.5, k]));
+      //  app.sprites.push(createSquareSprite([i + 0.5, j + 0.5, k]));
       }
     }
   }
