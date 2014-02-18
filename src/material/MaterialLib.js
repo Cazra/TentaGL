@@ -24,6 +24,10 @@
 
 /**
  * A library of loaded Materials.
+ * All materials stored in the library must implement the following methods:
+ * clean(gl) : void
+ * useMe(gl) : void
+ * isLoaded() : Boolean
  */
 TentaGL.MaterialLib = {
   

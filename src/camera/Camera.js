@@ -369,6 +369,59 @@ TentaGL.Camera.prototype = {
     
     vec3.add(this._eye, this._center, lookVec);
     console.log(this._eye);
+  },
+  
+  
+  
+  /** 
+   * Returns the unit vector currently pointing in the "right" direction of the view.
+   * @return {vec3}
+   */
+  getRight:function() {
+    var right = vec3.cross(vec3.create(), this.getLookVector(), this.getUp());
+    vec3.normalize(right, right);
+    return right;
+  },
+  
+  
+  /** 
+   * Projects the mouse's XY coordinates (relative to its viewport) to the  
+   * plane in world coordinates facing the camera's eye and intersecting the 
+   * camera's center.
+   * @param {length 2 int array} mouseXY  The XY coordinates of the mouse relative to 
+   *      its viewport's upper-left corner.
+   * @param {int} viewWidth   The width of the mouse's viewport.
+   * @param {int} viewHeight  The height of the mouse's viewport.
+   * @return {vec3} The XYZ coordinates of the mouse projected onto the panning plane.
+   */
+  projectMouseToPanningPlane:function(mouseXY, viewWidth, viewHeight) {
+    
+    // We need to transform our mouse coordinates to a normalized viewport 
+    // coordinates system, also taking into account the aspect ratio and
+    // inverting the Y axis.
+    var aspect = viewWidth/viewHeight;
+    var x = (mouseXY[0] - viewWidth/2)/aspect;
+    var y = -1*(mouseXY[1] - viewHeight/2);
+    var xy = vec3.fromValues(x,y,0);
+    vec3.scale(xy, xy, 2/viewHeight);
+    
+    // Convert our transformed mouse coordinates to model-view coordinates by 
+    // cancelling the perspective transform.
+    xy[2] = 0-this._dist
+    var projMat = this.getProjectionTransform(viewWidth/viewHeight);
+    vec3.transformMat4(xy, xy, mat4.invert(mat4.create(), projMat));
+    
+    // Determine the position of the transformed mouse's model coordinates, 
+    // relative to the camera's center, using our oriented up and right vectors.
+    var up = this.getUp();
+    var right = this.getRight();
+    
+    var tx = (xy[0]*right[0] + xy[1]*up[0])*this._dist + this._center[0];
+    var ty = (xy[0]*right[1] + xy[1]*up[1])*this._dist + this._center[1];
+    var tz = (xy[0]*right[2] + xy[1]*up[2])*this._dist + this._center[2];
+    
+    var planeCoords = vec3.fromValues(tx, ty, tz);
+    return planeCoords;
   }
   
 };

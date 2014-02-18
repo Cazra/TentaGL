@@ -29,7 +29,7 @@
  *      application and its Canvas.
  */
 TentaGL.Application = function(container, attrs) {
-  console.log("TentaGL version " + this.versionMajor + "." + this.versionMinor);
+  console.log("TentaGL version " + TentaGL.versionMajor + "." + TentaGL.versionMinor);
   
   this._container = container;
   var canvas = TentaGL.createCanvas(container);

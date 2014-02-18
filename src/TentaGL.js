@@ -35,7 +35,7 @@ var TentaGL = {
   versionMajor:0, 
   
   /** The minor version number of this framework. */
-  versionMinor:1,
+  versionMinor:2,
   
   /** 
    * Initializes and returns a WebGL context for a canvas element.
@@ -55,9 +55,12 @@ var TentaGL = {
       
       // Create the WebGL context for the canvas.
       var gl = canvas.getContext("webgl", attrs) || canvas.getContext("experimental-webgl", attrs);
-      gl.viewport(0, 0, canvas.width, canvas.height);
-      gl.viewWidth = canvas.width;
-      gl.viewHeight = canvas.height;
+      TentaGL.setViewport(gl, [0, 0, canvas.width, canvas.height]);
+    //  gl.viewport(0, 0, canvas.width, canvas.height);
+    //  gl.viewX = 0;
+    //  gl.viewY = 0;
+    //  gl.viewWidth = canvas.width;
+    //  gl.viewHeight = canvas.height;
       return gl;
     }
     catch(e) {
@@ -79,6 +82,32 @@ var TentaGL = {
     canvas.width = container.offsetWidth;
     canvas.height = container.offsetHeight;
     return canvas;
+  },
+  
+  
+  /** 
+   * Returns the rectangle data describing the GL context's current viewport.
+   * @param {WebGLRenderingContext} gl
+   * @return {length-4 int array} Contains the viewport metrics: 
+   *      x, y, width, and height in that order.
+   */
+  getViewport:function(gl) {
+    return [gl.viewX, gl.viewY, gl.viewWidth, gl.viewHeight];
+  },
+  
+  
+  /** 
+   * Sets the rectangular viewport area for the GL context. 
+   * @param {WebGLRenderingContext} gl
+   * @param {length-4 int array} xywh   An array containing in-order the new 
+   *      viewport rectangle's x, y, width, and height.
+   */
+  setViewport: function(gl, xywh) {
+    gl.viewX = xywh[0];
+    gl.viewY = xywh[1];
+    gl.viewWidth = xywh[2];
+    gl.viewHeight = xywh[3];
+    gl.viewport(xywh[0], xywh[1], xywh[2], xywh[3]);
   }
 };
 

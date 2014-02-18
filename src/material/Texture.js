@@ -68,7 +68,7 @@ TentaGL.Texture.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   clean:function(gl) {
-    gl.deleteTexture(gl, this._location);
+    gl.deleteTexture(this._location);
   },
   
   /** 
