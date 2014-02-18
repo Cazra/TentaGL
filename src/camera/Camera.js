@@ -346,7 +346,7 @@ TentaGL.Camera.prototype = {
    * @return {vec3}
    */
   getLookVector:function() {
-    return vec3.subtract(vec3.create(), this._eye, this._center);
+    return vec3.sub(vec3.create(), this._center, this._eye);
   },
   
   

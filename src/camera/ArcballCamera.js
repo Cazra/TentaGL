@@ -28,9 +28,10 @@ TentaGL.ArcballCamera = function(eye, center, up) {
   
   this._orientation = quat.create();
   
-  this._origLook = this.getLookVector();
-  this._origLookUnit = vec3.normalize(vec3.create(), this._origLook);
-  this._origDist = vec3.length(this._origLook);
+  this._look = this.getLookVector();
+  this._origLookUnit = vec3.normalize(vec3.create(), this._look);
+  this._origDist = vec3.length(this._look);
+  this._curDist = this._origDist;
   
   this._origUp = this.getUp();
 };
@@ -90,17 +91,8 @@ TentaGL.ArcballCamera.prototype.rotate = function(vFrom, vTo) {
   
   var q = quat.setAxisAngle(quat.create(), vCross, theta);
   q = quat.normalize(q, q);
-  var newO = quat.mul(quat.create(), this._orientation, q);
   
-  this._up = vec3.transformQuat(this._up, this._origUp, newO);
-  var look = vec3.transformQuat(vec3.create(), this._origLook, newO);
-  
-  //vec3.transformQuat(this._up, this._up, q);
-  //var look = vec3.transformQuat(vec3.create(), this.getLookVector(), q);
-  
-  this._eye = vec3.add(this._eye, look, this._center);
-  
-  return newO;
+  this.setEye(q);
 };
 
 
@@ -109,27 +101,24 @@ TentaGL.ArcballCamera.prototype.controlWithMouse = function(mouse, viewWidth, vi
   
   if(mouse.justLeftPressed()) {
     this._preVec = this.projectMouseToUnitSphere(mouse.getXY(), viewWidth, viewHeight);
-    this._preVec[0] *= -1;
-    this._preVec[1] *= -1;
+    this._preLook = vec3.clone(this._look);
+    this._preUp = vec3.clone(this._up);
   }
   
   // Rotate the arcball while the left mouse button is dragged.
   if(mouse.isLeftPressed()) {
     this._curVec = this.projectMouseToUnitSphere(mouse.getXY(), viewWidth, viewHeight);
-    this._curVec[0] *= -1;
-    this._curVec[1] *= -1;
     this.rotate(this._preVec, this._curVec);
-  }
-  
-  if(mouse.justLeftReleased()) {
-    this._curVec = this.projectMouseToUnitSphere(mouse.getXY(), viewWidth, viewHeight);
-    this._curVec[0] *= -1;
-    this._curVec[1] *= -1;
-    this._orientation = this.rotate(this._preVec, this._curVec);
   }
 };
 
 
+
+TentaGL.ArcballCamera.prototype.setEye = function(orientation) {
+  vec3.transformQuat(this._up, this._preUp, q);
+  vec3.transformQuat(this._look, this._preLook, orientation);
+  vec3.sub(this._eye, this._center, this._look);
+};
 
 
 
@@ -137,8 +126,13 @@ TentaGL.ArcballCamera.prototype.controlWithMouse = function(mouse, viewWidth, vi
  * Resets the arcball to its original orientation. 
  */
 TentaGL.ArcballCamera.prototype.resetOrientation = function() {
-  this._up = this._origUp;
-  vec3.add(this._eye, this._center, this._origLook);
+  this._up = vec3.clone(this._origUp);
+  console.log(this._up);
+  
+  vec3.scale(this._look, this._origLookUnit, this._origDist);
+  vec3.sub(this._eye, this._center, this._look);
+  
+  this._curDist = this._origDist;
   
   this._orientation = quat.create();
 };
@@ -149,7 +143,7 @@ TentaGL.ArcballCamera.prototype.resetOrientation = function() {
  * @return {Number}
  */
 TentaGL.ArcballCamera.prototype.getDist = function() {
-  return vec3.length(this._origLook);
+  return this._curDist;
 };
 
 
@@ -159,13 +153,11 @@ TentaGL.ArcballCamera.prototype.getDist = function() {
  * orientation. 
  */
 TentaGL.ArcballCamera.prototype.setDist = function(dist) {
-  var lookVec = this.getLookVector();
-  var scale = dist/vec3.length(lookVec);
   
-  vec3.scale(lookVec, lookVec, dist/vec3.length(lookVec));
-  vec3.add(this._eye, this._center, lookVec);
+  this._preLook = vec3.scale(vec3.create(), this._look, dist/this._curDist);
+  this._curDist = dist;
+  this.setEye(quat.create());
   
-  vec3.scale(this._origLook, this._origLookUnit, dist);
 };
 
 
