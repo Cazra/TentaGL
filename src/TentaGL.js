@@ -294,52 +294,6 @@ TentaGL.glSizeBytes = function(type){
  */
 TentaGL.glUnitType = function(type){
   return TentaGL._glUnitTypes[type];
-  /*
-  switch(type) {
-    case 0x1400: // "BYTE"
-      return 0x1400;
-    case 0x1401: // "UNSIGNED_BYTE"
-      return 0x1401;
-    case 0x1402: // "SHORT"
-      return 0x1402;
-    case 0x1403: // "UNSIGNED_SHORT"
-      return 0x1403;
-    case 0x1404: // "INT"
-      return 0x1404;
-    case 0x1405: // "UNSIGNED_INT"
-      return 0x1405;
-    case 0x1406: // "FLOAT"
-      return 0x1406;
-    case 0x8B50: // "FLOAT_VEC2"
-      return 0x1406;
-    case 0x8B51: // "FLOAT_VEC3"
-      return 0x1406;
-    case 0x8B52: // "FLOAT_VEC4"
-      return 0x1406;
-    case 0x8B53: // "INT_VEC2"
-      return 0x1404;
-    case 0x8B54: // "INT_VEC3"
-      return 0x1404;
-    case 0x8B55: // "INT_VEC4"
-      return 0x1404;
-    case 0x8B56: // "BOOL" - bools have the same size as a uint: 32-bits.
-      return 0x8B56;
-    case 0x8B57: // "BOOL_VEC2"
-      return 0x8B56;
-    case 0x8B58: // "BOOL_VEC3"
-      return 0x8B56;
-    case 0x8B59: // "BOOL_VEC4"
-      return 0x8B56;
-    case 0x8B5A: // "FLOAT_MAT2"
-      return 0x1406;
-    case 0x8B5B: // "FLOAT_MAT3"
-      return 0x1406;
-    case 0x8B5C: // "FLOAT_MAT4"
-      return 0x1406;
-    default:
-      return -1;
-  }
-  */
 };
 
 TentaGL._glUnitTypes = [];

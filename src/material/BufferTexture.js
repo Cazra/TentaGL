@@ -62,6 +62,7 @@ TentaGL.BufferTexture.prototype = {
   clean:function(gl) {
     gl.deleteFrameBuffer(this._frameBuffer);
     gl.deleteTexture(this._tex);
+    gl.deleteRenderbuffer(this._depth);
   },
   
   
@@ -95,9 +96,15 @@ TentaGL.BufferTexture.prototype = {
   },
   
   
+  /** 
+   * Sets up the currently bound ShaderProgram so that its sampler2D uniform
+   * variable "tex" will use this texture.
+   * @param {WebGLRenderingContext} gl
+   */
   useMe:function(gl) {
-    // TODO
-    
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, this._tex);
+    TentaGL.ShaderLib.current(gl).setUniValue(gl, "tex", 0);
   }
 };
 

@@ -66,44 +66,6 @@ TentaGL.Uniform.prototype.get = function(gl) {
  */
 TentaGL.Uniform.prototype.set = function(gl, valueArray) {
   TentaGL.Uniform.setters[this._type].call(this, gl, valueArray);
-  
-  /*
-  switch(this._type) {
-    case gl.FLOAT:
-      gl.uniform1f(this._location, valueArray);
-      break;
-    case gl.FLOAT_VEC2:
-      gl.uniform2fv(this._location, valueArray);
-      break;
-    case gl.FLOAT_VEC3:
-      gl.uniform3fv(this._location, valueArray);
-      break;
-    case gl.FLOAT_VEC4:
-      gl.uniform4fv(this._location, valueArray);
-      break;
-    case gl.INT:
-      gl.uniform1i(this._location, valueArray);
-      break;
-    case gl.INT_VEC2:
-      gl.uniform2iv(this._location, valueArray);
-      break;
-    case gl.INT_VEC3:
-      gl.uniform3iv(this._location, valueArray);
-      break;
-    case gl.INT_VEC4:
-      gl.uniform4iv(this._location, valueArray);
-      break;
-    case gl.FLOAT_MAT2:
-      gl.uniformMatrix2fv(this._location, false, valueArray);
-      break;
-    case gl.FLOAT_MAT3:
-      gl.uniformMatrix3fv(this._location, false, valueArray);
-      break;
-    case gl.FLOAT_MAT4:
-      gl.uniformMatrix4fv(this._location, false, valueArray);
-      break;
-  }
-  */
 };
 
 

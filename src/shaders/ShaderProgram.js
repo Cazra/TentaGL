@@ -43,6 +43,8 @@ TentaGL.ShaderProgram = function(gl, id, vertSrc, fragSrc) {
   this._glProg = this._linkProgram(gl, vert, frag);
   this._uniforms = this._initUniforms(gl);
   this._attributes = this._initAttributes(gl);
+  
+  this._showErrors = true;
 };
 
 TentaGL.ShaderProgram.prototype = {
@@ -164,6 +166,7 @@ TentaGL.ShaderProgram.prototype = {
   /**
    * Initializes and returns the uniform variables for the program, mapped by
    * name.
+   * @private
    * @param {WebGLRenderingContext} gl
    */
   _initUniforms:function(gl) {
@@ -189,6 +192,7 @@ TentaGL.ShaderProgram.prototype = {
   /**
    * Initializes and returns the vertex attribute variables for the program,
    *  mapped by name.
+   * @private
    * @param {WebGLRenderingContext} gl
    */
   _initAttributes:function(gl) {
@@ -217,6 +221,9 @@ TentaGL.ShaderProgram.prototype = {
    * @return {TentaGL.Uniform}
    */
   getUniform:function(name) {
+    if(!this._uniforms[name] && this._showErrors) {
+      console.log("Uniform variable " + name + " doesn't exist.");
+    }
     return this._uniforms[name];
   },
   
@@ -298,11 +305,10 @@ TentaGL.ShaderProgram.prototype = {
    *      length for the variable.
    */
   setUniValue:function(gl, name, valueArray) {
-    var uniform = this._uniforms[name];
-    if(uniform === undefined) {
-      throw Error("Uniform variable " + name + " doesn't exist.");
+    var uniform = this.getUniform(name);
+    if(uniform) {
+      uniform.set(gl, valueArray);
     }
-    uniform.set(gl, valueArray);
   },
   
   
@@ -391,7 +397,9 @@ TentaGL.ShaderProgram.prototype = {
    *      length for the variable.
    */
   setMVPTransUniValue:function(gl, value) {
-    this._uniforms[this._mvpUniName].set(gl, value);
+    if(this._mvpUni) {
+      this._mvpUni.set(gl, value);
+    }
   },
   
   /** 
@@ -401,10 +409,7 @@ TentaGL.ShaderProgram.prototype = {
    * @param {string} uniName
    */
   bindMVPTransUni:function(uniName) {
-    if(!this._uniforms[uniName]) {
-      throw Error("Uniform variable " + uniName + " doesn't exist.");
-    }
-    this._mvpUniName = uniName;
+    this._mvpUni = this.getUniform(uniName);
   },
   
   
@@ -420,7 +425,9 @@ TentaGL.ShaderProgram.prototype = {
    *      length for the variable.
    */
   setNormalTransUniValue:function(gl, value) {
-    this._uniforms[this._normalUniName].set(gl, value);
+    if(this._normalUni) {
+      this._normalUni.set(gl, value);
+    }
   },
   
   /** 
@@ -430,10 +437,7 @@ TentaGL.ShaderProgram.prototype = {
    * @param {string} uniName
    */
   bindNormalTransUni:function(uniName) {
-    if(!this._uniforms[uniName]) {
-      throw Error("Uniform variable " + uniName + " doesn't exist.");
-    }
-    this._normalUniName = uniName;
+    this._normalUni = this.getUniform(uniName);
   },
   
   
@@ -448,9 +452,8 @@ TentaGL.ShaderProgram.prototype = {
    *      length for the variable.
    */
   setOpacityUniValue:function(gl, value) {
-    var uni = this._uniforms[this._opacityUniName];
-    if(uni) {
-      uni.set(gl, value);
+    if(this._opacityUni) {
+      this._opacityUni.set(gl, value);
     }
   },
   
@@ -462,10 +465,7 @@ TentaGL.ShaderProgram.prototype = {
    * @param {string} uniName
    */
   bindOpacityUni:function(uniName) {
-    if(!this._uniforms[uniName]) {
-      throw Error("Uniform variable " + uniName + " doesn't exist.");
-    }
-    this._opacityUniName = uniName;
+    this._opacityUni = this.getUniform(uniName);
   },
 };
 
