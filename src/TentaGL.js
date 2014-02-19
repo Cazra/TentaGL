@@ -108,6 +108,65 @@ var TentaGL = {
     gl.viewWidth = xywh[2];
     gl.viewHeight = xywh[3];
     gl.viewport(xywh[0], xywh[1], xywh[2], xywh[3]);
+  },
+  
+  
+  /** 
+   * Creates an off-screen depth buffer.
+   * @param {WebGLRenderingContext} gl
+   * @param {int} width
+   * @param {int} height
+   * @return {WebGLRenderbuffer}
+   */
+  createDepthbuffer: function(gl, width, height) {
+    var buffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, buffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    return buffer;
+  },
+  
+  
+  /**
+   * Creates an off-screen stencil buffer.
+   * @param {WebGLRenderingContext} gl
+   * @param {int} width
+   * @param {int} height
+   * @return {WebGLRenderbuffer}
+   */
+  createStencilBuffer: function(gl, width, height) {
+    var buffer = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, buffer);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
+    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+    return buffer;
+  },
+  
+  
+  /** 
+   * Creates an initially empty texture in GL memory. By default, this texture 
+   * Displays as solid red and has its min-mag filters set to gl.NEAREST.
+   * @param {WebGLRenderingContext} gl
+   * @param {Uint8Array} data   Optional. RGBA array of pixel data. This is
+   *      allowed to be null, in which case the resulting appearance will be
+   *      undefined (Displays white for me). Defaults to null.
+   * @param {int} width   Optional. Width of the texture. Defaults to 1.
+   * @param {int} height  Optional. Height of the texture. Defaults to 1.
+   * @return {WebGLTexture}
+   */
+  createTexture: function(gl, data, width, height) {
+    data = data || null;
+    width = width || 1;
+    height = height || 1;
+    
+    var tex = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    
+    // Use gl.NEAREST by default for min-mag filters.
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    return tex;
   }
 };
 

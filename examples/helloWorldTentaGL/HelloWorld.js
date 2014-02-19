@@ -84,10 +84,16 @@ function initModels() {
 };
 
 
-/** Draws the scene with the triangle and square. */
-function drawScene() {
+
+function appUpdate() {
   var gl = this.getGL();
-  
+  drawScene.call(this, gl);
+};
+
+
+
+/** Draws the scene with the triangle and square. */
+function drawScene(gl) {
   TentaGL.ShaderLib.use(gl, "simpleShader");
   
   var aspect = gl.canvas.width/gl.canvas.height;
@@ -167,7 +173,7 @@ function createApp(container) {
   app.initShaders = initShaders;
   app.initMaterials = initMaterials;
   app.initModels = initModels;
-  app.update = drawScene;
+  app.update = appUpdate;
   
   app.camera = new TentaGL.ArcballCamera([0, 0, 10], [0, 0, 0]);
 //  app.arcball = new TentaGL.ArcballCamera([0, 0, 10], [0, 0, 0]);
@@ -191,6 +197,7 @@ function createApp(container) {
     }
   }
   
+  app.offscreenBuffer = new TentaGL.BufferTexture(app.getGL(), app.getWidth(), app.getHeight());
   
   return app;
 }

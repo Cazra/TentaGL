@@ -25,26 +25,27 @@
 
 /** 
  * Constructs a texture that can have scenes rendered onto it with a GL context.
+ * @constructor
+ * @param {WebGLRenderingContext} gl
+ * @param {int} width   The desired width of the texture.
+ * @param {int} height  The desired height of the texture.
  */
-TentaGL.BufferTexture = function(gl, width, height, pixelFormat) {
-  pixelFormat = pixelFormat || gl.RGBA;
-  
+TentaGL.BufferTexture = function(gl, width, height) {
   this._width = width;
   this._height = height;
-  this._pixelFormat = pixelFormat;
   this._clearColor = [0, 0, 0, 1];
   
   // Create the frame buffer.
-  this._frameBuffer = gl.createFrameBuffer();
-  gl.bindFrameBuffer(gl.FRAMEBUFFER, this._frameBuffer);
+  this._frameBuffer = gl.createFramebuffer();
+  gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
   
   // Bind the texture to receive the colors.
-  this._tex = TentaGL.BufferTexture.createGLTexture(gl, width, height, pixelFormat);
+  this._tex = TentaGL.createTexture(gl, null, width, height);
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._tex, 0);
   
   // Bind a RenderBuffer to store depth data.
-  this._depth = TentaGL.BufferTexture.createGLDepthBuffer(gl, width, height);
-  gl.framebufferRenderBuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depth);
+  this._depth = TentaGL.createDepthbuffer(gl, width, height);
+  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depth);
   
   gl.bindTexture(gl.TEXTURE_2D, null);
   gl.bindRenderbuffer(gl.RENDERBUFFER, null);
@@ -60,7 +61,7 @@ TentaGL.BufferTexture.prototype = {
   
   /** Removes the Texture and the FrameBuffer from GL memory. */
   clean:function(gl) {
-    gl.deleteFrameBuffer(this._frameBuffer);
+    gl.deleteFramebuffer(this._frameBuffer);
     gl.deleteTexture(this._tex);
     gl.deleteRenderbuffer(this._depth);
   },
@@ -83,16 +84,45 @@ TentaGL.BufferTexture.prototype = {
     var oldViewport = TentaGL.getViewport(gl);
     
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
-    
     TentaGL.setViewport(gl, [0, 0, this._width, this._height]);
+    
     gl.clearColor(this._clearColor[0], this._clearColor[1], this._clearColor[2], this._clearColor[3]);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     renderable.render(gl);
     
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.bindTexture(gl.TEXTURE_2D, null);
-    
     TentaGL.setViewport(gl, oldViewport);
+  },
+  
+  
+  /** 
+   * Returns a PixelData object containing the current pixel data 
+   * for this texture. 
+   * @param {WebGLRenderingContext} gl
+   * @param {int} x Optional. X position of lower-left corner of area containing 
+   *      the pixel data. Defaults to 0, the extreme left of the texture.
+   * @param {int} y Optional. Y position of lower-left corner of area containing
+   *      the pixel data. Defaults to 0, the extreme bottom of the texture.
+   * @param {int} w Optional. The width of the area containing the pixel data. 
+   *      Defaults to the width of this texture.
+   * @param {int} h Optional. The height of the area containing the pixel data.
+   *      Defaults to the height of this texture.
+   * @return {TentaGL.PixelData}
+   */
+  getPixelData:function(gl, x, y, w, h) {
+    x = x || 0;
+    y = y || 0;
+    w = w || this._width - x;
+    h = h || this._height - y;
+    
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
+    
+    var data = new Uint8Array(w*h*4);
+    gl.readPixels(x, y, w, h, gl.RGBA, data);
+    
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    
+    return new TentaGL.PixelData(data, w, h);
   },
   
   
@@ -106,42 +136,5 @@ TentaGL.BufferTexture.prototype = {
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
     TentaGL.ShaderLib.current(gl).setUniValue(gl, "tex", 0);
   }
-};
-
-
-
-/** 
- * Allocates a blank texture in the GL state with the specified dimensions 
- * and returns it. 
- * @param {WebGLRenderingContext} gl
- * @param {int} width
- * @param {int} height
- * @return {WebGLTexture}
- */
-TentaGL.BufferTexture.createGLTexture = function(gl, width, height, pixelFormat) {
-  var tex = gl.createTexture();
-  
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.texImage2D(gl.TEXTURE_2D, 0, pixelFormat, width, height, 0, pixelFormat, gl.UNSIGNED_BYTE, null);
-  
-  // Use gl.NEAREST by default for min-mag filters.
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  return tex;
-};
-
-
-/** 
- * Allocates and returns a depth buffer with the specified dimensions. 
- * @param {WebGLRenderingContext} gl
- * @param {int} width
- * @param {int} height
- * @return {WebGLRenderbuffer}
- */
-TentaGL.BufferTexture.createGLDepthBuffer = function(gl, width, height) {
-  var buffer = gl.createRenderBuffer();
-  gl.bindRenderbuffer(gl.RENDERBUFFER, buffer);
-  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
-  return buffer;
 };
 
