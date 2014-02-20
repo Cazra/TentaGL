@@ -61,6 +61,7 @@ function initShaders() {
   
   shaderProgram.bindMVPTransUni("mvpTrans");
   shaderProgram.bindNormalTransUni("normalTrans");
+  shaderProgram.bindPickIDUni("pickID");
 };
 
 
@@ -89,11 +90,23 @@ function appUpdate() {
   var gl = this.getGL();
   TentaGL.resetTransform();
   TentaGL.resetProjection();
+  TentaGL.resetRenderFilter();
   
-  var aspect = gl.canvas.width/gl.canvas.height;
-  this.camera.useMe(gl, aspect);
-
+  updateScene.call(this, gl);
+  
+  
+  
   drawScene.call(this, gl);
+  this.picker.update(gl, drawScene.bind(this));
+  
+  if(this._mouse.isLeftPressed()) {
+    var mx = this._mouse.getX();
+    var my = this.getHeight() - this._mouse.getY()
+    var pixel = this.picker.getPixelAt(mx, my);
+    var sprite = this.picker.getSpriteAt(mx, my);
+    console.log(pixel);
+    console.log(sprite);
+  }
   
   // Draw a second time to an offscreen buffer which we'll use to get the color of 
   // the pixel the mouse is currently over.
@@ -108,21 +121,7 @@ function appUpdate() {
 };
 
 
-
-/** Draws the scene with the triangle and square. */
-function drawScene(gl) {
-  TentaGL.ShaderLib.use(gl, "simpleShader");
-  
-  // Clear the background. 
-  gl.clearColor(0, 0, 0, 1); // Black
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  gl.enable(gl.DEPTH_TEST);
-  
-//  gl.enable(gl.CULL_FACE);
-  
-  // Draw the triangle.
-//  this.triangleSprite.render(gl);
-  
+function updateScene(gl) {
   if(this._keyboard.isPressed(KeyCode.UP)) {
     console.log("pressed up");
     this.drX -= 0.001;
@@ -165,12 +164,32 @@ function drawScene(gl) {
   this.rX += this.drX;
   this.rY += this.drY;
   this.rZ += this.drZ;
+};
+
+
+/** Draws the scene with the triangle and square. */
+function drawScene(gl) {
+  TentaGL.ShaderLib.use(gl, "simpleShader");
+  
+  var aspect = gl.canvas.width/gl.canvas.height;
+  this.camera.useMe(gl, aspect);
+  
+  // Clear the background. 
+  gl.clearColor(0, 0, 0, 1); // Black
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.enable(gl.DEPTH_TEST);
+  
+//  gl.enable(gl.CULL_FACE);
+  
+  // Draw the triangle.
+//  this.triangleSprite.render(gl);
   
   // Draw the square.
 //  this.squareSprite.render(gl);
 //  this.squareSprite.setAngleY(this.rY);
 //  this.squareSprite.setAngleX(this.rX);
 
+  // Draw the spinning cubes.
   for(var i = 0; i < this.sprites.length; i++) {
     var sprite = this.sprites[i];
     sprite.setAngleY(this.rY);
@@ -212,6 +231,7 @@ function createApp(container) {
   }
   
   app.mousePixelBuffer = new TentaGL.BufferTexture(app.getGL(), app.getWidth(), app.getHeight());
+  app.picker = new TentaGL.Picker(app.getWidth(), app.getHeight());
   
   return app;
 }

@@ -75,12 +75,6 @@ TentaGL.PixelData.prototype = {
   /** 
    * Extracts the RGBA values of the pixel at the specified coordinates in the 
    * source data. 
-   * If flipY is true, then pixel (0,0) corresponds to the upper-left pixel in
-   * the source data and pixel (width, height) corresponds to the lower-right
-   * pixel in the source data.
-   * Otherwise, pixel (0,0) corresponds to the lower-left pixel in the source
-   * data and pixel (width, height) corresponds to the upper-right pixel in the
-   * source data.
    * @param {int} x
    * @param {int} y
    * @param {int} flipY   Optional. If true, y increases downward. 

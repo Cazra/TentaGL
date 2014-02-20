@@ -273,10 +273,51 @@ var TentaGL = {
     
     mat4.mul(this._mvpTrans, this._projTrans, this._modelViewTrans);
     TentaGL.ShaderLib.current(gl).setMVPTransUniValue(gl, this._mvpTrans);
+  },
+  
+  
+  
+  /** 
+   * Returns the filter function used for rendering. 
+   * @return {function(TentaGL.Sprite)}
+   */
+  getRenderFilter: function() {
+    return this._renderFilter;
+  },
+  
+  /** 
+   * Sets the filter function used for rendering. 
+   * @param {function(TentaGL.Sprite)}
+   */
+  setRenderFilter: function(filterFunc) {
+    this._renderFilter = filterFunc;
+  },
+  
+  /** 
+   * Resets the render filtering function to undefined, so renderFilter returns
+   * true for all sprites.
+   */
+  resetRenderFilter: function() {
+    this._renderFilter = TentaGL._defaultRenderFilter;
+  },
+  
+  /** 
+   * Filters out which sprites are renderable.
+   * If this function returns false for a sprite, then that sprite will 
+   * not be rendered. 
+   * @param {TentaGL.Sprite} sprite
+   * @param {Boolean}
+   */
+  renderFilter:function(sprite) {
+    return (!this._renderFilter || this._renderFilter(sprite));
   }
 };
 
 
+/** Returns true for all sprites. */
+TentaGL._defaultRenderFilter = function(sprite) {
+  return true;
+};
 
 
 /** 

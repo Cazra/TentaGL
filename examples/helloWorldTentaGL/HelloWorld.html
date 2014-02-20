@@ -8,6 +8,7 @@
   
   uniform float opacity;
   uniform sampler2D tex;
+  uniform vec4 pickID;
   
   varying vec4 v_color;
   varying vec2 texCoords;
@@ -15,6 +16,7 @@
   // All fragments are colored white.
   void main(void) {
     gl_FragColor = texture2D(tex, texCoords); //v_color;
+  //  gl_FragColor = pickID;
   }
 </script>
 
@@ -50,6 +52,8 @@
 
 <script type="text/javascript" src="../../src/camera/Camera.js"></script>
 <script type="text/javascript" src="../../src/camera/ArcballCamera.js"></script>
+
+<script type="text/javascript" src="../../src/collisions/Picker.js"></script>
 
 <script type="text/javascript" src="../../src/geom/Model.js"></script>
 <script type="text/javascript" src="../../src/geom/ModelLib.js"></script>

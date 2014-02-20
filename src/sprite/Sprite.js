@@ -34,14 +34,15 @@
  * bindMVPTransUni and bindNormalTransUni methods after the 
  * ShaderProgram is created, but before any sprites are rendered.
  * @constructor
- * @param {Number} xyz  Optional. If the sprite's world coordinates aren't 
- *      provided, they will be set to [0, 0, 0].
+ * @param {vec4} xyz  Optional. If the sprite's world coordinates aren't 
+ *      provided, they will be set to [0, 0, 0, 1]. 
+ *      The 4th coordinate will be replaced with 1.
  */
 TentaGL.Sprite = function(xyz) {
   if(xyz === undefined) {
-    xyz = [0, 0, 0];
+    xyz = [0, 0, 0, 1];
   }
-  this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2]);
+  this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
   
   //this._scaleXYZ = [1, 1, 1];
   //this._scaleUni = 1;
@@ -52,6 +53,8 @@ TentaGL.Sprite = function(xyz) {
   
   this._isVisible = true;
   //this._opacity = 1;
+  
+  this._isPickable = false;
 };
 
 
@@ -362,7 +365,7 @@ TentaGL.Sprite.prototype = {
     return m;
   },
   
-  
+  /*
   getRotYXZSTransform:function() {
     var sx = Math.sin(this.getAngleX());
     var cx = Math.cos(this.getAngleX());
@@ -505,6 +508,7 @@ TentaGL.Sprite.prototype = {
     
     return m;
   },
+  */
   
   //////// Rendering
   
@@ -513,12 +517,22 @@ TentaGL.Sprite.prototype = {
    * During rendering, gl gains a new normalMat field containing the current 
    * model transform. This allows Sprites to also be used as transform nodes
    * in a scene graph.
+   * @param {WebGLRenderingContext} gl
    */
   render:function(gl) {
-    if(!this.isVisible()) {
+    if(!this.isVisible() || !TentaGL.renderFilter(this)) {
       return;
     }
- 
+    TentaGL.pushTransform();
+    
+    TentaGL.mulTransform(this.getModelTransform());
+    TentaGL.updateMVPUniforms(gl);
+    
+    this.draw(gl);
+    
+    TentaGL.popTransform();
+  },
+  
   /*
     // save the original matrix.
    var origMat = gl.modelViewMat || mat4.create();
@@ -537,22 +551,12 @@ TentaGL.Sprite.prototype = {
     gl.modelViewMat = origMat;
     
     */
-    
-    TentaGL.pushTransform();
-    
-    TentaGL.mulTransform(this.getModelTransform());
-    TentaGL.updateMVPUniforms(gl);
-    
-    this.draw(gl);
-    
-    TentaGL.popTransform();
-  },
   
   /** 
    * Sets the materials for and draws the Models making up this sprite. 
    * Override this. 
    */
-  draw:function(gl) {}
+  draw:function(gl) {},
 };
 
 

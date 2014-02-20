@@ -24,11 +24,96 @@
 
 
 /** 
- * Cosntructs a 3D picker for mapping viewport coordinates to objects in a scene. 
+ * Constructs a 3D picker for mapping viewport coordinates to objects in a scene. 
  * TODO 
  */
-TentaGL.Picker = function() {
+TentaGL.Picker = function(width, height) {
+  this._width = width;
+  this._height = height;
+};
+
+
+TentaGL.Picker.prototype = {
   
+  constructor:TentaGL.Picker,
+  
+  /** 
+   * Updates the internal raster of mouse-over information of a scene for this picker.
+   * @param {WebGLRenderingContext} gl
+   * @param {function(WebGLRenderingContext)} renderFunc   
+   *      The function used to render the scene.
+   */
+  update:function(gl, renderFunc) {
+    var self = this;
+    var origFilter = TentaGL.getRenderFilter();
+    
+    this._nextID = 1;
+    this._sprites = [];
+    
+    // Every time before a sprite is rendered to the picker, 
+    // it is assigned a picking ID.
+    TentaGL.setRenderFilter( function(sprite) {
+      if(origFilter(sprite)) {
+        var id = (0xFF000000 | self._nextID);
+        self._nextID++;
+        
+        var pickColor = new TentaGL.Color.Hex(id);
+        self._sprites[id] = sprite;
+        var rgba = pickColor.getRGBA();
+        TentaGL.ShaderLib.current(gl).setPickIDUniValue(gl, rgba);
+        
+        return true;
+      }
+      else {
+        return false;
+      }
+    });
+    
+    
+  //  renderFunc(gl);
+  //  this._nextID = 1;
+    
+    // Render to the offscreen raster, cache the pixel data, 
+    // and then delete the offscreen raster.
+    var raster = new TentaGL.BufferTexture(gl, this._width, this._height);
+    raster.renderToMe(gl, renderFunc);
+    this._pixels = raster.getPixelData(gl);
+    raster.clean(gl);
+    
+    TentaGL.setRenderFilter(origFilter);
+  },
+  
+  
+  
+  /** 
+   * Extracts the RGBA values of the pixel at the specified coordinates in the 
+   * picker raster. 
+   * @param {int} x
+   * @param {int} y
+   * @param {int} flipY   Optional. If true, y increases downward. 
+   *      Default to false.
+   * @return {length-4 array}   An array containing the RGBA byte values for 
+   *      the pixel.
+   */
+  getPixelAt:function(x, y, flipY) {
+    return this._pixels.getPixelAt(x, y, flipY);
+  },
+  
+  
+  /** 
+   * Returns the sprite whose picking ID is stored at the specified location in
+   * the picker raster.
+   * @param {int} x
+   * @param {int} y
+   * @param {int} flipY   Optional. If true, y increases downward. 
+   *      Default to false.
+   * @return {TentaGL.Sprite}
+   */
+  getSpriteAt:function(x, y, flipY) {
+    var pixel = this.getPixelAt(x, y, flipY);
+    var id = TentaGL.Color.rgba2Hex(pixel[0], pixel[1], pixel[2], pixel[3]);
+    return this._sprites[id];
+  },
 };
 
 

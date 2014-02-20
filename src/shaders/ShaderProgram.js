@@ -467,5 +467,32 @@ TentaGL.ShaderProgram.prototype = {
   bindOpacityUni:function(uniName) {
     this._opacityUni = this.getUniform(uniName);
   },
+  
+  //// Picking
+  
+  /** 
+   * Sets the value of the float uniform variable bound to store opacity.
+   * An error is thrown if a uniform hasn't been bound to the sprites' model 
+   * transform matrices.
+   * @param {WebGLRenderingContext} gl
+   * @param {typed array} value   A typed array of the appropriate type and 
+   *      length for the variable.
+   */
+  setPickIDUniValue:function(gl, value) {
+    if(this._pickIDUni) {
+      this._pickIDUni.set(gl, value);
+    }
+  },
+  
+  
+  /** 
+   * Binds the float uniform variable with the specified name in this
+   * ShaderProgram to store the opacity.
+   * An error is thrown if the specified uniform doesn't exist in this program.
+   * @param {string} uniName
+   */
+  bindPickIDUni:function(uniName) {
+    this._pickIDUni = this.getUniform(uniName);
+  },
 };
 

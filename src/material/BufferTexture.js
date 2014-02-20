@@ -30,10 +30,10 @@
  * @param {int} width   The desired width of the texture.
  * @param {int} height  The desired height of the texture.
  */
-TentaGL.BufferTexture = function(gl, width, height) {
+TentaGL.BufferTexture = function(gl, width, height, clearColor) {
   this._width = width;
   this._height = height;
-  this._clearColor = [0, 0, 0, 1];
+  this._clearColor = clearColor || [0, 0, 0, 1];
   
   // Create the frame buffer.
   this._frameBuffer = gl.createFramebuffer();
@@ -78,16 +78,12 @@ TentaGL.BufferTexture.prototype = {
    * @param {WebGLRenderingContext} gl
    * @param {function} renderFunc   A function that accepts a single parameter 
    *      - a WebGLRenderingContext - which renders a scene.
-   * @param {length-4 array} viewport   Optional. x, y, width, height values 
-   *      defining the viewport rectangle to use. By default, this is 
-   *      [0, 0, this.getWidth(), this.getHeight()].
    */
-  renderToMe:function(gl, renderFunc, viewport) {
+  renderToMe:function(gl, renderFunc) {
     var oldViewport = TentaGL.getViewport(gl);
-    viewport = viewport || [0, 0, this._width, this._height];
     
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
-    TentaGL.setViewport(gl, viewport);
+    TentaGL.setViewport(gl, [0, 0, this._width, this._height]);
     
     gl.clearColor(this._clearColor[0], this._clearColor[1], this._clearColor[2], this._clearColor[3]);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);

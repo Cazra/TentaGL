@@ -168,12 +168,18 @@ TentaGL.Color.prototype = {
    * @return {TentaGL.Color} this
    */
   setHex:function(argb) {
-    var a = ((argb >>> 24) & 0x000000FF);
-    var r = ((argb >>> 16) & 0x000000FF);
-    var g = ((argb >>> 8) & 0x000000FF);
-    var b = (argb & 0x000000FF);
+    var a = ((argb >>> 24) & 0x000000FF)/255;
+    var r = ((argb >>> 16) & 0x000000FF)/255;
+    var g = ((argb >>> 8) & 0x000000FF)/255;
+    var b = (argb & 0x000000FF)/255;
     
     return this.setRGBA(r, g, b, a);
+  },
+  
+  
+  /** Returns the ARGB hex representation of this color. */
+  toHex:function() {
+    return TentaGL.Color.rgba2Hex(this.getRed(), this.getGreen(), this.getBlue(), this.getAlpha());
   },
    
   /** 
@@ -290,6 +296,19 @@ TentaGL.Color.prototype = {
    */
   useMe:function(gl) {
     TentaGL.ShaderLib.current(gl).setUniValue(gl, "color", this._rgba);
+  },
+  
+  
+  /** 
+   * A color is equal to another color if their RGBA values are the same. 
+   * @param {TentaGL.Color} other
+   * @return {Boolean}
+   */
+  equals:function(other) {
+    return (  this.getRed() == other.getRed() && 
+              this.getGreen() == other.getGreen() &&
+              this.getBlue() == other.getBlue() &&
+              this.getAlpha() == other.getAlpha());
   }
 
 };
@@ -340,6 +359,29 @@ TentaGL.Color.HSBA = function(h, s, b, a) {
  */
 TentaGL.Color.clone = function(color) {
   return (new TentaGL.Color()).setRGBA(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-}
+};
 
 
+/** 
+ * Returns the ARGB hex representation of the color defined by the given 
+ * normalized rgba color components. 
+ */
+TentaGL.Color.nrgba2Hex = function(r, g, b, a) {
+    var hex = (a*255)<<24;
+    hex += (r*255)<<16;
+    hex += (g*255)<<8;
+    hex += b*255;
+    return hex;
+};
+
+/** 
+ * Returns the ARGB hex representation of the color defined by the given 
+ * integer rgba color components. 
+ */
+TentaGL.Color.rgba2Hex = function(r, g, b, a) {
+    var hex = (a)<<24;
+    hex += (r)<<16;
+    hex += (g)<<8;
+    hex += b;
+    return hex;
+};
