@@ -56,11 +56,10 @@ var TentaGL = {
       // Create the WebGL context for the canvas.
       var gl = canvas.getContext("webgl", attrs) || canvas.getContext("experimental-webgl", attrs);
       TentaGL.setViewport(gl, [0, 0, canvas.width, canvas.height]);
-    //  gl.viewport(0, 0, canvas.width, canvas.height);
-    //  gl.viewX = 0;
-    //  gl.viewY = 0;
-    //  gl.viewWidth = canvas.width;
-    //  gl.viewHeight = canvas.height;
+      TentaGL.resetProjection();
+      TentaGL.resetTransform();
+      this._normalTrans = mat3.create();
+      this._mvpTrans = mat4.create();
       return gl;
     }
     catch(e) {
@@ -167,6 +166,113 @@ var TentaGL = {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     return tex;
+  },
+  
+  
+  
+  
+  /** 
+   * Sets the model-view transform matrix.
+   * @param {mat4} trans  The new model-view transform matrix.
+   */
+  setTransform: function(trans) {
+    this._modelViewTrans = trans;
+  },
+  
+  
+  /** 
+   * Multiplies the model-view transform matrix (M) by another matrix (T) so 
+   * that the result is M = M x T.
+   * @param {mat4} trans
+   */
+  mulTransform: function(trans) {
+    mat4.mul(this._modelViewTrans, this._modelViewTrans, trans);
+  },
+  
+  
+  /** 
+   * Multiplies the model-view transform matrix (M) by another matrix (T) so 
+   * that the result is M = T x M.
+   * @param {mat4} trans
+   */
+  premulTransform: function(trans) {
+    mat4.mul(this._modelViewTrans, trans, this._modelViewTrans);
+  },
+  
+  
+  /** 
+   * Saves the current model-view transform matrix onto the transform stack. 
+   */
+  pushTransform: function() {
+    this._transformStack.push(mat4.clone(this._modelViewTrans));
+  },
+  
+  /**
+   * Restores the current model-view transform matrix from the transform stack.
+   */
+  popTransform: function() {
+    this._modelViewTrans = this._transformStack.pop();
+  },
+  
+  /** 
+   * Resets the model-view transform matrix to the identity matrix and empties
+   * the transform stack.
+   */
+  resetTransform: function() {
+    this.setTransform(mat4.create());
+    this._transformStack = [];
+  },
+  
+  
+  /** 
+   * Sets the projection transform matrix.
+   * @param {mat4} trans  The new projection matrix.
+   */
+  setProjection: function(trans) {
+    this._projTrans = trans;
+  },
+  
+  
+  /** 
+   * Multiplies the projection transform matrix (M) by another matrix (T) so 
+   * that the result is M = M x T.
+   * @param {mat4} trans
+   */
+  mulProjection: function(trans) {
+    mat4.mul(this._projTrans, this._projTrans, trans);
+  },
+  
+  
+  /** 
+   * Multiplies the projection transform matrix (M) by another matrix (T) so 
+   * that the result is M = T x M.
+   * @param {mat4} trans
+   */
+  premulProjection: function(trans) {
+    mat4.mul(this._projTrans, trans, this._projTrans);
+  },
+  
+  
+ /** 
+  * Resets the projection transform matrix to the identity matrix.
+  */
+  resetProjection: function() {
+    this.setProjection(mat4.create());
+  },
+  
+  
+  /** 
+   * Updates the MVP and normal transform matrix uniform variables in the 
+   * currently bound shader program, using the current projection and 
+   * model-view matrices.
+   * @param {WebGLRenderingContext} gl
+   */
+  updateMVPUniforms: function(gl) {
+    mat3.normalFromMat4(this._normalTrans, this._modelViewTrans);
+    TentaGL.ShaderLib.current(gl).setNormalTransUniValue(gl, this._normalTrans);
+    
+    mat4.mul(this._mvpTrans, this._projTrans, this._modelViewTrans);
+    TentaGL.ShaderLib.current(gl).setMVPTransUniValue(gl, this._mvpTrans);
   }
 };
 

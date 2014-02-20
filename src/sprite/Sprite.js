@@ -518,9 +518,10 @@ TentaGL.Sprite.prototype = {
     if(!this.isVisible()) {
       return;
     }
-    
+ 
+  /*
     // save the original matrix.
-    var origMat = gl.modelViewMat || mat4.create();
+   var origMat = gl.modelViewMat || mat4.create();
     
     // Set the concatenated model transform matrix and draw the sprite.
     gl.modelViewMat = mat4.mul(TentaGL.mat4Recyclable, origMat, this.getModelTransform());
@@ -534,6 +535,17 @@ TentaGL.Sprite.prototype = {
     
     // restore the original matrix.
     gl.modelViewMat = origMat;
+    
+    */
+    
+    TentaGL.pushTransform();
+    
+    TentaGL.mulTransform(this.getModelTransform());
+    TentaGL.updateMVPUniforms(gl);
+    
+    this.draw(gl);
+    
+    TentaGL.popTransform();
   },
   
   /** 

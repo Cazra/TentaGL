@@ -335,6 +335,9 @@ TentaGL.Camera.prototype = {
   useMe:function(gl, aspect) {
     gl.projMat = this.getProjectionTransform(aspect);
     gl.modelViewMat = this.getViewTransform();
+    
+    TentaGL.setTransform(this.getViewTransform());
+    TentaGL.setProjection(this.getProjectionTransform(aspect));
   },
   
   

@@ -76,19 +76,22 @@ TentaGL.BufferTexture.prototype = {
   /** 
    * Renders a scene to this BufferTexture.
    * @param {WebGLRenderingContext} gl
-   * @param {any} renderable   Any object with a render(WebGLContext) method. 
-   *      This object's render method will be called to draw the scene on this
-   *      BufferTexture.
+   * @param {function} renderFunc   A function that accepts a single parameter 
+   *      - a WebGLRenderingContext - which renders a scene.
+   * @param {length-4 array} viewport   Optional. x, y, width, height values 
+   *      defining the viewport rectangle to use. By default, this is 
+   *      [0, 0, this.getWidth(), this.getHeight()].
    */
-  renderToMe:function(gl, renderable) {
+  renderToMe:function(gl, renderFunc, viewport) {
     var oldViewport = TentaGL.getViewport(gl);
+    viewport = viewport || [0, 0, this._width, this._height];
     
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
-    TentaGL.setViewport(gl, [0, 0, this._width, this._height]);
+    TentaGL.setViewport(gl, viewport);
     
     gl.clearColor(this._clearColor[0], this._clearColor[1], this._clearColor[2], this._clearColor[3]);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    renderable.render(gl);
+    renderFunc(gl);
     
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     TentaGL.setViewport(gl, oldViewport);
@@ -118,7 +121,7 @@ TentaGL.BufferTexture.prototype = {
     gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
     
     var data = new Uint8Array(w*h*4);
-    gl.readPixels(x, y, w, h, gl.RGBA, data);
+    gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, data);
     
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     

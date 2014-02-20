@@ -119,7 +119,7 @@ TentaGL.PixelData.GLTexture = function(gl, glTex, x, y, w, h) {
   gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, glTex, 0);
   
   var data = new Uint8Array(w*h*4);
-  gl.readPixels(x, y, w, h, gl.RGBA, data);
+  gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, data);
   
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
   gl.deleteFramebuffer(fb);

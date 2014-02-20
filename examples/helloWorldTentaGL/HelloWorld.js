@@ -87,7 +87,24 @@ function initModels() {
 
 function appUpdate() {
   var gl = this.getGL();
+  TentaGL.resetTransform();
+  TentaGL.resetProjection();
+  
+  var aspect = gl.canvas.width/gl.canvas.height;
+  this.camera.useMe(gl, aspect);
+
   drawScene.call(this, gl);
+  
+  // Draw a second time to an offscreen buffer which we'll use to get the color of 
+  // the pixel the mouse is currently over.
+//  this.camera.useMe(gl, aspect);
+//  this.mousePixelBuffer.renderToMe(gl, drawScene.bind(this));
+//  var pixData = this.mousePixelBuffer.getPixelData(gl, this._mouse.getX(), this.getHeight( ) - this._mouse.getY(), 1, 1);
+//  var pixel = pixData.getPixelAt(0, 0);
+//  
+//  if(this._mouse.isLeftPressed()) {
+//    console.log(pixel);
+//  }
 };
 
 
@@ -95,9 +112,6 @@ function appUpdate() {
 /** Draws the scene with the triangle and square. */
 function drawScene(gl) {
   TentaGL.ShaderLib.use(gl, "simpleShader");
-  
-  var aspect = gl.canvas.width/gl.canvas.height;
-  this.camera.useMe(gl, aspect);
   
   // Clear the background. 
   gl.clearColor(0, 0, 0, 1); // Black
@@ -197,7 +211,7 @@ function createApp(container) {
     }
   }
   
-  app.offscreenBuffer = new TentaGL.BufferTexture(app.getGL(), app.getWidth(), app.getHeight());
+  app.mousePixelBuffer = new TentaGL.BufferTexture(app.getGL(), app.getWidth(), app.getHeight());
   
   return app;
 }
