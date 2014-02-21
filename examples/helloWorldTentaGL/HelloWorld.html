@@ -9,14 +9,19 @@
   uniform float opacity;
   uniform sampler2D tex;
   uniform vec4 pickID;
+  uniform int isPicking;
   
   varying vec4 v_color;
   varying vec2 texCoords;
   
   // All fragments are colored white.
   void main(void) {
-    gl_FragColor = texture2D(tex, texCoords); //v_color;
-  //  gl_FragColor = pickID;
+    if(isPicking == 0) {
+      gl_FragColor = texture2D(tex, texCoords); //v_color;
+    }
+    else {
+      gl_FragColor = pickID;
+    }
   }
 </script>
 

@@ -59,6 +59,8 @@ function initShaders() {
   shaderProgram.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
   shaderProgram.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
   
+  TentaGL.ShaderLib.use(this.getGL(), "simpleShader");
+  
   shaderProgram.bindMVPTransUni("mvpTrans");
   shaderProgram.bindNormalTransUni("normalTrans");
   shaderProgram.bindPickIDUni("pickID");
@@ -94,18 +96,20 @@ function appUpdate() {
   
   updateScene.call(this, gl);
   
-  
-  
-  drawScene.call(this, gl);
-  this.picker.update(gl, drawScene.bind(this));
-  
+  TentaGL.ShaderLib.current(gl).setUniValue(gl, "isPicking", 0);
   if(this._mouse.isLeftPressed()) {
+    TentaGL.ShaderLib.current(gl).setUniValue(gl, "isPicking", 1);
+    this.picker.update(gl, drawScene.bind(this));
+    
     var mx = this._mouse.getX();
     var my = this.getHeight() - this._mouse.getY()
     var pixel = this.picker.getPixelAt(mx, my);
     var sprite = this.picker.getSpriteAt(mx, my);
     console.log(pixel);
     console.log(sprite);
+  }
+  else {
+    drawScene.call(this, gl);
   }
   
   // Draw a second time to an offscreen buffer which we'll use to get the color of 

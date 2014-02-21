@@ -45,13 +45,14 @@ TentaGL.Picker.prototype = {
    */
   update:function(gl, renderFunc) {
     var self = this;
-    var origFilter = TentaGL.getRenderFilter();
+    this._origFilter = TentaGL.getRenderFilter();
     
     this._nextID = 1;
     this._sprites = [];
     
     // Every time before a sprite is rendered to the picker, 
     // it is assigned a picking ID.
+    /*
     TentaGL.setRenderFilter( function(sprite) {
       if(origFilter(sprite)) {
         var id = (0xFF000000 | self._nextID);
@@ -68,10 +69,12 @@ TentaGL.Picker.prototype = {
         return false;
       }
     });
+    */
+    this._gl = gl;
+    TentaGL.setRenderFilter(this._filterFunction.bind(this));
     
-    
-  //  renderFunc(gl);
-  //  this._nextID = 1;
+    renderFunc(gl);
+    this._nextID = 1;
     
     // Render to the offscreen raster, cache the pixel data, 
     // and then delete the offscreen raster.
@@ -80,8 +83,29 @@ TentaGL.Picker.prototype = {
     this._pixels = raster.getPixelData(gl);
     raster.clean(gl);
     
-    TentaGL.setRenderFilter(origFilter);
+    TentaGL.setRenderFilter(this._origFilter);
   },
+  
+  
+  
+  /** The sprite filtering function used by the Picker. */
+  _filterFunction: function(sprite) {
+    if(this._origFilter(sprite)) {
+      var id = (0xFF000000 | this._nextID);
+      this._nextID++;
+      
+      var pickColor = new TentaGL.Color.Hex(id);
+      this._sprites[id] = sprite;
+      var rgba = pickColor.getRGBA();
+      TentaGL.ShaderLib.current(this._gl).setPickIDUniValue(this._gl, rgba);
+      
+      return true;
+    }
+    else {
+      return false;
+    }
+  },
+  
   
   
   
@@ -115,5 +139,8 @@ TentaGL.Picker.prototype = {
     return this._sprites[id];
   },
 };
+
+
+
 
 
