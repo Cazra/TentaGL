@@ -32,6 +32,12 @@
 TentaGL.ShaderLib = {
   
   /** 
+   * If true, then the ShaderLib cannot change what program is used by 
+   * the GL context. See the lock() and unlock() methods.
+   */
+  _locked: false,
+  
+  /** 
    * Attempts to load a new shader program into the shaderLib. If there are any
    * errors compiling the shader program, those errors are printed to the 
    * console and an Error is thrown.
@@ -76,6 +82,10 @@ TentaGL.ShaderLib = {
    * @return {TentaGL.ShaderProgram} The shader program now being used.
    */
   use:function(gl, name) {
+    if(this._locked) {
+      return;
+    }
+    
     var program = this[name];
     program.useMe(gl);
     this._currentProgram = program;
@@ -90,6 +100,23 @@ TentaGL.ShaderLib = {
     return this._currentProgram;
     //var glProg = gl.getParameter(gl.CURRENT_PROGRAM);
     //return this[glProg];
+  },
+  
+  
+  /** 
+   * Locks the ShaderLib so that it can't change which shader program is being 
+   * used by the GL context. 
+   */
+  lock:function() {
+    this._locked = true;
+  },
+  
+  /** 
+   * Unlocks the ShaderLib so that it can once again be able to change
+   * which shader program is being used by the GL context.
+   */
+  unlock:function() {
+    this._locked = false;
   }
 };
 

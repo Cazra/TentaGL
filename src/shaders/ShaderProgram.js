@@ -216,6 +216,21 @@ TentaGL.ShaderProgram.prototype = {
   
   
   /** 
+   * Returns true if this program has a uniform variable with the given name. 
+   * @param {string} name
+   * @return {Boolean}
+   */
+  hasUniform:function(name) {
+    if(this._uniforms[name]) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  },
+  
+  
+  /** 
    * Returns a Uniform variable for the program, given its name.
    * @param {string} name
    * @return {TentaGL.Uniform}
@@ -223,6 +238,7 @@ TentaGL.ShaderProgram.prototype = {
   getUniform:function(name) {
     if(!this._uniforms[name] && this._showErrors) {
       console.log("Uniform variable " + name + " doesn't exist.");
+    //  throw Error();
     }
     return this._uniforms[name];
   },

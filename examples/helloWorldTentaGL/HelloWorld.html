@@ -6,22 +6,14 @@
 <script id="fshader" type="x-shader/x-fragment">  
   precision mediump float;
   
-  uniform float opacity;
   uniform sampler2D tex;
-  uniform vec4 pickID;
-  uniform int isPicking;
   
   varying vec4 v_color;
   varying vec2 texCoords;
   
   // All fragments are colored white.
   void main(void) {
-    if(isPicking == 0) {
-      gl_FragColor = texture2D(tex, texCoords); //v_color;
-    }
-    else {
-      gl_FragColor = pickID;
-    }
+    gl_FragColor = texture2D(tex, texCoords); //v_color;
   }
 </script>
 
@@ -33,9 +25,7 @@
 
   uniform mat4 mvpTrans;
   uniform mat3 normalTrans;
-  uniform vec4 color;
-  
-  varying vec4 v_color;
+
   varying vec2 texCoords;
 
   // pass-through shader.
@@ -45,7 +35,6 @@
     gl_Position = mvpTrans * vertexPos;
     
     vec3 normal = normalTrans*vertexNormal;
-    v_color = color;
   }
 </script>
 

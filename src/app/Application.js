@@ -89,10 +89,17 @@ TentaGL.Application.prototype = {
   
   /** Initializes the application's shaders, materials, and models. */
   initResources:function() {
+    this.initShadersBuiltIn();
     this.initShaders();
     this.initMaterials();
     this.initModels();
   },
+  
+  /** Initializes shaders built into the TentaGL framework. */
+  initShadersBuiltIn:function() {
+    TentaGL.Picker.loadShaderProgram(this.getGL());
+  },
+  
   
   /** 
    * Initializes shaders for the application. 

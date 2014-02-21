@@ -25,7 +25,9 @@
 
 /** 
  * Constructs a 3D picker for mapping viewport coordinates to objects in a scene. 
- * TODO 
+ * @constructor
+ * @param {int} width   The width of the viewport the picking is done in.
+ * @param {int} height  The heigh of the viewport the picking is done in.
  */
 TentaGL.Picker = function(width, height) {
   this._width = width;
@@ -46,30 +48,13 @@ TentaGL.Picker.prototype = {
   update:function(gl, renderFunc) {
     var self = this;
     this._origFilter = TentaGL.getRenderFilter();
+    var origShader = TentaGL.ShaderLib.current(gl).getID();
     
+    TentaGL.Picker.useShader(gl);
+    TentaGL.ShaderLib.lock();
     this._nextID = 1;
     this._sprites = [];
     
-    // Every time before a sprite is rendered to the picker, 
-    // it is assigned a picking ID.
-    /*
-    TentaGL.setRenderFilter( function(sprite) {
-      if(origFilter(sprite)) {
-        var id = (0xFF000000 | self._nextID);
-        self._nextID++;
-        
-        var pickColor = new TentaGL.Color.Hex(id);
-        self._sprites[id] = sprite;
-        var rgba = pickColor.getRGBA();
-        TentaGL.ShaderLib.current(gl).setPickIDUniValue(gl, rgba);
-        
-        return true;
-      }
-      else {
-        return false;
-      }
-    });
-    */
     this._gl = gl;
     TentaGL.setRenderFilter(this._filterFunction.bind(this));
     
@@ -83,12 +68,18 @@ TentaGL.Picker.prototype = {
     this._pixels = raster.getPixelData(gl);
     raster.clean(gl);
     
+    TentaGL.ShaderLib.unlock();
+    TentaGL.ShaderLib.use(gl, origShader);
     TentaGL.setRenderFilter(this._origFilter);
   },
   
   
   
-  /** The sprite filtering function used by the Picker. */
+  /** 
+   * The sprite filtering function used by the Picker. 
+   * @param {TentaGL.Sprite} sprite
+   * @return {Boolean}
+   */
   _filterFunction: function(sprite) {
     if(this._origFilter(sprite)) {
       var id = (0xFF000000 | this._nextID);
@@ -140,7 +131,56 @@ TentaGL.Picker.prototype = {
   },
 };
 
+/** The ID of the picker's shader program in the ShaderLib. */
+TentaGL._shaderID = "pickShader";
+
+/** Source code for the picker's vertex shader. */
+TentaGL.Picker._vShader = 
+  "attribute vec4 vertexPos;\n" +
+  "\n" +
+  "uniform mat4 mvpTrans;\n" +
+  "\n" +
+  "// pass-through shader.\n" +
+  "void main(void) {\n" + 
+  "  gl_Position = mvpTrans * vertexPos;\n" +
+  "}\n";
+
+/** Source code for the picker's fragment shader. */
+TentaGL.Picker._fShader = 
+  "precision mediump float;\n" +
+  "\n" +
+  "uniform vec4 pickID;\n" +
+  "\n" +
+  "// All fragments are colored white.\n" +
+  "void main(void) {\n" +
+  "  gl_FragColor = pickID;\n" +
+  "}\n";
+
+  
+/** 
+ * Loads the picker's shader program into the ShaderLib with ID "pickShader". 
+ * @param {WebGLRenderingContext} gl
+ * @return {TentaGL.ShaderProgram}
+ */
+TentaGL.Picker.loadShaderProgram = function(gl) {
+  var shaderProgram = TentaGL.ShaderLib.add(gl, TentaGL._shaderID, TentaGL.Picker._vShader, TentaGL.Picker._fShader);
+  
+  shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+  
+  shaderProgram.bindMVPTransUni("mvpTrans");
+  shaderProgram.bindPickIDUni("pickID");
+  
+  return shaderProgram;
+};
 
 
+/** 
+ * Sets the GL context to use the picker's shader program. 
+ * @param {WebGLRenderingContext} gl
+ * @return {TentaGL.ShaderProgram}
+ */
+TentaGL.Picker.useShader = function(gl) {
+  return TentaGL.ShaderLib.use(gl, TentaGL._shaderID);
+};
 
 

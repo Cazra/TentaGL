@@ -63,7 +63,6 @@ function initShaders() {
   
   shaderProgram.bindMVPTransUni("mvpTrans");
   shaderProgram.bindNormalTransUni("normalTrans");
-  shaderProgram.bindPickIDUni("pickID");
 };
 
 
@@ -96,9 +95,7 @@ function appUpdate() {
   
   updateScene.call(this, gl);
   
-  TentaGL.ShaderLib.current(gl).setUniValue(gl, "isPicking", 0);
   if(this._mouse.isLeftPressed()) {
-    TentaGL.ShaderLib.current(gl).setUniValue(gl, "isPicking", 1);
     this.picker.update(gl, drawScene.bind(this));
     
     var mx = this._mouse.getX();
