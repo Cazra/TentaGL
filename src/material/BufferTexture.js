@@ -25,6 +25,9 @@
 
 /** 
  * Constructs a texture that can have scenes rendered onto it with a GL context.
+ * For a shader to be able to use a BufferedTexture as a material, it must have
+ * its uniform variable for storing texture0 bound, using its bindTex0Uni
+ * method when the program is initialized.
  * @constructor
  * @param {WebGLRenderingContext} gl
  * @param {int} width   The desired width of the texture.
@@ -133,7 +136,7 @@ TentaGL.BufferTexture.prototype = {
   useMe:function(gl) {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
-    TentaGL.ShaderLib.current(gl).setUniValue(gl, "tex", 0);
+    TentaGL.ShaderLib.current(gl).setTex0UniValue(gl, 0);
   }
 };
 

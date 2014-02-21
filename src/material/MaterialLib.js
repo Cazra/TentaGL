@@ -24,10 +24,7 @@
 
 /**
  * A library of loaded Materials.
- * All materials stored in the library must implement the following methods:
- * clean(gl) : void
- * useMe(gl) : void
- * isLoaded() : Boolean
+ * All materials stored in the library must implement the Material interface.
  */
 TentaGL.MaterialLib = {
   
@@ -59,6 +56,10 @@ TentaGL.MaterialLib = {
     if(this._materials[name] !== undefined) {
       throw Error("Material " + name + " already exists.");
     }
+    if(!TentaGL.Inheritance.objImplements(material, TentaGL.Material)) {
+    
+    }
+    
     this._materials[name] = material;
     return material;
   },

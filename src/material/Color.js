@@ -26,8 +26,9 @@
 /** 
  * Constructs an opaque, black Color. See the auxillary constructor methods 
  * for creating other colors using various color models.
- * If a ShaderProgram uses a Color as a Material, that Shader must have a 
- * uniform vec4 "color" to store the Color's RGBA values.
+ * For a shader program to be able to use a color as a material, you must
+ * bind its uniform variable used to store the color's RGBA values using 
+ * its bindColorUni method when the program is initialized.
  * @constructor
  */
 TentaGL.Color = function() {
@@ -290,12 +291,12 @@ TentaGL.Color.prototype = {
   
   
   /** 
-   * Sets up the currently bound ShaderProgram so that its vec4
-   * uniform variable "color" is set to this color's RGBA values.
+   * Sets up the currently bound ShaderProgram so that its bound vec4 color
+   * uniform variable is set to this color's RGBA values.
    * @param {WebGLRenderingContext} gl
    */
   useMe:function(gl) {
-    TentaGL.ShaderLib.current(gl).setUniValue(gl, "color", this._rgba);
+    TentaGL.ShaderLib.current(gl).setColorUniValue(gl, this._rgba);
   },
   
   

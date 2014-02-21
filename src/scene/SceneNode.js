@@ -24,12 +24,24 @@
 
 
 /** 
- * Constructs an empty group of objects in a scene graph. It also applies a 
- * transformation to all objects and nodes underneath it in the scene graph. 
+ * Interface for a node in a scene graph. All nodes in a scene graph have a set
+ * of affine transforms which are implemented here. SceneNodes can also be made
+ * visible or invisible.
  */
-TentaGL.SceneNode = function() {
-  this._sceneChildren = [];
-  this._nextSceneID = 0;
+TentaGL.SceneNode = function(xyz) {
+  if(xyz === undefined) {
+    xyz = [0, 0, 0, 1];
+  }
+  this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
+  
+  //this._scaleXYZ = [1, 1, 1];
+  //this._scaleUni = 1;
+  
+  //this._angleY = 0;
+  //this._angleX = 0;
+  //this._angleZ = 0;
+  
+  this._isVisible = true;
 };
 
 
@@ -38,37 +50,275 @@ TentaGL.SceneNode.prototype = {
   constructor:TentaGL.SceneNode,
   
   
-  getSceneID:function() {
-    return this._sceneID
+  //////// Visibility
+  
+  /** 
+   * Returns true iff this node's visibility flag is true. 
+   * @return {Boolean}
+   */
+  isVisible:function() {
+    return this._isVisible;
   },
   
   
   /** 
-   * Adds a renderable object or node to the scene immediately under this node. 
-   * It is assigned a unique ID among this node's children.
+   * Sets whether this node is visible. 
    */
-  add:function(object) {
-    
-    // Try to avoid integer overflow of IDs by skipping IDs that are in use.
-    while(this._sceneChildren[this._nextSceneID]) {
-      this._nextSceneID++;
+  setVisible:function(visible) {
+    this._isVisible = visible;
+  },
+  
+  
+  //////// Position
+  
+  /** 
+   * Returns the Sprite's XYZ coordinates.
+   * @return {vec4}
+   */
+  getXYZ:function() {
+    return this._xyz;
+  },
+  
+  /** 
+   * Sets the Sprite's XYZ coordinates.
+   * @param {vec3} xyz
+   */
+  setXYZ:function(xyz) {
+    this._xyz[0] = xyz[0];
+    this._xyz[1] = xyz[1];
+    this._xyz[2] = xyz[2];
+  },
+  
+  /**
+   * Returns the Sprites X coordinate.
+   * @return {Number}
+   */
+  getX:function() {
+    return this._xyz[0];
+  },
+  
+  /**
+   * Returns the Sprites Y coordinate.
+   * @return {Number}
+   */
+  getY:function() {
+    return this._xyz[1];
+  },
+  
+  /**
+   * Returns the Sprites Z coordinate.
+   * @return {Number}
+   */
+  getZ:function() {
+    return this._xyz[2];
+  },
+  
+  
+  //////// Euclid angles
+  
+  
+  /** 
+   * Returns the angle of rotation of this sprite, in  radians, about its 
+   * X axis.
+   * @return {Number}
+   */
+  getAngleX:function() {
+    if(this._angleX === undefined) {
+      return 0;
     }
-    
-    object.setSceneID(this._nextSceneID);
-    this._sceneChildren[this._nextSceneID] = object;
-    this._nextSceneID++;
+    return this._angleX;
   },
+  
+  /** 
+   * Sets the angle of rotation of this sprite, in radians, about its X axis.
+   * @param {Number} angle
+   */
+  setAngleX:function(angle) {
+    this._angleX = angle;
+  },
+  
+  /** 
+   * Returns the angle of rotation of this sprite, in  radians, about its 
+   * Y axis.
+   * @return {Number}
+   */
+  getAngleY:function() {
+    if(this._angleY === undefined) {
+      return 0;
+    }
+    return this._angleY;
+  },
+  
+  /** 
+   * Sets the angle of rotation of this sprite, in radians, about its Y axis.
+   * @param {Number} angle
+   */
+  setAngleY:function(angle) {
+    this._angleY = angle;
+  },
+  
+  /** 
+   * Returns the angle of rotation of this sprite, in  radians, about its 
+   * Z axis.
+   * @return {Number}
+   */
+  getAngleZ:function() {
+    if(this._angleZ === undefined) {
+      return 0;
+    }
+    return this._angleZ;
+  },
+  
+  /** 
+   * Sets the angle of rotation of this sprite, in radians, about its Z axis.
+   * @param {Number} angle
+   */
+  setAngleZ:function(angle) {
+    this._angleZ = angle;
+  },
+  
+  
+  //////// Quaterion TODO
+  
+  
+  
+  //////// Scale
+  
+  /** 
+   * Returns the sprite's scales along its X, Y, and Z axes.
+   * @return {vec3}
+   */
+  getScaleXYZ:function() {
+    if(this._scaleXYZ === undefined) {
+      return vec3.fromValues(1, 1, 1);
+    }
+    return this._ScaleXYZ;
+  },
+  
+  /** 
+   * Sets the sprite's scales along its X, Y, and Z axes.
+   * @param {vec3} xyz
+   */
+  setScaleXYZ:function(xyz) {
+    this._scaleXYZ = vec3.fromValues(xyz[0], xyz[1], xyz[2]);;
+  },
+  
+  /** 
+   * Returns the X component of the sprite's scale.
+   * @return {Number}
+   */
+  getScaleX:function() {
+    if(this._scaleXYZ === undefined) {
+      return 1;
+    }
+    return this._scaleXYZ[0];
+  },
+  
+  /**
+   * Returns the Y component of the sprite's scale.
+   * @return {Number}
+   */
+  getScaleY:function() {
+    if(this._scaleXYZ === undefined) {
+      return 1;
+    }
+    return this._scaleXYZ[1];
+  },
+  
+  /** 
+   * Returns the Z component of the sprite's scale.
+   * @return {Number}
+   */
+  getScaleZ:function() {
+    if(this._scaleXYZ === undefined) {
+      return 1;
+    }
+    return this._scaleXYZ[2];
+  },
+  
+  /** 
+   * Returns the uniform scale value of the sprite. 
+   * In the sprite's scale transform, this multiplies the axial scale values
+   * of the sprite.
+   * @return {Number}
+   */
+  getScaleUni:function() {
+    if(this._scaleUni === undefined) {
+      return 1;
+    }
+    return this._scaleUni;
+  },
+  
+  /** 
+   * Sets the uniform scale value of the sprite.
+   * In the sprite's scale transform, this multiplies the axial scale values
+   * of the sprite.
+   * @param {Number} coeff
+   */
+  setScaleUni:function(coeff) {
+    this._scaleUni = coeff;
+  },
+  
+  
+  
+  //////// Model transform
   
   
   /** 
-   * Removes an object from the scene, but only if it is an immediate child. 
+   * Produces and returns the sprite's model transform.
+   * @return {mat4}
    */
-  remove:function(object) {
-    var id = object.getSceneID();
-    object.setSceneParent(undefined);
-    this._sceneChildren[id] = undefined;
+  getModelTransform:function() {
+    var m = this.getTRotYXZSTransform();
+    return m;
   },
+  
+  
+  getTRotYXZSTransform:function() {
+    var tx = this.getX();
+    var ty = this.getY();
+    var tz = this.getZ();
+    
+    var sx = Math.sin(this.getAngleX());
+    var cx = Math.cos(this.getAngleX());
+    
+    var sy = Math.sin(this.getAngleY());
+    var cy = Math.cos(this.getAngleY());
+    
+    var sz = Math.sin(this.getAngleZ());
+    var cz = Math.cos(this.getAngleZ());
+    
+    var scaleX = this.getScaleX()*this.getScaleUni();
+    var scaleY = this.getScaleY()*this.getScaleUni();
+    var scaleZ = this.getScaleZ()*this.getScaleUni();
+    
+    var m = TentaGL.mat4Recyclable; //mat4.create();
+    m[0] = scaleX*(cy*cz + sy*sx*sz);
+    m[1] = scaleX*(cx*sz);
+    m[2] = scaleX*(cy*sx*sz - sy*cz);
+    m[3] = 0;
+    
+    m[4] = scaleY*(sy*sx*cz - cy*sz);
+    m[5] = scaleY*(cx*cz);
+    m[6] = scaleY*(sy*sz + cy*sx*cz);
+    m[7] = 0;
+    
+    m[8] = scaleZ*(sy*cx);
+    m[9] = scaleZ*(-sx);
+    m[10] = scaleZ*(cy*cx);
+    m[11] = 0;
+    
+    m[12] = tx;
+    m[13] = ty;
+    m[14] = tz;
+    m[15] = 1;
+    
+    return m;
+  },
+
   
 };
+
+TentaGL.Inheritance.inherit(TentaGL.SceneNode.prototype, TentaGL.Renderable.prototype);
 
 

@@ -35,7 +35,7 @@ var TentaGL = {
   versionMajor:0, 
   
   /** The minor version number of this framework. */
-  versionMinor:2,
+  versionMinor:3,
   
   /** 
    * Initializes and returns a WebGL context for a canvas element.

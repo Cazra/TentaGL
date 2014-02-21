@@ -7,13 +7,14 @@
   precision mediump float;
   
   uniform sampler2D tex;
+  uniform vec4 color;
   
-  varying vec4 v_color;
   varying vec2 texCoords;
   
   // All fragments are colored white.
   void main(void) {
-    gl_FragColor = texture2D(tex, texCoords); //v_color;
+  //  gl_FragColor = color;
+    gl_FragColor = texture2D(tex, texCoords); 
   }
 </script>
 
@@ -42,44 +43,53 @@
 <script type="text/javascript" src="../../src/TentaGL.js"></script>
 <script type="text/javascript" src="../../src/math/Math.js"></script>
 
+<script type="text/javascript" src="../../src/util/Debug.js"></script>
+<script type="text/javascript" src="../../src/util/DOM.js"></script>
+<script type="text/javascript" src="../../src/util/Inheritance.js"></script>
+
 <script type="text/javascript" src="../../src/app/Application.js"></script>
 
 <script type="text/javascript" src="../../src/camera/Camera.js"></script>
-<script type="text/javascript" src="../../src/camera/ArcballCamera.js"></script>
+  <script type="text/javascript" src="../../src/camera/ArcballCamera.js"></script>
 
 <script type="text/javascript" src="../../src/collisions/Picker.js"></script>
 
 <script type="text/javascript" src="../../src/geom/Model.js"></script>
+  <script type="text/javascript" src="../../src/geom/shapes/Cube.js"></script>
+  <script type="text/javascript" src="../../src/geom/shapes/Plane.js"></script>
+  <script type="text/javascript" src="../../src/geom/shapes/Triangle.js"></script>
 <script type="text/javascript" src="../../src/geom/ModelLib.js"></script>
 <script type="text/javascript" src="../../src/geom/Vertex.js"></script>
-<script type="text/javascript" src="../../src/geom/shapes/Cube.js"></script>
-<script type="text/javascript" src="../../src/geom/shapes/Plane.js"></script>
-<script type="text/javascript" src="../../src/geom/shapes/Triangle.js"></script>
+
 
 <script type="text/javascript" src="../../src/input/Keyboard.js"></script>
 <script type="text/javascript" src="../../src/input/Mouse.js"></script>
 
-<script type="text/javascript" src="../../src/material/BufferTexture.js"></script>
-<script type="text/javascript" src="../../src/material/Color.js"></script>
+
+<script type="text/javascript" src="../../src/material/Material.js"></script>
+  <script type="text/javascript" src="../../src/material/BufferTexture.js"></script>
+  <script type="text/javascript" src="../../src/material/Color.js"></script>
+  <script type="text/javascript" src="../../src/material/Texture.js"></script>
 <script type="text/javascript" src="../../src/material/MaterialLib.js"></script>
 <script type="text/javascript" src="../../src/material/PixelData.js"></script>
-<script type="text/javascript" src="../../src/material/Texture.js"></script>
 
-<script type="text/javascript" src="../../src/renderer/VBOCache.js"></script>
+
 <script type="text/javascript" src="../../src/renderer/VBOData.js"></script>
 <script type="text/javascript" src="../../src/renderer/VBORenderer.js"></script>
 
-<script type="text/javascript" src="../../src/sprite/Sprite.js"></script>
+<script type="text/javascript" src="../../src/scene/Renderable.js"></script>
+  <script type="text/javascript" src="../../src/scene/SceneNode.js"></script>
+    <script type="text/javascript" src="../../src/sprite/Sprite.js"></script>
 
 <script type="text/javascript" src="../../src/shaders/ShaderVar.js"></script>
-<script type="text/javascript" src="../../src/shaders/Attribute.js"></script>
+  <script type="text/javascript" src="../../src/shaders/Attribute.js"></script>
+  <script type="text/javascript" src="../../src/shaders/Uniform.js"></script>
 <script type="text/javascript" src="../../src/shaders/AttrProfile.js"></script>
 <script type="text/javascript" src="../../src/shaders/ShaderLib.js"></script>
 <script type="text/javascript" src="../../src/shaders/ShaderProgram.js"></script>
-<script type="text/javascript" src="../../src/shaders/Uniform.js"></script>
 
-<script type="text/javascript" src="../../src/util/Debug.js"></script>
-<script type="text/javascript" src="../../src/util/DOM.js"></script>
+
+
 <script type="text/javascript" src="HelloWorld.js"></script>
 
 </head>

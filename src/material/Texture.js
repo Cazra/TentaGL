@@ -24,8 +24,9 @@
 
 /** 
  * Constructs a Texture in the WebGL state that is ready to receive data from 
- * some image source. Any shader using this material must have a sampler2D
- * uniform variable named "tex" to access its pixel data.
+ * some image source. For a shader program to be able to use textures, you must
+ * bind its uniform variable used to store the texture's offset using 
+ * its bindTex0Uni method when the program is initialized.
  * @constructor
  * @param {WebGLRenderingContext} gl
  * @param {int} srcType   One of either TentaGL.Texture.SRC_PIXDATA, 
@@ -250,18 +251,14 @@ TentaGL.Texture.prototype = {
   
   
   /** 
-   * Sets up the currently bound ShaderProgram so that its sampler2D uniform
-   * variable "tex" will use this texture.
+   * Sets up the currently bound ShaderProgram so that its bound sampler2D 
+   * texture0 uniform variable will use this texture.
    * @param {WebGLRenderingContext} gl
    */
   useMe:function(gl) {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
-    var shader = TentaGL.ShaderLib.current(gl);
-    
-    if(shader.hasUniform("tex")) {
-      shader.setUniValue(gl, "tex", 0);
-    }
+    TentaGL.ShaderLib.current(gl).setTex0UniValue(gl, 0);
   }
 };
 

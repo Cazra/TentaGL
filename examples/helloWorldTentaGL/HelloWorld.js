@@ -59,10 +59,10 @@ function initShaders() {
   shaderProgram.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
   shaderProgram.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
   
-  TentaGL.ShaderLib.use(this.getGL(), "simpleShader");
-  
   shaderProgram.bindMVPTransUni("mvpTrans");
   shaderProgram.bindNormalTransUni("normalTrans");
+  shaderProgram.bindTex0Uni("tex");
+//  shaderProgram.bindColorUni("color");
 };
 
 

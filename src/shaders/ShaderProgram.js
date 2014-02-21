@@ -457,6 +457,62 @@ TentaGL.ShaderProgram.prototype = {
   },
   
   
+  //// Colors
+  
+  /** 
+   * Sets the value of the vec4 uniform variable used to store the RGBA 
+   * values of a color material. 
+   * @param {WebGLRenderingContext} gl
+   * @param {typed array} value   A typed array of the appropriate type and 
+   *      length for the variable.
+   */
+  setColorUniValue:function(gl, value) {
+    if(this._colorUni) {
+      this._colorUni.set(gl, value);
+    }
+  },
+  
+  
+  /** 
+   * Binds the vec4 uniform variable used to store the RGBA values of a color
+   * material.
+   * @param {string} uniName
+   */
+  bindColorUni:function(uniName) {
+    this._colorUni = this.getUniform(uniName);
+  },
+  
+  
+  //// Texture0
+  
+  
+  /** 
+   * Sets the value of the sampler2D uniform variable bound to store the 
+   * texture0 start offset. In most cases, just give it the value 0.
+   * @param {WebGLRenderingContext} gl
+   * @param {int} value
+   */
+  setTex0UniValue:function(gl, value) {
+    if(this._tex0Uni) {
+      this._tex0Uni.set(gl, value);
+    }
+  },
+  
+  
+  /** 
+   * Binds the sampler2D uniform variable with the specified name in this
+   * ShaderProgram to store the start offset for texture0.
+   * @param {string} uniName
+   */
+  bindTex0Uni:function(uniName) {
+    this._tex0Uni = this.getUniform(uniName);
+  },
+  
+  
+  
+  
+  
+  
   //// Opacity
   
   /** 
