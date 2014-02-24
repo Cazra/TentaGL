@@ -53,10 +53,8 @@ TentaGL.Sprite.prototype = {
   //////// Rendering
   
   /** 
-   * Sets up the concatenated model transform for the sprite and renders it. 
-   * During rendering, gl gains a new normalMat field containing the current 
-   * model transform. This allows Sprites to also be used as transform nodes
-   * in a scene graph.
+   * Renders this sprite, temporarily concatenating its model transform to the 
+   * current Model-view transform of the scene. 
    * @param {WebGLRenderingContext} gl
    */
   render:function(gl) {

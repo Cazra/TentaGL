@@ -45,6 +45,7 @@ function createSquareSprite(xyz) {
   };
   
   square.setScaleUni(0.25);
+//  square.setQuaternion(quat.setAxisAngle(quat.create(), [1,1,1], TentaGL.TAU/8));
   
   return square;
 };
@@ -108,21 +109,22 @@ function appUpdate() {
   else {
     drawScene.call(this, gl);
   }
-  
-  // Draw a second time to an offscreen buffer which we'll use to get the color of 
-  // the pixel the mouse is currently over.
-//  this.camera.useMe(gl, aspect);
-//  this.mousePixelBuffer.renderToMe(gl, drawScene.bind(this));
-//  var pixData = this.mousePixelBuffer.getPixelData(gl, this._mouse.getX(), this.getHeight( ) - this._mouse.getY(), 1, 1);
-//  var pixel = pixData.getPixelAt(0, 0);
-//  
-//  if(this._mouse.isLeftPressed()) {
-//    console.log(pixel);
-//  }
 };
 
 
 function updateScene(gl) {
+
+  if(this._keyboard.isPressed(KeyCode.W)) {
+    console.log("pressed w");
+    this.spriteGroup.setAngleX(this.spriteGroup.getAngleX() - 0.1);
+    console.log(this.spriteGroup.getAngleX());
+  }
+  
+  if(this._keyboard.isPressed(KeyCode.D)) {
+    console.log("pressed d");
+    this.spriteGroup.setAngleY(this.spriteGroup.getAngleY() + 0.1);
+  }
+
   if(this._keyboard.isPressed(KeyCode.UP)) {
     console.log("pressed up");
     this.drX -= 0.001;
@@ -146,14 +148,12 @@ function updateScene(gl) {
   }
   
   if(this._mouse.scrollUpAmount() > 0) {
-    console.log("scroll up: " + this._mouse.scrollUpAmount());
     for(var i = 0; i < this._mouse.scrollUpAmount(); i++) {
       this.camera.setDist(this.camera.getDist() * 9/10);
     }
   }
   
   if(this._mouse.scrollDownAmount() > 0) {
-    console.log("scroll down: " + this._mouse.scrollDownAmount());
     for(var i = 0; i < this._mouse.scrollDownAmount(); i++) {
       this.camera.setDist(this.camera.getDist() * 10/9);
     }
@@ -191,13 +191,17 @@ function drawScene(gl) {
 //  this.squareSprite.setAngleX(this.rX);
 
   // Draw the spinning cubes.
-  for(var i = 0; i < this.sprites.length; i++) {
-    var sprite = this.sprites[i];
+  
+  
+  var sprites = this.spriteGroup.getChildren();
+  for(var i = 0; i < sprites.length; i++) {
+    var sprite = sprites[i];
     sprite.setAngleY(this.rY);
     sprite.setAngleX(this.rX);
     sprite.setAngleZ(this.rZ);
-    sprite.render(gl);
   }
+  
+  this.spriteGroup.render(gl);
 };
 
 
@@ -219,11 +223,13 @@ function createApp(container) {
   app.drZ = 0;
 //  app.triangleSprite = createTriangleSprite([-1.5, 0, 0]);
 //  app.squareSprite = createSquareSprite([1.5, 0, 0]);
-  app.sprites = [];
+//  app.sprites = [];
+  app.spriteGroup = new TentaGL.SceneGroup();
   for(var i = -5; i < 5; i++) {
     for(var j = -5; j < 5; j++) {
       for(var k = -5; k < 5; k++) {
-        app.sprites.push(createSquareSprite([i, j, k]));
+        var sprite = createSquareSprite([i, j, k]);
+        app.spriteGroup.add(sprite);
       //  app.sprites.push(createSquareSprite([i + 0.5, j, k]));
       //  app.sprites.push(createSquareSprite([i, j + 0.5, k]));
       //  app.sprites.push(createSquareSprite([i + 0.5, j + 0.5, k]));
@@ -231,7 +237,7 @@ function createApp(container) {
     }
   }
   
-  app.mousePixelBuffer = new TentaGL.BufferTexture(app.getGL(), app.getWidth(), app.getHeight());
+//  app.mousePixelBuffer = new TentaGL.BufferTexture(app.getGL(), app.getWidth(), app.getHeight());
   app.picker = new TentaGL.Picker(app.getWidth(), app.getHeight());
   
   return app;

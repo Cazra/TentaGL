@@ -34,13 +34,18 @@ TentaGL.SceneNode = function(xyz) {
   }
   this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
   
-  //this._scaleXYZ = [1, 1, 1];
-  //this._scaleUni = 1;
+  this._scaleXYZ = [1, 1, 1];
+  this._scaleUni = 1;
   
-  //this._angleY = 0;
-  //this._angleX = 0;
-  //this._angleZ = 0;
+  this._angleY = 0;
+  this._angleX = 0;
+  this._angleZ = 0;
   
+  this._quat = quat.create();
+  this._quatIsID = true;
+  
+  this._transform = mat4.create();
+  this._tranDiry = true;
   this._isVisible = true;
 };
 
@@ -87,6 +92,7 @@ TentaGL.SceneNode.prototype = {
     this._xyz[0] = xyz[0];
     this._xyz[1] = xyz[1];
     this._xyz[2] = xyz[2];
+    this._tranDirty = true;
   },
   
   /**
@@ -123,9 +129,6 @@ TentaGL.SceneNode.prototype = {
    * @return {Number}
    */
   getAngleX:function() {
-    if(this._angleX === undefined) {
-      return 0;
-    }
     return this._angleX;
   },
   
@@ -135,6 +138,7 @@ TentaGL.SceneNode.prototype = {
    */
   setAngleX:function(angle) {
     this._angleX = angle;
+    this._tranDirty = true;
   },
   
   /** 
@@ -143,9 +147,6 @@ TentaGL.SceneNode.prototype = {
    * @return {Number}
    */
   getAngleY:function() {
-    if(this._angleY === undefined) {
-      return 0;
-    }
     return this._angleY;
   },
   
@@ -155,6 +156,7 @@ TentaGL.SceneNode.prototype = {
    */
   setAngleY:function(angle) {
     this._angleY = angle;
+    this._tranDirty = true;
   },
   
   /** 
@@ -163,9 +165,6 @@ TentaGL.SceneNode.prototype = {
    * @return {Number}
    */
   getAngleZ:function() {
-    if(this._angleZ === undefined) {
-      return 0;
-    }
     return this._angleZ;
   },
   
@@ -175,10 +174,32 @@ TentaGL.SceneNode.prototype = {
    */
   setAngleZ:function(angle) {
     this._angleZ = angle;
+    this._tranDirty = true;
   },
   
   
   //////// Quaterion TODO
+  
+  
+  /** 
+   * Returns the quaternion for this sprite. 
+   * @return {quat}
+   */
+  getQuaternion:function() {
+    return this._quat;
+  },
+  
+  /** 
+   * Sets the quaternion for this sprite. 
+   * @param {quat} q
+   */
+  setQuaternion:function(q) {
+    this._quat = q;
+    this._tranDirty = true;
+    
+    // Check if the quaternion is now an identity quaternion.
+    this._quatIsID = (q[0] == 0 && q[1] == 0 && q[2] == 0 && q[3] == 1);
+  },
   
   
   
@@ -189,9 +210,6 @@ TentaGL.SceneNode.prototype = {
    * @return {vec3}
    */
   getScaleXYZ:function() {
-    if(this._scaleXYZ === undefined) {
-      return vec3.fromValues(1, 1, 1);
-    }
     return this._ScaleXYZ;
   },
   
@@ -200,7 +218,8 @@ TentaGL.SceneNode.prototype = {
    * @param {vec3} xyz
    */
   setScaleXYZ:function(xyz) {
-    this._scaleXYZ = vec3.fromValues(xyz[0], xyz[1], xyz[2]);;
+    this._scaleXYZ = vec3.fromValues(xyz[0], xyz[1], xyz[2]);
+    this._tranDirty = true;
   },
   
   /** 
@@ -208,9 +227,6 @@ TentaGL.SceneNode.prototype = {
    * @return {Number}
    */
   getScaleX:function() {
-    if(this._scaleXYZ === undefined) {
-      return 1;
-    }
     return this._scaleXYZ[0];
   },
   
@@ -219,9 +235,6 @@ TentaGL.SceneNode.prototype = {
    * @return {Number}
    */
   getScaleY:function() {
-    if(this._scaleXYZ === undefined) {
-      return 1;
-    }
     return this._scaleXYZ[1];
   },
   
@@ -230,9 +243,6 @@ TentaGL.SceneNode.prototype = {
    * @return {Number}
    */
   getScaleZ:function() {
-    if(this._scaleXYZ === undefined) {
-      return 1;
-    }
     return this._scaleXYZ[2];
   },
   
@@ -243,9 +253,6 @@ TentaGL.SceneNode.prototype = {
    * @return {Number}
    */
   getScaleUni:function() {
-    if(this._scaleUni === undefined) {
-      return 1;
-    }
     return this._scaleUni;
   },
   
@@ -257,6 +264,7 @@ TentaGL.SceneNode.prototype = {
    */
   setScaleUni:function(coeff) {
     this._scaleUni = coeff;
+    this._tranDirty = true;
   },
   
   
@@ -269,8 +277,11 @@ TentaGL.SceneNode.prototype = {
    * @return {mat4}
    */
   getModelTransform:function() {
-    var m = this.getTRotYXZSTransform();
-    return m;
+    if(this._tranDirty) {
+      this._transform = this.getTRotYXZSTransform();
+      this._tranDirty = false;
+    }
+    return this._transform;
   },
   
   
@@ -279,20 +290,25 @@ TentaGL.SceneNode.prototype = {
     var ty = this.getY();
     var tz = this.getZ();
     
-    var sx = Math.sin(this.getAngleX());
-    var cx = Math.cos(this.getAngleX());
+    var ax = this.getAngleX();
+    var ay = this.getAngleY();
+    var az = this.getAngleZ();
     
-    var sy = Math.sin(this.getAngleY());
-    var cy = Math.cos(this.getAngleY());
+    var sx = Math.sin(ax);
+    var cx = Math.cos(ax);
     
-    var sz = Math.sin(this.getAngleZ());
-    var cz = Math.cos(this.getAngleZ());
+    var sy = Math.sin(ay);
+    var cy = Math.cos(ay);
     
-    var scaleX = this.getScaleX()*this.getScaleUni();
-    var scaleY = this.getScaleY()*this.getScaleUni();
-    var scaleZ = this.getScaleZ()*this.getScaleUni();
+    var sz = Math.sin(az);
+    var cz = Math.cos(az);
     
-    var m = TentaGL.mat4Recyclable; //mat4.create();
+    var sUni = this.getScaleUni();
+    var scaleX = this.getScaleX()*sUni;
+    var scaleY = this.getScaleY()*sUni;
+    var scaleZ = this.getScaleZ()*sUni;
+    
+    var m = this._transform; //TentaGL.mat4Recyclable; //mat4.create();
     m[0] = scaleX*(cy*cz + sy*sx*sz);
     m[1] = scaleX*(cx*sz);
     m[2] = scaleX*(cy*sx*sz - sy*cz);
@@ -307,6 +323,14 @@ TentaGL.SceneNode.prototype = {
     m[9] = scaleZ*(-sx);
     m[10] = scaleZ*(cy*cx);
     m[11] = 0;
+    
+    if(!this._quatIsID) {
+      m[12] = 0;
+      m[13] = 0;
+      m[14] = 0;
+      m[15] = 1;
+      mat4.mul(m, mat4.fromQuat(TentaGL.mat4Recyclable, this.getQuaternion()), m);
+    }
     
     m[12] = tx;
     m[13] = ty;

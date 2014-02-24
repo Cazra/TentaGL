@@ -315,6 +315,10 @@ TentaGL.Color.prototype = {
 };
 
 
+TentaGL.Inheritance.inherit(TentaGL.Color.prototype, TentaGL.Material.prototype);
+
+
+
 /** 
  * Returns a new color from normalized RGBA (red, green, blue, alpha) 
  * color components.

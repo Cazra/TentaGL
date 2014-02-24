@@ -140,3 +140,7 @@ TentaGL.BufferTexture.prototype = {
   }
 };
 
+
+TentaGL.Inheritance.inherit(TentaGL.BufferTexture.prototype, TentaGL.Material.prototype);
+
+

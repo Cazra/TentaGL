@@ -262,6 +262,8 @@ TentaGL.Texture.prototype = {
   }
 };
 
+TentaGL.Inheritance.inherit(TentaGL.Texture.prototype, TentaGL.Material.prototype);
+
 
 TentaGL.Texture.SRC_PIXDATA = 1;
 TentaGL.Texture.SRC_IMAGE = 2;
