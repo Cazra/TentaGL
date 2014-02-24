@@ -37,22 +37,61 @@ TentaGL.SceneNode = function(xyz) {
   this._scaleXYZ = [1, 1, 1];
   this._scaleUni = 1;
   
-  this._angleY = 0;
-  this._angleX = 0;
-  this._angleZ = 0;
-  
   this._quat = quat.create();
   this._quatIsID = true;
+  
+  this._objLook = vec3.fromValues(0,0,1);
+  this._objUp = vec3.fromValues(0,1,0);
   
   this._transform = mat4.create();
   this._tranDiry = true;
   this._isVisible = true;
+  
+  this._parent = undefined;
 };
 
 
 TentaGL.SceneNode.prototype = {
   
   constructor:TentaGL.SceneNode,
+  
+  
+  //////// Scene Graph hierarchy
+  
+  /**
+   * Returns the parent of this node in the scene graph. If this node has no
+   * parent, it returns undefined.
+   * @return {TentaGL.SceneNode}
+   */
+  getParent:function() {
+    return this._parent;
+  },
+  
+  /** 
+   * Sets the parent of this node in the scene graph. Although it is possible
+   * for a node to be a child for several nodes, a node can only have 1 parent.
+   * This can produce unpredictable results when calling methods to get the 
+   * node's world transforms which require a traversal up the node's 
+   * ancestors.
+   * @param {TentaGL.SceneNode}
+   */
+  setParent:function(node) {
+    this._parent = node;
+  },
+  
+  
+  /** 
+   * Returns whether this node has a parent node in the scene graph. 
+   * @return {Boolean}
+   */
+  hasParent:function() {
+    if(this._parent) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  },
   
   
   //////// Visibility
@@ -77,12 +116,22 @@ TentaGL.SceneNode.prototype = {
   //////// Position
   
   /** 
-   * Returns the Sprite's XYZ coordinates.
+   * Returns the Sprite's XYZ position in local coordinates.
    * @return {vec4}
    */
   getXYZ:function() {
     return this._xyz;
   },
+  
+  
+  getWorldXYZ:function() {
+    var wTran = this.getWorldTransform();
+    var x = wTran[12];
+    var y = wTran[13];
+    var z = wTran[14];
+    return vec4.fromValues(x, y, z, 1);
+  },
+  
   
   /** 
    * Sets the Sprite's XYZ coordinates.
@@ -124,61 +173,91 @@ TentaGL.SceneNode.prototype = {
   
   
   /** 
-   * Returns the angle of rotation of this sprite, in  radians, about its 
-   * X axis.
-   * @return {Number}
+   * Sets the orientation to be equivalent to the following matrix product: 
+   * rotateX*rotateY*rotateZ
+   * @param {length-3 array} xyz
    */
-  getAngleX:function() {
-    return this._angleX;
+  setEuclidXYZ:function(xyz) {
+    var q = quat.create();
+    quat.rotateX(q, q, xyz[0]);
+    quat.rotateY(q, q, xyz[1]);
+    quat.rotateZ(q, q, xyz[2]);
+    
+    this.setQuaternion(q);
   },
   
   /** 
-   * Sets the angle of rotation of this sprite, in radians, about its X axis.
-   * @param {Number} angle
+   * Sets the orientation to be equivalent to the following matrix product: 
+   * rotateX*rotateZ*rotateY
+   * @param {length-3 array} xyz
    */
-  setAngleX:function(angle) {
-    this._angleX = angle;
-    this._tranDirty = true;
+  setEuclicXZY:function(xyz) {
+    var q = quat.create();
+    quat.rotateX(q, q, xyz[0]);
+    quat.rotateZ(q, q, xyz[2]);
+    quat.rotateY(q, q, xyz[1]);
+    
+    this.setQuaternion(q);
   },
   
   /** 
-   * Returns the angle of rotation of this sprite, in  radians, about its 
-   * Y axis.
-   * @return {Number}
+   * Sets the orientation to be equivalent to the following matrix product: 
+   * rotateY*rotateX*rotateZ
+   * @param {length-3 array} xyz
    */
-  getAngleY:function() {
-    return this._angleY;
+  setEuclicYXZ:function(xyz) {
+    var q = quat.create();
+    quat.rotateY(q, q, xyz[1]);
+    quat.rotateX(q, q, xyz[0]);
+    quat.rotateZ(q, q, xyz[2]);
+    
+    this.setQuaternion(q);
   },
   
   /** 
-   * Sets the angle of rotation of this sprite, in radians, about its Y axis.
-   * @param {Number} angle
+   * Sets the orientation to be equivalent to the following matrix product: 
+   * rotateY*rotateZ*rotateX
+   * @param {length-3 array} xyz
    */
-  setAngleY:function(angle) {
-    this._angleY = angle;
-    this._tranDirty = true;
+  setEuclidYZX:function(xyz) {
+    var q = quat.create();
+    quat.rotateY(q, q, xyz[1]);
+    quat.rotateZ(q, q, xyz[2]);
+    quat.rotateX(q, q, xyz[0]);
+    
+    this.setQuaternion(q);
   },
   
   /** 
-   * Returns the angle of rotation of this sprite, in  radians, about its 
-   * Z axis.
-   * @return {Number}
+   * Sets the orientation to be equivalent to the following matrix product: 
+   * rotateZ*rotateX*rotateY
+   * @param {length-3 array} xyz
    */
-  getAngleZ:function() {
-    return this._angleZ;
+  setEuclidZXY:function(xyz) {
+    var q = quat.create();
+    quat.rotateZ(q, q, xyz[2]);
+    quat.rotateX(q, q, xyz[0]);
+    quat.rotateY(q, q, xyz[1]);
+    
+    this.setQuaternion(q);
   },
   
   /** 
-   * Sets the angle of rotation of this sprite, in radians, about its Z axis.
-   * @param {Number} angle
+   * Sets the orientation to be equivalent to the following matrix product: 
+   * rotateZ*rotateY*rotateX
+   * @param {length-3 array} xyz
    */
-  setAngleZ:function(angle) {
-    this._angleZ = angle;
-    this._tranDirty = true;
+  setEuclidZYX:function(xyz) {
+    var q = quat.create();
+    quat.rotateZ(q, q, xyz[2]);
+    quat.rotateY(q, q, xyz[1]);
+    quat.rotateX(q, q, xyz[0]);
+    
+    this.setQuaternion(q);
   },
   
   
-  //////// Quaterion TODO
+  //////// Quaterion/Orientation
   
   
   /** 
@@ -199,6 +278,94 @@ TentaGL.SceneNode.prototype = {
     
     // Check if the quaternion is now an identity quaternion.
     this._quatIsID = (q[0] == 0 && q[1] == 0 && q[2] == 0 && q[3] == 1);
+  },
+  
+  
+  /** 
+   * Rotates the quaternion for this node ccw around the specified axis by the  
+   * specified number of radians. 
+   * @param {vec3} axis
+   * @param {Number} rads
+   */
+  rotate:function(axis, rads) {
+    var q = quat.setAxisAngle(quat.create(), axis, rads);
+    this.setQuaternion(quat.mul(q, q, this._quat));
+  },
+  
+  
+  /** 
+   * Returns the node's unit look vector in object space. 
+   * @return {vec3}
+   */
+  getObjectLook:function() {
+    return this._objLook;
+  },
+  
+  /** 
+   * Sets and normalizes the look vector for the node in object space. 
+   * @param {vec3} look
+   */
+  setObjectLook:function(look) {
+    vec3.normalize(this._objLook, look);
+    this._correctUpVector();
+  },
+  
+  
+  /**
+   * Returns the node's unit right vector in object space. (The cross product
+   * of the look and up unit vectors)
+   */
+  getObjectRight:function() {
+    return vec3.cross(vec3.create(), this._objLook, this._objUp);
+  },
+  
+  
+  /** 
+   * Get the node's look vector augmented by quaternion orientation.
+   * @return {vec3}
+   */
+  getLook:function() {
+    var look = vec3.clone(this._objLook);
+    return vec3.transformQuat(look, look, this._quat);
+  },
+  
+  
+  /** 
+   * Get the node's up vector augmented by quaternion orientation.
+   * @return {vec3}
+   */
+  getUp:function() {
+    var up = vec3.clone(this._objUp);
+    return vec3.transformQuat(up, up, this._quat);
+  },
+  
+  
+  
+  /** 
+   * Returns the node's unit up vector in object space. 
+   * @return {vec3}
+   */
+  getObjectUp:function() {
+    return this._objUp;
+  },
+  
+  /** 
+   * Sets and normalizes the up vector for the node in object space. 
+   * @param {vec3} up
+   */
+  setObjectUp:function(up) {
+    vec3.normalize(this._objUp, up);
+    this._correctUpVector();
+  },
+  
+  /** 
+   * Corrects the up vector so that it forms a right angle with the look vector. 
+   */
+  _correctUpVector:function() {
+    var look = this._objLook;
+    var up = this._objUp;
+    var right = vec3.cross(vec3.create(), look, up);
+    this._objUp = vec3.cross(up, right, look);
   },
   
   
@@ -268,60 +435,54 @@ TentaGL.SceneNode.prototype = {
   },
   
   
+  getWorldScaleUni:function() {
+    var scale = this.getScaleUni();
+    if(this._parent) {
+      scale += this._parent.getWorldScaleUni();
+    }
+    return scale;
+  },
   
   //////// Model transform
   
   
   /** 
-   * Produces and returns the sprite's model transform.
+   * Produces and returns the sprite's local model transform.
    * @return {mat4}
    */
   getModelTransform:function() {
     if(this._tranDirty) {
-      this._transform = this.getTRotYXZSTransform();
+      this._transform = this.getTRSTransform();
       this._tranDirty = false;
     }
     return this._transform;
   },
   
   
-  getTRotYXZSTransform:function() {
+  getTRSTransform:function() {
     var tx = this.getX();
     var ty = this.getY();
     var tz = this.getZ();
-    
-    var ax = this.getAngleX();
-    var ay = this.getAngleY();
-    var az = this.getAngleZ();
-    
-    var sx = Math.sin(ax);
-    var cx = Math.cos(ax);
-    
-    var sy = Math.sin(ay);
-    var cy = Math.cos(ay);
-    
-    var sz = Math.sin(az);
-    var cz = Math.cos(az);
     
     var sUni = this.getScaleUni();
     var scaleX = this.getScaleX()*sUni;
     var scaleY = this.getScaleY()*sUni;
     var scaleZ = this.getScaleZ()*sUni;
     
-    var m = this._transform; //TentaGL.mat4Recyclable; //mat4.create();
-    m[0] = scaleX*(cy*cz + sy*sx*sz);
-    m[1] = scaleX*(cx*sz);
-    m[2] = scaleX*(cy*sx*sz - sy*cz);
+    var m = this._transform; 
+    m[0] = scaleX; 
+    m[1] = 0; 
+    m[2] = 0; 
     m[3] = 0;
     
-    m[4] = scaleY*(sy*sx*cz - cy*sz);
-    m[5] = scaleY*(cx*cz);
-    m[6] = scaleY*(sy*sz + cy*sx*cz);
+    m[4] = 0; 
+    m[5] = scaleY; 
+    m[6] = 0; 
     m[7] = 0;
     
-    m[8] = scaleZ*(sy*cx);
-    m[9] = scaleZ*(-sx);
-    m[10] = scaleZ*(cy*cx);
+    m[8] = 0; 
+    m[9] = 0; 
+    m[10] = scaleZ;
     m[11] = 0;
     
     if(!this._quatIsID) {
@@ -340,6 +501,26 @@ TentaGL.SceneNode.prototype = {
     return m;
   },
 
+  
+  /** 
+   * Obtains the world transform matrix for this node in the scene graph. 
+   * This is simply the product of this node's model transform with its
+   * ancestors' that results in the final model transformation of the node at 
+   * render time.
+   * @return {mat4}
+   */
+  getWorldTransform:function() {
+    return this._getWorldTransform(mat4.create());
+  },
+  
+  /** Private helper for getWorldTransform. */
+  _getWorldTransform:function(resultMat) {
+    mat4.mul(resultMat, this.getModelTransform(), resultMat);
+    if(this._parent) {
+      this._parent._getWorldTransform(resultMat);
+    }
+    return resultMat;
+  },
   
 };
 

@@ -58,6 +58,8 @@ TentaGL.Camera = function(eye, center, up) {
   this._zoom = 1;
   this._znear = 1;
   this._zfar = 1000;
+  
+  this._correctUpVector();
 };
 
 
@@ -67,6 +69,19 @@ TentaGL.Camera.ORTHO = 2; // Orthographic
 
 TentaGL.Camera.prototype = {
   constructor:TentaGL.Camera,
+  
+  
+  /** 
+   * Corrects the up vector so that it forms a right angle with the look vector. 
+   */
+  _correctUpVector:function() {
+    var look = this.getLookVector();
+    var up = vec3.clone(this._up);
+    var right = vec3.cross(vec3.create(), look, up);
+    up = vec3.cross(up, right, look);
+    this._up = up;
+  },
+  
   
   ////// Eye location
   
@@ -84,6 +99,7 @@ TentaGL.Camera.prototype = {
    */
   setEye:function(eye) {
     this._eye = vec3.fromValues(eye[0], eye[1], eye[2]);
+    this._correctUpVector();
   },
   
   /** 
@@ -129,6 +145,7 @@ TentaGL.Camera.prototype = {
    */
   setCenter:function(center) {
     this._center = vec3.fromValues(center[0], center[1], center[2]);
+    this._correctUpVector();
   },
   
   /**
@@ -172,6 +189,7 @@ TentaGL.Camera.prototype = {
    */
   setUp:function(up) {
     this._up = vec3.fromValues(up[0], up[1], up[2]);
+    this._correctUpVector();
   },
   
   /**

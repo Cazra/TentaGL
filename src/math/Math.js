@@ -55,8 +55,8 @@ TentaGL.Math = {
       }
     }
     else {
-      thetaY = Math.atan(-z/x);
-      if(x < 0) {
+      thetaY = Math.atan(-xyz[2]/xyz[0]);
+      if(xyz[0] < 0) {
         thetaY += TentaGL.TAU/2;
       }
     }
@@ -93,41 +93,26 @@ TentaGL.Math = {
   
   
   /** 
-   * Produces a concatenated rotation matrix of the form 
-   * Ry*Rx*Rz.
+   * Returns a matrix for changing a vector from basis B' to a vector in the 
+   * standard basis of R^3. 
+   * @param {vec3} vX   The X axis in B' relative to R^3.
+   * @param {vec3} vY   The Y axis in B' relative to R^3.
+   * @param {vec3} vZ   The Z axis in B' relative to R^3.
+   * @return {mat3}
    */
-  mat4RotYXZ:function(angleY, angleX, angleZ) {
-    var m = mat4.create();
+  matChangeBasis:function(vX, vY, vZ) {
+    var m = mat3.create();
+    m[0] = vX[0];
+    m[1] = vX[1];
+    m[2] = vX[2];
     
-    var cx = Math.cos(angleX);
-    var sx = Math.sin(angleX);
+    m[3] = vY[0];
+    m[4] = vY[1];
+    m[5] = vY[2];
     
-    var cy = Math.cos(angleY);
-    var sy = Math.sin(angleY);
-    
-    var cz = Math.cos(angleZ);
-    var sz = Math.sin(angleZ);
-    
-    m[0] = cx*cz + sx*sy*sz;
-    m[1] = cx*sz;
-    m[2] = -sy*cz + cy*sx*sz;
-    m[3] = 0;
-    
-    m[4] = -cy*sz + sx*sy*cz;
-    m[5] = cx*cz;
-    m[6] = sy*sz + sx*cy*cz;
-    m[7] = 0;
-    
-    m[8] = sy*cx;
-    m[9] = -sx;
-    m[10] = cx*cy;
-    m[11] = 0;
-    
-    m[12] = 0;
-    m[13] = 0;
-    m[14] = 0;
-    m[15] = 1;
-    
+    m[6] = vZ[0];
+    m[7] = vZ[1];
+    m[8] = vZ[2];
     return m;
-  }
+  },
 };

@@ -45,7 +45,6 @@ function createSquareSprite(xyz) {
   };
   
   square.setScaleUni(0.25);
-//  square.setQuaternion(quat.setAxisAngle(quat.create(), [1,1,1], TentaGL.TAU/8));
   
   return square;
 };
@@ -105,6 +104,9 @@ function appUpdate() {
     var sprite = this.picker.getSpriteAt(mx, my);
     console.log(pixel);
     console.log(sprite);
+    if(sprite) {
+      console.log(sprite.getWorldXYZ());
+    }
   }
   else {
     drawScene.call(this, gl);
@@ -115,29 +117,19 @@ function appUpdate() {
 function updateScene(gl) {
 
   if(this._keyboard.isPressed(KeyCode.W)) {
-    console.log("pressed w");
-    this.spriteGroup.setAngleX(this.spriteGroup.getAngleX() - 0.1);
-    console.log(this.spriteGroup.getAngleX());
+    this.spriteGroup.rotate([1,0,0], -0.1);
+  }
+  if(this._keyboard.isPressed(KeyCode.S)) {
+    this.spriteGroup.rotate([1,0,0], 0.1);
   }
   
   if(this._keyboard.isPressed(KeyCode.D)) {
-    console.log("pressed d");
-    this.spriteGroup.setAngleY(this.spriteGroup.getAngleY() + 0.1);
+    this.spriteGroup.rotate([0,1,0], 0.1);
   }
-
-  if(this._keyboard.isPressed(KeyCode.UP)) {
-    console.log("pressed up");
-    this.drX -= 0.001;
-  }
-  if(this._keyboard.isPressed(KeyCode.Z)) {
-    console.log("pressed Z");
-    this.drZ += 0.001;
+  if(this._keyboard.isPressed(KeyCode.A)) {
+    this.spriteGroup.rotate([0,1,0], -0.1);
   }
   
-  if(this._keyboard.justPressed(KeyCode.Q)) {
-    console.log("pressed Q");
-    this.drX *= -1;
-  }
   
   if(this._keyboard.justPressed(KeyCode.R)) {
     this.camera.resetOrientation();
@@ -161,10 +153,6 @@ function updateScene(gl) {
   
   
   this.camera.controlWithMouse(this._mouse, this.getWidth(), this.getHeight());
-  
-  this.rX += this.drX;
-  this.rY += this.drY;
-  this.rZ += this.drZ;
 };
 
 
@@ -196,9 +184,9 @@ function drawScene(gl) {
   var sprites = this.spriteGroup.getChildren();
   for(var i = 0; i < sprites.length; i++) {
     var sprite = sprites[i];
-    sprite.setAngleY(this.rY);
-    sprite.setAngleX(this.rX);
-    sprite.setAngleZ(this.rZ);
+    
+    // spin slowly around their local group's Y axis.
+    sprite.rotate([0, 1, 0], 0.01);
   }
   
   this.spriteGroup.render(gl);
@@ -214,7 +202,6 @@ function createApp(container) {
   app.update = appUpdate;
   
   app.camera = new TentaGL.ArcballCamera([0, 0, 10], [0, 0, 0]);
-//  app.arcball = new TentaGL.ArcballCamera([0, 0, 10], [0, 0, 0]);
   app.rX = 0;
   app.drX = 0;
   app.rY = 0;

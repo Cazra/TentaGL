@@ -42,9 +42,6 @@ TentaGL.ArcballCamera = function(eye, center, up) {
   var unitLook = vec3.normalize(vec3.create(), look);
   this._eye = vec3.sub(vec3.create(), this._center, unitLook);
   
-  this._origRotTrans = mat4.lookAt(mat4.create(), this._eye, this._center, this._up);
-  this._rotTrans = mat4.clone(this._origRotTrans);
-  
   // Save the initial center.
   this._origCenter = vec3.clone(this._center);
   
@@ -157,7 +154,6 @@ TentaGL.ArcballCamera.prototype.controlWithMouse = function(mouse, viewWidth, vi
   // Start arcball drag by saving starting arcball state.
   if(mouse.justLeftPressed()) {
     this._preVec = this.projectMouseToUnitSphere(mouse.getXY(), viewWidth, viewHeight);
-    this._preRot = mat4.clone(this._rotTrans);
     this._preOrientation = quat.clone(this._orientation);
   }
   
@@ -165,9 +161,6 @@ TentaGL.ArcballCamera.prototype.controlWithMouse = function(mouse, viewWidth, vi
   if(mouse.isLeftPressed() || mouse.justLeftReleased()) {
     var curVec = this.projectMouseToUnitSphere(mouse.getXY(), viewWidth, viewHeight);
     var q = this.getQuatFromTo(this._preVec, curVec);
-    
-    var qMat = mat4.fromQuat(mat4.create(), q);
-    this._rotTrans = mat4.mul(mat4.create(), qMat, this._preRot);
     
     quat.mul(this._orientation, q, this._preOrientation);
   }
@@ -200,14 +193,19 @@ TentaGL.ArcballCamera.prototype.controlWithMouse = function(mouse, viewWidth, vi
  * the center point from panning.
  */
 TentaGL.ArcballCamera.prototype.getViewTransform = function() {
+  
+  // Zoom translation (Z)
   var translate = mat4.create();
   mat4.translate(translate, translate, [0, 0, 0-this._dist]);
   
-  var m = mat4.mul(mat4.create(), translate, this._rotTrans);
+  // Arcball rotation (R)
+  var m = mat4.mul(mat4.create(), translate, mat4.fromQuat(mat4.create(), this._orientation));
   
+  // Center point panning. (P)
   var centerTrans = mat4.create();
   mat4.translate(centerTrans, centerTrans, vec3.negate(vec3.create(), this._center));
   
+  // M = Z*R*P
   m = mat4.mul(m, m, centerTrans);
   return m;
 };
@@ -217,7 +215,6 @@ TentaGL.ArcballCamera.prototype.getViewTransform = function() {
  * Resets the camera to its original state. 
  */
 TentaGL.ArcballCamera.prototype.resetOrientation = function() {
-  this._rotTrans = mat4.clone(this._origRotTrans);
   this._center = vec3.clone(this._origCenter);
   this._dist = this._origDist;
   this._orientation = quat.create();

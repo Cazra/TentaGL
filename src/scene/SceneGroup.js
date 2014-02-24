@@ -77,6 +77,7 @@ TentaGL.SceneGroup.prototype = {
    */
   add:function(node) {
     this._children.push(node);
+    node.setParent(this);
   },
   
   
