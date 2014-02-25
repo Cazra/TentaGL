@@ -93,25 +93,6 @@ TentaGL.ArcballCamera.prototype.projectMouseToUnitSphere = function(mouseXY, vie
 };
 
 
-/** 
- * Gets the quaternion for rotating from one point on a unit sphere to another. 
- * @param {vec3} vFrom  The point on the surface of the unit sphere the 
- *      rotation starts from.
- * @param {vec3} vTo  The point on the surface of the unit sphere the
- *      rotation ends at.
- * @return {quat}
- */
-TentaGL.ArcballCamera.prototype.getQuatFromTo = function(vFrom, vTo) {
-  var vCross = vec3.cross(vec3.create(), vFrom, vTo);
-  var vDot = vec3.dot(vFrom, vTo);
-  var theta = Math.acos(TentaGL.Math.clamp(vDot, -1, 1));
-  
-  var q = quat.setAxisAngle(quat.create(), vCross, theta);
-  q = quat.normalize(q, q);
-  return q;
-};
-
-
 
 
 /** 
@@ -160,7 +141,7 @@ TentaGL.ArcballCamera.prototype.controlWithMouse = function(mouse, viewWidth, vi
   // Rotate the arcball while the left mouse button is dragged.
   if(mouse.isLeftPressed() || mouse.justLeftReleased()) {
     var curVec = this.projectMouseToUnitSphere(mouse.getXY(), viewWidth, viewHeight);
-    var q = this.getQuatFromTo(this._preVec, curVec);
+    var q = TentaGL.Math.getQuatFromTo(this._preVec, curVec);
     
     quat.mul(this._orientation, q, this._preOrientation);
   }

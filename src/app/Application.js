@@ -166,6 +166,24 @@ TentaGL.Application.prototype = {
    */
   getAspectRatio:function() {
     return this.getWidth()/this.getHeight();
+  },
+  
+  
+  /** 
+   * Returns the keyboard input object for the application.
+   * @return {TentaGL.Keyboard}
+   */
+  keyboard:function() {
+    return this._keyboard;
+  },
+  
+  
+  /**
+   * Returns the mouse input object for the application.
+   * @return {TentaGL.Mouse}
+   */
+  mouse:function() {
+    return this._mouse;
   }
 };
 
