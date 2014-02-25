@@ -49,6 +49,8 @@ TentaGL.Picker.prototype = {
     var self = this;
     this._origFilter = TentaGL.getRenderFilter();
     var origShader = TentaGL.ShaderLib.current(gl).getID();
+    // TODO: Preserve blending state.
+    // TODO: Set blending state to no blend.
     
     TentaGL.Picker.useShader(gl);
     TentaGL.ShaderLib.lock();
@@ -69,6 +71,7 @@ TentaGL.Picker.prototype = {
     raster.clean(gl);
     
     TentaGL.ShaderLib.unlock();
+    // TODO: Restore blending state.
     TentaGL.ShaderLib.use(gl, origShader);
     TentaGL.setRenderFilter(this._origFilter);
   },

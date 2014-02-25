@@ -105,7 +105,7 @@ function appUpdate() {
     console.log(pixel);
     console.log(sprite);
     if(sprite) {
-      console.log(sprite.getWorldXYZ());
+      console.log(sprite.getWorldUp());
     }
   }
   else {
@@ -131,6 +131,10 @@ function updateScene(gl) {
   }
   
   
+
+  
+  
+  
   if(this._keyboard.justPressed(KeyCode.R)) {
     this.camera.resetOrientation();
   }
@@ -153,6 +157,27 @@ function updateScene(gl) {
   
   
   this.camera.controlWithMouse(this._mouse, this.getWidth(), this.getHeight());
+  
+  
+  
+//  if(this.keyboard().justPressed(KeyCode.Q)) {
+    var camEye = this.camera.getEye();
+    
+    /*
+    var spriteGroupPos = this.spriteGroup.getXYZ();
+    
+    var dx = camEye[0] - spriteGroupPos[0];
+    var dy = camEye[1] - spriteGroupPos[1];
+    var dz = camEye[2] - spriteGroupPos[2];
+    
+    var lookAtCamera = vec3.fromValues(dx, dy, dz);
+    var right = this.camera.getRight();
+    var cubeUp = vec3.cross(vec3.create(), lookAtCamera, right);
+    
+    this.spriteGroup.orient(lookAtCamera, cubeUp);
+    */
+    this.spriteGroup.billboardPoint(camEye, this.camera.getUp());
+//  }
 };
 
 

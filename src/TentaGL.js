@@ -550,6 +550,15 @@ TentaGL.GL_FLOAT_MAT4 = 0x8B5C;
 TentaGL.GL_SAMPLER_2D = 0x8B5E;
 TentaGL.GL_SAMPLER_CUBE = 0x8B60;
 
+TentaGL.GL_FUNC_ADD = 0x8006;
+TentaGL.GL_FUNC_SUBTRACT = 0x800A;
+TentaGL.GL_FUNC_REVERSE_SUBTRACT = 0x800B;
+
+TentaGL.GL_ONE = 1;
+TentaGL.GL_ZERO = 0;
+
+
+
 TentaGL.mat3Recyclable = mat3.create();
 TentaGL.mat4Recyclable = mat4.create();
 

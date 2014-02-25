@@ -39,8 +39,8 @@ TentaGL.ArcballCamera = function(eye, center, up) {
   this._dist = this._origDist;
   
   // Save our initial rotational transform with our eye at distance = 1 from the center.
-  var unitLook = vec3.normalize(vec3.create(), look);
-  this._eye = vec3.sub(vec3.create(), this._center, unitLook);
+  this._origLook = vec3.normalize(vec3.create(), look);
+//  this._eye = vec3.sub(vec3.create(), this._center, this._origLook);
   
   // Save the initial center.
   this._origCenter = vec3.clone(this._center);
@@ -48,10 +48,14 @@ TentaGL.ArcballCamera = function(eye, center, up) {
   // Save our orientation, as well as the initial up and right vectors of the camera.
   this._orientation = quat.create();
   this._origUp = vec3.clone(this._up);
-  this._origRight = vec3.cross(vec3.create(), unitLook, this._origUp);
+  this._origRight = vec3.cross(vec3.create(), this._origLook, this._origUp);
 };
 
 TentaGL.ArcballCamera.prototype = Object.create(TentaGL.Camera.prototype);
+
+
+
+//////// Arcball sphere projection
 
 /** 
  * Converts mouse viewport coordinates to unit sphere coordinates. 
@@ -94,6 +98,32 @@ TentaGL.ArcballCamera.prototype.projectMouseToUnitSphere = function(mouseXY, vie
 
 
 
+//////// Eye position
+
+
+TentaGL.ArcballCamera.prototype.getEye = function() {
+  var lookInv = this.getLook();
+  vec3.negate(lookInv, lookInv);
+  vec3.scale(lookInv, lookInv, this._dist);
+  
+  return vec3.add(this._eye, this._center, lookInv);
+};
+
+
+//////// Look, Up, Right vectors
+
+/** 
+ * Returns the unit vector currently pointing in the "look" direction of the view.
+ * For our arcball camera, this is calculated from the original look vector
+ * and the orientation quaternion.
+ * @return {vec3}
+ */
+TentaGL.ArcballCamera.prototype.getLook = function() {
+  var qMatInv = mat4.invert(mat4.create(), mat4.fromQuat(mat4.create(), this._orientation));
+  var look = vec3.transformMat4(vec3.create(), this._origLook, qMatInv);
+  return vec3.normalize(look, look);
+};
+
 
 /** 
  * Returns the unit vector currently pointing in the "up" direction of the view.
@@ -120,9 +150,31 @@ TentaGL.ArcballCamera.prototype.getRight = function() {
 };
 
 
+//////// Distance
+
+/** 
+ * Returns the distance of the eye from the center.
+ * @return {Number}
+ */
+TentaGL.ArcballCamera.prototype.getDist = function() {
+  return this._dist;
+};
+
+
+/** 
+ * Sets the distance from the eye to the center without changing the 
+ * orientation. 
+ * @param {Number} dist
+ */
+TentaGL.ArcballCamera.prototype.setDist = function(dist) {
+  this._dist = dist;
+};
 
 
 
+
+
+//////// Controller
 
 /** 
  * Controls the arcball camera with the mouse using dragging gestures. 
@@ -169,6 +221,20 @@ TentaGL.ArcballCamera.prototype.controlWithMouse = function(mouse, viewWidth, vi
 
 
 /** 
+ * Resets the camera to its original state. 
+ */
+TentaGL.ArcballCamera.prototype.resetOrientation = function() {
+  this._center = vec3.clone(this._origCenter);
+  this._dist = this._origDist;
+  this._orientation = quat.create();
+};
+
+
+
+//////// Camera transforms
+
+
+/** 
  * Returns the view transform for the arcball camera. This accounts for 
  * rotation of the arcball, distance from the center point, and translation of
  * the center point from panning.
@@ -192,33 +258,7 @@ TentaGL.ArcballCamera.prototype.getViewTransform = function() {
 };
 
 
-/** 
- * Resets the camera to its original state. 
- */
-TentaGL.ArcballCamera.prototype.resetOrientation = function() {
-  this._center = vec3.clone(this._origCenter);
-  this._dist = this._origDist;
-  this._orientation = quat.create();
-};
 
 
-/** 
- * Returns the distance of the eye from the center.
- * @return {Number}
- */
-TentaGL.ArcballCamera.prototype.getDist = function() {
-  return this._dist;
-};
-
-
-
-/** 
- * Sets the distance from the eye to the center without changing the 
- * orientation. 
- * @param {Number} dist
- */
-TentaGL.ArcballCamera.prototype.setDist = function(dist) {
-  this._dist = dist;
-};
 
 

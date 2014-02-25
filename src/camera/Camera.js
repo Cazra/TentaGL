@@ -52,14 +52,13 @@ TentaGL.Camera = function(eye, center, up) {
   var uy = up[1] || 1;
   var uz = up[2] || 0;
   this._up = vec3.fromValues(ux, uy, uz);
+  this._correctUpVector();
   
   this._mode = TentaGL.Camera.PERSP;
   this._fovBase = TentaGL.TAU/8;
   this._zoom = 1;
   this._znear = 1;
   this._zfar = 1000;
-  
-  this._correctUpVector();
 };
 
 
@@ -72,14 +71,14 @@ TentaGL.Camera.prototype = {
   
   
   /** 
-   * Corrects the up vector so that it forms a right angle with the look vector. 
+   * Corrects the up vector so that it forms a right angle with the look vector
+   * and so that it is a unit vector.
    */
   _correctUpVector:function() {
     var look = this.getLookVector();
-    var up = vec3.clone(this._up);
-    var right = vec3.cross(vec3.create(), look, up);
-    up = vec3.cross(up, right, look);
-    this._up = up;
+    var right = vec3.cross(vec3.create(), look, this._up);
+    vec3.cross(this._up, right, look);
+    vec3.normalize(this._up, this._up);
   },
   
   
@@ -172,11 +171,59 @@ TentaGL.Camera.prototype = {
     return this._center[2];
   },
   
+  //////// "Look" vector
+  
+  
+  /** 
+   * Returns the unit vector pointing in the "look" direction of the view.
+   * @return {vec3}
+   */
+  getLook:function() {
+    var look = this.getLookVector();
+    return vec3.normalize(look, look);
+  },
+  
+  
+  /** 
+   * Gets the unnormalized vector from eye to center. 
+   * @return {vec3}
+   */
+  getLookVector:function() {
+    return vec3.sub(vec3.create(), this._center, this._eye);
+  },
+  
+  
+  /** 
+   * Returns the distance of the eye from the center.
+   * @return {Number}
+   */
+  getDist:function() {
+    return vec3.length(this.getLookVector());
+  },
+  
+  
+  /** 
+   * Sets the distance from the eye to the center by changing the eye's position
+   * relative to the center. This does not change the orientation of the camera. 
+   */
+  setDist:function(dist) {
+    var lookInv = this.getLookVector();
+    vec3.negate(lookInv, lookInv);
+    vec3.scale(lookInv, lookInv, dist/vec3.length(lookInv));
+    
+    vec3.add(this._eye, this._center, lookInv);
+  },
+  
+  
+  
+  
+  
+  
   
   //////// "Up" vector
   
   /** 
-   * Returns a copy of the camera's "up" vector.
+   * Returns a copy of the camera's unit "up" vector.
    * @return {vec3}
    */
   getUp:function() {
@@ -215,6 +262,23 @@ TentaGL.Camera.prototype = {
   getUpZ:function() {
     return this._up[2];
   },
+  
+  
+  
+  
+  //////// "Right" vector
+  
+  
+  /** 
+   * Returns the unit vector pointing in the "right" direction of the view.
+   * @return {vec3}
+   */
+  getRight:function() {
+    var right = vec3.cross(vec3.create(), this.getLook(), this.getUp());
+    vec3.normalize(right, right);
+    return right;
+  },
+  
   
   
   //////// Perspective properties
@@ -361,48 +425,6 @@ TentaGL.Camera.prototype = {
   
   
   //////// Misc.
-  
-  /** 
-   * Gets the vector from center to eye. 
-   * @return {vec3}
-   */
-  getLookVector:function() {
-    return vec3.sub(vec3.create(), this._center, this._eye);
-  },
-  
-  
-  /** 
-   * Returns the distance of the eye from the center.
-   * @return {Number}
-   */
-  getDist:function() {
-    return vec3.length(this.getLookVector());
-  },
-  
-  
-  /** 
-   * Sets the distance from the eye to the center without changing the 
-   * orientation. 
-   */
-  setDist:function(dist) {
-    var lookVec = this.getLookVector();
-    vec3.scale(lookVec, lookVec, dist/vec3.length(lookVec));
-    
-    vec3.add(this._eye, this._center, lookVec);
-    console.log(this._eye);
-  },
-  
-  
-  
-  /** 
-   * Returns the unit vector currently pointing in the "right" direction of the view.
-   * @return {vec3}
-   */
-  getRight:function() {
-    var right = vec3.cross(vec3.create(), this.getLookVector(), this.getUp());
-    vec3.normalize(right, right);
-    return right;
-  },
   
   
   /** 

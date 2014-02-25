@@ -117,17 +117,18 @@ TentaGL.Math = {
   },
   
   
-/** 
- * Gets the quaternion for rotating from vector to another. 
- * @param {vec3} vFrom  The start vector.
- * @param {vec3} vTo  The end vector.
- * @return {quat}
- */
+  /** 
+   * Gets the quaternion for rotating from one vector to another. 
+   * @param {vec3} vFrom  The start vector.
+   * @param {vec3} vTo  The end vector.
+   * @return {quat}
+   */
   getQuatFromTo:function(vFrom, vTo) {
     var vnFrom = vec3.normalize(vec3.create(), vFrom);
     var vnTo = vec3.normalize(vec3.create(), vTo);
     
     var axis = vec3.cross(vec3.create(), vnFrom, vnTo);
+    vec3.normalize(axis, axis);
     var cosTheta = TentaGL.Math.clamp(vec3.dot(vnFrom, vnTo), -1, 1);
     var sinTheta = vec3.length(axis);
     
