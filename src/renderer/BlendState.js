@@ -46,6 +46,9 @@ TentaGL.BlendState = function(enableBlend, enableDepth) {
   
   this._funcSrc = TentaGL.GL_ONE;
   this._funcDst = TentaGL.GL_ZERO;
+  
+  this._cullFront = false;
+  this._cullBack = false;
 };
 
 
@@ -189,6 +192,29 @@ TentaGL.BlendState.prototype = {
   },
   
   
+  
+  //////// Face culling
+  
+  /** 
+   * Set whether to cull front faces. 
+   * (Front faces of models won't be rendered.)
+   * @param {Boolean} enable
+   */
+  setCullFront:function(enable) {
+    this._cullFront = enable;
+  },
+  
+  /** 
+   * Set whether to cull back faces.
+   * (Back faces of models won't be rendered.)
+   * @param {Boolean} enable
+   */
+  setCullBack:function(enable) {
+    this._cullBack = enable;
+  },
+  
+  
+  
   //////// GL state
   
   /** Sets the WebGL context to use this BlendState. */
@@ -202,10 +228,29 @@ TentaGL.BlendState.prototype = {
     
     if(this._enableDepth) {
       gl.enable(gl.DEPTH_TEST);
+      console.log("depth test is on");
     }
     else {
       gl.disable(gl.DEPTH_TEST);
+      console.log("depth test is off");
     }
+    
+    if(this._cullFront && this._cullBack) {
+      gl.enable(gl.CULL_FACE);
+      gl.cullFace(gl.FRONT_AND_BACK);
+    }
+    else if(this._cullFront) {
+      gl.enable(gl.CULL_FACE);
+      gl.cullFace(gl.FRONT);
+    }
+    else if(this._cullBack) {
+      gl.enable(gl.CULL_FACE);
+      gl.cullFace(gl.BACK);
+    }
+    else {
+      gl.disable(gl.CULL_FACE);
+    }
+    
 
     gl.blendColor(this._blendColor.getRed(), this._blendColor.getGreen(), this._blendColor.getBlue(), this._blendColor.getAlpha());
     gl.blendEquation(this._equation);
@@ -221,7 +266,7 @@ TentaGL.BlendState.prototype = {
  * depth test turned on. 
  * @return {TentaGL.BlendState}
  */
-TentaGL.BlendState.NoBlend = function() {
+TentaGL.BlendState.None = function() {
   var result = new TentaGL.BlendState(false);
   return result;
 };
@@ -234,7 +279,7 @@ TentaGL.BlendState.NoBlend = function() {
  * dst : ONE_MINUS_SRC_ALPHA
  * @return {TentaGL.BlendState}
  */
-TentaGL.BlendState.DefaultBlend = function() {
+TentaGL.BlendState.AlphaComposite = function() {
   var result = new TentaGL.BlendState(true, false);
   result.setFuncs(TentaGL.GL_SRC_ALPHA, TentaGL.GL_ONE_MINUS_SRC_ALPHA);
   return result;

@@ -24,47 +24,62 @@
 
 
 
-TentaGL.DOM = {
+TentaGL.IconSprite = function(xyz, camera, texName) {
+  TentaGL.BillboardSprite.call(this, xyz, camera);
+  this._texName = texName;
+  
+  var tex = TentaGL.MaterialLib.get(texName);
+  this._width = tex.getWidth();
+  this._height = tex.getHeight();
+  
+};
+
+
+TentaGL.IconSprite.prototype = {
+  
+  constructor:TentaGL.IconSprite,
+  
   
   /** 
-   * Gets the absolute position of a DOM element in the document. 
-   * @param {DOM element}
-   * @return {length-2 array} The XY coordinates.
+   * Returns the name of this icon's texture material. 
+   * @return {string}
    */
-  getAbsolutePosition: function(element) {
-    // get the absolute position of the canvas element in the document.
-    var obj = element;
-    var offX = 0;
-    var offY = 0;
-    while( obj.nodeName != "BODY") {
-      offX += obj.offsetLeft;
-      offY += obj.offsetTop;
-      
-      obj = obj.parentNode;
-    }
-    
-    return [offX, offY];
+  getTextureName:function() {
+    return this._texName;
+  },
+  
+  /** 
+   * Returns this icon's texture material. 
+   * @return {TentaGL.Texture}
+   */
+  getTexture:function() {
+    return TentaGL.MaterialLib.get(this._texName);
   },
   
   
-  /** Returns the string for a DOM script element's text content. */
-  extractScriptText:function(scriptID) {
-    var shaderScript = document.getElementById(scriptID);
-    if(!shaderScript) {
-      throw Error("Script ID " + scriptID + " doesn't exist in the document.");
-    }
-    
-    // Extract the shader source code from the DOM script element.
-    var str = "";
-    var k = shaderScript.firstChild;
-    console.log(shaderScript);
-    while(k) {
-      if(k.nodeType == Node.TEXT_NODE) {
-        str += k.textContent;
-      }
-      k = k.nextSibling;
-    }
-    
-    return str;
+  /** 
+   * Returns the icon's pixel width. 
+   * @return {int}
+   */
+  getIconWidth:function() {
+    return this._width;
+  },
+  
+  /**
+   * Returns the icon's pixel height.
+   * @return {int}
+   */
+  getIconHeight:function() {
+    return this._height;
+  },
+  
+  
+  draw:function(gl) {    
+    TentaGL.MaterialLib.use(gl, this._texName);
+    TentaGL.VBORenderer.render(gl, "unitPlane");
   }
 };
+
+
+
+TentaGL.Inheritance.inherit(TentaGL.IconSprite.prototype, TentaGL.BillboardSprite.prototype);

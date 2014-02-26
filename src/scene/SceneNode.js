@@ -296,6 +296,16 @@ TentaGL.SceneNode.prototype = {
   },
   
   
+  getParentWorldQuat:function() {
+    if(this._parent) {
+      return this._parent.getWorldQuat();
+    }
+    else {
+      return quat.create();
+    }
+  },
+  
+  
   /** 
    * Rotates the quaternion for this node ccw around the specified axis by the  
    * specified number of radians. 
@@ -319,8 +329,10 @@ TentaGL.SceneNode.prototype = {
   },
   
   
+  //////// Look vector & orientation
+  
   /** 
-   * Returns the node's unit look vector in object space. This is used as the X
+   * Returns the node's unit look vector in local space. This is used as the X
    * axis in the node's look space.
    * @return {vec3}
    */
@@ -328,8 +340,20 @@ TentaGL.SceneNode.prototype = {
     return this._objLook;
   },
   
+  
   /** 
-   * Sets and normalizes the base look vector for the node. 
+   * Returns the node's unit look vector in world space. This is used as the X
+   * axis in the node's look space.
+   * @return {vec3}
+   */
+  getWorldBaseLook:function() {
+    var q = this.getParentWorldQuat();
+    return vec3.transformQuat(vec3.create(), this._objLook, q);
+  },
+  
+  
+  /** 
+   * Sets and normalizes the base look vector for the node in local space. 
    * @param {vec3} look
    */
   setBaseLook:function(look) {
@@ -358,7 +382,7 @@ TentaGL.SceneNode.prototype = {
   },
 
   
-  
+  //////// Right vector & orientation
   
   /**
    * Returns the node's base unit right vector. (The cross product
@@ -369,7 +393,21 @@ TentaGL.SceneNode.prototype = {
     return vec3.cross(vec3.create(), this._objLook, this._objUp);
   },
   
+  /** 
+   * Returns the node's unit right vector in world space. This is used as the Z 
+   * axis in look space.
+   * @return {vec3}
+   */
+  getWorldBaseRight:function() {
+    var q = this.getParentWorldQuat();
+    return vec3.transformQuat(vec3.create(), this.getBaseRight(), q);
+  },
   
+  
+  /** 
+   * Returns the oriented right vector of this node in local space.
+   * @return {vec3}
+   */
   getRight:function() {
     return vec3.transformQuat(vec3.create(), this.getBaseRight(), this._quat);
   },
@@ -385,7 +423,7 @@ TentaGL.SceneNode.prototype = {
   },
   
   
-  
+  //////// Up vector & orientation
   
   /** 
    * Get the node's oriented up vector in local coordinates.
@@ -415,6 +453,18 @@ TentaGL.SceneNode.prototype = {
     return this._objUp;
   },
   
+  
+  /** 
+   * Returns the node's unit up vector in world space. This is used as the Y
+   * axis in the node's look space.
+   * @return {vec3}
+   */
+  getWorldBaseUp:function() {
+    var q = this.getParentWorldQuat();
+    return vec3.transformQuat(vec3.create(), this._objUp, q);
+  },
+  
+
   /** 
    * Sets and normalizes the base up vector for the node. 
    * @param {vec3} up
@@ -435,6 +485,8 @@ TentaGL.SceneNode.prototype = {
     this._objUp = vec3.cross(up, right, look);
   },
   
+  
+  //////// Look/Up/Right vectors
   
   /** 
    * Returns an array containing the node's base look, up, and right vectors, 
@@ -476,6 +528,9 @@ TentaGL.SceneNode.prototype = {
   
   
   
+  
+  //////// Orientation
+  
   /** 
    * Orients the node so that its look and up vectors are in the 
    * specified directions in local space. 
@@ -493,6 +548,30 @@ TentaGL.SceneNode.prototype = {
     }
   },
   
+  /** 
+   * Orients the node so that its look and up vectors are in the specified 
+   * directions in world space.
+   * @param {vec3} look
+   * @param {vec3} up
+   */
+  orientWorld:function(look, up) {
+    var qToLocal = this.getParentWorldQuat();
+    quat.invert(qToLocal, qToLocal);
+    look = vec3.transformQuat(vec3.create(), look, qToLocal);
+    up = vec3.transformQuat(vec3.create(), up, qToLocal);
+    
+    var q = TentaGL.Math.getQuatFromTo(this.getBaseLook(), look);
+    this.setQuat(q);
+    
+    if(up) {
+      var curUp = this.getUp();
+      var q2 = TentaGL.Math.getQuatFromTo(curUp, up);
+      this.mulQuat(q2);
+    }
+  },
+  
+  
+  //////// Look-At/Billboarding
   
   /** 
    * Orients the node to look towards the specified point in local space.
@@ -513,8 +592,35 @@ TentaGL.SceneNode.prototype = {
     this.orient(look, up);
   },
   
+  /** 
+   * Orients the node to look towards the specified point in world space.
+   * The look vector will be oriented towards the point, but the up vector
+   * will be tilted from the base up vector.
+   */
+  lookAtWorld:function(p) {
+    var xyz = this.getWorldXYZ();
+    
+    var dx = p[0] - xyz[0];
+    var dy = p[1] - xyz[1];
+    var dz = p[2] - xyz[2];
+    
+    var look = vec3.fromValues(dx, dy, dz);
+    var right = vec3.cross(vec3.create(), look, this.getWorldBaseUp());
+    var up = vec3.cross(vec3.create(), right, look);
+    
+    this.orientWorld(look, up);
+  },
   
   
+  
+  
+  /** 
+   * Orients the node so that it looks towards a certain point in local space 
+   * and its up vector is oriented in some specified general direction 
+   * in local space.
+   * @param {vec4} p    The point to look at.
+   * @param {vec3} up   The general direction of "up".
+   */
   billboardPoint:function(p, up) {
     var xyz = this.getXYZ();
     
@@ -531,30 +637,92 @@ TentaGL.SceneNode.prototype = {
   
   
   /** 
-   * Orients the node so that it looks in the direction of some point, 
-   * but its up vector remains set as the base up vector.
+   * Orients the node so that it looks towards a certain point in world space 
+   * and its up vector is oriented in some specified general direction 
+   * in world space.
+   * @param {vec4} p    The point to look at.
+   * @param {vec3} up   The general direction of "up".
    */
-  billboardAxis:function(p) {
-    var xyz = this.getXYZ();
+  billboardWorldPoint:function(p, up) {
+    var xyz = this.getWorldXYZ();
     
     var dx = p[0] - xyz[0];
     var dy = p[1] - xyz[1];
     var dz = p[2] - xyz[2];
     
     var look = vec3.fromValues(dx, dy, dz);
+    var right = vec3.cross(vec3.create(), look, up);
+    up = vec3.cross(vec3.create(), right, look);
     
-    var q = TentaGL.Math.getQuatFromTo(this.getBaseLook(), look);
-    this.setQuat(q);
+    this.orientWorld(look, up);
+  },
+  
+  
+  /** 
+   * Orients the node so that it looks in the direction of some point in local space, 
+   * but its up vector remains set as the base up vector.
+   */
+  billboardAxis:function(p) {
+    var xyz = this.getXYZ();
+    var baseLook = this.getBaseLook();
+    var baseUp = this.getBaseUp();
     
-    var right = vec3.cross(vec3.create(), look, this.getBaseUp());
-    var upTo = vec3.cross(vec3.create(), right, look);
+    var dx = p[0] - xyz[0];
+    var dy = p[1] - xyz[1];
+    var dz = p[2] - xyz[2];
     
-    q = TentaGL.Math.getQuatFromTo(this.getUp(), upTo);
-    this.mulQuat(q);
+    var look = vec3.fromValues(dx, dy, dz);
+    var q = TentaGL.Math.getQuatFromTo(baseLook, look);
+    var up = vec3.transformQuat(vec3.create(), baseUp, q);
     
-    upTo = this.getBaseUp();
-    q = TentaGL.Math.getQuatFromTo(this.getUp(), upTo);
-    this.mulQuat(q);
+    var rightP = vec3.cross(vec3.create(), look, baseUp);
+    var upP = vec3.cross(vec3.create(), rightP, look);
+    
+    var q2 = TentaGL.Math.getQuatFromTo(up, upP);
+    quat.mul(q, q2, q);
+    
+    var q2 = TentaGL.Math.getQuatFromTo(upP, baseUp);
+    quat.mul(q, q2, q);
+    
+    look = vec3.transformQuat(look, baseLook, q);
+    up = baseUp
+    
+    
+    this.orient(look, up);
+  },
+  
+  
+  /** 
+   * Orients the node so that it looks in the direction of some point in world space, 
+   * but its up vector remains set as the base up vector.
+   */
+  billboardWorldAxis:function(p) {
+    var xyz = this.getWorldXYZ();
+    var baseLook = this.getWorldBaseLook();
+    var baseUp = this.getWorldBaseUp();
+    
+    var dx = p[0] - xyz[0];
+    var dy = p[1] - xyz[1];
+    var dz = p[2] - xyz[2];
+    
+    var look = vec3.fromValues(dx, dy, dz);
+    var q = TentaGL.Math.getQuatFromTo(baseLook, look);
+    var up = vec3.transformQuat(vec3.create(), baseUp, q);
+    
+    var rightP = vec3.cross(vec3.create(), look, baseUp);
+    var upP = vec3.cross(vec3.create(), rightP, look);
+    
+    var q2 = TentaGL.Math.getQuatFromTo(up, upP);
+    quat.mul(q, q2, q);
+    
+    var q2 = TentaGL.Math.getQuatFromTo(upP, baseUp);
+    quat.mul(q, q2, q);
+    
+    look = vec3.transformQuat(look, baseLook, q);
+    up = baseUp
+    
+    
+    this.orientWorld(look, up);
   },
   
   
@@ -681,30 +849,6 @@ TentaGL.SceneNode.prototype = {
     return m;
   },
   
-  /*
-    m[0] = scaleX; 
-    m[1] = 0; 
-    m[2] = 0; 
-    m[3] = 0;
-    
-    m[4] = 0; 
-    m[5] = scaleY; 
-    m[6] = 0; 
-    m[7] = 0;
-    
-    m[8] = 0; 
-    m[9] = 0; 
-    m[10] = scaleZ;
-    m[11] = 0;
-    
-    if(!this._quatIsID) {
-      m[12] = 0;
-      m[13] = 0;
-      m[14] = 0;
-      m[15] = 1;
-      mat4.mul(m, mat4.fromQuat(TentaGL.mat4Recyclable, this.getQuat()), m);
-    }
-    */
   
   /** 
    * Obtains the world transform matrix for this node in the scene graph. 

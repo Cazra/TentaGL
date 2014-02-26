@@ -57,10 +57,11 @@ TentaGL.MaterialLib = {
       throw Error("Material " + name + " already exists.");
     }
     if(!TentaGL.Inheritance.objImplements(material, TentaGL.Material)) {
-    
+      throw Error("Object for " + name + " isn't a material!");
     }
     
     this._materials[name] = material;
+    
     return material;
   },
   
@@ -87,13 +88,25 @@ TentaGL.MaterialLib = {
    * @param {string} name
    */
   use:function(gl, name) {
+    if(this._currentName === name) {
+      return;
+    }
+    
     var material = this._materials[name];
     if(material === undefined) {
       throw Error("Material " + name + " doesn't exist.");
     }
     
     material.useMe(gl);
+    this._currentName = name;
   },
+  
+  
+  /** Sets the library to not currently be using a material. */
+  useNone:function() {
+    this._currentName = undefined;
+  },
+  
   
   
   /** Returns true iff all the Materials in the library are loaded. */

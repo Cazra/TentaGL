@@ -42,9 +42,18 @@ TentaGL.Inheritance = {
    */
   objImplements:function(obj, intf) {
     for(var i in intf) {
-      if(!obj[i] || !obj[i].length || obj[i].length < intf[i].length) {
+      if(!obj[i] || obj[i].length === undefined) {
+        console.log(i + " not present.");
+        console.log(obj);
         return false;
       }
+      
+      if(obj[i].length < intf[i].length) {
+        console.log("Has " + obj[i].length + " arguments, expected " + intf[i].length);
+        console.log(obj);
+        return false;
+      }
+      
     }
     return true;
   },

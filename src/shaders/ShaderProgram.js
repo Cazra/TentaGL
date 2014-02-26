@@ -125,7 +125,7 @@ TentaGL.ShaderProgram.prototype = {
   
   
   /** Deletes this ProgramShader from the WebGL context. */
-  deleteMe:function(gl) {
+  clean:function(gl) {
     gl.deleteProgram(this._glProg);
   },
   

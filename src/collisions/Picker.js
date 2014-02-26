@@ -44,15 +44,18 @@ TentaGL.Picker.prototype = {
    * @param {WebGLRenderingContext} gl
    * @param {function(WebGLRenderingContext)} renderFunc   
    *      The function used to render the scene.
+   * @param {Boolean} renderToView  Optional. If true, the picker will render 
+   *      to to the canvas as well as its offscreen buffer. This may be useful
+   *      for debugging purposes. Default is false.
    */
-  update:function(gl, renderFunc) {
+  update:function(gl, renderFunc, renderToView) {
     var self = this;
     this._origFilter = TentaGL.getRenderFilter();
     var origShader = TentaGL.ShaderLib.current(gl).getID();
     var origBlendState = TentaGL.BlendStateLib.current().getID();
     
-    // TODO: Set blending state to no blend.
-    TentaGL.BlendStateLib.use(gl, TentaGL.BlendStateLib.NO_BLEND);
+    // Set up the GL state for picker rendering. 
+    TentaGL.BlendStateLib.useNone(gl);
     TentaGL.Picker.useShader(gl);
     TentaGL.ShaderLib.lock();
     this._nextID = 1;
@@ -61,8 +64,10 @@ TentaGL.Picker.prototype = {
     this._gl = gl;
     TentaGL.setRenderFilter(this._filterFunction.bind(this));
     
-    renderFunc(gl);
-    this._nextID = 1;
+    if(renderToView) {
+      renderFunc(gl);
+      this._nextID = 1;
+    }
     
     // Render to the offscreen raster, cache the pixel data, 
     // and then delete the offscreen raster.
@@ -71,6 +76,8 @@ TentaGL.Picker.prototype = {
     this._pixels = raster.getPixelData(gl);
     raster.clean(gl);
     
+    
+    // Restore the previous state.
     TentaGL.ShaderLib.unlock();
     TentaGL.BlendStateLib.use(gl, origBlendState);
     TentaGL.ShaderLib.use(gl, origShader);

@@ -44,6 +44,19 @@ TentaGL.ModelLib = {
   
   
   /** 
+   * Cleans the library and then preloads it with the following built-in 
+   * common models:
+   * "unitPlane" - a 1x1 square whose lower-left corner is at (0,0,0) and whose
+   *               upper-right corner is at (1,1,0).
+   */
+  reset:function(gl) {
+    this.clean(gl);
+    this.add(gl, "unitPlane", new TentaGL.Model.Plane(1,1));
+  },
+  
+  
+  
+  /** 
    * Creates and adds the VBO data for a model to the library, intended to be 
    * used only with the specified shader. (This may change once I figure out 
    * some way to allow different shaders to use the same VBOs)
@@ -64,6 +77,11 @@ TentaGL.ModelLib = {
   add:function(gl, modelID, model, attrProfileSet) {
   //  console.log("Creating VBO for " + modelID + " with profiles set ");
   //  console.log(attrProfileSet);
+  
+    if(!attrProfileSet) {
+      attrProfileSet = TentaGL.getDefaultAttrProfileSet();
+    }
+    
     var vbo = new TentaGL.VBOData(gl, model, attrProfileSet);
     this._vboData[modelID] = vbo;
   },

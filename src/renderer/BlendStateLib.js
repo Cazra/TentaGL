@@ -25,10 +25,6 @@
 /** A singleton library for BlendStates. */
 TentaGL.BlendStateLib = {
   
-  DEFAULT_BLEND:"DefaultBlend",
-  
-  NO_BLEND:"NoBlend",
-  
   _blendStates:{},
   
   _currentName:"",
@@ -38,11 +34,17 @@ TentaGL.BlendStateLib = {
   
   
   /** 
-   * Loads the library with two built-in BlendStates: NO_BLEND and DEFAULT_BLEND.
+   * Resets the library and pre-loads it with two built-in BlendStates: 
+   * "None" - Blending is disabled and depth-test is enabled.
+   * "AlphaComposite" - Blending is enabled and depth-test is disabled. The
+   *                    add equation is used with source function SRC_ALPHA
    */
-  loadBuiltInStates:function() {
-    this.add(this.NO_BLEND, TentaGL.BlendState.NoBlend());
-    this.add(this.DEFAULT_BLEND, TentaGL.BlendState.DefaultBlend());
+  reset:function(gl) {
+    this._blendStates = {};
+    this.add("None", TentaGL.BlendState.None());
+    this.add("AlphaComposite", TentaGL.BlendState.AlphaComposite());
+    
+    this.useNone(gl);
   },
   
   
@@ -86,11 +88,17 @@ TentaGL.BlendStateLib = {
    * @return {TentaGL.BlendState} The BlendState now being used.
    */
   use:function(gl, name) {
-    if(!this._locked && this._currentName !== name) {
+    if(!this._locked && this._currentName !== name) {      
       this._currentName = name;
       var blendState = this._blendStates[name];
       blendState.useMe(gl);
     }
+  },
+  
+  
+  /** Uses the built-in "None" BlendState. */
+  useNone:function(gl) {
+    this.use(gl, "None");
   },
   
   

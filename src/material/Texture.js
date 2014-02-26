@@ -67,6 +67,8 @@ TentaGL.Texture.prototype = {
     this._width = src.width;
     this._height = src.height;
     this._loaded = true;
+    
+    TentaGL.MaterialLib.useNone();
   },
   
   /** 
@@ -256,8 +258,8 @@ TentaGL.Texture.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   useMe:function(gl) {
-    gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
+    gl.activeTexture(gl.TEXTURE0);
     TentaGL.ShaderLib.current(gl).setTex0UniValue(gl, 0);
   }
 };

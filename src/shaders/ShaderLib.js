@@ -31,11 +31,38 @@
  */
 TentaGL.ShaderLib = {
   
+  
+  /** The collection of loaded shader programs. */
+  _programs: {},
+  
+  
   /** 
    * If true, then the ShaderLib cannot change what program is used by 
    * the GL context. See the lock() and unlock() methods.
    */
   _locked: false,
+  
+  
+  /** Removes all loaded shader programs from the library and GL context. */
+  clean:function(gl) {
+    for(var i in this._programs) {
+      this._programs[i].clean(gl);
+    }
+    this._programs = {};
+  },
+  
+  
+  /** 
+   * Cleans the library and preloads the following built-in shader programs:  
+   * "pickShader" - Program used by TentaGL.Picker which colors each sprite
+   *                a unique solid color which can then be read back for
+   *                mouse-overs.   
+   */
+  reset:function(gl) {
+    this.clean(gl);
+    TentaGL.Picker.loadShaderProgram(gl);
+  },
+  
   
   /** 
    * Attempts to load a new shader program into the shaderLib. If there are any
@@ -82,13 +109,17 @@ TentaGL.ShaderLib = {
    * @return {TentaGL.ShaderProgram} The shader program now being used.
    */
   use:function(gl, name) {
-    if(this._locked) {
+    if(this._locked || this._currentName === name) {
       return;
     }
     
     var program = this[name];
     program.useMe(gl);
+    
     this._currentProgram = program;
+    this._currentName = name;
+    TentaGL.MaterialLib.useNone();
+    
     return program;
   },
   
@@ -98,8 +129,6 @@ TentaGL.ShaderLib = {
    */
   current:function(gl) {
     return this._currentProgram;
-    //var glProg = gl.getParameter(gl.CURRENT_PROGRAM);
-    //return this[glProg];
   },
   
   

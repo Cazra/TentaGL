@@ -89,26 +89,17 @@ TentaGL.Application.prototype = {
   
   /** Initializes the application's shaders, materials, and models. */
   initResources:function() {
-    this.initShadersBuiltIn();
-    this.initBlendStatesBuiltIn();
+    var gl = this.getGL();
+    //this.initShadersBuiltIn();
+    //this.initBlendStatesBuiltIn();
+    
+    TentaGL.ShaderLib.reset(gl);
+    TentaGL.BlendStateLib.reset(gl);
+    TentaGL.ModelLib.reset(gl);
+    
     this.initShaders();
     this.initMaterials();
     this.initModels();
-  },
-  
-  /** Initializes shaders built into the TentaGL framework. */
-  initShadersBuiltIn:function() {
-    TentaGL.Picker.loadShaderProgram(this.getGL());
-  },
-  
-  
-  /** 
-   * Initializes blend states built into the TentaGL framework. 
-   * The BlendStateLib is also initialized to use NO_BLEND.
-   */
-  initBlendStatesBuiltIn:function() {
-    TentaGL.BlendStateLib.loadBuiltInStates();
-    TentaGL.BlendStateLib.use(this.getGL(), TentaGL.BlendStateLib.NO_BLEND);
   },
   
   
