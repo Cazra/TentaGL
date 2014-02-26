@@ -25,11 +25,25 @@
 /** A singleton library for BlendStates. */
 TentaGL.BlendStateLib = {
   
+  DEFAULT_BLEND:"DefaultBlend",
+  
+  NO_BLEND:"NoBlend",
+  
   _blendStates:{},
   
   _currentName:"",
   
   _locked:false,
+  
+  
+  
+  /** 
+   * Loads the library with two built-in BlendStates: NO_BLEND and DEFAULT_BLEND.
+   */
+  loadBuiltInStates:function() {
+    this.add(this.NO_BLEND, TentaGL.BlendState.NoBlend());
+    this.add(this.DEFAULT_BLEND, TentaGL.BlendState.DefaultBlend());
+  },
   
   
   /** 
@@ -52,6 +66,7 @@ TentaGL.BlendStateLib = {
    */
   add:function(name, state) {
     this._blendStates[name] = state;
+    state.setID(name);
   },
   
   

@@ -34,7 +34,7 @@
  */
 TentaGL.BlendState = function(enableBlend, enableDepth) {
   enableBlend = enableBlend || false;
-  if(enabledDepth === undefined) {
+  if(enableDepth === undefined) {
     enableDepth = true;
   }
   
@@ -52,6 +52,26 @@ TentaGL.BlendState = function(enableBlend, enableDepth) {
 TentaGL.BlendState.prototype = {
   
   constructor:TentaGL.BlendState,
+  
+  //////// ID (set when it is added to the BlendStateLib)
+  
+  /** 
+   * Returns the ID for this BlendState used in the BlendStateLib.
+   * @return {string}
+   */
+  getID:function() {
+    return this._id;
+  },
+  
+  
+  /** 
+   * Sets theID for this BlendState used in the BlendStateLib.
+   * @param {string} id
+   */ 
+  setID:function(id) {
+    this._id = id;
+  },
+  
   
   
   //////// Enable blending
@@ -192,6 +212,32 @@ TentaGL.BlendState.prototype = {
     gl.blendFunc(this._funcSrc, this._funcDst);
   }
   
+};
+
+
+
+/** 
+ * Creates and returns a BlendState with blending turned off and 
+ * depth test turned on. 
+ * @return {TentaGL.BlendState}
+ */
+TentaGL.BlendState.NoBlend = function() {
+  var result = new TentaGL.BlendState(false);
+  return result;
+};
+
+
+/** 
+ * Creates and returns a BlendState that enables alpha blending with one 
+ * of the most commonly used blending function combinations:
+ * src: SRC_ALPHA
+ * dst : ONE_MINUS_SRC_ALPHA
+ * @return {TentaGL.BlendState}
+ */
+TentaGL.BlendState.DefaultBlend = function() {
+  var result = new TentaGL.BlendState(true, false);
+  result.setFuncs(TentaGL.GL_SRC_ALPHA, TentaGL.GL_ONE_MINUS_SRC_ALPHA);
+  return result;
 };
 
 
