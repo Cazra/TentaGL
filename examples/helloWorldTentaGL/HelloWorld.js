@@ -12,14 +12,14 @@ function createTriangleSprite(xyz) {
 
 
 function createSquareSprite(xyz, camera) {
-  var square = new TentaGL.BillboardSprite(xyz, camera);
+  var square = new TentaGL.IconSprite(xyz, camera, "iconNew");
   
-  square.draw = function(gl) {
-    TentaGL.MaterialLib.use(gl, "coinBlock");
-    TentaGL.VBORenderer.render(gl, "unitPlane");
-  };
+//  square.draw = function(gl) {
+//    TentaGL.MaterialLib.use(gl, "coinBlock");
+//    TentaGL.VBORenderer.render(gl, "cube");
+//  };
   
-  square.setScaleUni(0.25);
+  square.setScaleUni(0.5);
   
   return square;
 };
@@ -42,12 +42,19 @@ function initShaders() {
 
 
 function initMaterials() {
+  var gl = this.getGL();
+
   TentaGL.MaterialLib.add("myColor", TentaGL.Color.RGBA(1, 0, 0, 1));
   
-  var coinBlock = TentaGL.Texture.Image(this.getGL(), "../../images/sampleTex.png");
+  var coinBlock = TentaGL.Texture.Image(gl, "../../images/sampleTex.png");
   TentaGL.MaterialLib.add("coinBlock", coinBlock);
   
-  var icon = TentaGL.Texture.Image(this.getGL(), "../../images/iconNew.png");
+  var icon = new TentaGL.Texture(gl);
+  TentaGL.PixelData.loadImage("../../images/iconNew.png", function(pixelData) {
+    pixelData = pixelData.applyRGBAFilter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,200,255));
+    pixelData = pixelData.crop(7,6, 17,21);
+    icon.setPixelData(gl, pixelData);
+  });
   TentaGL.MaterialLib.add("iconNew", icon);
 };
 
@@ -63,17 +70,43 @@ function initModels() {
 };
 
 
+function appReset() {
+  this.camera = new TentaGL.ArcballCamera([0, 0, 10], [0, 0, 0]);
+  this.rX = 0;
+  this.drX = 0;
+  this.rY = 0;
+  this.drY = 0.01;
+  this.rZ = 0;
+  this.drZ = 0;
+  
+  this.spriteGroup = new TentaGL.SceneGroup();
+  for(var i = -5; i < 5; i++) {
+    for(var j = -5; j < 5; j++) {
+      for(var k = -5; k < 5; k++) {
+        var sprite = createSquareSprite([i, j, k], this.camera);
+        this.spriteGroup.add(sprite);
+      }
+    }
+  }
+  
+  this.picker = new TentaGL.Picker(this.getWidth(), this.getHeight());
+};
+
+
+
 
 function appUpdate() {
   var gl = this.getGL();
+  
+  // Reset the GL states for this iteration.
   TentaGL.resetTransform();
   TentaGL.resetProjection();
   TentaGL.resetRenderFilter();
   
-  
-  
+  // Scene application code
   updateScene.call(this, gl);
   
+  // Picker test
   if(this._mouse.isLeftPressed()) {
     this.picker.update(gl, drawScene.bind(this), true);
     
@@ -83,9 +116,6 @@ function appUpdate() {
     var sprite = this.picker.getSpriteAt(mx, my);
     console.log(pixel);
     console.log(sprite);
-    if(sprite) {
-      console.log(sprite.getWorldBaseLook());
-    }
   }
   else {
     drawScene.call(this, gl);
@@ -94,7 +124,8 @@ function appUpdate() {
 
 
 function updateScene(gl) {
-
+  
+  // Group rotation
   if(this._keyboard.isPressed(KeyCode.W)) {
     this.spriteGroup.rotate([1,0,0], -0.1);
   }
@@ -110,35 +141,18 @@ function updateScene(gl) {
   }
   
   
-
+  // Camera reset
   if(this._keyboard.justPressed(KeyCode.R)) {
     this.camera.resetOrientation();
   }
   
+  // Click count test
   if(this._mouse.justLeftReleased() && this._mouse.leftClickCount() > 1) {
     console.log(this._mouse.leftClickCount());
   }
   
-  if(this._mouse.scrollUpAmount() > 0) {
-    for(var i = 0; i < this._mouse.scrollUpAmount(); i++) {
-      this.camera.setDist(this.camera.getDist() * 9/10);
-    }
-  }
-  
-  if(this._mouse.scrollDownAmount() > 0) {
-    for(var i = 0; i < this._mouse.scrollDownAmount(); i++) {
-      this.camera.setDist(this.camera.getDist() * 10/9);
-    }
-  }
-  
-  
+  // Camera control
   this.camera.controlWithMouse(this._mouse, this.getWidth(), this.getHeight());
-  
-  
-  // Billboarding test.
-  var camEye = this.camera.getEye();
- // this.spriteGroup.billboardPoint(camEye, this.camera.getUp());
-  
 };
 
 
@@ -146,17 +160,19 @@ function updateScene(gl) {
 function drawScene(gl) {
   TentaGL.ShaderLib.use(gl, "simpleShader");
   TentaGL.BlendStateLib.useNone(gl);
-//  TentaGL.BlendStateLib.useDefaultAlphaBlend(gl);
+//  TentaGL.BlendStateLib.use(gl, "AlphaComposite");
   
   var aspect = gl.canvas.width/gl.canvas.height;
   this.camera.useMe(gl, aspect);
   
   // Clear the background. 
-  gl.clearColor(0, 0, 0, 1); // Black
+  gl.clearColor(0.1, 0.1, 0.3, 1); // Black
   gl.clear(gl.COLOR_BUFFER_BIT);
 
   // Draw the spinning cubes.
   var camEye = this.camera.getEye();
+  var viewTrans = this.camera.getViewTransform();
+  
   var sprites = this.spriteGroup.getChildren();
   for(var i = 0; i < sprites.length; i++) {
     var sprite = sprites[i];
@@ -177,26 +193,8 @@ function createApp(container) {
   app.initMaterials = initMaterials;
   app.initModels = initModels;
   app.update = appUpdate;
+  app.reset = appReset;
   
-  app.camera = new TentaGL.ArcballCamera([0, 0, 10], [0, 0, 0]);
-  app.rX = 0;
-  app.drX = 0;
-  app.rY = 0;
-  app.drY = 0.01;
-  app.rZ = 0;
-  app.drZ = 0;
-  
-  app.spriteGroup = new TentaGL.SceneGroup();
-  for(var i = -5; i < 5; i++) {
-    for(var j = -5; j < 5; j++) {
-      for(var k = -5; k < 5; k++) {
-        var sprite = createSquareSprite([i, j, k], app.camera);
-        app.spriteGroup.add(sprite);
-      }
-    }
-  }
-  
-  app.picker = new TentaGL.Picker(app.getWidth(), app.getHeight());
   
   return app;
 }

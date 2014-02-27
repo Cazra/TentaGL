@@ -23,15 +23,19 @@
 */
 
 
-
+/** 
+ * A sprite that displays a 2D icon floating in 3D space. It always faces  
+ * the plane behind the camera, rather than at the camera eye like 
+ * BillboardSprite does.
+ * @constructor
+ * @param {vec4} xyz
+ * @param {TentaGL.Camera} camera
+ * @param {string} texName  The name of the texture in MaterialLib used by 
+ *      this sprite.
+ */
 TentaGL.IconSprite = function(xyz, camera, texName) {
   TentaGL.BillboardSprite.call(this, xyz, camera);
   this._texName = texName;
-  
-  var tex = TentaGL.MaterialLib.get(texName);
-  this._width = tex.getWidth();
-  this._height = tex.getHeight();
-  
 };
 
 
@@ -39,6 +43,8 @@ TentaGL.IconSprite.prototype = {
   
   constructor:TentaGL.IconSprite,
   
+  
+  //////// Texture properties
   
   /** 
    * Returns the name of this icon's texture material. 
@@ -62,7 +68,7 @@ TentaGL.IconSprite.prototype = {
    * @return {int}
    */
   getIconWidth:function() {
-    return this._width;
+    return this.getTexture().getWidth();
   },
   
   /**
@@ -70,7 +76,51 @@ TentaGL.IconSprite.prototype = {
    * @return {int}
    */
   getIconHeight:function() {
-    return this._height;
+    return this.getTexture().getHeight();
+  },
+  
+  
+  /** 
+   * Scales the icon such that the Y scale is 1 and the X scale is set so that
+   * the icon's aspect ratio is maintained.
+   */
+  scaleAspectX:function() {
+    var aspect = this.getIconWidth()/this.getIconHeight();
+    this.setScaleXYZ([aspect, 1, 1]);
+  },
+  
+  /** 
+   * Scales the icon such that the X scale is 1 and the Y scale is set so that
+   * the icon's aspect ratio is maintained.
+   */
+  scaleAspectY:function() {
+    var aspect = this.getIconWidth()/this.getIconHeight();
+    this.setScaleXYZ([1, 1/aspect, 1]);
+  },
+  
+  
+  //////// Rendering
+  
+  /** 
+   * Renders this sprite, temporarily concatenating its model transform to the 
+   * current Model-view transform of the scene. 
+   * @param {WebGLRenderingContext} gl
+   */
+  render:function(gl) {
+    if(!this.isVisible() || !TentaGL.renderFilter(this)) {
+      return;
+    }
+    TentaGL.pushTransform();
+    
+    var camEye = this._camera.getEye();
+    this.billboardWorldPlane(vec3.negate(vec3.create(), this._camera.getLook()), this._camera.getUp())
+    
+    TentaGL.mulTransform(this.getModelTransform());
+    TentaGL.updateMVPUniforms(gl);
+    
+    this.draw(gl);
+    
+    TentaGL.popTransform();
   },
   
   

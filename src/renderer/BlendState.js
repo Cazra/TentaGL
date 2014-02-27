@@ -228,11 +228,9 @@ TentaGL.BlendState.prototype = {
     
     if(this._enableDepth) {
       gl.enable(gl.DEPTH_TEST);
-      console.log("depth test is on");
     }
     else {
       gl.disable(gl.DEPTH_TEST);
-      console.log("depth test is off");
     }
     
     if(this._cullFront && this._cullBack) {

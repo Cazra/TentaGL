@@ -25,6 +25,8 @@
 
 /** 
  * Utility object for mimicking and testing for type inheritance.
+ * TentaGL uses this inheritance code, but you are by no means forced to use it
+ * in your own application code. 
  */
 TentaGL.Inheritance = {
   

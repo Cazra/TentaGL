@@ -178,11 +178,29 @@ TentaGL.ArcballCamera.prototype.setDist = function(dist) {
 
 /** 
  * Controls the arcball camera with the mouse using dragging gestures. 
+ * Left-dragging rotates the scene around the center point.
+ * Right-dragging pans the scene around the center point.
+ * The mouse wheel zooms in and out of the scene.
  * @param {TentaGL.Mouse} mouse
  * @param {int} viewWidth   The width of the mouse's viewport.
  * @param {int} viewHeight  The height of the mouse's viewport.
  */
 TentaGL.ArcballCamera.prototype.controlWithMouse = function(mouse, viewWidth, viewHeight) {
+  
+  // Zoom in by scrolling the mouse wheel up.
+  if(mouse.scrollUpAmount() > 0) {
+    for(var i = 0; i < mouse.scrollUpAmount(); i++) {
+      this.setDist(this.getDist() * 9/10);
+    }
+  }
+  
+  // Zoom out by scrolling the mouse wheel down.
+  if(mouse.scrollDownAmount() > 0) {
+    for(var i = 0; i < mouse.scrollDownAmount(); i++) {
+      this.setDist(this.getDist() * 10/9);
+    }
+  }
+  
   
   // Start arcball drag by saving starting arcball state.
   if(mouse.justLeftPressed()) {

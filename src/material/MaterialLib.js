@@ -61,6 +61,7 @@ TentaGL.MaterialLib = {
     }
     
     this._materials[name] = material;
+    console.log("Added material " + name);
     
     return material;
   },

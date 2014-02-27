@@ -726,6 +726,26 @@ TentaGL.SceneNode.prototype = {
   },
   
   
+  /** 
+   * Orients the node so that it is oriented in some plane in local space
+   * defined by a look vector and an up vector.
+   * @param {vec3} look
+   * @param {vec3} up
+   */
+  billboardPlane:function(look, up) {
+    this.orient(look, up);
+  },
+  
+  
+  /** 
+   * Orients the node so that it is oriented in some plane in local space
+   * defined by a look vector and an up vector.
+   * @param {vec3} look
+   * @param {vec3} up
+   */
+  billboardWorldPlane:function(look, up) {
+    this.orientWorld(look, up);
+  },
   
   
   //////// Scale

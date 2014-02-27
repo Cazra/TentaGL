@@ -47,22 +47,22 @@ TentaGL.Model.Plane = function(w, h, flipY) {
     // Create vertices
     var v0 = new TentaGL.Vertex(0, 0, 0);
     v0.setNormal(n[0], n[1], n[2]);
-    v0.setTexST(0,0);
+    v0.setTexST(0,1);
     model.addVertex(v0);
     
     var v1 = new TentaGL.Vertex(0, -h, 0);
     v1.setNormal(n[0], n[1], n[2]);
-    v1.setTexST(0,1);
+    v1.setTexST(0,0);
     model.addVertex(v1);
     
     var v2 = new TentaGL.Vertex(w, -h, 0);
     v2.setNormal(n[0], n[1], n[2]);
-    v2.setTexST(1,1);
+    v2.setTexST(1,0);
     model.addVertex(v2);
     
     var v3 = new TentaGL.Vertex(w, 0, 0);
     v3.setNormal(n[0], n[1], n[2]);
-    v3.setTexST(1,0);
+    v3.setTexST(1,1);
     model.addVertex(v3);
     
     
@@ -71,22 +71,22 @@ TentaGL.Model.Plane = function(w, h, flipY) {
     // Create vertices
     var v0 = new TentaGL.Vertex(0, 0, 0);
     v0.setNormal(n[0], n[1], n[2]);
-    v0.setTexST(0,1);
+    v0.setTexST(0,0);
     model.addVertex(v0);
     
     var v1 = new TentaGL.Vertex(w, 0, 0);
     v1.setNormal(n[0], n[1], n[2]);
-    v1.setTexST(1,1);
+    v1.setTexST(1,0);
     model.addVertex(v1);
     
     var v2 = new TentaGL.Vertex(w, h, 0);
     v2.setNormal(n[0], n[1], n[2]);
-    v2.setTexST(1,0);
+    v2.setTexST(1,1);
     model.addVertex(v2);
     
     var v3 = new TentaGL.Vertex(0, h, 0);
     v3.setNormal(n[0], n[1], n[2]);
-    v3.setTexST(0,0);
+    v3.setTexST(0,1);
     model.addVertex(v3);
   }
   

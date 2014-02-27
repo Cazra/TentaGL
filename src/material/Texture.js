@@ -23,73 +23,45 @@
 */
 
 /** 
- * Constructs a Texture in the WebGL state that is ready to receive data from 
- * some image source. For a shader program to be able to use textures, you must
- * bind its uniform variable used to store the texture's offset using 
- * its bindTex0Uni method when the program is initialized.
+ * Constructs an initially empty texture. The texture's image data can be set
+ * by constructing a PixelData object and loading it with the setPixelData 
+ * method.
  * @constructor
  * @param {WebGLRenderingContext} gl
- * @param {int} srcType   One of either TentaGL.Texture.SRC_PIXDATA, 
- *      TentaGL.Texture.SRC_IMAGE, TentaGL.Texture.SRC_CANVAS, 
- *      or TentaGL.Texture.SRC_VIDEO.
  */
-TentaGL.Texture = function(gl, srcType) {
-  if(srcType === TentaGL.Texture.SRC_PIXDATA || 
-    srcType === TentaGL.Texture.SRC_IMAGE ||
-    srcType === TentaGL.Texture.SRC_CANVAS ||
-    srcType === TentaGL.Texture.SRC_VIDEO) {
-    
-    this._srcType = srcType;
+TentaGL.Texture = function(gl) {
     this._tex = TentaGL.createTexture(gl);
     this._width = 1;
     this._height = 1;
     this._loaded = false;
-  }
-  else {
-    throw Error("Invalid srcType: " + srcType);
-  }
 };
 
 
 TentaGL.Texture.prototype = {
   
   constructor:TentaGL.Texture,
-
-  /** 
-   * DOM image source onload handler.
-   * @param {WebGLRenderingContext} gl
-   * @param {ImageData|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} src
-   */
-  _handleOnLoad:function(gl, src) {
-    gl.bindTexture(gl.TEXTURE_2D, this._tex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
-    
-    this._width = src.width;
-    this._height = src.height;
-    this._loaded = true;
-    
-    TentaGL.MaterialLib.useNone();
-  },
+  
   
   /** 
-   * Sets the contents of the texture to a byte array of pixel data.
+   * Sets the contents of the texture to the data in a PixelData object.
    * @param {WebGLRenderingContext} gl
-   * @param {Uint8Array} data   The array containing the pixel data.
-   *      The size of the array should be width*height*4, each element should be 
-   *      represented by 4 consecutive bytes in RGBA order, and the first 
-   *      element should be the pixel in the lower-left corner of the image the 
-   *      array represents. Each row in the array is read from bottom to top, 
-   *      and left to right in each row.
-   * @param {int} width
-   * @param {int} height
+   * @param {TentaGL.PixelData} pixelData
    */
-  loadRGBAData:function(gl, data, width, height) {
+  setPixelData:function(gl, pixelData) {
+    var data = pixelData.getData();
+    var width = pixelData.getWidth();
+    var height = pixelData.getHeight();
+    
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
     this._width = width;
     this._height = height;
     this._loaded = true;
+    
+    TentaGL.MaterialLib.useNone();
   },
+  
+  
   
   /** 
    * Deletes this texture from GL memory.
@@ -116,6 +88,8 @@ TentaGL.Texture.prototype = {
   },
   
   
+  //////// Dimensions
+  
   /** 
    * Returns the width of the texture if it is available.
    * @return {int}
@@ -133,8 +107,13 @@ TentaGL.Texture.prototype = {
     return this._height;
   },
   
+  
+  
+  //////// Min-mag
+  
   /** 
    * Returns the constant for the current magnification filter being used.
+   * Default gl.NEAREST
    * @param {WebGLRenderingContext} gl
    * @return {GLenum} Either gl.NEAREST or gl.LINEAR
    */
@@ -155,6 +134,7 @@ TentaGL.Texture.prototype = {
   
   /** 
    * Returns the constant for the current minification filter being used.
+   * Default gl.NEAREST
    * @param {WebGLRenderingContext} gl
    * @return {GLenum} Either gl.NEAREST, gl.LINEAR, gl.LINEAR_MIPMAP_LINEAR,
    *       gl.NEAREST_MIPMAP_NEAREST, gl.NEARTEST_MIPMAP_LINEAR, or gl.LINEAR_MIPMAP_NEAREST.
@@ -175,9 +155,14 @@ TentaGL.Texture.prototype = {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
   },
   
+  
+  
+  //////// Wrapping
+  
   /**
    * Gets the the wrapping method used for this texture on the S texture
    * coordinates axis.
+   * Default gl.CLAMP_TO_EDGE
    * @param {WebGLRenderingContext} gl
    * @return {GLenum} Either gl.CLAMP_TO_EDGE, gl.REPEAR, or gl.MIRRORED_REPEAT.
    */
@@ -201,6 +186,7 @@ TentaGL.Texture.prototype = {
   /**
    * Gets the the wrapping method used for this texture on the S texture
    * coordinates axis.
+   * Default gl.CLAMP_TO_EDGE
    * @param {WebGLRenderingContext} gl
    * @return {GLenum} Either gl.CLAMP_TO_EDGE, gl.REPEAR, or gl.MIRRORED_REPEAT.
    */
@@ -221,10 +207,12 @@ TentaGL.Texture.prototype = {
   },
   
   
+  //////// Pixel data
+  
   /** 
    * Produces a PixelData object containing the raw pixel data of some 
    * rectangular area of this texture. Here, X and Y are the coordinates of the 
-   * lower-left corner of the area.
+   * lower-left corner of the texture area.
    * @param {WebGLRenderingContext} gl
    * @param {int} x   Optional. Default 0.
    * @param {int} y   Optional. Default 0.
@@ -252,6 +240,9 @@ TentaGL.Texture.prototype = {
   },
   
   
+  
+  //////// GL state
+  
   /** 
    * Sets up the currently bound ShaderProgram so that its bound sampler2D 
    * texture0 uniform variable will use this texture.
@@ -267,12 +258,6 @@ TentaGL.Texture.prototype = {
 TentaGL.Inheritance.inherit(TentaGL.Texture.prototype, TentaGL.Material.prototype);
 
 
-TentaGL.Texture.SRC_PIXDATA = 1;
-TentaGL.Texture.SRC_IMAGE = 2;
-TentaGL.Texture.SRC_CANVAS = 3;
-TentaGL.Texture.SRC_VIDEO = 4;
-
-
 
 /** 
  * Returns a new Texture constructed from an image. 
@@ -280,15 +265,26 @@ TentaGL.Texture.SRC_VIDEO = 4;
  * @param {string} imagePath  The filepath to the image.
  * @return {TentaGL.Texture}
  */
-TentaGL.Texture.Image = function(gl, imagePath) {
-  var result = new TentaGL.Texture(gl, TentaGL.Texture.SRC_IMAGE);
-  var img = new Image();
-  img.onload = function() {
-    result._handleOnLoad(gl, img);
-  };
-  img.src = imagePath;
+TentaGL.Texture.Image = function(gl, imagePath) {  
+  var result = new TentaGL.Texture(gl);
+  TentaGL.PixelData.loadImage(imagePath, function(pixelData) {
+    result.setPixelData(gl, pixelData);
+  });
   return result;
 };
+
+
+/** 
+ * Returns a new Texture constructed from a Canvas element. 
+ * @param {WebGLRenderingContext} gl
+ * @param {string} imagePath  The filepath to the image.
+ * @return {TentaGL.Texture}
+ */
+TentaGL.Texture.Canvas = function(gl, canvas) {
+  var pixelData = TentaGL.PixelData.Canvas(canvas);
+  return TentaGL.Texture.PixelData(gl, pixelData);
+};
+
 
 
 /** 
@@ -298,26 +294,9 @@ TentaGL.Texture.Image = function(gl, imagePath) {
  * @return {TentaGL.Texture}
  */
 TentaGL.Texture.PixelData = function(gl, pixelData) {
-  return TentaGL.Texture.RGBAUint8Array(gl, pixelData.getData(), pixelData.getWidth(), pixelData.getHeight());
+  var result = new TentaGL.Texture(gl);
+  result.setPixelData(gl, pixelData);
+  return result;
 };
 
-
-/** 
- * Returns a new Texture constructed from a byte array of RGBA pixel data.
- * @param {WebGLRenderingContext} gl
- * @param {Uint8Array} data   The array containing the pixel data.
- *      The size of the array should be width*height*4, each element should be 
- *      represented by 4 consecutive bytes in RGBA order, and the first 
- *      element should be the pixel in the lower-left corner of the image the 
- *      array represents. Each row in the array is read from bottom to top, 
- *      and left to right in each row.
- * @param {int} width
- * @param {int} height
- * @return {TentaGL.Texture}
- */
-TentaGL.Texture.Uint8Array = function(gl, data, width, height) {
-  var result = new TentaGL.Texture(gl, TentaGL.Texture.SRC_PIXDATA);
-  result.loadRGBAData(gl, data, width, height);
-  return result;
-}
 

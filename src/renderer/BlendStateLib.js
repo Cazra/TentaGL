@@ -90,6 +90,7 @@ TentaGL.BlendStateLib = {
   use:function(gl, name) {
     if(!this._locked && this._currentName !== name) {      
       this._currentName = name;
+      
       var blendState = this._blendStates[name];
       blendState.useMe(gl);
     }

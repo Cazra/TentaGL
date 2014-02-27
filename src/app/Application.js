@@ -100,6 +100,8 @@ TentaGL.Application.prototype = {
     this.initShaders();
     this.initMaterials();
     this.initModels();
+    
+    this.reset();
   },
   
   
@@ -121,6 +123,13 @@ TentaGL.Application.prototype = {
    */
   initModels:function() {},
   
+  
+  /** 
+   * Sets any other initial state of the application after other resources 
+   * have been initialized. 
+   * Override this.
+   */
+  reset:function() {},
   
   /** 
    * Returns the div element containing the application.

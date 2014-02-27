@@ -42,28 +42,28 @@ TentaGL.Model.Cube = function(w, h, d) {
                                 lowerLeft[1], 
                                 lowerLeft[2]);
     v0.setNormal(n[0], n[1], n[2]);
-    v0.setTexST(0,1);
+    v0.setTexST(0,0);
     model.addVertex(v0);
     
     var v1 = new TentaGL.Vertex(lowerLeft[0] + u[0], 
                                 lowerLeft[1] + u[1], 
                                 lowerLeft[2] + u[2]);
     v1.setNormal(n[0], n[1], n[2]);
-    v1.setTexST(1,1);
+    v1.setTexST(1,0);
     model.addVertex(v1);
     
     var v2 = new TentaGL.Vertex(lowerLeft[0] + u[0] + v[0], 
                                 lowerLeft[1] + u[1] + v[1], 
                                 lowerLeft[2] + u[2] + v[2]);
     v2.setNormal(n[0], n[1], n[2]);
-    v2.setTexST(1,0);
+    v2.setTexST(1,1);
     model.addVertex(v2);
     
     var v3 = new TentaGL.Vertex(lowerLeft[0] + v[0], 
                                 lowerLeft[1] + v[1], 
                                 lowerLeft[2] + v[2]);
     v3.setNormal(n[0], n[1], n[2]);
-    v3.setTexST(0,0);
+    v3.setTexST(0,1);
     model.addVertex(v3);
     
     model.addFaceQuad(indexOffset,

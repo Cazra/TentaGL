@@ -124,10 +124,10 @@ TentaGL.Math = {
    * @return {quat}
    */
   getQuatFromTo:function(vFrom, vTo) {
-    var vnFrom = vec3.normalize(vec3.create(), vFrom);
-    var vnTo = vec3.normalize(vec3.create(), vTo);
+    var vnFrom = vec3.normalize(this._vec3_1, vFrom);
+    var vnTo = vec3.normalize(this._vec3_2, vTo);
     
-    var axis = vec3.cross(vec3.create(), vnFrom, vnTo);
+    var axis = vec3.cross(this._vec3_3, vnFrom, vnTo);
     vec3.normalize(axis, axis);
     var cosTheta = TentaGL.Math.clamp(vec3.dot(vnFrom, vnTo), -1, 1);
     var sinTheta = vec3.length(axis);
@@ -139,6 +139,14 @@ TentaGL.Math = {
     
     var q = quat.setAxisAngle(quat.create(), axis, theta);
     return quat.normalize(q, q);
-  }
+  },
+  
+  /** 
+   * A recyclable vec3 for intermediate Math vector operations so that we don't 
+   * have to spend as much time creating new vectors for every operation.
+   */
+  _vec3_1:vec3.create(),
+  _vec3_2:vec3.create(),
+  _vec3_3:vec3.create(),
   
 };

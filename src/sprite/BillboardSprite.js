@@ -23,7 +23,13 @@
 */
 
 
-/** A sprite that is always facing towards a camera. */
+/** 
+ * A sprite that is always facing towards a camera's eye and is oriented 
+ * relative to the camera's up vector. 
+ * @constructor
+ * @param {vec4} xyz
+ * @param {TentaGL.Camera} camera
+ */
 TentaGL.BillboardSprite = function(xyz, camera) {
   TentaGL.Sprite.call(this, xyz);
   

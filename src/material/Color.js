@@ -32,7 +32,8 @@
  * @constructor
  */
 TentaGL.Color = function() {
-  this._rgba = vec4.fromValues(0, 0, 0, 1);
+  this._rgba = vec4.create();
+  this.setRGBA(0, 0, 0, 1);
 };
 
 
@@ -65,6 +66,13 @@ TentaGL.Color.prototype = {
     return vec4.clone(this._rgba);
   },
   
+  /** 
+   * Returns a copy of the color's uint8 RGBA components. 
+   * @return {vec4}
+   */
+  getRGBABytes:function() {
+    return vec4.fromValues(this.getRedByte(), this.getGreenByte(), this.getBlueByte(), this.getAlphaByte());
+  },
   
   /** 
    * Returns the color's normalized red component.
@@ -72,6 +80,14 @@ TentaGL.Color.prototype = {
    */
   getRed:function() {
     return this._rgba[0];
+  },
+  
+  /** 
+   * Returns the color's red component as a uint8 value.
+   * @return {uint8}
+   */
+  getRedByte:function() {
+    return (this._rgba[0]*255) & 0xFF;
   },
   
   /** 
@@ -83,11 +99,29 @@ TentaGL.Color.prototype = {
   },
   
   /** 
+   * Returns the color's green component as a uint8 value.
+   * @return {uint8}
+   */
+  getGreenByte:function() {
+    return (this._rgba[1]*255) & 0xFF;
+  },
+  
+  
+  /** 
    * Returns the color's normalized blue component.
    * @return {Number}
    */
   getBlue:function() {
     return this._rgba[2];
+  },
+  
+  
+  /** 
+   * Returns the color's blue component as a uint8 value.
+   * @return {uint8}
+   */
+  getBlueByte:function() {
+    return (this._rgba[2]*255) & 0xFF;
   },
   
   /** 
@@ -98,6 +132,14 @@ TentaGL.Color.prototype = {
     return this._rgba[3];
   },
   
+  
+  /** 
+   * Returns the color's alpha component as a uint8 value.
+   * @return {uint8}
+   */
+  getAlphaByte:function() {
+    return (this._rgba[3]*255) & 0xFF;
+  },
   
   /** 
    * Sets the RGBA color components for this color. 
@@ -329,6 +371,22 @@ TentaGL.Inheritance.inherit(TentaGL.Color.prototype, TentaGL.Material.prototype)
  */
 TentaGL.Color.RGBA = function(r, g, b, a) {
   return (new TentaGL.Color()).setRGBA(r, g, b, a);
+};
+
+
+/** 
+ * Returns a new color from RGBA (red, green, blue, alpha) 
+ * color component uint8 values.
+ * @param {Number} r  red
+ * @param {Number} g  green
+ * @param {Number} b  blue
+ * @param {Number} a  alpha (Optional, will be set to 255 if not provided)
+ */
+TentaGL.Color.RGBABytes = function(r, g, b, a) {
+  if(a === undefined) {
+    a = 255;
+  }
+  return (new TentaGL.Color()).setRGBA(r/255, g/255, b/255, a/255);
 };
 
 

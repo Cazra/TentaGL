@@ -14,7 +14,11 @@
   // All fragments are colored white.
   void main(void) {
   //  gl_FragColor = color;
-    gl_FragColor = texture2D(tex, texCoords); 
+    vec4 color = texture2D(tex, texCoords); 
+    if(color.a == 0.0) {
+      discard;
+    }
+    gl_FragColor = color;
   }
 </script>
 
@@ -31,10 +35,8 @@
 
   // pass-through shader.
   void main(void) {
-    
     texCoords = vertexTexCoords;
     gl_Position = mvpTrans * vertexPos;
-    
     vec3 normal = normalTrans*vertexNormal;
   }
 </script>
@@ -61,6 +63,9 @@
 <script type="text/javascript" src="../../src/geom/ModelLib.js"></script>
 <script type="text/javascript" src="../../src/geom/Vertex.js"></script>
 
+<script type="text/javascript" src="../../src/image/PixelData.js"></script>
+<script type="text/javascript" src="../../src/image/RGBAFilter.js"></script>
+  <script type="text/javascript" src="../../src/image/TransparentColor.js"></script>
 
 <script type="text/javascript" src="../../src/input/Keyboard.js"></script>
 <script type="text/javascript" src="../../src/input/Mouse.js"></script>
@@ -71,7 +76,6 @@
   <script type="text/javascript" src="../../src/material/Color.js"></script>
   <script type="text/javascript" src="../../src/material/Texture.js"></script>
 <script type="text/javascript" src="../../src/material/MaterialLib.js"></script>
-<script type="text/javascript" src="../../src/material/PixelData.js"></script>
 
 <script type="text/javascript" src="../../src/renderer/BlendState.js"></script>
 <script type="text/javascript" src="../../src/renderer/BlendStateLib.js"></script>
@@ -99,7 +103,8 @@
 </head>
 
 <body onload="webGLStart();">
-  <div id="container" style="border: none; width:800px; height:500px;" tabindex="1"/>
+  <div id="container" style="border: none; width:800px; height:500px;" tabindex="1"></div>
+  <div id="imgDebug" style="border: none; width:800px; height:500px;"></div>
 </body>
 
 </html>

@@ -165,11 +165,15 @@ var TentaGL = {
     // Use gl.NEAREST by default for min-mag filters.
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     return tex;
   },
   
   
   
+  
+  //////// MVP and Normal transforms
   
   /** 
    * Sets the model-view transform matrix.
@@ -276,6 +280,8 @@ var TentaGL = {
   },
   
   
+  
+  //////// RenderFilter
   
   /** 
    * Returns the filter function used for rendering. 
