@@ -134,7 +134,7 @@ TentaGL.PixelData.prototype = {
    * @param {TentaGL.RGBAFilter} filter
    * @return TentaGL.PixelData
    */
-  applyRGBAFilter:function(filter) {
+  filter:function(filter) {
     var result = this.clone();
     
     for(var i=0; i < this._pixels.length; i+=4) {
@@ -265,3 +265,16 @@ TentaGL.PixelData.Canvas = function(canvas) {
 };
 
 
+/** 
+ * Converts a GL pixel array index to GL X, Y coordinates. */
+TentaGL.PixelData.indexToXY = function(index, width) {
+  index /= 4;
+  var y = Math.floor(index/width);
+  var x = index - y*width;
+  
+  return [x, y];
+};
+
+TentaGL.PixelData.xyToIndex = function(x, y, width) {
+  return 4*(width*y + x);
+};

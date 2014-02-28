@@ -58,6 +58,7 @@ TentaGL.Picker.prototype = {
     TentaGL.BlendStateLib.useNone(gl);
     TentaGL.Picker.useShader(gl);
     TentaGL.ShaderLib.lock();
+    gl.clearColor(0, 0, 0, 1); // Black
     this._nextID = 1;
     this._sprites = [];
     

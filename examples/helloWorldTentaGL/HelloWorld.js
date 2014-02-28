@@ -51,8 +51,16 @@ function initMaterials() {
   
   var icon = new TentaGL.Texture(gl);
   TentaGL.PixelData.loadImage("../../images/iconNew.png", function(pixelData) {
-    pixelData = pixelData.applyRGBAFilter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,200,255));
+    pixelData = pixelData.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,200,255));
     pixelData = pixelData.crop(7,6, 17,21);
+    
+  //  TentaGL.PixelData.loadImage("../../images/iconNewAlpha.png", function(alphaImg) {
+  //    alphaImg = alphaImg.crop(7,6, 17,21);
+  //    
+  //    pixelData = pixelData.filter(new TentaGL.RGBAFilter.AlphaMap(alphaImg));
+  //    icon.setPixelData(gl, pixelData);
+  //  });
+    
     icon.setPixelData(gl, pixelData);
   });
   TentaGL.MaterialLib.add("iconNew", icon);
@@ -124,6 +132,7 @@ function appUpdate() {
 
 
 function updateScene(gl) {
+  gl.clearColor(0.1, 0.1, 0.3, 1); // Black
   
   // Group rotation
   if(this._keyboard.isPressed(KeyCode.W)) {
@@ -156,7 +165,7 @@ function updateScene(gl) {
 };
 
 
-/** Draws the scene with the triangle and square. */
+/** Draws the scene. */
 function drawScene(gl) {
   TentaGL.ShaderLib.use(gl, "simpleShader");
   TentaGL.BlendStateLib.useNone(gl);
@@ -166,8 +175,7 @@ function drawScene(gl) {
   this.camera.useMe(gl, aspect);
   
   // Clear the background. 
-  gl.clearColor(0.1, 0.1, 0.3, 1); // Black
-  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
   // Draw the spinning cubes.
   var camEye = this.camera.getEye();
@@ -182,7 +190,7 @@ function drawScene(gl) {
     //sprite.billboardWorldAxis(camEye);
   }
   
-  this.spriteGroup.render(gl);
+  this.spriteGroup.render(gl, this.camera);
 };
 
 
