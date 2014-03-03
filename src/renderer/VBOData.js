@@ -45,18 +45,6 @@ TentaGL.VBOData = function(gl, model, attrProfileSet) {
     var vertex = vertices[i];
     
   //  console.log(vertex);
-    
-    /*
-    var attrs = shader.getAttributes();
-    for(var j=0; j < attrs.length; j++) {
-      var attr = attrs[j];
-      var values = attr.getValues(vertex);
-      
-      for(var k=0; k<values.length; k++) {
-        attrData.push(values[k]);
-      }
-    }
-    */
     var offset = 0;
     for(var j in attrProfileSet) {
       var attr = attrProfileSet[j];
@@ -90,6 +78,8 @@ TentaGL.VBOData = function(gl, model, attrProfileSet) {
   
   this._attrSet = attrProfileSet;
   this._stride = TentaGL.AttrProfiles.getStride(attrProfileSet);
+  
+  this._mode = model.getMode();
 };
 
 

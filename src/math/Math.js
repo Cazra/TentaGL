@@ -141,6 +141,21 @@ TentaGL.Math = {
     return quat.normalize(q, q);
   },
   
+  
+  /** 
+   * Returns the first power of two >= to value.
+   * @param {Number} value
+   * @param {int}
+   */
+  getPowerOfTwo:function(value) {
+    var pow = 1;
+    while(pow < value) {
+      pow *= 2;
+    }
+    return pow;
+  },
+  
+  
   /** 
    * A recyclable vec3 for intermediate Math vector operations so that we don't 
    * have to spend as much time creating new vectors for every operation.

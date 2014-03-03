@@ -93,6 +93,14 @@ TentaGL.SceneNode.prototype = {
   },
   
   
+  removeFromParent:function() {
+    if(this._parent && this._parent.remove) {
+      this._parent.remove(this);
+      this._parent = null;
+    }
+  },
+  
+  
   //////// Visibility
   
   /** 

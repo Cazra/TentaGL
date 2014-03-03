@@ -565,6 +565,9 @@ TentaGL.GL_ZERO = 0;
 TentaGL.GL_SRC_ALPHA = 0x0302;
 TentaGL.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
 
+TentaGL.GL_POINTS = 0;
+TentaGL.GL_LINES = 1;
+TentaGL.GL_TRIANGLES = 4;
 
 
 TentaGL.mat3Recyclable = mat3.create();

@@ -62,6 +62,29 @@ TentaGL.Model.prototype = {
   },
   
   
+  //////// Mode
+  
+  /** 
+   * Returns the mode used to draw this model by the VBORenderer. If undefined,
+   * then the VBORenderer will use its default drawing mode.
+   * @return {GLenum}
+   */
+  getMode:function() {
+    return this._mode;
+  },
+  
+  
+  /** 
+   * Sets the preferred mode used to draw this model by the VBORenderer. 
+   * By default a model's drawing mode is undefined.
+   * @param {GLenum} mode   One of the WebGL primitive drawing mode 
+   *      enumerations. E.G. LINES, TRIANGLES.
+   */
+  setMode:function(mode) {
+    this._mode = mode;
+  },
+  
+  
   //////// Element index data
   
   /** 
@@ -120,28 +143,20 @@ TentaGL.Model.prototype = {
   },
   
   
+  //////// Line index operations
+  
+  
+  
+  addLine:function(v1, v2) {
+    // Since TentaGL prefers to represent
+    this.addFace(v1, v2, v2);
+  },
+  
+  
+  
+  
   //////// Face index operations
   
-  /** 
-   * Returns a copy of the model's face indices array.
-   * @return {Array: int}
-   */
-  getFaceIndices:function() {
-    return this._indices.slice(0, this._indices.length);
-  },
-  
-  /** 
-   * Returns the specified face index for this model.
-   * @param {int} i   The index of the face index in the model's face indices
-   *      array.
-   * @return {int}
-   */
-  getFaceIndex:function(i) {
-    if(i < 0 || i >= this._indices.length) {
-      throw Error("Index " + i + " out of bounds.");
-    }
-    return this._indices[i];
-  },
   
   /**
    * Returns the number of faces defined in this model.

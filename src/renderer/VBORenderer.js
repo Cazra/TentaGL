@@ -25,6 +25,16 @@
 
 TentaGL.VBORenderer = {
   
+  _mode:TentaGL.GL_TRIANGLES,
+  
+  getMode:function() {
+    return this._mode;
+  },
+  
+  setMode:function(mode) {
+    this._mode = mode;
+  },
+  
   
   /** 
    * Renders a Model with the ShaderProgram and Material currently in use. 
@@ -58,7 +68,7 @@ TentaGL.VBORenderer = {
     // Bind the index data and draw.
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);
   //  console.log(model.numIndices());
-    gl.drawElements(gl.TRIANGLES, vboData.numIndices(), gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(this._mode, vboData.numIndices(), gl.UNSIGNED_SHORT, 0);
   }
   
 };

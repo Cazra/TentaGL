@@ -11,15 +11,19 @@ function createTriangleSprite(xyz) {
 };
 
 
-function createSquareSprite(xyz, camera) {
-  var square = new TentaGL.IconSprite(xyz, camera, "iconNew");
+function createSquareSprite(xyz, camera, gl) {
+  var font = new TentaGL.Font("Arial", "sans-serif", 16);
+  font.setBold(true);
+  var color = TentaGL.Color.RGBA(0,0,0,1);
   
-//  square.draw = function(gl) {
-//    TentaGL.MaterialLib.use(gl, "coinBlock");
-//    TentaGL.VBORenderer.render(gl, "cube");
-//  };
+  var square = new TentaGL.Sprite(xyz); //new TentaGL.TextIconSprite(gl, xyz, camera, "Hello World!\nHow are you?", font, color); //new TentaGL.IconSprite(xyz, camera, "iconNew");
+//  square.scaleToWidth(1);
+  square.draw = function(gl) {
+    TentaGL.MaterialLib.use(gl, "coinBlock");
+    TentaGL.VBORenderer.render(gl, "cube");
+  };
   
-  square.setScaleUni(0.5);
+  square.setScaleUni(0.25);
   
   return square;
 };
@@ -91,7 +95,7 @@ function appReset() {
   for(var i = -5; i < 5; i++) {
     for(var j = -5; j < 5; j++) {
       for(var k = -5; k < 5; k++) {
-        var sprite = createSquareSprite([i, j, k], this.camera);
+        var sprite = createSquareSprite([i, j, k], this.camera, this.getGL());
         this.spriteGroup.add(sprite);
       }
     }
@@ -124,6 +128,12 @@ function appUpdate() {
     var sprite = this.picker.getSpriteAt(mx, my);
     console.log(pixel);
     console.log(sprite);
+    
+  //  if(sprite && sprite.setText) {
+  //    sprite.setColor(gl, new TentaGL.Color.RGBA(1,0,0,1));
+  //    sprite.setText(gl, "X__X You clicked me...\nI am dead now.");
+  //    sprite.scaleToWidth(1);
+  //  }
   }
   else {
     drawScene.call(this, gl);
@@ -186,7 +196,7 @@ function drawScene(gl) {
     var sprite = sprites[i];
     
     // spin slowly around their local group's Y axis.
-    //sprite.rotate([0, 1, 0], 0.01);
+    sprite.rotate([0, 1, 0], 0.01);
     //sprite.billboardWorldAxis(camEye);
   }
   

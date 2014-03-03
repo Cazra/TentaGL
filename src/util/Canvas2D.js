@@ -62,8 +62,9 @@ TentaGL.Canvas2D = {
     
     var g = canvas.getContext("2d");
     g.save();
-    
+    g.webkitImageSmoothingEnabled = false;
     g.font = font.toCSS();
+    g.lineWidth = 1;
     g.fillStyle = color.toCSS();
     
     var lines = str.split("\n");
@@ -89,8 +90,18 @@ TentaGL.Canvas2D = {
    * @return {Canvas}
    */
   createString:function(str, font, color) {
-    var wh = font.getStringDimensions(str);
-    var canvas = this.create(wh[0], wh[1]);
+    var dims = font.getStringDimensions(str);
+    var canvas = this.create(dims[0], dims[1]);
+    var g = canvas.getContext("2d");
+    
+    if(color.getRed() == 1 && color.getGreen() == 1 && color.getBlue() == 1) {
+      g.fillStyle = "black";
+      g.fillRect(0,0,dims[0], dims[1]);
+    }
+    else {
+      g.fillStyle = "white";
+      g.fillRect(0,0,dims[0], dims[1]);
+    }
     
     return this.drawString(canvas, str, font, color, 0, 0);
   },

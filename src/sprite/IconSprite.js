@@ -81,21 +81,33 @@ TentaGL.IconSprite.prototype = {
   
   
   /** 
-   * Scales the icon such that the Y scale is 1 and the X scale is set so that
-   * the icon's aspect ratio is maintained.
+   * Scales the icon such that its X and Y scale properties equal its
+   * width and height, respectively.
    */
-  scaleAspectX:function() {
-    var aspect = this.getIconWidth()/this.getIconHeight();
-    this.setScaleXYZ([aspect, 1, 1]);
+  scaleIconDims:function() {
+    this.setScaleXYZ(this.getIconWidth(), this.getIconHeight(), 1);
   },
   
+  
   /** 
-   * Scales the icon such that the X scale is 1 and the Y scale is set so that
-   * the icon's aspect ratio is maintained.
+   * Scales the icon such that it becomes the specified width and its height
+   * is set such that the aspect ratio for the icon's texture is maintained.
+   * @param {Number} width
    */
-  scaleAspectY:function() {
+  scaleToWidth:function(width) {
     var aspect = this.getIconWidth()/this.getIconHeight();
-    this.setScaleXYZ([1, 1/aspect, 1]);
+    this.setScaleXYZ([width, width/aspect, 1]);
+  },
+  
+  
+  /** 
+   * Scales the icon such that it becomes the specified height and its width
+   * is set such that the aspect ratio for the icon's texture is maintained.
+   * @param {Number} height
+   */
+  scaleToHeight:function(height) {
+    var aspect = this.getIconWidth()/this.getIconHeight();
+    this.setScaleXYZ([height*aspect, height, 1]);
   },
   
   

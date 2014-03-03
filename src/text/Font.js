@@ -155,6 +155,7 @@ TentaGL.Font.prototype = {
   getStringDimensions:function(str) {
     var canvas = document.createElement("canvas");
     var g = canvas.getContext("2d");
+    g.font = this.toCSS();
     
     var width = 0;
     var height = 0;
@@ -171,6 +172,7 @@ TentaGL.Font.prototype = {
       
       height += this._vPad;
     }
+    height += this._size/4;
     
     return [width, height];
   }

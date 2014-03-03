@@ -52,10 +52,10 @@ TentaGL.RGBAFilter.prototype = {
    * @param {Uint8Array} dstData
    * @param {int} index   the start index of the pixel in dstData. Each pixel is
    *      assumed to be composed of 4 bytes for the RGBA values.
-   * @param {int} r
-   * @param {int} g
-   * @param {int} b
-   * @param {int} a
+   * @param {uint8} r
+   * @param {uint8} g
+   * @param {uint8} b
+   * @param {uint8} a
    */
   setPixel:function(dstData, index, r, g, b, a) {
     dstData[index] = r;
