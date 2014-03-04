@@ -24,37 +24,19 @@
 
 
 /** 
- * A sprite that is always facing towards a camera's eye and is oriented 
+ * A sprite that is always facing towards the camera's eye and is oriented 
  * relative to the camera's up vector. 
  * @constructor
  * @param {vec4} xyz
- * @param {TentaGL.Camera} camera
  */
-TentaGL.BillboardSprite = function(xyz, camera) {
+TentaGL.BillboardSprite = function(xyz) {
   TentaGL.Sprite.call(this, xyz);
-  
-  this._camera = camera;
 };
 
 
 TentaGL.BillboardSprite.prototype = {
   
   constructor:TentaGL.BillboardSprite,
-  
-  /** 
-   * Returns the camera whose eye point this billboard looks at.
-   * @return {TentaGL.Camera}
-   */
-  getCamera:function() {
-    return this._camera;
-  },
-  
-  /** 
-   * Sets the camera whose eye point this billboard looks at.
-   */
-  setCamera:function(camera) {
-    this._camera = camera;
-  },
   
   
   //////// Rendering
@@ -70,8 +52,9 @@ TentaGL.BillboardSprite.prototype = {
     }
     TentaGL.pushTransform();
     
-    var camEye = this._camera.getEye();
-    this.billboardWorldPoint(camEye, this._camera.getUp())
+    var camera = TentaGL.getCamera();
+    var camEye = camera.getEye();
+    this.billboardWorldPoint(camEye, camera.getUp())
     
     TentaGL.mulTransform(this.getModelTransform());
     TentaGL.updateMVPUniforms(gl);

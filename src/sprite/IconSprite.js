@@ -29,12 +29,11 @@
  * BillboardSprite does.
  * @constructor
  * @param {vec4} xyz
- * @param {TentaGL.Camera} camera
  * @param {string} texName  The name of the texture in MaterialLib used by 
  *      this sprite.
  */
-TentaGL.IconSprite = function(xyz, camera, texName) {
-  TentaGL.BillboardSprite.call(this, xyz, camera);
+TentaGL.IconSprite = function(xyz, texName) {
+  TentaGL.BillboardSprite.call(this, xyz);
   this._texName = texName;
 };
 
@@ -124,8 +123,9 @@ TentaGL.IconSprite.prototype = {
     }
     TentaGL.pushTransform();
     
-    var camEye = this._camera.getEye();
-    this.billboardWorldPlane(vec3.negate(vec3.create(), this._camera.getLook()), this._camera.getUp())
+    var camera = TentaGL.getCamera();
+    var camEye = camera.getEye();
+    this.billboardWorldPlane(vec3.negate(vec3.create(), camera.getLook()), camera.getUp())
     
     TentaGL.mulTransform(this.getModelTransform());
     TentaGL.updateMVPUniforms(gl);

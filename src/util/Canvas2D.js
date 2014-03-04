@@ -45,6 +45,7 @@ TentaGL.Canvas2D = {
   
   /** 
    * Draws a string to a Canvas. This supports newline characters '\n'.
+   * @param {Canvas} canvas
    * @param {string} str
    * @param {TentaGL.Font} font
    * @param {TentaGL.Color} 
@@ -104,6 +105,35 @@ TentaGL.Canvas2D = {
     }
     
     return this.drawString(canvas, str, font, color, 0, 0);
+  },
+  
+  
+  /** 
+   * Draws a circle onto a Canvas. 
+   * @param {Canvas} canvas
+   * @param {Number} cx   The center X coordinate of the circle.
+   * @param {Number} cy   The center Y coordinate of the circle.
+   * @param {Number} r    The radius of the circle.
+   * @param {TentaGL.Color} stroke  The color for the edge of the circle.
+   * @param {Number} strokeW    The thickness of the edge of the circle.
+   * @param {TentaGL.Color} fill    The color for the interior of the circle.
+   */
+  drawCircle:function(canvas, cx, cy, r, stroke, strokeW, fill) {
+    
+    // TODO
+    return canvas;
+  },
+  
+  
+  /** 
+   * Creates a new canvas with a rendered circle. 
+   * @param {Number} r  The radius of the circle.
+   */
+  createCircle:function(r, stroke, strokeW, fill) {
+    var sideLen = r*2 + strokeW;
+    var canvas = this.create(sideLen, sideLen);
+    
+    return this.drawCircle(canvas, r+strokeW/2, r+strokeW/2, r, stroke, strokeW, fill);
   },
 };
 

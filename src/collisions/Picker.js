@@ -58,7 +58,7 @@ TentaGL.Picker.prototype = {
     TentaGL.BlendStateLib.useNone(gl);
     TentaGL.Picker.useShader(gl);
     TentaGL.ShaderLib.lock();
-    gl.clearColor(0, 0, 0, 1); // Black
+    TentaGL.lockClearColor(gl, [0, 0, 0, 1]); //gl.clearColor(0, 0, 0, 1); // Black
     this._nextID = 1;
     this._sprites = [];
     
@@ -79,6 +79,7 @@ TentaGL.Picker.prototype = {
     
     
     // Restore the previous state.
+    TentaGL.unlockClearColor();
     TentaGL.ShaderLib.unlock();
     TentaGL.BlendStateLib.use(gl, origBlendState);
     TentaGL.ShaderLib.use(gl, origShader);

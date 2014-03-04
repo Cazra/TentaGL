@@ -266,7 +266,8 @@ TentaGL.PixelData.Canvas = function(canvas) {
 
 
 /** 
- * Converts a GL pixel array index to GL X, Y coordinates. */
+ * Converts a GL pixel array index to GL X, Y coordinates. 
+ */
 TentaGL.PixelData.indexToXY = function(index, width) {
   index /= 4;
   var y = Math.floor(index/width);
@@ -275,6 +276,10 @@ TentaGL.PixelData.indexToXY = function(index, width) {
   return [x, y];
 };
 
+
+/**
+ * Converts GL X,Y coordinates to a GL pixel array index.
+ */
 TentaGL.PixelData.xyToIndex = function(x, y, width) {
   return 4*(width*y + x);
 };

@@ -37,6 +37,10 @@ var TentaGL = {
   /** The minor version number of this framework. */
   versionMinor:5,
   
+  
+  //////// Canvas/Context creation
+  
+  
   /** 
    * Initializes and returns a WebGL context for a canvas element.
    * @param {DOM Canvas element} canvas  The canvas element we're making a 
@@ -84,6 +88,9 @@ var TentaGL = {
   },
   
   
+  
+  //////// GL viewport
+  
   /** 
    * Returns the rectangle data describing the GL context's current viewport.
    * @param {WebGLRenderingContext} gl
@@ -108,6 +115,10 @@ var TentaGL = {
     gl.viewHeight = xywh[3];
     gl.viewport(xywh[0], xywh[1], xywh[2], xywh[3]);
   },
+  
+  
+  
+  //////// GL RenderBuffers
   
   
   /** 
@@ -141,6 +152,9 @@ var TentaGL = {
     return buffer;
   },
   
+  
+  
+  //////// GL textures
   
   /** 
    * Creates an initially empty texture in GL memory. By default, this texture 
@@ -285,6 +299,7 @@ var TentaGL = {
   
   /** 
    * Returns the filter function used for rendering. 
+   * If a sprite returns false for the filter, then it will not be rendered.
    * @return {function(TentaGL.Sprite)}
    */
   getRenderFilter: function() {
@@ -293,6 +308,7 @@ var TentaGL = {
   
   /** 
    * Sets the filter function used for rendering. 
+   * If a sprite returns false for the filter, then it will not be rendered.
    * @param {function(TentaGL.Sprite)}
    */
   setRenderFilter: function(filterFunc) {
@@ -300,7 +316,7 @@ var TentaGL = {
   },
   
   /** 
-   * Resets the render filtering function to undefined, so renderFilter returns
+   * Resets the render filtering function to the default filter, which returns 
    * true for all sprites.
    */
   resetRenderFilter: function() {
@@ -316,7 +332,108 @@ var TentaGL = {
    */
   renderFilter:function(sprite) {
     return (!this._renderFilter || this._renderFilter(sprite));
-  }
+  },
+  
+  
+  //////// Clear
+  
+  /** 
+   * Clears the screen buffers. 
+   * @param {WebGLRenderingContext} gl
+   * @param {bitwise OR of gl buffer bits} bufferBits   
+   *      Optional. The bits specifying which buffers to clear.
+   *      Default to gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT.
+   * @param {vec4} rgba   
+   *      Optional. The normalized rgba color values to clear the color buffer with. 
+   */
+  clear:function(gl, bufferBits, rgba) {
+    if(!bufferBits) {
+      bufferBits = (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    }
+    
+    if(rgba && !this._clearColorLock) {
+      gl.clearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+    }
+    
+    gl.clear(bufferBits);
+  },
+  
+  
+  /** 
+   * Clears the color buffer. 
+   * @param {WebGLRenderingContext} gl
+   * @param {vec4} rgba   Optional. The normalized rgba color values to clear
+   *      the color buffer with. If not provided, it will use whatever clear
+   *      color is currently being used by the GL context.
+   */
+  clearColorBuffer:function(gl, rgba) {
+    if(rgba && !this._clearColorLock) {
+      gl.clearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+    }
+    
+    gl.clear(gl.COLOR_BUFFER_BIT);
+  },
+  
+  
+  /**
+   * Clears the depth buffer.
+   * @param {WebGLRenderingContext} gl   
+   */
+  clearDepthBuffer:function(gl) {
+    gl.clear(gl.DEPTH_BUFFER_BIT);
+  },
+  
+  
+  /**
+   * Sets the clear color (if not already locked) and prevents it from being
+   * changed until TentaGL.unlockClearColor is called.
+   * @param {WebGLRenderingContext} gl
+   * @param {vec4} rgba   Optional. The normalized rgba color values to 
+   *      use as the locked clear color. If not specified, it will use whatever
+   *      clear color is already being used by the GL context.
+   */
+  lockClearColor:function(gl, rgba) {
+    if(rgba && !this._clearColorLock) {
+      gl.clearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+    }
+    this._clearColorLock = true;
+  },
+  
+  
+  /** 
+   * Unlocks the clear color so that it can be changed with TentaGL.clear or 
+   * TentaGL.lockClearColor.
+   */
+  unlockClearColor:function() {
+    this._clearColorLock = false;
+  },
+  
+  
+  //////// Camera
+  
+  /** 
+   * Returns the camera that is being used to render scenes. 
+   * @return {TentaGL.Camera}
+   */
+  getCamera:function() {
+    return this._camera;
+  },
+  
+  /** 
+   * Sets the camera that is being used to render scenes. 
+   * This also resets the MVP and normal transforms to the base transforms
+   * provided by the camera.
+   * @param {TentaGL.Camera} camera
+   * @param {Number} aspect   The aspect ratio for the view.
+   */
+  setCamera:function(camera, aspect) {
+    this._camera = camera;
+    
+    this.setTransform(camera.getViewTransform());
+    this.setProjection(camera.getProjectionTransform(aspect));
+  },
+  
+  
 };
 
 
@@ -334,6 +451,8 @@ TentaGL._defaultRenderFilter = function(sprite) {
  * @return {string}
  */
 TentaGL.glTypeName = function(type){
+  return TentaGL._glTypeName[type];
+  /*
   switch(type) {
     case 0x1400:
       return "BYTE";
@@ -382,9 +501,32 @@ TentaGL.glTypeName = function(type){
     default:
       return "";
   }
+  */
 };
 
-
+TentaGL._glTypeName = [];
+TentaGL._glTypeName[0x1400] = "BYTE";
+TentaGL._glTypeName[0x1401] = "UNSIGNED_BYTE";
+TentaGL._glTypeName[0x1402] = "SHORT";
+TentaGL._glTypeName[0x1403] = "UNSIGNED_SHORT";
+TentaGL._glTypeName[0x1404] = "INT";
+TentaGL._glTypeName[0x1405] = "UNSIGNED_INT";
+TentaGL._glTypeName[0x1406] = "FLOAT";
+TentaGL._glTypeName[0x8B50] = "FLOAT_VEC2";
+TentaGL._glTypeName[0x8B51] = "FLOAT_VEC3";
+TentaGL._glTypeName[0x8B52] = "FLOAT_VEC4";
+TentaGL._glTypeName[0x8B53] = "INT_VEC2";
+TentaGL._glTypeName[0x8B54] = "INT_VEC3";
+TentaGL._glTypeName[0x8B55] = "INT_VEC4";
+TentaGL._glTypeName[0x8B56] = "BOOL";
+TentaGL._glTypeName[0x8B57] = "BOOL_VEC2";
+TentaGL._glTypeName[0x8B58] = "BOOL_VEC3";
+TentaGL._glTypeName[0x8B59] = "BOOL_VEC4";
+TentaGL._glTypeName[0x8B5A] = "FLOAT_MAT2";
+TentaGL._glTypeName[0x8B5B] = "FLOAT_MAT3";
+TentaGL._glTypeName[0x8B5C] = "FLOAT_MAT4";
+TentaGL._glTypeName[0x8B5E] = "SAMPLER_2D";
+TentaGL._glTypeName[0x8B60] = "SAMPLER_CUBE";
 
 /** 
  * Returns the size of a WebGL type in units of its base type. Returns -1 if 
@@ -393,6 +535,8 @@ TentaGL.glTypeName = function(type){
  * @return {int}
  */
 TentaGL.glSizeUnits = function(type){
+  return TentaGL._glSizeUnits[type];
+  /*
   switch(type) {
     case 0x1400: // "BYTE"
       return 1;
@@ -437,8 +581,30 @@ TentaGL.glSizeUnits = function(type){
     default:
       return -1;
   }
+  */
 };
 
+TentaGL._glSizeUnits = [];
+TentaGL._glSizeUnits[0x1400] = 1; // BYTE
+TentaGL._glSizeUnits[0x1401] = 1; // UNSIGNED_BYTE
+TentaGL._glSizeUnits[0x1402] = 1; // SHORT
+TentaGL._glSizeUnits[0x1403] = 1; // UNSIGNED_SHORT
+TentaGL._glSizeUnits[0x1404] = 1; // INT
+TentaGL._glSizeUnits[0x1405] = 1; // UNSIGNED_INT
+TentaGL._glSizeUnits[0x1406] = 1; // FLOAT
+TentaGL._glSizeUnits[0x8B50] = 2; // FLOAT_VEC2
+TentaGL._glSizeUnits[0x8B51] = 3; // FLOAT_VEC3
+TentaGL._glSizeUnits[0x8B52] = 4; // FLOAT_VEC4
+TentaGL._glSizeUnits[0x8B53] = 2; // INT_VEC2
+TentaGL._glSizeUnits[0x8B54] = 3; // INT_VEC3
+TentaGL._glSizeUnits[0x8B55] = 4; // INT_VEC4
+TentaGL._glSizeUnits[0x8B56] = 1; // BOOL
+TentaGL._glSizeUnits[0x8B57] = 2; // BOOL_VEC2
+TentaGL._glSizeUnits[0x8B58] = 3; // BOOL_VEC3
+TentaGL._glSizeUnits[0x8B59] = 4; // BOOL_VEC4
+TentaGL._glSizeUnits[0x8B5A] = 4; // FLOAT_MAT2
+TentaGL._glSizeUnits[0x8B5B] = 9; // FLOAT_MAT3
+TentaGL._glSizeUnits[0x8B5C] = 16; // FLOAT_MAT4
 
 
 /** 
@@ -449,6 +615,10 @@ TentaGL.glSizeUnits = function(type){
  */
 TentaGL.glSizeBytes = function(type){
   var units = TentaGL.glSizeUnits(type);
+  type = TentaGL.glUnitType(type);
+  return units*TentaGL._glSizeBytes[type];
+  
+  /*
   switch(type) {
     case 0x1400: // "BYTE"
       return units*1;
@@ -493,7 +663,18 @@ TentaGL.glSizeBytes = function(type){
     default:
       return -1;
   }
+  */
 };
+
+TentaGL._glSizeBytes = [];
+TentaGL._glSizeBytes[0x1400] = 1; // BYTE
+TentaGL._glSizeBytes[0x1401] = 1; // UNSIGNED_BYTE
+TentaGL._glSizeBytes[0x1402] = 2; // SHORT
+TentaGL._glSizeBytes[0x1403] = 2; // UNSIGNED_SHORT
+TentaGL._glSizeBytes[0x1404] = 4; // INT
+TentaGL._glSizeBytes[0x1405] = 4; // UNSIGNED_INT
+TentaGL._glSizeBytes[0x1406] = 4; // FLOAT
+TentaGL._glSizeBytes[0x8B56] = 4; // BOOL
 
 
 

@@ -23,7 +23,10 @@
 */
 
 /** 
- * Constructor for a TentaGL application. 
+ * A TentaGL application. This helps set up many things expected from 
+ * applications produced with TentaGL so that the user only needs to implement
+ * their own application logic for the functions that initialize their 
+ * app's data and run an iteration of its update loop.
  * @constructor
  * @param {DOM div element} container   An empty div element to contain the
  *      application and its Canvas.
@@ -51,6 +54,22 @@ TentaGL.Application.prototype = {
     this.run(0);
   },
   
+  /** Initializes the application's shaders, materials, and models. */
+  initResources:function() {
+    var gl = this.getGL();
+    
+    TentaGL.ShaderLib.reset(gl);
+    TentaGL.BlendStateLib.reset(gl);
+    TentaGL.ModelLib.reset(gl);
+    
+    this.initShaders();
+    this.initMaterials();
+    this.initModels();
+    
+    this.reset();
+  },
+  
+  
   /** 
    * Runs an iteration of the application loop and then schedules the next 
    * iteration so that the application tries to run at 60 frames per second. 
@@ -70,8 +89,16 @@ TentaGL.Application.prototype = {
       this._fpsCount = 0;
     }
     
+    // Reset the GL states for this iteration.
+    TentaGL.resetTransform();
+    TentaGL.resetProjection();
+    TentaGL.resetRenderFilter();
+    
+    // Poll the input devices.
     this._keyboard.poll();
     this._mouse.poll();
+    
+    // Run an iteration of the application logic.
     this.update();
     
     this._lastTimestamp = timestamp;
@@ -80,54 +107,8 @@ TentaGL.Application.prototype = {
   },
   
   
-  /** 
-   * Runs an iteration of the application loop and renders the application. 
-   * Override this. 
-   */
-  update:function() {},
   
-  
-  /** Initializes the application's shaders, materials, and models. */
-  initResources:function() {
-    var gl = this.getGL();
-    
-    TentaGL.ShaderLib.reset(gl);
-    TentaGL.BlendStateLib.reset(gl);
-    TentaGL.ModelLib.reset(gl);
-    
-    this.initShaders();
-    this.initMaterials();
-    this.initModels();
-    
-    this.reset();
-  },
-  
-  
-  /** 
-   * Initializes shaders for the application. 
-   * Override this. 
-   */
-  initShaders:function() {},
-  
-  /** 
-   * Initializes materials for the application. 
-   * Override this. 
-   */
-  initMaterials:function() {},
-  
-  /** 
-   * Initializes models for the application. 
-   * Override this. 
-   */
-  initModels:function() {},
-  
-  
-  /** 
-   * Sets any other initial state of the application after other resources 
-   * have been initialized. 
-   * Override this.
-   */
-  reset:function() {},
+  //////// DOM and context
   
   /** 
    * Returns the div element containing the application.
@@ -137,6 +118,16 @@ TentaGL.Application.prototype = {
     return this._container;
   },
   
+    
+  /** 
+   * Returns the Canvas for this applicaiton.
+   * @return {DOM Canvas element}
+   */
+  getCanvas:function() {
+    return this._canvas;
+  },
+  
+  
   /** 
    * Returns the WebGLContext for this application. 
    * @return {WebGLContext}
@@ -145,13 +136,8 @@ TentaGL.Application.prototype = {
     return this._gl;
   },
   
-  /** 
-   * Returns the Canvas for this applicaiton.
-   * @return {DOM Canvas element}
-   */
-  getCanvas:function() {
-    return this._canvas;
-  },
+  //////// Dimensions
+  
   
   /** 
    * Returns the width of the application container.
@@ -178,6 +164,9 @@ TentaGL.Application.prototype = {
   },
   
   
+  
+  //////// Access to input device interfaces.
+  
   /** 
    * Returns the keyboard input object for the application.
    * @return {TentaGL.Keyboard}
@@ -193,7 +182,44 @@ TentaGL.Application.prototype = {
    */
   mouse:function() {
     return this._mouse;
-  }
+  },
+  
+  
+  //////// Things the user is expected to override.
+  
+  /** 
+   * Initializes shaders for the application. 
+   * Override this. 
+   */
+  initShaders:function() {},
+  
+  /** 
+   * Initializes materials for the application. 
+   * Override this. 
+   */
+  initMaterials:function() {},
+  
+  /** 
+   * Initializes models for the application. 
+   * Override this. 
+   */
+  initModels:function() {},
+  
+  /** 
+   * Sets any other initial state of the application after other resources 
+   * have been initialized. 
+   * Override this.
+   */
+  reset:function() {},
+  
+  /** 
+   * Runs an iteration of the application loop and renders the application. 
+   * Override this. 
+   */
+  update:function() {},
+  
+  
+  
 };
 
 
