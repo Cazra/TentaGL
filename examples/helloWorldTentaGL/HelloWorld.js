@@ -79,6 +79,12 @@ function initModels() {
   
   var cubeModel = TentaGL.Model.Cube(2, 2, 2).cloneCentered();
   TentaGL.ModelLib.add(this.getGL(), "cube", cubeModel, TentaGL.getDefaultAttrProfileSet());
+  
+  var lineModel = TentaGL.Model.Line([0,0,0],[1,1,0]);
+  TentaGL.ModelLib.add(this.getGL(), "line", lineModel, TentaGL.getDefaultAttrProfileSet());
+  
+  var polyLineModel = TentaGL.Model.PolyLine([[0,0,0],[1,1,0],[1,0,1]], true);
+  TentaGL.ModelLib.add(this.getGL(), "polyline", polyLineModel, TentaGL.getDefaultAttrProfileSet());
 };
 
 

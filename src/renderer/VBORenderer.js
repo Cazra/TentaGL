@@ -65,10 +65,15 @@ TentaGL.VBORenderer = {
                               stride, offset);
     }
     
+    var mode = this._mode;
+    if(vboData.getMode() == gl.LINES) {
+      mode = gl.LINES;
+    }
+    
     // Bind the index data and draw.
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);
   //  console.log(model.numIndices());
-    gl.drawElements(this._mode, vboData.numIndices(), gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(mode, vboData.numIndices(), gl.UNSIGNED_SHORT, 0);
   }
   
 };

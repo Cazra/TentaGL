@@ -90,8 +90,6 @@ TentaGL.Application.prototype = {
   /** Initializes the application's shaders, materials, and models. */
   initResources:function() {
     var gl = this.getGL();
-    //this.initShadersBuiltIn();
-    //this.initBlendStatesBuiltIn();
     
     TentaGL.ShaderLib.reset(gl);
     TentaGL.BlendStateLib.reset(gl);

@@ -143,6 +143,15 @@ TentaGL.VBOData.prototype = {
   
   
   /** 
+   * Returns the primitive mode preferred for rendering this model. 
+   * @return {GLenum}   Either gl.LINES or gl.TRIANGLES.
+   */
+  getMode:function() {
+    return this._mode;
+  },
+  
+  
+  /** 
    * Deletes the VBOData's buffers from GL memory.
    * @param {WebGLRenderingContext} gl
    */

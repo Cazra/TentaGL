@@ -25,8 +25,15 @@
 /** 
  * Constructs a model with empty vertex and face index arrays.
  * @constructor
+ * @param {GLenum} mode   Optional. Either gl.LINES or gl.TRIANGLES. 
+ *      Default gl.TRIANGLES.
  */
-TentaGL.Model = function() {
+TentaGL.Model = function(mode) {
+  if(!mode) {
+    mode = TentaGL.GL_TRIANGLES;
+  }
+  
+  this._mode = mode;
   this._vertices = [];
   this._indices = [];
 };
@@ -71,17 +78,6 @@ TentaGL.Model.prototype = {
    */
   getMode:function() {
     return this._mode;
-  },
-  
-  
-  /** 
-   * Sets the preferred mode used to draw this model by the VBORenderer. 
-   * By default a model's drawing mode is undefined.
-   * @param {GLenum} mode   One of the WebGL primitive drawing mode 
-   *      enumerations. E.G. LINES, TRIANGLES.
-   */
-  setMode:function(mode) {
-    this._mode = mode;
   },
   
   
@@ -145,13 +141,91 @@ TentaGL.Model.prototype = {
   
   //////// Line index operations
   
-  
-  
-  addLine:function(v1, v2) {
-    // Since TentaGL prefers to represent
-    this.addFace(v1, v2, v2);
+  /** Returns the number of lines defining this model. */
+  numLines:function() {
+    return Math.floor(this._indices.length/2);
   },
   
+  
+  /** 
+   * Adds indices to the model to define a line.
+   * @param {int} v1  The index of the line's start vertex.
+   * @param {int} v2  The index of the line's end vertex.
+   */
+  addLine:function(v1, v2) {
+    if(v1 < 0 || v1 >= this._vertices.length) {
+      throw Error("Index " + v1 + " out of bounds.");
+    }
+    if(v2 < 0 || v2 >= this._vertices.length) {
+      throw Error("Index " + v2 + " out of bounds.");
+    }
+    
+    this._indices.push(v1);
+    this._indices.push(v2);
+    
+    var vert1 = this._vertices[v1];
+    var vert2 = this._vertices[v2];
+    vert1.setTangental(vert1.computeTangental(vert2, vert2));
+    vert2.setTangental(vert2.computeTangental(vert1, vert1));
+  },
+  
+  
+  /** 
+   * Adds indices to the model to define a line strip. Internally though, the 
+   * line strip is composed of a series of individual lines.
+   * @param {Array of ints} An array of line strip indices to vertices.
+   */
+  addLineStrip:function(v) {
+    if(v.length < 2) {
+      throw Error("Not enough indices in line strip array.");
+    }
+    
+    var prev = v[0];
+    for(var i=1; i<v.length; i++) {
+      var cur = v[i];
+      
+      this.addLine(prev, cur);
+    }
+  },
+  
+  
+  /** 
+   * Adds indices to the model to define a line loop. Internally though, the 
+   * line loop is composed of a series of individual lines.
+   * @param {Array of ints} An array of line strip indices to vertices.
+   */
+  addLineLoop:function(v) {
+    if(v.length < 2) {
+      throw Error("Not enough indices in line strip array.");
+    }
+    
+    var prev = v[0];
+    for(var i=1; i<v.length; i++) {
+      var cur = v[i];
+      
+      this.addLine(prev, cur);
+    }
+    this.addLine(v[v.length-1], v[0]);
+  },
+  
+  
+  /** 
+   * Returns an array of lines for this model. 
+   * Each element is a length-2 array containing the start and end vertex 
+   * indices for a line.
+   * @return {Array{Array{int}}}
+   */
+  getLines:function() {
+    var result = [];
+    
+    for(var i=1; i<v.length; i+=2) {
+      var v1 = this._indices[i-1];
+      var v2 = this._indices[i];
+      result.push([v1, v2]);
+    }
+    
+    return result;
+  },
   
   
   
