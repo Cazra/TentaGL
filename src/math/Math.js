@@ -157,7 +157,7 @@ TentaGL.Math = {
   
   
   /** 
-   * A recyclable vec3 for intermediate Math vector operations so that we don't 
+   * Recyclable vec3s for intermediate Math vector operations so that we don't 
    * have to spend as much time creating new vectors for every operation.
    */
   _vec3_1:vec3.create(),

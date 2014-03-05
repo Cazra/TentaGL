@@ -85,7 +85,14 @@ TentaGL.ShaderProgram.prototype = {
       // Alert the user of any compile errors for the shader.
       if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         var msg = gl.getShaderInfoLog(shader);
-        throw Error("Failed to compile shader :\n" + msg);
+        var typeStr = "";
+        if(glType == gl.VERTEX_SHADER) {
+          typeStr = "vertex";
+        }
+        else if(glType == gl.FRAGMENT_SHADER) {
+          typeStr = "fragment";
+        }
+        throw Error("Failed to compile " + typeStr + " shader :\n" + msg);
       }
       
       return shader;

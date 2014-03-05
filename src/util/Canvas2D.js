@@ -26,6 +26,8 @@
 /** 
  * Provides a small framework for creating offscreen Canvas elements and 
  * drawing to them. 
+ * Please remember that when drawing on a canvas, the positive Y axis is down
+ * and the origin is at the upper-left corner of the canvas.
  */
 TentaGL.Canvas2D = {
   
@@ -41,6 +43,31 @@ TentaGL.Canvas2D = {
     canvas.height = height;
     return canvas;
   },
+  
+  
+  /** 
+   * Sets the alpha component of all pixels that aren't 255 to 0.
+   * If your application doesn't enable blending, you may want to use this on
+   * any textures produced from canvas renderings. Otherwise you'll end up
+   * with a messy white-ish outline.
+   * @param {Canvas} canvas
+   */
+  removeAlpha:function(canvas) {
+    var g = canvas.getContext("2d");
+    var pixels = g.getImageData(0, 0, canvas.width, canvas.height);
+    var data = pixels.data;
+    
+    for(var i=0; i<data.length; i+=4) {
+      if(data[i+3] < 255) {
+        data[i+3] = 0;
+      }
+    }
+    
+    g.putImageData(pixels, 0, 0);
+    
+    return canvas;
+  },
+  
   
   
   /** 
@@ -104,7 +131,8 @@ TentaGL.Canvas2D = {
       g.fillRect(0,0,dims[0], dims[1]);
     }
     
-    return this.drawString(canvas, str, font, color, 0, 0);
+    this.drawString(canvas, str, font, color, 0, 0);
+    return canvas;
   },
   
   
@@ -113,27 +141,146 @@ TentaGL.Canvas2D = {
    * @param {Canvas} canvas
    * @param {Number} cx   The center X coordinate of the circle.
    * @param {Number} cy   The center Y coordinate of the circle.
-   * @param {Number} r    The radius of the circle.
+   * @param {Number} r    The radius of the circle, sans edge thickness.
    * @param {TentaGL.Color} stroke  The color for the edge of the circle.
-   * @param {Number} strokeW    The thickness of the edge of the circle.
+   * @param {Number} edgeW    The thickness of the edge of the circle.
    * @param {TentaGL.Color} fill    The color for the interior of the circle.
    */
-  drawCircle:function(canvas, cx, cy, r, stroke, strokeW, fill) {
+  drawCircle:function(canvas, cx, cy, r, stroke, edgeW, fill) {
+    var g = canvas.getContext("2d");
+    g.save();
     
-    // TODO
+    g.beginPath();
+    g.arc(cx, cy, r, 0, TentaGL.TAU);
+    if(fill) {
+      g.fillStyle = fill.toCSS();
+      g.fill();
+    }
+    if(stroke) {
+      g.strokeStyle = stroke.toCSS();
+      g.lineWidth = edgeW;
+      g.stroke();
+    }
+    
+    g.restore();
     return canvas;
   },
   
   
   /** 
    * Creates a new canvas with a rendered circle. 
-   * @param {Number} r  The radius of the circle.
+   * @param {Number} r  The radius of the circle, sans edge thickness.
+   * @param {TentaGL.Color} stroke  The color for the edge of the circle.
+   * @param {Number} edgeW    The thickness of the edge of the circle.
+   * @param {TentaGL.Color} fill    The color for the interior of the circle.
    */
-  createCircle:function(r, stroke, strokeW, fill) {
-    var sideLen = r*2 + strokeW;
+  createCircle:function(r, stroke, edgeW, fill) {
+    var sideLen = r*2 + edgeW;
     var canvas = this.create(sideLen, sideLen);
-    
-    return this.drawCircle(canvas, r+strokeW/2, r+strokeW/2, r, stroke, strokeW, fill);
+    this.drawCircle(canvas, r+edgeW/2, r+edgeW/2, r, stroke, edgeW, fill);
+    return canvas;
   },
+  
+  
+  /** 
+   * Draws a rectangle onto a canvas. 
+   * @param {Canvas} canvas
+   * @param {Number} x    The x coordinate of the rectangle's left edge.
+   * @param {Number} y    The y coordinate of the rectangle's top edge.
+   * @param {Number} w    The rectangle's width, sans edge thickness.
+   * @param {Number} h    The rectangle's height, sans edge thickness.
+   * @param {TentaGL.Color} stroke  The color for the edge of the rectangle.
+   * @param {Number} edgeW  The thickness of the edge of the rectangle.
+   * @param {TentaGL.Color} fill    The color of the interior of the rectangle.
+   */
+  drawRect:function(canvas, x, y, w, h, stroke, edgeW, fill) {
+    var g = canvas.getContext("2d");
+    g.save();
+    
+    if(fill) {
+      g.fillStyle = fill.toCSS();
+      g.fillRect(x, y, w, h);
+    }
+    if(stroke) {
+      g.strokeStyle = stroke.toCSS();
+      g.lineWidth = edgeW;
+      g.strokeRect(x, y, w, h);
+    }
+    
+    g.restore();
+    return canvas;
+  },
+  
+  /** 
+   * Creates a new canvas with a rendered rectangle. 
+   * @param {Number} w
+   * @param {Number} h
+   * @param {TentaGL.Color} stroke  The color for the edge of the rectangle.
+   * @param {Number} edgeW  The thickness of the edge of the rectangle.
+   * @param {TentaGL.Color} fill    The color of the interior of the rectangle.
+   */
+  createRect:function(w, h, stroke, edgeW, fill) {
+    var canvas = this.create(w + edgeW, h + edgeW);
+    this.drawRect(canvas, edgeW/2, edgeW/2, w, h, stroke, edgeW, fill);
+    return canvas;
+  },
+  
+  
+  /** 
+   * Draws a rounded rectangle onto a canvas. 
+   * @param {Canvas} canvas
+   * @param {Number} x    The x coordinate of the rectangle's left edge.
+   * @param {Number} y    The y coordinate of the rectangle's top edge.
+   * @param {Number} w    The rectangle's width, sans edge thickness.
+   * @param {Number} h    The rectangle's height, sans edge thickness.
+   * @param {Number} r    The radius of the rounded corners.
+   * @param {TentaGL.Color} stroke  The color for the edge of the rectangle.
+   * @param {Number} edgeW  The thickness of the edge of the rectangle.
+   * @param {TentaGL.Color} fill    The color of the interior of the rectangle.
+   */
+  drawRoundedRect:function(canvas, x, y, w, h, r, stroke, edgeW, fill) {
+    var g = canvas.getContext("2d");
+    g.save();
+    
+    g.beginPath();
+    g.moveTo(x+r, y);
+    g.lineTo(x+w-r, y);
+    g.arc(x+w-r, y+r, r, TentaGL.TAU*3/4, 0);
+    g.lineTo(x+w, y+h-r);
+    g.arc(x+w-r, y+h-r, r, 0, TentaGL.TAU*1/4);
+    g.lineTo(x+r, y+h);
+    g.arc(x+r, y+h-r, r, TentaGL.TAU*1/4, TentaGL.TAU*2/4);
+    g.lineTo(x, y+r);
+    g.arc(x+r, y+r, r, TentaGL.TAU*2/4, TentaGL.TAU*3/4);
+    
+    if(fill) {
+      g.fillStyle = fill.toCSS();
+      g.fill();
+    }
+    if(stroke) {
+      g.strokeStyle = stroke.toCSS();
+      g.lineWidth = edgeW;
+      g.stroke();
+    }
+    
+    g.restore();
+    return canvas;
+  },
+  
+  
+  /** 
+   * Creates a new canvas with a rendered rounded rectangle. 
+   * @param {Number} w    The rectangle's width, sans edge thickness.
+   * @param {Number} h    The rectangle's height, sans edge thickness.
+   * @param {Number} r    The radius of the rounded corners.
+   * @param {TentaGL.Color} stroke  The color for the edge of the rectangle.
+   * @param {Number} edgeW  The thickness of the edge of the rectangle.
+   * @param {TentaGL.Color} fill    The color of the interior of the rectangle.
+   */
+  createRoundedRect:function(w, h, r, stroke, edgeW, fill) {
+    var canvas = this.create(w + edgeW, h + edgeW);
+    this.drawRoundedRect(canvas, edgeW/2, edgeW/2, w, h, r, stroke, edgeW, fill);
+    return canvas;
+  }
 };
 

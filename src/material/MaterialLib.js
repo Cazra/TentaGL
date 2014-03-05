@@ -46,6 +46,17 @@ TentaGL.MaterialLib = {
     return material;
   },
   
+  
+  /** 
+   * Returns true iff this library contains a Material with the specified name. 
+   * @param {string} name
+   * @return {Boolean}
+   */
+  has:function(name) {
+    return (this._materials[name] !== undefined);
+  },
+  
+  
   /** 
    * Adds a new Material to the library, keyed with the specified name.
    * @param {string} name

@@ -57,6 +57,7 @@ TentaGL.Picker.prototype = {
     // Set up the GL state for picker rendering. 
     TentaGL.BlendStateLib.useNone(gl);
     TentaGL.Picker.useShader(gl);
+    TentaGL.MaterialLib.useNone();
     TentaGL.ShaderLib.lock();
     TentaGL.lockClearColor(gl, [0, 0, 0, 1]); //gl.clearColor(0, 0, 0, 1); // Black
     this._nextID = 1;
@@ -67,6 +68,7 @@ TentaGL.Picker.prototype = {
     
     if(renderToView) {
       renderFunc(gl);
+      TentaGL.MaterialLib.useNone();
       this._nextID = 1;
     }
     
@@ -150,12 +152,16 @@ TentaGL._shaderID = "pickShader";
 /** Source code for the picker's vertex shader. */
 TentaGL.Picker._vShader = 
   "attribute vec4 vertexPos;\n" +
+  "attribute vec2 vertexTexCoords;\n" + 
   "\n" +
   "uniform mat4 mvpTrans;\n" +
+  "\n" +
+  "varying vec2 texCoords;\n" +
   "\n" +
   "// pass-through shader.\n" +
   "void main(void) {\n" + 
   "  gl_Position = mvpTrans * vertexPos;\n" +
+  "  texCoords = vertexTexCoords;\n" +
   "}\n";
 
 /** Source code for the picker's fragment shader. */
@@ -163,10 +169,19 @@ TentaGL.Picker._fShader =
   "precision mediump float;\n" +
   "\n" +
   "uniform vec4 pickID;\n" +
+  "uniform sampler2D tex;\n" +
+  "\n" +
+  "varying vec2 texCoords;\n" +
   "\n" +
   "// All fragments are colored white.\n" +
   "void main(void) {\n" +
-  "  gl_FragColor = pickID;\n" +
+  "  if(texture2D(tex, texCoords).a == 0.0) {\n"+
+  "    gl_FragColor = vec4(0, 0, 0, 1);\n" +
+  "    discard;\n" +
+  "  }\n" +
+  "  else {\n" +
+  "    gl_FragColor = pickID;\n" +
+  "  }\n" +
   "}\n";
 
   
@@ -179,6 +194,7 @@ TentaGL.Picker.loadShaderProgram = function(gl) {
   var shaderProgram = TentaGL.ShaderLib.add(gl, TentaGL._shaderID, TentaGL.Picker._vShader, TentaGL.Picker._fShader);
   
   shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+  shaderProgram.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
   
   shaderProgram.bindMVPTransUni("mvpTrans");
   shaderProgram.bindPickIDUni("pickID");

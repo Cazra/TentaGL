@@ -25,15 +25,22 @@
 /** 
  * Constructs a model with empty vertex and face index arrays.
  * @constructor
- * @param {GLenum} mode   Optional. Either gl.LINES or gl.TRIANGLES. 
+ * @param {GLenum} drawMode   Optional. Either gl.LINES or gl.TRIANGLES. 
  *      Default gl.TRIANGLES.
+ * @param {GLenum} cullMode    Optional. Either gl.NONE, gl.FRONT, gl.BACK, 
+ *      or gl.FRONT_AND_BACK. Default gl.NONE.
  */
-TentaGL.Model = function(mode) {
-  if(!mode) {
-    mode = TentaGL.GL_TRIANGLES;
+TentaGL.Model = function(drawMode, cullMode) {
+  if(!drawMode) {
+    drawMode = TentaGL.GL_TRIANGLES;
+  }
+  if(!cullMode) {
+    cullMode = TentaGL.GL_NONE;
   }
   
-  this._mode = mode;
+  
+  this._mode = drawMode;
+  this._cull = cullMode;
   this._vertices = [];
   this._indices = [];
 };
@@ -76,10 +83,18 @@ TentaGL.Model.prototype = {
    * then the VBORenderer will use its default drawing mode.
    * @return {GLenum}
    */
-  getMode:function() {
+  getDrawMode:function() {
     return this._mode;
   },
   
+  
+  /** 
+   * Returns the face culling mode used to draw this model. 
+   * @return {GLenum}
+   */
+  getCullMode:function() {
+    return this._cull;
+  },
   
   //////// Element index data
   

@@ -35,7 +35,7 @@ var TentaGL = {
   versionMajor:0, 
   
   /** The minor version number of this framework. */
-  versionMinor:5,
+  versionMinor:6,
   
   
   //////// Canvas/Context creation
@@ -749,6 +749,11 @@ TentaGL.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
 TentaGL.GL_POINTS = 0;
 TentaGL.GL_LINES = 1;
 TentaGL.GL_TRIANGLES = 4;
+
+TentaGL.GL_NONE = 0;
+TentaGL.GL_FRONT = 0x0404;
+TentaGL.GL_BACK = 0x0405;
+TentaGL.GL_FRONT_AND_BACK = 0x0408;
 
 
 TentaGL.mat3Recyclable = mat3.create();

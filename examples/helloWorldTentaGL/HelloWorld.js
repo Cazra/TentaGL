@@ -27,13 +27,13 @@ HelloWorldApp.prototype = {
     font.setBold(true);
     var color = TentaGL.Color.RGBA(0.5, 0.5, 0.5, 1);
     
-    var sprite = new TentaGL.TextIconSprite(xyz, "Hello World!\nHow are you?", font, color); //new TentaGL.TextIconSprite(xyz, "Hello World!\nHow are you?", font, color); //new TentaGL.IconSprite(xyz, "iconNew");
+    var sprite = new TentaGL.Sprite(xyz); //new TentaGL.TextIconSprite(xyz, "Hello World!\nHow are you?", font, color); //new TentaGL.IconSprite(xyz, "iconNew");
   //  sprite.scaleToWidth(1);
-  //  sprite.draw = function(gl) {
-  //    TentaGL.MaterialLib.use(gl, "coinBlock");
-  //    TentaGL.VBORenderer.render(gl, "cube");
-  //  };
-    
+    sprite.draw = function(gl) {
+      TentaGL.MaterialLib.use(gl, "testCircle");
+      TentaGL.VBORenderer.render(gl, "cube");
+    };
+    sprite.setAnchorXYZ([1,1,1]);
     sprite.setScaleUni(0.25);
     
     return sprite;
@@ -81,12 +81,31 @@ HelloWorldApp.prototype = {
       icon.setPixelData(gl, pixelData);
     });
     TentaGL.MaterialLib.add("iconNew", icon);
+    
+    
+    
+    var canvas = TentaGL.Canvas2D.createRoundedRect(100, 100, 32,TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1)); // TentaGL.Canvas2D.createCircle(100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
+    TentaGL.Canvas2D.removeAlpha(canvas);
+    var canvasPixels = TentaGL.PixelData.Canvas(canvas);
+    
+    // Clipping/Masking filter test
+    /*
+    var clipCanvas = TentaGL.Canvas2D.create(canvas.width, canvas.height);
+    TentaGL.Canvas2D.drawCircle(clipCanvas, 0, 0, 100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
+    var clipPixels = TentaGL.PixelData.Canvas(clipCanvas);
+    canvasPixels = canvasPixels.filter(new TentaGL.RGBAFilter.ClipMap(clipPixels));
+    */
+    
+    
+    var circle = new TentaGL.Texture(gl); //TentaGL.Texture.Canvas(gl, canvas);
+    circle.setPixelData(gl, canvasPixels);
+    TentaGL.MaterialLib.add("testCircle", circle);
   },
   
   
   /** Overrides TentaGL.Application.initModels */
   initModels:function() {
-    var cubeModel = TentaGL.Model.Cube(2, 2, 2).cloneCentered();
+    var cubeModel = TentaGL.Model.Cube(2, 2, 2);//.cloneCentered();
     TentaGL.ModelLib.add(this.getGL(), "cube", cubeModel, TentaGL.getDefaultAttrProfileSet());
     
     var lineModel = TentaGL.Model.Line([0,0,0],[1,1,0]);

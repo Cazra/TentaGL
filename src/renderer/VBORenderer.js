@@ -27,12 +27,50 @@ TentaGL.VBORenderer = {
   
   _mode:TentaGL.GL_TRIANGLES,
   
-  getMode:function() {
+  /** 
+   * Returns the preferred drawing mode for primitives. 
+   * @return {GLenum}   Either gl.LINES or gl.TRIANGLES.
+   */
+  getDrawMode:function() {
     return this._mode;
   },
   
-  setMode:function(mode) {
+  /** 
+   * Sets the preferred drawing mode for primitives. 
+   * @param {GLenum} mode   Either gl.LINES or gl.TRIANGLES.
+   */
+  setDrawMode:function(mode) {
     this._mode = mode;
+  },
+  
+  
+  _cull:TentaGL.GL_NONE,
+  
+  /** 
+   * Returns the face culling mode in use. 
+   * @return {GLenum}   Either gl.NONE, gl.FRONT, gl.BACK, or gl.FRONT_AND_BACK.
+   */
+  getCullMode:function() {
+    return this._cull;
+  },
+  
+  /** 
+   * Sets the GL context's face culling state. 
+   * @param {WebGLRenderingContext} gl
+   * @param {GLenum} mode   Either gl.NONE, gl.FRONT, gl.BACK, or gl.FRONT_AND_BACK.
+   */
+  setCullMode:function(gl, mode) {
+    if(this._cull != mode) {
+      this._cull = mode;
+      
+      if(mode == TentaGL.GL_NONE) {
+        gl.disable(gl.CULL_FACE);
+      }
+      else {
+        gl.enable(gl.CULL_FACE);
+        gl.cullFace(mode);
+      }
+    }
   },
   
   
@@ -66,9 +104,10 @@ TentaGL.VBORenderer = {
     }
     
     var mode = this._mode;
-    if(vboData.getMode() == gl.LINES) {
+    if(vboData.getDrawMode() == gl.LINES) {
       mode = gl.LINES;
     }
+    this.setCullMode(gl, vboData.getCullMode());
     
     // Bind the index data and draw.
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);

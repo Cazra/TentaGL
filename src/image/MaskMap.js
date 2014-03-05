@@ -24,38 +24,31 @@
 
 
 /** 
- * Clears all pixels whose RGB values do not match the specified color within some tolerance. 
- * Those pixels are set to RGBA = [0,0,0,0]. All matching pixels are kept and
- * have their alpha components set to 255.
+ * An RGBA filter that uses the pixels of one image as a mask region
+ * for the pixels. The pixels in the mask map image whose alpha components 
+ * are > 0 define the masking region. 
+ * Pixels inside the masking region have their alpha components
+ * set to 0.
  * @constructor
- * @param {TentaGL.Color} color
- * @param {Number} tolerance  Optional. A tolerance level in range [0, 1]. Default 0.
+ * @param {TentaGL.PixelData} maskMapPixelData  The PixelData to be used 
+ *      as the mask map.
  */
-TentaGL.RGBAFilter.OneColor = function(color, tolerance) {
-  if(!tolerance) {
-    tolerance = 0;
-  }
-  
-  this._color = color;
-  this._tolerance = tolerance;
+TentaGL.RGBAFilter.MaskMap = function(maskMapPixelData) {
+  this._maskData = maskMapPixelData.getData();
 };
 
-TentaGL.RGBAFilter.OneColor.prototype = {
+
+TentaGL.RGBAFilter.MaskMap.prototype = {
   
-  constructor:TentaGL.RGBAFilter.OneColor,
+  constructor:TentaGL.RGBAFilter.MaskMap,
   
-  
-  /** Returns the color for this filter. */
-  getColor:function() {
-    return this._color;
-  },
   
   /** 
-   * Returns the tolerance level for this filter.
-   * @return {Number}
+   * Returns the uint8 pixel array for the mask map.
+   * @return {Uint8Array}
    */
-  getTolerance:function() {
-    return this._tolerance;
+  getMaskData:function() {
+    return this._maskData;
   },
   
 
@@ -66,21 +59,8 @@ TentaGL.RGBAFilter.OneColor.prototype = {
     var b = srcData[index+2];
     var a = srcData[index+3];
     
-    var dr = Math.abs(r-this._color.getRedByte())/255;
-    var dg = Math.abs(g-this._color.getGreenByte())/255;
-    var db = Math.abs(b-this._color.getBlueByte())/255;
-    
-    if(dr*dr + dg*dg + db*db > this._tolerance*this._tolerance) {
-      r = 0;
-      g = 0;
-      b = 0;
+    if(this._maskData[index+3] > 0) {
       a = 0;
-    }
-    else {
-      r = this._color.getRedByte();
-      g = this._color.getGreenByte();
-      b = this._color.getBlueByte();
-      a = 255;
     }
     
     this.setPixel(dstData, index, r, g, b, a);
@@ -88,6 +68,6 @@ TentaGL.RGBAFilter.OneColor.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.OneColor.prototype, TentaGL.RGBAFilter.prototype);
+TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.MaskMap.prototype, TentaGL.RGBAFilter.prototype);
 
 

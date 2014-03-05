@@ -79,7 +79,8 @@ TentaGL.VBOData = function(gl, model, attrProfileSet) {
   this._attrSet = attrProfileSet;
   this._stride = TentaGL.AttrProfiles.getStride(attrProfileSet);
   
-  this._mode = model.getMode();
+  this._mode = model.getDrawMode();
+  this._cull = model.getCullMode();
 };
 
 
@@ -143,11 +144,16 @@ TentaGL.VBOData.prototype = {
   
   
   /** 
-   * Returns the primitive mode preferred for rendering this model. 
+   * Returns the primitive drawing mode preferred for rendering this model. 
    * @return {GLenum}   Either gl.LINES or gl.TRIANGLES.
    */
-  getMode:function() {
+  getDrawMode:function() {
     return this._mode;
+  },
+  
+  /** Returns the face culling mode for rendering this model. */
+  getCullMode:function() {
+    return this._cull;
   },
   
   

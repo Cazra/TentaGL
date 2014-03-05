@@ -61,6 +61,10 @@ TentaGL.TextIconSprite = function(xyz, text, font, color, antialiasTolerance) {
   this._texCreated = false;
   this._needsUpdate = true;
   
+  var dims = font.getStringDimensions(text);
+  this._width = dims[0];
+  this._height = dims[1];
+  
   TentaGL.TextIconSprite.count++;
 };
 
@@ -74,12 +78,17 @@ TentaGL.TextIconSprite.prototype = {
   
   constructor:TentaGL.TextIconSprite,
   
+  //////// GL cleanup
+  
   /** Removes the internal texture for this sprite form the MaterialLib and GL memory.  */
   clean:function(gl) {
     if(this._texCreated) {
       TentaGL.MaterialLib.remove(gl, this.getTextureName());
     }
   },
+  
+  
+  //////// Edit text content
   
   /** 
    * Sets the text of this sprite. 
@@ -117,22 +126,65 @@ TentaGL.TextIconSprite.prototype = {
     this._needsUpdate = true;
   },
   
+  //////// Texture Dimensions
+  
+  /** 
+   * Returns the base pixel width of the text. 
+   * @return {int}
+   */
+  getIconWidth:function() {
+    return this._width;
+  },
+  
+  
+  /** 
+   * Returns the base pixel height of the text. 
+   * @return {int}
+   */
+  getIconHeight:function() {
+    return this._height;
+  },
+  
+  //////// Filters
+  
+  /**  
+   * Sets a list of filters to apply to the text whenever it is updated. 
+   * @param {Array{TentaGL.RGBAFilter}} filters
+   */
+  setFilters:function(filters) {
+    this._filters = filters;
+    this._needsUpdate = true;
+  },
+  
+  
+  //////// Rendering
   
   /** 
    * Updates the internal texture used to display the text for this sprite. 
    * The texture is created in GL memory the first time this method is called.
    * @param {WebGLRenderingContext} gl
    */
-  _update:function(gl) {
+  update:function(gl) {
+    // Create the GL texture for this sprite if it hasn't already been created. 
     if(!this._texCreated) {
       TentaGL.MaterialLib.add(this.getTextureName(), new TentaGL.Texture(gl));
       this._texCreated = true;
     }
     
+    // Render the text to a canvas and extract the PixelData. Then use a filter
+    // to get rid of edge alpha colors.
     var textIconPixelData = TentaGL.PixelData.Canvas(TentaGL.Canvas2D.createString(this._text, this._font, this._color));
     textIconPixelData = textIconPixelData.filter(new TentaGL.RGBAFilter.OneColor(this._color, this._tolerance));
-    this.getTexture().setPixelData(gl, textIconPixelData);
     
+    // Apply any filters to the canvas text.
+    if(this._filters) {
+      for(var i in this._filters) {
+        textIconPixelData = textIconPixelData.filter(this._filters[i]);
+      }
+    }
+    
+    // Update the GL texture with our updated PixelData.
+    this.getTexture().setPixelData(gl, textIconPixelData);
     this._needsUpdate = false;
   },
   
@@ -141,7 +193,7 @@ TentaGL.TextIconSprite.prototype = {
   /** Updates the TEXTure if necessary and then draws the sprite. */
   draw:function(gl) {
     if(this._needsUpdate) {
-      this._update(gl);
+      this.update(gl);
     }
     
     TentaGL.IconSprite.prototype.draw.call(this, gl);

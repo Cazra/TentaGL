@@ -41,6 +41,7 @@
 TentaGL.Sprite = function(xyz) {
   TentaGL.SceneNode.call(this, xyz);
   
+  this._anchorXYZ = vec4.fromValues(0, 0, 0, 1);
   //this._opacity = 1;
 };
 
@@ -48,7 +49,93 @@ TentaGL.Sprite = function(xyz) {
 TentaGL.Sprite.prototype = {
   
   constructor:TentaGL.Sprite,
-
+  
+  //////// Anchor point
+  
+  /** 
+   * Returns the homogeneous xyz coordinates of the sprite's anchor point. 
+   * The anchor point is the position of the sprite's origin point in relation
+   * to its model's origin point.
+   * @return {vec4}
+   */
+  getAnchorXYZ:function() {
+    return this._anchorXYZ;
+  },
+  
+  /** 
+   * Sets the anchor point for the sprite.
+   * The anchor point is the position of the sprite's origin point in relation
+   * to its model's origin point.
+   * @param {vec3} xyz
+   */
+  setAnchorXYZ:function(xyz) {
+    this._anchorXYZ = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
+  },
+  
+  /** 
+   * Returns the x coordinate of the sprite's anchor point. 
+   * @return {Number}
+   */
+  getAnchorX:function() {
+    return this._anchorXYZ[0];
+  },
+  
+  /** 
+   * Returns the y coordinate of the sprite's anchor point. 
+   * @return {Number}
+   */
+  getAnchorY:function() {
+    return this._anchorXYZ[1];
+  },
+  
+  /** 
+   * Returns the z coordinate of the sprite's anchor point. 
+   * @return {Number}
+   */
+  getAnchorZ:function() {
+    return this._anchorXYZ[2];
+  },
+  
+  
+  //////// Transform
+  
+  
+  /** The model transform for sprites also needs to take into account anchor points. */
+  getTRSTransform:function() {
+    var tx = this.getX();
+    var ty = this.getY();
+    var tz = this.getZ();
+    
+    var ax = 0-this.getAnchorX();
+    var ay = 0-this.getAnchorY();
+    var az = 0-this.getAnchorZ();
+    
+    var sUni = this.getScaleUni();
+    var scaleX = this.getScaleX()*sUni;
+    var scaleY = this.getScaleY()*sUni;
+    var scaleZ = this.getScaleZ()*sUni;
+    
+    var m = this._transform; 
+    mat4.fromQuat(m, this.getQuat());
+    m[0] *= scaleX;
+    m[1] *= scaleX;
+    m[2] *= scaleX;
+    
+    m[4] *= scaleY;
+    m[5] *= scaleY;
+    m[6] *= scaleY;
+    
+    m[8] *= scaleZ;
+    m[9] *= scaleZ;
+    m[10] *= scaleZ;
+    
+    m[12] = ax*m[0] + ay*m[4] + az*m[8] + tx;
+    m[13] = ax*m[1] + ay*m[5] + az*m[9] + ty;
+    m[14] = ax*m[2] + ay*m[6] + az*m[10] + tz;
+    m[15] = 1;
+    
+    return m;
+  },
   
   //////// Rendering
   
