@@ -59,7 +59,7 @@ TentaGL.SceneGroup.prototype = {
    * @return {TentaGL.SceneNode}
    */
   get:function(index) {
-    return this._children(index);
+    return this._children[index];
   },
   
   /** 
@@ -166,41 +166,16 @@ TentaGL.SceneGroup.prototype = {
   
   
   /** 
-   * Renders this group's children in the order they appear in its list, 
-   * temporarily concatenating the group's model transform to the model-view
-   * transform of the scene. 
-   * @param {WebGLRenderingContext} gl
-   */
-  render:function(gl) {
-    if(!this.isVisible()) {
-      return;
-    }
-    TentaGL.pushTransform();
-    
-    TentaGL.mulTransform(this.getModelTransform());
-    TentaGL.updateMVPUniforms(gl);
-    
-    for(var i=0; i<this.size(); i++) {
-      var child = this._children[i];
-      child.render(gl);
-    }
-    
-    TentaGL.popTransform();
-  },
-  
-  
-  /** 
    * Render's this group's children in ascending Z order in view space. 
    * @param {WebGLRenderingContext} gl
-   * @param {TentaGL.Camera} camera
    */
-  renderSorted:function(gl, camera) {
+  renderSorted:function(gl) {
     if(!this.isVisible()) {
       return;
     }
     
     // Sort the children nodes.
-    var viewTrans = camera.getViewTransform();
+    var viewTrans = TentaGL.getCamera().getViewTransform();
     this._children.sort(function(a, b) {
       var aPos = a.getWorldXYZ();
       vec3.transformMat4(aPos, aPos, viewTrans);
@@ -211,18 +186,17 @@ TentaGL.SceneGroup.prototype = {
       return aPos[2] - bPos[2];
     });
     
-    
-    TentaGL.pushTransform();
-    
-    TentaGL.mulTransform(this.getModelTransform());
-    TentaGL.updateMVPUniforms(gl);
-    
+    // Render the group node.
+    this.render(gl);
+  },
+  
+  
+  /** Renders the nodes in this group. */
+  draw:function(gl) {
     for(var i=0; i<this.size(); i++) {
       var child = this._children[i];
       child.render(gl);
     }
-    
-    TentaGL.popTransform();
   }
 };
 

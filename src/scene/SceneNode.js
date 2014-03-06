@@ -546,6 +546,7 @@ TentaGL.SceneNode.prototype = {
    * @param {vec3} up
    */
   orient:function(look, up) {
+    /*
     var q = TentaGL.Math.getQuatFromTo(this.getBaseLook(), look);
     this.setQuat(q);
     
@@ -554,6 +555,9 @@ TentaGL.SceneNode.prototype = {
       var q2 = TentaGL.Math.getQuatFromTo(curUp, up);
       this.mulQuat(q2);
     }
+    */
+    
+    this.setQuat(TentaGL.Math.getOrientation(this.getBaseLook(), this.getBaseUp(), look, up));
   },
   
   /** 
@@ -568,6 +572,7 @@ TentaGL.SceneNode.prototype = {
     look = vec3.transformQuat(vec3.create(), look, qToLocal);
     up = vec3.transformQuat(vec3.create(), up, qToLocal);
     
+    /*
     var q = TentaGL.Math.getQuatFromTo(this.getBaseLook(), look);
     this.setQuat(q);
     
@@ -576,6 +581,8 @@ TentaGL.SceneNode.prototype = {
       var q2 = TentaGL.Math.getQuatFromTo(curUp, up);
       this.mulQuat(q2);
     }
+    */
+    this.setQuat(TentaGL.Math.getOrientation(this.getBaseLook(), this.getBaseUp(), look, up));
   },
   
   
@@ -898,6 +905,36 @@ TentaGL.SceneNode.prototype = {
     return resultMat;
   },
   
+  
+  
+  //////// Rendering
+  
+  
+  /** 
+   * Renders this node, temporarily concatenating its model transform to the 
+   * current Model-view transform of the scene. 
+   * @param {WebGLRenderingContext} gl
+   */
+  render:function(gl) {
+    if(!this.isVisible() || !TentaGL.renderFilter(this)) {
+      return;
+    }
+    TentaGL.pushTransform();
+    
+    TentaGL.mulTransform(this.getModelTransform());
+    TentaGL.updateMVPUniforms(gl);
+    
+    this.draw(gl);
+    
+    TentaGL.popTransform();
+  },
+  
+  
+  /** 
+   * "Draws" the contents of this node.
+   * Override this. 
+   */
+  draw:function(gl) {}
 };
 
 TentaGL.Inheritance.inherit(TentaGL.SceneNode.prototype, TentaGL.Renderable.prototype);

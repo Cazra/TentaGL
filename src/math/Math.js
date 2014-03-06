@@ -142,6 +142,26 @@ TentaGL.Math = {
   },
   
   
+  
+  /** 
+   * Gets the quaternion for rotating from one orientation to another.
+   * @param {vec3} xFrom    The start x-axis vector.
+   * @param {vec3} yFrom    The start y-axis vector.
+   * @param {vec3} xTo      The end x-axis vector.
+   * @param {vec3} yTo      The end y-axis vector.
+   * @return {quat}
+   */
+  getOrientation:function(xFrom, yFrom, xTo, yTo) {
+    var q = this.getQuatFromTo(xFrom, xTo);
+    
+    var curY = vec3.transformQuat(vec3.create(), yFrom, q);
+    var q2 = this.getQuatFromTo(curY, yTo);
+    quat.mul(q, q2, q);
+    
+    return q;
+  },
+  
+  
   /** 
    * Returns the first power of two >= to value.
    * @param {Number} value

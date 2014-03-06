@@ -138,25 +138,7 @@ TentaGL.Sprite.prototype = {
   },
   
   //////// Rendering
-  
-  /** 
-   * Renders this sprite, temporarily concatenating its model transform to the 
-   * current Model-view transform of the scene. 
-   * @param {WebGLRenderingContext} gl
-   */
-  render:function(gl) {
-    if(!this.isVisible() || !TentaGL.renderFilter(this)) {
-      return;
-    }
-    TentaGL.pushTransform();
-    
-    TentaGL.mulTransform(this.getModelTransform());
-    TentaGL.updateMVPUniforms(gl);
-    
-    this.draw(gl);
-    
-    TentaGL.popTransform();
-  },
+
   
   /** 
    * Sets the materials for and draws the Models making up this sprite. 

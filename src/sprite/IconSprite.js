@@ -89,6 +89,12 @@ TentaGL.IconSprite.prototype = {
   },
   
   
+  /** Returns the aspect ratio of the icon. */
+  getIconAspect:function() {
+    return this.getIconWidth()/this.getIconHeight();
+  },
+  
+  
   //////// Alignment
   
   /** 
@@ -184,6 +190,7 @@ TentaGL.IconSprite.prototype = {
   },
   
   
+  /** Draws the icon's texture onto a unit plane. */
   draw:function(gl) {    
     TentaGL.MaterialLib.use(gl, this._texName);
     TentaGL.VBORenderer.render(gl, "unitPlane");

@@ -57,6 +57,7 @@ TentaGL.RGBAFilter.MulColor.prototype = {
     r *= this._color.getRed();
     g *= this._color.getGreen();
     b *= this._color.getBlue();
+    a *= this._color.getAlpha();
     
     this.setPixel(dstData, index, r, g, b, a);
   }
@@ -68,10 +69,11 @@ TentaGL.RGBAFilter.MulColor.prototype = {
  * @param {Number} r
  * @param {Number} g
  * @param {Number} b
+ * @param {Number} a  Optional. Default 1.
  * @return {TentaGL.RGBAFilter.MulColor}
  */
-TentaGL.RGBAFilter.MulColor.RGB = function(r, g, b) {
-  var color = TentaGL.Color.RGBA(r, g, b);
+TentaGL.RGBAFilter.MulColor.RGBA = function(r, g, b, a) {
+  var color = TentaGL.Color.RGBA(r, g, b, a);
   return new TentaGL.RGBAFilter.MulColor(color);
 };
 

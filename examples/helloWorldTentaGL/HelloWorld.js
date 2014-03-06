@@ -16,11 +16,9 @@ HelloWorldApp.prototype = {
   /** 
    * Produces a test sprite. 
    * @param {vec4} xyz  The sprite's position in local space.
-   * @param {TentaGL.Camera} camera   Optional. Camera object for 
-   *      icon/billboard sprites to face.
    * @return {TentaGL.Sprite}
    */
-  createTestSprite:function(xyz, camera) {
+  createTestSprite:function(xyz) {
     var gl = this.getGL();
     
     var font = new TentaGL.Font("Arial", "sans-serif", 24);
@@ -30,15 +28,28 @@ HelloWorldApp.prototype = {
     var sprite = new TentaGL.Sprite(xyz); //new TentaGL.TextIconSprite(xyz, "Hello World!\nHow are you?", font, color); //new TentaGL.IconSprite(xyz, "iconNew");
   //  sprite.scaleToWidth(1);
     sprite.draw = function(gl) {
-      TentaGL.MaterialLib.use(gl, "testCircle");
-      TentaGL.VBORenderer.render(gl, "cube");
+      TentaGL.MaterialLib.use(gl, "coinBlock");
+      TentaGL.VBORenderer.render(gl, "sphere");
     };
-    sprite.setAnchorXYZ([1,1,1]);
+  //  sprite.setAnchorXYZ([1,1,1]);
     sprite.setScaleUni(0.25);
     
     return sprite;
   },
   
+  
+  createSphereSprite:function(xyz, materialName) {
+    var gl = this.getGL();
+    
+    var sprite = new TentaGL.Sprite(xyz); 
+    sprite.draw = function(gl) {
+      TentaGL.MaterialLib.use(gl, materialName);
+      TentaGL.VBORenderer.render(gl, "sphere");
+    };
+    sprite.setScaleUni(0.5);
+    
+    return sprite;
+  },
   
   
   /** Overrides TentaGL.Application.initShaders */
@@ -83,23 +94,66 @@ HelloWorldApp.prototype = {
     TentaGL.MaterialLib.add("iconNew", icon);
     
     
+    // Canvas doodling
+    {
+      var canvas = TentaGL.Canvas2D.createRoundedRect(100, 100, 32,TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1)); // TentaGL.Canvas2D.createCircle(100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
+      TentaGL.Canvas2D.removeAlpha(canvas);
+      var canvasPixels = TentaGL.PixelData.Canvas(canvas);
+      
+      // Clipping/Masking filter test
+      /*
+      var clipCanvas = TentaGL.Canvas2D.create(canvas.width, canvas.height);
+      TentaGL.Canvas2D.drawCircle(clipCanvas, 0, 0, 100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
+      var clipPixels = TentaGL.PixelData.Canvas(clipCanvas);
+      canvasPixels = canvasPixels.filter(new TentaGL.RGBAFilter.ClipMap(clipPixels));
+      */
+      
+      
+      var circle = new TentaGL.Texture(gl); //TentaGL.Texture.Canvas(gl, canvas);
+      circle.setPixelData(gl, canvasPixels);
+      TentaGL.MaterialLib.add("testCircle", circle);
+    }
     
-    var canvas = TentaGL.Canvas2D.createRoundedRect(100, 100, 32,TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1)); // TentaGL.Canvas2D.createCircle(100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
-    TentaGL.Canvas2D.removeAlpha(canvas);
-    var canvasPixels = TentaGL.PixelData.Canvas(canvas);
     
-    // Clipping/Masking filter test
-    /*
-    var clipCanvas = TentaGL.Canvas2D.create(canvas.width, canvas.height);
-    TentaGL.Canvas2D.drawCircle(clipCanvas, 0, 0, 100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
-    var clipPixels = TentaGL.PixelData.Canvas(clipCanvas);
-    canvasPixels = canvasPixels.filter(new TentaGL.RGBAFilter.ClipMap(clipPixels));
-    */
+    // green
+    {
+      var tex = new TentaGL.Texture(gl);
+      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 1, 0, 1));
+      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
+      TentaGL.MaterialLib.add("green", tex);
+    }
     
+    // blue
+    {
+      var tex = new TentaGL.Texture(gl);
+      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 0, 1, 1));
+      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
+      TentaGL.MaterialLib.add("blue", tex);
+    }
     
-    var circle = new TentaGL.Texture(gl); //TentaGL.Texture.Canvas(gl, canvas);
-    circle.setPixelData(gl, canvasPixels);
-    TentaGL.MaterialLib.add("testCircle", circle);
+    // red
+    {
+      var tex = new TentaGL.Texture(gl);
+      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(1, 0, 0, 1));
+      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
+      TentaGL.MaterialLib.add("red", tex);
+    }
+    
+    // white
+    {
+      var tex = new TentaGL.Texture(gl);
+      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(1, 1, 1, 1));
+      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
+      TentaGL.MaterialLib.add("white", tex);
+    }
+    
+    // black
+    {
+      var tex = new TentaGL.Texture(gl);
+      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 0, 0, 1));
+      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
+      TentaGL.MaterialLib.add("black", tex);
+    }
   },
   
   
@@ -113,12 +167,15 @@ HelloWorldApp.prototype = {
     
     var polyLineModel = TentaGL.Model.PolyLine([[0,0,0],[1,1,0],[1,0,1]], true);
     TentaGL.ModelLib.add(this.getGL(), "polyline", polyLineModel, TentaGL.getDefaultAttrProfileSet());
+    
+    var sphereModel = TentaGL.Model.Sphere(1);
+    TentaGL.ModelLib.add(this.getGL(), "sphere", sphereModel, TentaGL.getDefaultAttrProfileSet());
   },
   
   
   /** Overrides TentaGL.Application.reset */
   reset:function() {
-    this.camera = new TentaGL.ArcballCamera([0, 0, 10], [0, 0, 0]);
+    this.camera = new TentaGL.ArcballCamera([10, 10, 10], [0, 0, 0]);
     this.rX = 0;
     this.drX = 0;
     this.rY = 0;
@@ -130,13 +187,22 @@ HelloWorldApp.prototype = {
     for(var i = -5; i < 5; i++) {
       for(var j = -5; j < 5; j++) {
         for(var k = -5; k < 5; k++) {
-          var sprite = this.createTestSprite([i, j, k], this.camera);
+          var sprite = this.createTestSprite([i, j, k]);
           this.spriteGroup.add(sprite);
         }
       }
     }
+    this.axesGroup = new TentaGL.SceneGroup();
+    this.axesGroup.add(this.createSphereSprite([10,0,0], "red"));
+    this.axesGroup.add(this.createSphereSprite([0,10,0], "green"));
+    this.axesGroup.add(this.createSphereSprite([0,0,10], "blue"));
+    this.axesGroup.add(this.createSphereSprite([0,0,0], "white"));
+    this.axesGroup.add(this.createSphereSprite([0,0,0], "black"));
     
     this.picker = new TentaGL.Picker(this.getWidth(), this.getHeight());
+    
+    this.camGroup = new TentaGL.SceneGroup();
+    this.camGroup.add(this.createSphereSprite([15,0,0], "black"));
   },
   
   
@@ -201,6 +267,9 @@ HelloWorldApp.prototype = {
     
     // Camera control
     this.camera.controlWithMouse(this._mouse, this.getWidth(), this.getHeight());
+    
+    this.axesGroup.get(3).setXYZ(this.camera.getCenter());
+    this.camGroup.setQuat(this.camera._orientation);
   },
   
   
@@ -233,6 +302,8 @@ HelloWorldApp.prototype = {
     }
     
     this.spriteGroup.render(gl, this.camera);
+    this.axesGroup.render(gl);
+    this.camGroup.render(gl);
   },
   
   
