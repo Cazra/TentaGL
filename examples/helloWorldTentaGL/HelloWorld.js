@@ -183,7 +183,8 @@ HelloWorldApp.prototype = {
     this.rZ = 0;
     this.drZ = 0;
     
-    this.spriteGroup = new TentaGL.SceneGroup();
+    this.spriteGroup = new TentaGL.SceneGroup([0,0,0]);
+    /*
     for(var i = -5; i < 5; i++) {
       for(var j = -5; j < 5; j++) {
         for(var k = -5; k < 5; k++) {
@@ -192,6 +193,23 @@ HelloWorldApp.prototype = {
         }
       }
     }
+    */
+    
+    
+    var group = this.spriteGroup;
+    group.add(this.createTestSprite([0,0,0]));
+    for(var i=0; i < 10; i++) {
+      var prevGroup = group;
+      
+      group = new TentaGL.SceneGroup([1,0,0]);
+      group.rotate([0,0,1],0.1);
+      group.add(this.createTestSprite([0,0,0]));
+      
+      prevGroup.add(group);
+    }
+    
+    
+    
     this.axesGroup = new TentaGL.SceneGroup();
     this.axesGroup.add(this.createSphereSprite([10,0,0], "red"));
     this.axesGroup.add(this.createSphereSprite([0,10,0], "green"));

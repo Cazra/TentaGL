@@ -31,8 +31,8 @@
  * group's list. This is more important for 2D rendering when depth-test
  * is turned off.
  */
-TentaGL.SceneGroup = function() {
-  TentaGL.SceneNode.call(this, [0,0,0]);
+TentaGL.SceneGroup = function(xyz) {
+  TentaGL.SceneNode.call(this, xyz);
   this._children = [];
 };
 
@@ -173,6 +173,8 @@ TentaGL.SceneGroup.prototype = {
     if(!this.isVisible()) {
       return;
     }
+    
+    // TODO: Better sorted rendering. This doesn't sort descendants of descendants.
     
     // Sort the children nodes.
     var viewTrans = TentaGL.getCamera().getViewTransform();

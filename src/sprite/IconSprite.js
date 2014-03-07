@@ -53,6 +53,17 @@ TentaGL.IconSprite.prototype = {
     return this._texName;
   },
   
+  
+  /** 
+   * Changes the texture material used by this icon to the one with the 
+   * specified name. 
+   * @param {string} name
+   */
+  setTextureName:function(name) {
+    this._texName = name;
+  },
+  
+  
   /** 
    * Returns this icon's texture material. 
    * @return {TentaGL.Texture}
@@ -66,7 +77,7 @@ TentaGL.IconSprite.prototype = {
    * Returns the PixelData for the icon's texture material.
    */
   getPixelData:function() {
-    return TentaGL.MaterialLib.get(this._texName).getPixelData();
+    return this.getTexture().getPixelData();
   },
   
   

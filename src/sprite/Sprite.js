@@ -42,7 +42,7 @@ TentaGL.Sprite = function(xyz) {
   TentaGL.SceneNode.call(this, xyz);
   
   this._anchorXYZ = vec4.fromValues(0, 0, 0, 1);
-  //this._opacity = 1;
+  this._pickEventListeners = [];
 };
 
 
@@ -94,6 +94,47 @@ TentaGL.Sprite.prototype = {
    */
   getAnchorZ:function() {
     return this._anchorXYZ[2];
+  },
+  
+  
+  //////// Events
+  
+  /** 
+   * Publishes a PickEvent to this sprite's PickEventListeners in relevance 
+   * to some context.
+   * @param {Object} context
+   */
+  firePickEvent:function(context) {
+    var event = new TentaGL.PickEvent(this, context);
+    
+    for(var i in this._pickEventListeners) {
+      this._pickEventListeners[i].handlePickEvent(event);
+    }
+  },
+  
+  
+  /** 
+   * Subscribes a PickEventListener to this Sprite.  
+   * @param {TentaGL.PickEventListener} listener
+   */
+  addPickEventListener:function(listener) {
+    this._pickEventListeners.push(listener);
+  },
+  
+  
+  /** 
+   * Removes a PickEventListener from this Sprite's subscribers.
+   * @param {TentaGL.PickEventListener} listener
+   */
+  removePickEventListener:function(listener) {
+    var index = this._pickEventListeners.indexOf(node);
+    if(index == -1) {
+      return false;
+    }
+    else {
+      this._pickEventListeners.splice(index, 1);
+      return true;
+    }
   },
   
   

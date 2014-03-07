@@ -88,16 +88,40 @@ TentaGL.TextIconSprite.prototype = {
   },
   
   
-  //////// Edit text content
+  //////// Text content and style
   
   /** 
-   * Sets the text of this sprite. 
+   * Returns the sprite's text. 
+   * @return {string}
+   */
+  getText:function() {
+    return this._text;
+  },
+  
+  
+  /** 
+   * Sets the sprite's text. 
    * @param {string} text
    */
   setText:function(text) {
     this._text = text;
+    
+    var dims = this._font.getStringDimensions(text);
+    this._width = dims[0];
+    this._height = dims[1];
+    
     this._needsUpdate = true;
   },
+  
+  
+  /** 
+   * Returns the sprite's font.
+   * @return {TentaGL.Font}
+   */
+  getFont:function() {
+    return this._font;
+  },
+  
   
   /** 
    * Sets the font of this sprite. 
@@ -108,6 +132,16 @@ TentaGL.TextIconSprite.prototype = {
     this._needsUpdate = true;
   },
   
+  
+  /**
+   * Returns the sprite's color. 
+   * @return {TentaGL.Color}
+   */
+  getColor:function() {
+    return this._color;
+  },
+  
+  
   /** 
    * Sets the color of this sprite.
    * @param {TentaGL.Color} color
@@ -115,6 +149,15 @@ TentaGL.TextIconSprite.prototype = {
   setColor:function(color) {
     this._color = color;
     this._needsUpdate = true;
+  },
+  
+  
+  /** 
+   * Returns the sprite's anti-alias tolerance.
+   * @return {Number}
+   */
+  getAntialiasTolerance:function() {
+    return this._tolerance;
   },
   
   /** 

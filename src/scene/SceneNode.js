@@ -43,7 +43,7 @@ TentaGL.SceneNode = function(xyz) {
   this._objUp = vec3.fromValues(0,1,0);
   
   this._transform = mat4.create();
-  this._tranDiry = true;
+  this._tranDirty = true;
   this._isVisible = true;
   
   this._parent = undefined;
