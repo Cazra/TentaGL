@@ -26,10 +26,10 @@ HelloWorldApp.prototype = {
     var color = TentaGL.Color.RGBA(0.5, 0.5, 0.5, 1);
     
     var sprite = new TentaGL.Sprite(xyz); //new TentaGL.TextIconSprite(xyz, "Hello World!\nHow are you?", font, color); //new TentaGL.IconSprite(xyz, "iconNew");
-  //  sprite.scaleToWidth(1);
+  //  sprite.scaleToHeight(1);
     sprite.draw = function(gl) {
       TentaGL.MaterialLib.use(gl, "coinBlock");
-      TentaGL.VBORenderer.render(gl, "sphere");
+      TentaGL.ModelLib.render(gl, "cylinder");
     };
   //  sprite.setAnchorXYZ([1,1,1]);
     sprite.setScaleUni(0.25);
@@ -44,7 +44,7 @@ HelloWorldApp.prototype = {
     var sprite = new TentaGL.Sprite(xyz); 
     sprite.draw = function(gl) {
       TentaGL.MaterialLib.use(gl, materialName);
-      TentaGL.VBORenderer.render(gl, "sphere");
+      TentaGL.ModelLib.render(gl, "unitSphere");
     };
     sprite.setScaleUni(0.5);
     
@@ -168,8 +168,8 @@ HelloWorldApp.prototype = {
     var polyLineModel = TentaGL.Model.PolyLine([[0,0,0],[1,1,0],[1,0,1]], true);
     TentaGL.ModelLib.add(this.getGL(), "polyline", polyLineModel, TentaGL.getDefaultAttrProfileSet());
     
-    var sphereModel = TentaGL.Model.Sphere(1);
-    TentaGL.ModelLib.add(this.getGL(), "sphere", sphereModel, TentaGL.getDefaultAttrProfileSet());
+    var cylinderModel = TentaGL.Model.Cylinder(1,2);
+    TentaGL.ModelLib.add(this.getGL(), "cylinder", cylinderModel, TentaGL.getDefaultAttrProfileSet());
   },
   
   
@@ -234,7 +234,7 @@ HelloWorldApp.prototype = {
     
     // Picker test
     if(this._mouse.isLeftPressed()) {
-      this.picker.update(gl, this.drawScene.bind(this), true);
+      this.picker.update(gl, this.drawScene.bind(this), false);
       
       var mx = this._mouse.getX();
       var my = this.getHeight() - this._mouse.getY()
@@ -250,8 +250,9 @@ HelloWorldApp.prototype = {
     //  }
     }
     else {
-      this.drawScene(gl);
+      //this.drawScene(gl);
     }
+    this.drawScene(gl);
   },
   
   

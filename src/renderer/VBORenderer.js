@@ -77,13 +77,12 @@ TentaGL.VBORenderer = {
   /** 
    * Renders a Model with the ShaderProgram and Material currently in use. 
    * @param {WebGLRenderingContext} gl
-   * @param {string} modelID   The ID for the VBO data from ModelLib being rendered.
+   * @param {TentaGL.VBOData} vboData   The VBOData of the model to be rendered.
    */
-  render:function(gl, modelID) {
+  render:function(gl, vboData) {
     var program = TentaGL.ShaderLib.current(gl);
     
     // Get the data buffers for the model and program, creating them if necessary.
-    var vboData = TentaGL.ModelLib.get(modelID);
     var attrBuffer = vboData.getAttrBuffer();
     var elemBuffer = vboData.getElemBuffer();
     var stride = vboData.getStride();

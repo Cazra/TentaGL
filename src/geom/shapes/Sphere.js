@@ -42,36 +42,6 @@ TentaGL.Model.Sphere = function(r, latInc, lonInc) {
   if(!lonInc) {
     lonInc = TentaGL.TAU/20;
   }
-  /*
-  // compute surface normal vector.
-  var u = vec3.fromValues(w, 0, 0);
-  var v = vec3.fromValues(0, h, 0);
-  var n = vec3.cross(vec3.create(), u, v);
-  
-
-  // Create vertices
-  var v0 = new TentaGL.Vertex(0, 0, 0);
-  v0.setNormal(n[0], n[1], n[2]);
-  v0.setTexST(0,0);
-  model.addVertex(v0);
-  
-  var v1 = new TentaGL.Vertex(w, 0, 0);
-  v1.setNormal(n[0], n[1], n[2]);
-  v1.setTexST(1,0);
-  model.addVertex(v1);
-  
-  var v2 = new TentaGL.Vertex(w, h, 0);
-  v2.setNormal(n[0], n[1], n[2]);
-  v2.setTexST(1,1);
-  model.addVertex(v2);
-  
-  var v3 = new TentaGL.Vertex(0, h, 0);
-  v3.setNormal(n[0], n[1], n[2]);
-  v3.setTexST(0,1);
-  model.addVertex(v3);
-  
-  // Create faces.
-  model.addFaceQuad(0, 1, 2, 3);*/
   
   var numLatVerts = Math.floor(TentaGL.TAU/2/latInc) + 1;
   var numLonVerts = Math.floor(TentaGL.TAU/lonInc) + 1;

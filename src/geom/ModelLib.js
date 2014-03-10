@@ -52,6 +52,9 @@ TentaGL.ModelLib = {
   reset:function(gl) {
     this.clean(gl);
     this.add(gl, "unitPlane", new TentaGL.Model.Plane(1,1));
+    this.add(gl, "unitLine", new TentaGL.Model.Line([0,0,0], [1,1,1]));
+    this.add(gl, "unitCube", new TentaGL.Model.Cube(1,1,1));
+    this.add(gl, "unitSphere", new TentaGL.Model.Sphere(1));
   },
   
   
@@ -111,6 +114,17 @@ TentaGL.ModelLib = {
     vbo.clean(gl);
     delete this._vboData[modelID];
   },
+  
+  
+  /** 
+   * Renders a model from this library with the VBORenderer. 
+   * @param {WebGLRenderingContext} gl
+   * @param {string} modelID
+   */
+  render:function(gl, modelID) {
+    var vboData = TentaGL.ModelLib.get(modelID);
+    TentaGL.VBORenderer.render(gl, vboData);
+  }
   
 };
 

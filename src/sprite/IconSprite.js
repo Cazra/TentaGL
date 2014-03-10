@@ -204,7 +204,7 @@ TentaGL.IconSprite.prototype = {
   /** Draws the icon's texture onto a unit plane. */
   draw:function(gl) {    
     TentaGL.MaterialLib.use(gl, this._texName);
-    TentaGL.VBORenderer.render(gl, "unitPlane");
+    TentaGL.ModelLib.render(gl, "unitPlane");
   }
 };
 
