@@ -27,10 +27,12 @@
  * Interface for a node in a scene graph. All nodes in a scene graph have a set
  * of affine transforms which are implemented here. SceneNodes can also be made
  * visible or invisible.
+ * @constructor
+ * @param {vec3} xyz    The node's position in local 3D space.
  */
 TentaGL.SceneNode = function(xyz) {
   if(xyz === undefined) {
-    xyz = [0, 0, 0, 1];
+    xyz = [0, 0, 0];
   }
   this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
   
@@ -53,6 +55,14 @@ TentaGL.SceneNode = function(xyz) {
 TentaGL.SceneNode.prototype = {
   
   constructor:TentaGL.SceneNode,
+  
+  /** 
+   * Frees any GL memory and resources used only by this SceneNode. 
+   * This should be called before disposing of the node. The default 
+   * implementation does nothing.
+   * Override me.
+   */
+  clean:function(gl) {},
   
   
   //////// Scene Graph hierarchy

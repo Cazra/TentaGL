@@ -33,7 +33,7 @@
  * @return {TentaGL.Model}
  */
 TentaGL.Model.Cylinder = function(r, h, lonInc) {
-  var model = new TentaGL.Model(false, TentaGL.GL_BACK);
+  var model = new TentaGL.Model(false);
   
   if(!lonInc) {
     lonInc = TentaGL.TAU/20;
@@ -49,11 +49,12 @@ TentaGL.Model.Cylinder = function(r, h, lonInc) {
     var xyz = TentaGL.Math.toCartesian([r, lon, 0]);
     var x = xyz[0];
     var z = xyz[2];
-    var s = lon/TentaGL.TAU;
+    var s = (x/r+1)/2; //lon/TentaGL.TAU;
+    var t = (z/r+1)/2;
     
     var v = new TentaGL.Vertex(x, 0, z);
     v.setNormal(0, -1, 0);
-    v.setTexST(s, 0);
+    v.setTexST(s, t);
     model.addVertex(v);
   }
   
@@ -92,11 +93,12 @@ TentaGL.Model.Cylinder = function(r, h, lonInc) {
     var xyz = TentaGL.Math.toCartesian([r, lon, 0]);
     var x = xyz[0];
     var z = xyz[2];
-    var s = lon/TentaGL.TAU;
+    var s = (x/r+1)/2; //lon/TentaGL.TAU;
+    var t = (z/r+1)/2;
     
     var v = new TentaGL.Vertex(x, h, z);
     v.setNormal(0, 1, 0);
-    v.setTexST(s, 1);
+    v.setTexST(s, t);
     model.addVertex(v);
   }
   

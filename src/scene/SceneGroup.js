@@ -43,6 +43,18 @@ TentaGL.SceneGroup.prototype = {
   
   
   /** 
+   * Frees the GL memory and resources associated with any SceneNodes 
+   * in this group. Then the group is cleared.
+   */
+  clean:function(gl) {
+    for(var i in this._children) {
+      this._children[i].clean(gl);
+    }
+    this.clear();
+  },
+  
+  
+  /** 
    * Returns the index of some node in the group. If the node doesn't exist in 
    * this group, it returns -1.
    * @param {TentaGL.SceneNode} node
