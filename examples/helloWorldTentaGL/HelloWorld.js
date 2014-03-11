@@ -168,7 +168,7 @@ HelloWorldApp.prototype = {
     var polyLineModel = TentaGL.Model.PolyLine([[0,0,0],[1,1,0],[1,0,1]], true);
     TentaGL.ModelLib.add(this.getGL(), "polyline", polyLineModel, TentaGL.getDefaultAttrProfileSet());
     
-    var cylinderModel = TentaGL.Model.Cylinder(1,2);
+    var cylinderModel = TentaGL.Model.Cylinder(1,2).rotate([1,0,0],TentaGL.TAU/4);
     TentaGL.ModelLib.add(this.getGL(), "cylinder", cylinderModel, TentaGL.getDefaultAttrProfileSet());
   },
   

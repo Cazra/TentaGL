@@ -525,6 +525,47 @@ TentaGL.Model.prototype = {
     return this.transform(mat4.translate(mat4.create(), mat4.create(), [-xyz[0], -xyz[1], -xyz[2]]));
   },
   
+  
+  
+  /**  
+   * Returns a clone of this model with all the vertices translated.
+   * @param {vec3} xyz
+   * @return {TentaGL.Model}
+   */
+  translate:function(xyz) {
+    var t = mat4.create();
+    mat4.translate(t, t, xyz);
+    return this.transform(t);
+  },
+  
+  
+  /** 
+   * Returns a clone of this model with all the vertices scaled relative 
+   * to the origin.
+   * @param {vec3} xyz  The amount to scale the model by on the 3 axes.
+   * @return {TentaGL.Model}
+   */
+  scale:function(xyz) {
+    var t = mat4.create();
+    mat4.scale(t, t, xyz);
+    return this.transform(t);
+  },
+  
+  
+  /**
+   * Returns a clone of this model with all the vertices rotated around 
+   * some axis.
+   * @param {vec3} axis
+   * @param (number} radians
+   * @return {TentaGL.Model}
+   */
+  rotate:function(axis, radians) {
+    var q = quat.setAxisAngle(quat.create(), axis, radians);
+    return this.transform(mat4.fromQuat(mat4.create(), q));
+  },
+  
+  
+  
   /** 
    * Returns a clone of this model merged with another model. 
    * @param {TentaGL.Model} model
