@@ -565,6 +565,17 @@ TentaGL.Model.prototype = {
   },
   
   
+  scaleTexST:function(s, t) {
+    var result = this.clone();
+    for(var i in result._vertices) {
+      var v = result._vertices[i];
+      var st = v.getTexST();
+      v.setTexST(st[0]*s, st[1]*t);
+    }
+    return result;
+  },
+  
+  
   
   /** 
    * Returns a clone of this model merged with another model. 

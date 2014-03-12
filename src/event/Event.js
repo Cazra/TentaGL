@@ -22,30 +22,37 @@
  SOFTWARE.
 */
 
-
-/**  
- * An event for a Sprite being picked by the Picker 
- * in some context.
+/** 
+ * Superclass for events in Subscriber patterns.
  * @constructor
- * @param {TentaGL.Sprite} source  The Sprite that was picked and generated this event.
- * @param {Object} context    The context in which event was generated. (e.g. the mouse)
+ * @param {Object} source   The object that fired the event.
+ * @param {enum} type       The type of event fired.
  */
-TentaGL.PickEvent = function(source, context) {
-  TentaGL.Event.call(this, source, undefined);
-  this._context = context;
+TentaGL.Event = function(source, type) {
+  this._source = source;
+  this._type = type;
 };
 
-TentaGL.PickEvent.prototype = {
+TentaGL.Event.prototype = {
   
-  constructor:TentaGL.PickEvent,
+  constructor:TentaGL.Event,
+  
+  /**
+   * Returns the event's source object.
+   * @return {Object}
+   */
+  getSource:function() {
+    return this._source;
+  },
   
   
-  /** Returns the context in which the event was generated. */
-  getContext:function() {
-    return this._context;
+  /** 
+   * Returns the event's type.
+   * @return {enum}
+   */
+  getType:function() {
+    return this._type;
   }
 };
 
-
-TentaGL.Inheritance.inherit(TentaGL.PickEvent, TentaGL.Event);
 
