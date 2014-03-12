@@ -89,6 +89,32 @@ TentaGL.ShaderLib = {
   
   
   /** 
+   * Attempts to load a new shader program into the shaderLib. If there are any
+   * errors compiling the shader program, those errors are printed to the 
+   * console and an Error is thrown.
+   * @param {WebGLRenderingContext} gl  The WebGL context.
+   * @param {string} name  The name used to access the shader program in 
+   *    the library.
+   * @param {string} vertURL  The URL to the file containing the vertex shader source code.
+   * @param {string} fragURL  The URL to the file containing the fragment shader source code.
+   * @return {TentaGL.ShaderProgram} The created ShaderProgram.
+   */
+  addFromURLs:function(gl, name, vertURL, fragURL) {
+    var req = new XMLHttpRequest();
+    
+    req.open("get", vertURL, false);
+    req.send();
+    var vertSrc = req.responseText;
+    
+    req.open("get", fragURL, false);
+    req.send();
+    var fragSrc = req.responseText;
+    
+    return this.add(gl, name, vertSrc, fragSrc);
+  },
+  
+  
+  /** 
    * Deletes the shader program with the specified name from the 
    * ShaderLib and WebGL context. 
    */

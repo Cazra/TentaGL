@@ -3,44 +3,6 @@
 <head>
 <title>WebGL Hello World</title>
 
-<script id="fshader" type="x-shader/x-fragment">  
-  precision mediump float;
-  
-  uniform sampler2D tex;
-  uniform vec4 color;
-  
-  varying vec2 texCoords;
-  
-  // All fragments are colored white.
-  void main(void) {
-  //  gl_FragColor = color;
-    vec4 color = texture2D(tex, texCoords); 
-    if(color.a == 0.0) {
-      discard;
-    }
-    gl_FragColor = color;
-  }
-</script>
-
-<script id="vshader" type="x-shader/x-vertex">
-  
-  attribute vec3 vertexNormal;
-  attribute vec2 vertexTexCoords;
-  attribute vec4 vertexPos;
-
-  uniform mat4 mvpTrans;
-  uniform mat3 normalTrans;
-
-  varying vec2 texCoords;
-
-  // pass-through shader.
-  void main(void) {
-    texCoords = vertexTexCoords;
-    gl_Position = mvpTrans * vertexPos;
-    vec3 normal = normalTrans*vertexNormal;
-  }
-</script>
-
 <script type="text/javascript" src="../../libs/gl-matrix-min.js"></script>
 <script type="text/javascript" src="../../src/TentaGL.js"></script>
 <script type="text/javascript" src="../../src/math/Math.js"></script>

@@ -54,9 +54,7 @@ HelloWorldApp.prototype = {
   
   /** Overrides TentaGL.Application.initShaders */
   initShaders:function() {
-    var vertSrc = TentaGL.DOM.extractScriptText("vshader");
-    var fragSrc = TentaGL.DOM.extractScriptText("fshader");
-    var shaderProgram = TentaGL.ShaderLib.add(this.getGL(), "simpleShader", vertSrc, fragSrc);
+    var shaderProgram = TentaGL.ShaderLib.addFromURLs(this.getGL(), "simpleShader", "../../shaders/simple.vert", "../../shaders/simple.frag");
     
     shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
     shaderProgram.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
@@ -347,4 +345,13 @@ HelloWorldApp.getInstance = function() {
  */
 function webGLStart() {
   HelloWorldApp.getInstance().start();
+  
+  
+  var req = new XMLHttpRequest();
+  req.onload = function() { // for async
+    console.log("\"\"\"\n" + this.responseText + "\n\"\"\"");
+  };
+  req.open("get", "../../shaders/picker.frag", false);
+  req.send(); 
+  console.log(req.responseText); // for sync
 }
