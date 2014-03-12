@@ -58,6 +58,6 @@ TentaGL.RGBAFilter.Grayscale.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.Grayscale.prototype, TentaGL.RGBAFilter.prototype);
+TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.Grayscale, TentaGL.RGBAFilter);
 
 

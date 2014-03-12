@@ -189,5 +189,5 @@ TentaGL.Sprite.prototype = {
   draw:function(gl) {},
 };
 
-TentaGL.Inheritance.inherit(TentaGL.Sprite.prototype, TentaGL.SceneNode.prototype);
+TentaGL.Inheritance.inherit(TentaGL.Sprite, TentaGL.SceneNode);
 

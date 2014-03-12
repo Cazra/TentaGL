@@ -62,18 +62,16 @@ TentaGL.Inheritance = {
   
   
   /**
-   * Makes an object prototype inherit the fields of a parent prototype.
-   * The derived prototype's fields override those of its parent.
-   * @param {prototype} proto   The derived prototype.
-   * @param {prototype} parentProto   The parent prototype.
-   * @return {prototype} The derived prototype, for chaining.
+   * Makes an object type's prototype inherit the fields of a parent type's 
+   * prototype. The derived prototype's fields override those of its parent.
+   * @param {type} subtype   The derived type.
+   * @param {type} supertype   The parent type.
    */
-  inherit:function(proto, parentProto) {
-    for(var i in parentProto) {
-      if(!proto[i]) {
-        proto[i] = parentProto[i];
+  inherit:function(subtype, supertype) {
+    for(var i in supertype.prototype) {
+      if(!subtype.prototype[i]) {
+        subtype.prototype[i] = supertype.prototype[i];
       }
     }
-    return proto;
   }
 };

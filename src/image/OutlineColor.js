@@ -106,6 +106,6 @@ TentaGL.RGBAFilter.OutlineColor.RGBBytes = function(r, g, b) {
 
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.OutlineColor.prototype, TentaGL.RGBAFilter.prototype);
+TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.OutlineColor, TentaGL.RGBAFilter);
 
 

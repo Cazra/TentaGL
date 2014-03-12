@@ -53,6 +53,6 @@ TentaGL.RGBAFilter.Invert.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.Invert.prototype, TentaGL.RGBAFilter.prototype);
+TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.Invert, TentaGL.RGBAFilter);
 
 

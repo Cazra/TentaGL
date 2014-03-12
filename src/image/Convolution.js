@@ -142,7 +142,7 @@ TentaGL.RGBAFilter.Convolution.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.Convolution.prototype, TentaGL.RGBAFilter.prototype);
+TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.Convolution, TentaGL.RGBAFilter);
 
 
 /** 

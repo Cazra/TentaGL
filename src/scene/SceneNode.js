@@ -102,12 +102,52 @@ TentaGL.SceneNode.prototype = {
     }
   },
   
-  
+  /** 
+   * Removes this node from its parent in the scene graph.
+   */
   removeFromParent:function() {
     if(this._parent && this._parent.remove) {
       this._parent.remove(this);
       this._parent = null;
     }
+  },
+  
+  
+  //////// Compositing
+  
+  /** 
+   * If this node is a composite component, this returns its composite parent.
+   * Otherwise, this returns undefined.
+   * @return {TentaGL.SceneNode}
+   */
+  getCompositeParent:function() {
+    return this._compositeParent;
+  },
+  
+  /** 
+   * Sets this node as a composite component of another node.
+   * @param {TentaGL.SceneNode} parent
+   */
+  setCompositeParent:function(parent) {
+    this._compositeParent = parent;
+  },
+  
+  
+  /**
+   * Returns a list of this node's composite hierarchy, with 
+   * this at index 0, and the top composite in the last index.
+   * @return {array:TentaGL.SceneNode}
+   */
+  getCompositePath:function() {
+    var result = [];
+    
+    var current = this;
+    while(current) {
+      result.push(current);
+      current = current.getCompositeParent();
+    }
+    
+    return result;
   },
   
   
@@ -947,6 +987,6 @@ TentaGL.SceneNode.prototype = {
   draw:function(gl) {}
 };
 
-TentaGL.Inheritance.inherit(TentaGL.SceneNode.prototype, TentaGL.Renderable.prototype);
+TentaGL.Inheritance.inherit(TentaGL.SceneNode, TentaGL.Renderable);
 
 

@@ -36,39 +36,42 @@ TentaGL.Uniform = function(info, glProg, location) {
   this._location = location;
 };
 
-TentaGL.Uniform.prototype = Object.create(TentaGL.ShaderVar.prototype);
+TentaGL.Uniform.prototype = {
+  
+  constructor:TentaGL.Uniform,
+  
+  /** 
+   * Returns the location of the Uniform in the WebGL context. 
+   * @return {WebGLUniformLocation}
+   */
+  getLocation:function() {
+    return this._location;
+  },
 
 
-/** 
- * Returns the location of the Uniform in the WebGL context. 
- * @return {WebGLUniformLocation}
- */
-TentaGL.Uniform.prototype.getLocation = function() {
-  return this._location;
+  /** 
+   * Returns the current value of this Uniform in the GL context.
+   * @return {any} see getUniform at http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.10
+   */
+  get:function(gl) {
+    gl.getUniform(this._glProg, this._location);
+  },
+
+
+  /** 
+   * Sets the value of this Uniform in the GL context.
+   * @param {WebGLRenderingContext} gl
+   * @param {typed array} valueArray  A typed array of the appropriate type and 
+   *      length for the variable. In the case of a size 1 INT or FLOAT variable,
+   *      
+   */
+  set:function(gl, valueArray) {
+    TentaGL.Uniform.setters[this._type].call(this, gl, valueArray);
+  }
 };
 
 
-/** 
- * Returns the current value of this Uniform in the GL context.
- * @return {any} see getUniform at http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14.10
- */
-TentaGL.Uniform.prototype.get = function(gl) {
-  gl.getUniform(this._glProg, this._location);
-};
-
-
-/** 
- * Sets the value of this Uniform in the GL context.
- * @param {WebGLRenderingContext} gl
- * @param {typed array} valueArray  A typed array of the appropriate type and 
- *      length for the variable. In the case of a size 1 INT or FLOAT variable,
- *      
- */
-TentaGL.Uniform.prototype.set = function(gl, valueArray) {
-  TentaGL.Uniform.setters[this._type].call(this, gl, valueArray);
-};
-
-
+TentaGL.Inheritance.inherit(TentaGL.Uniform, TentaGL.ShaderVar);
 
 
 

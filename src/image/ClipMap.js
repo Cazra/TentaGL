@@ -68,6 +68,6 @@ TentaGL.RGBAFilter.ClipMap.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.ClipMap.prototype, TentaGL.RGBAFilter.prototype);
+TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.ClipMap, TentaGL.RGBAFilter);
 
 

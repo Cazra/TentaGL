@@ -125,7 +125,7 @@ TentaGL.Picker.prototype = {
    * @return {length-4 array}   An array containing the RGBA byte values for 
    *      the pixel.
    */
-  getPixelAt:function(x, y, flipY) {
+  _getPixelAt:function(x, y, flipY) {
     return this._pixels.getPixelAt(x, y, flipY);
   },
   
@@ -135,14 +135,22 @@ TentaGL.Picker.prototype = {
    * the picker raster.
    * @param {int} x
    * @param {int} y
-   * @param {int} flipY   Optional. If true, y increases downward. 
-   *      Default to false.
+   * @param {boolean} ignoreComposite   Optional. Whether to ignore composited sprites.
+   *      Default to true, meaning that for composited sprites, this will return the top level
+   *      sprite the composite hierarchy for the sprite that was clicked.
    * @return {TentaGL.Sprite}
    */
-  getSpriteAt:function(x, y, flipY) {
-    var pixel = this.getPixelAt(x, y, flipY);
+  getSpriteAt:function(x, y, ignoreComposite) {
+    var pixel = this._getPixelAt(x, y);
     var id = TentaGL.Color.rgba2Hex(pixel[0], pixel[1], pixel[2], pixel[3]);
-    return this._sprites[id];
+    var sprite = this._sprites[id];
+    if(ignoreComposite || !sprite) {
+      return sprite;
+    }
+    else {
+      var path = sprite.getCompositePath();
+      return path[path.length-1];
+    }
   },
 };
 

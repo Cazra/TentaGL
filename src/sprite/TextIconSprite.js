@@ -244,5 +244,5 @@ TentaGL.TextIconSprite.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.TextIconSprite.prototype, TentaGL.IconSprite.prototype);
+TentaGL.Inheritance.inherit(TentaGL.TextIconSprite, TentaGL.IconSprite);
 

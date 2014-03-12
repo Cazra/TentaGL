@@ -83,6 +83,6 @@ TentaGL.RGBAFilter.MulColor.RGBA = function(r, g, b, a) {
 
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.MulColor.prototype, TentaGL.RGBAFilter.prototype);
+TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.MulColor, TentaGL.RGBAFilter);
 
 

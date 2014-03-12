@@ -72,4 +72,4 @@ TentaGL.BillboardSprite.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.BillboardSprite.prototype, TentaGL.Sprite.prototype);
+TentaGL.Inheritance.inherit(TentaGL.BillboardSprite, TentaGL.Sprite);

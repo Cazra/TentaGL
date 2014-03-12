@@ -255,7 +255,7 @@ TentaGL.Texture.prototype = {
   }
 };
 
-TentaGL.Inheritance.inherit(TentaGL.Texture.prototype, TentaGL.Material.prototype);
+TentaGL.Inheritance.inherit(TentaGL.Texture, TentaGL.Material);
 
 
 

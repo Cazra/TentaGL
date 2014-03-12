@@ -77,6 +77,6 @@ TentaGL.RGBAFilter.SubColor.RGBBytes = function(r, g, b) {
 
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.SubColor.prototype, TentaGL.RGBAFilter.prototype);
+TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.SubColor, TentaGL.RGBAFilter);
 
 

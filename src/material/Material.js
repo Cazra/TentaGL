@@ -24,7 +24,9 @@
 
 
 /** Interface for materials that can be used to color texels in a model. */
-TentaGL.Material = {
+TentaGL.Material = function() {};
+
+TentaGL.Material.prototype = {
   
   /** 
    * Cleans up any GL resources associated with the Material. 

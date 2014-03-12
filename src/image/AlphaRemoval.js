@@ -50,6 +50,6 @@ TentaGL.RGBAFilter.AlphaRemoval.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.AlphaRemoval.prototype, TentaGL.RGBAFilter.prototype);
+TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.AlphaRemoval, TentaGL.RGBAFilter);
 
 

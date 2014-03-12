@@ -238,9 +238,7 @@ HelloWorldApp.prototype = {
       
       var mx = this._mouse.getX();
       var my = this.getHeight() - this._mouse.getY()
-      var pixel = this.picker.getPixelAt(mx, my);
       var sprite = this.picker.getSpriteAt(mx, my);
-      console.log(pixel);
       console.log(sprite);
       
     //  if(sprite && sprite.setText) {
@@ -289,6 +287,15 @@ HelloWorldApp.prototype = {
     
     this.axesGroup.get(3).setXYZ(this.camera.getCenter());
     this.camGroup.setQuat(this.camera._orientation);
+    
+    var sprites = this.spriteGroup.getChildren();
+    for(var i = 0; i < sprites.length; i++) {
+      var sprite = sprites[i];
+      
+      // spin slowly around their local group's Y axis.
+      sprite.rotate([0, 1, 0], 0.01);
+      //sprite.billboardWorldAxis(camEye);
+    }
   },
   
   
@@ -307,19 +314,7 @@ HelloWorldApp.prototype = {
     TentaGL.clearColorBuffer(gl, [0.1, 0.1, 0.3, 1]);
     TentaGL.clearDepthBuffer(gl);
 
-    // Draw the spinning cubes.
-    var camEye = this.camera.getEye();
-    var viewTrans = this.camera.getViewTransform();
-    
-    var sprites = this.spriteGroup.getChildren();
-    for(var i = 0; i < sprites.length; i++) {
-      var sprite = sprites[i];
-      
-      // spin slowly around their local group's Y axis.
-      sprite.rotate([0, 1, 0], 0.01);
-      //sprite.billboardWorldAxis(camEye);
-    }
-    
+    // Draw the objects in the scene.
     this.spriteGroup.render(gl, this.camera);
     this.axesGroup.render(gl);
     this.camGroup.render(gl);
@@ -329,7 +324,7 @@ HelloWorldApp.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(HelloWorldApp.prototype, TentaGL.Application.prototype);
+TentaGL.Inheritance.inherit(HelloWorldApp, TentaGL.Application);
 
 
 /** 
