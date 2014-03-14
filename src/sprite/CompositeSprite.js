@@ -77,7 +77,7 @@ TentaGL.CompositeSprite.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   draw:function(gl) {
-    for(var i in this._components) {
+    for(var i=0; i < this._components.length; i++) {
       this._components[i].render(gl);
     }
   }

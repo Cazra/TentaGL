@@ -34,6 +34,7 @@
 TentaGL.Mouse = function(container) {
   
   this._xy = [0, 0];
+  this._xyPage = [0, 0];
   this._mouseMovedSinceLast = false;
   this._mouseMoved = false;
   this._pressedSinceLast = [];
@@ -63,8 +64,10 @@ TentaGL.Mouse = function(container) {
   container.onmousemove = function(evt) {
     var xy = TentaGL.DOM.getAbsolutePosition(this);
     xy = [evt.pageX - xy[0], evt.pageY - xy[1]];
+    var xyPage = [evt.pageX, evt.pageY];
     
     self._xy = xy;
+    self._xyPage = xyPage;
     self._mouseMovedSinceLast = true;
   };
   
@@ -182,6 +185,25 @@ TentaGL.Mouse.prototype = {
   getY:function() {
     return this._xy[1];
   },
+  
+  
+  /** Returns the XY position of the mouse in page coordinates. */
+  getPageXY:function() {
+    return [this._xyPage[0], this._xyPage[1]];
+  },
+  
+  
+  /** Returns the X position of the mouse in page coordinates. */
+  getPageX:function() {
+    return this._xyPage[0];
+  },
+  
+  
+  /** Returns the Y position of the mouse in page coordinates. */
+  getPageY:function() {
+    return this._xyPage[1];
+  },
+  
   
   /** 
    * Returns true if the mouse has moved since the last poll. 

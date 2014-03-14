@@ -237,8 +237,8 @@ TentaGL.PixelData.loadImage = function(imagePath, callback) {
  * @return {TentaGL.PixelData}
  */
 TentaGL.PixelData.Canvas = function(canvas) {
-  var container = document.getElementById("imgDebug");
-  container.appendChild(canvas);
+//  var container = document.getElementById("imgDebug");
+//  container.appendChild(canvas);
   
   
   var width = canvas.width;
