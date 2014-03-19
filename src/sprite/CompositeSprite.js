@@ -48,6 +48,8 @@ TentaGL.CompositeSprite.prototype = {
   
   constructor:TentaGL.CompositeSprite,
   
+  isaCompositeSprite:true,
+  
   /** 
    * Adds a SceneNode as a component of this composite. 
    * @param {TentaGL.SceneNode} sceneNode

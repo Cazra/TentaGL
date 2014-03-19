@@ -215,7 +215,7 @@ HelloWorldApp.prototype = {
     this.axesGroup.add(this.createSphereSprite([0,0,0], "white"));
     this.axesGroup.add(this.createSphereSprite([0,0,0], "black"));
     
-    this.picker = new TentaGL.Picker(this.getWidth(), this.getHeight());
+    this.picker = new TentaGL.Picker(this);
     
     this.camGroup = new TentaGL.SceneGroup();
     this.camGroup.add(this.createSphereSprite([15,0,0], "black"));
@@ -332,6 +332,13 @@ TentaGL.Inheritance.inherit(HelloWorldApp, TentaGL.Application);
 HelloWorldApp.getInstance = function() {
   if(!HelloWorldApp._instance) {
     HelloWorldApp._instance = new HelloWorldApp(document.getElementById("container"));
+    
+    window.onresize = function(event) {
+      console.log(window.innerWidth, window.innerHeight);
+      HelloWorldApp._instance.resize(Math.floor(window.innerWidth*0.95), Math.floor(window.innerHeight*0.95));
+    };
+    
+    HelloWorldApp._instance.resize(Math.floor(window.innerWidth*0.95), Math.floor(window.innerHeight*0.95));
   }
   return HelloWorldApp._instance;
 };

@@ -50,6 +50,7 @@ TentaGL.Sprite.prototype = {
   
   constructor:TentaGL.Sprite,
   
+  isaSprite:true,
   
   //////// Anchor point
   

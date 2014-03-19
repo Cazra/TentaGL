@@ -78,6 +78,9 @@ TentaGL.TextIconSprite.prototype = {
   
   constructor:TentaGL.TextIconSprite,
   
+  isaTextIconSprite:true,
+  
+  
   //////// GL cleanup
   
   /** Removes the internal texture for this sprite form the MaterialLib and GL memory.  */

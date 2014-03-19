@@ -42,6 +42,7 @@ TentaGL.LabelledIconSprite.prototype = {
   
   constructor:TentaGL.LabelledIconSprite,
   
+  isaLabelledIconSprite:true,
   
   /** 
    * Creates the sprite for the icon.

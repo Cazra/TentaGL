@@ -41,6 +41,8 @@ TentaGL.Application = function(container, attrs) {
   
   this._keyboard = new TentaGL.Keyboard(container);
   this._mouse = new TentaGL.Mouse(container);
+  
+  this._resizeListeners = [];
 };
 
 
@@ -163,6 +165,58 @@ TentaGL.Application.prototype = {
     return this.getWidth()/this.getHeight();
   },
   
+  
+  /** 
+   * Resizes the TentaGL application. 
+   * This changes the size of the canvas and div elements containing it.
+   * When the application is resized, it fires an AppResizeEvent to any 
+   * AppResizeListeners subscribed to it.
+   * @param {uint} w  The new width.
+   * @param {uint} h  The new height.
+   */
+  resize:function(w, h) {
+    var canvas = this.getCanvas();
+    var container = this.getContainer();
+    
+    var oldWidth = this.getWidth();
+    var oldHeight = this.getHeight();
+    
+    canvas.width = w;
+    canvas.height = h;
+    TentaGL.setViewport(this.getGL(), [0,0,w,h]);
+    
+    container.style.width = w;
+    container.style.height = h;
+    
+    var event = new TentaGL.AppResizeEvent(this, w, h, oldWidth, oldHeight);
+    for(var i in this._resizeListeners) {
+      this._resizeListeners[i].handleAppResizeEvent(event);
+    }
+  },
+  
+  
+  /** 
+   * Subscribes an AppResizeListener to this application.
+   * @param {AppResizeListener} listener
+   */
+  addAppResizeListener:function(listener) {
+    this._resizeListeners.push(listener);
+  },
+  
+  
+  /** 
+   * Unsubscribes an AppResizeListener from this application.
+   * @param {AppResizeListener} listener
+   */
+  removeAppResizeListener:function(listener) {
+    var index = this._resizeListeners.indexOf(listener);
+    if(index == -1) {
+      throw Error("Failed to unsubscribe AppResizeListener.");
+    }
+    else {
+      this._resizeListeners.splice(index, 1);
+    }
+  },
   
   
   //////// Access to input device interfaces.

@@ -22,55 +22,21 @@
  SOFTWARE.
 */
 
+TentaGL.AppResizeListener = function() {};
 
-/** 
- * A sprite that is always facing towards the camera's eye and is oriented 
- * relative to the camera's up vector. 
- * @constructor
- * @param {vec4} xyz
- */
-TentaGL.BillboardSprite = function(xyz) {
-  TentaGL.Sprite.call(this, xyz);
+TentaGL.AppResizeListener.prototype = {
+  
+  constructor:TentaGL.AppResizeListener,
+  
+  isaAppResizeListener:true,
+  
+  /** 
+   * Handler for AppResizeEvents. 
+   * Override this.
+   * @param {TentaGL.AppResizeEvent}
+   */
+  handleAppResizeEvent:function(event) {}
+  
 };
 
 
-TentaGL.BillboardSprite.prototype = {
-  
-  constructor:TentaGL.BillboardSprite,
-  
-  isaBillboardSprite:true,
-  
-  //////// Rendering
-  
-  /** 
-   * Renders this sprite, temporarily concatenating its model transform to the 
-   * current Model-view transform of the scene. 
-   * @param {WebGLRenderingContext} gl
-   */
-  render:function(gl) {
-    if(!this.isVisible() || !TentaGL.renderFilter(this)) {
-      return;
-    }
-    TentaGL.pushTransform();
-    
-    var camera = TentaGL.getCamera();
-    var camEye = camera.getEye();
-    this.billboardWorldPoint(camEye, camera.getUp())
-    
-    TentaGL.mulTransform(this.getModelTransform());
-    TentaGL.updateMVPUniforms(gl);
-    
-    this.draw(gl);
-    
-    TentaGL.popTransform();
-  },
-  
-  /** 
-   * Sets the materials for and draws the Models making up this sprite. 
-   * Override this. 
-   */
-  draw:function(gl) {},
-};
-
-
-TentaGL.Inheritance.inherit(TentaGL.BillboardSprite, TentaGL.Sprite);

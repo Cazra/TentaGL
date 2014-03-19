@@ -22,55 +22,63 @@
  SOFTWARE.
 */
 
-
 /** 
- * A sprite that is always facing towards the camera's eye and is oriented 
- * relative to the camera's up vector. 
+ * An event associated with a TentaGL Application being resized. 
  * @constructor
- * @param {vec4} xyz
+ * @param {Object} source
+ * @param {uint} w  The new width
+ * @param {uint} h  The new height
+ * @param {uint} oldW   The old width.
+ * @param {uint} oldH   The old height.
  */
-TentaGL.BillboardSprite = function(xyz) {
-  TentaGL.Sprite.call(this, xyz);
+TentaGL.AppResizeEvent = function(source, w, h, oldW, oldH) {
+  TentaGL.Event.call(this, source, 0);
+  
+  this._width = w;
+  this._height = h;
+  
+  this._oldWidth = oldW;
+  this._oldHeight = oldH;
 };
 
-
-TentaGL.BillboardSprite.prototype = {
+TentaGL.AppResizeEvent.prototype = {
   
-  constructor:TentaGL.BillboardSprite,
-  
-  isaBillboardSprite:true,
-  
-  //////// Rendering
+  constructor:TentaGL.AppResizeEvent,
   
   /** 
-   * Renders this sprite, temporarily concatenating its model transform to the 
-   * current Model-view transform of the scene. 
-   * @param {WebGLRenderingContext} gl
+   * Returns the new width of the application. 
+   * @return {uint}
    */
-  render:function(gl) {
-    if(!this.isVisible() || !TentaGL.renderFilter(this)) {
-      return;
-    }
-    TentaGL.pushTransform();
-    
-    var camera = TentaGL.getCamera();
-    var camEye = camera.getEye();
-    this.billboardWorldPoint(camEye, camera.getUp())
-    
-    TentaGL.mulTransform(this.getModelTransform());
-    TentaGL.updateMVPUniforms(gl);
-    
-    this.draw(gl);
-    
-    TentaGL.popTransform();
+  getWidth:function() {
+    return this._width;
   },
   
   /** 
-   * Sets the materials for and draws the Models making up this sprite. 
-   * Override this. 
+   * Returns the new height of the application. 
+   * @return {uint}
    */
-  draw:function(gl) {},
+  getHeight:function() {
+    return this._height;
+  },
+  
+  
+  /** 
+   * Returns the old width of the application. 
+   * @return {uint}
+   */
+  getOldWidth:function() {
+    return this._oldWidth;
+  },
+  
+  
+  /** 
+   * Returns the old height of the application. 
+   * @return {uint}
+   */
+  getOldHeight:function() {
+    return this._oldHeight;
+  }
 };
 
+TentaGL.Inheritance.inherit(TentaGL.AppResizeEvent, TentaGL.Event);
 
-TentaGL.Inheritance.inherit(TentaGL.BillboardSprite, TentaGL.Sprite);

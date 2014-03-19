@@ -42,6 +42,7 @@ TentaGL.IconSprite.prototype = {
   
   constructor:TentaGL.IconSprite,
   
+  isaIconSprite:true,
   
   //////// Texture properties
   

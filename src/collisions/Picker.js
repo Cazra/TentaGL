@@ -24,20 +24,21 @@
 
 
 /** 
- * Constructs a 3D picker for mapping viewport coordinates to objects in a scene. 
+ * Constructs a 3D picker for doing pixel-perfect mouse-over detections in
+ * a scene.
  * @constructor
- * @param {int} width   The width of the viewport the picking is done in.
- * @param {int} height  The heigh of the viewport the picking is done in.
+ * @param {TentaGL.Application} app   The application this picker is being used in.
  */
-TentaGL.Picker = function(width, height) {
-  this._width = width;
-  this._height = height;
+TentaGL.Picker = function(app) {
+  this._app = app;
 };
 
 
 TentaGL.Picker.prototype = {
   
   constructor:TentaGL.Picker,
+  
+  
   
   /** 
    * Updates the internal raster of mouse-over information of a scene for this picker.
@@ -74,7 +75,7 @@ TentaGL.Picker.prototype = {
     
     // Render to the offscreen raster, cache the pixel data, 
     // and then delete the offscreen raster.
-    var raster = new TentaGL.BufferTexture(gl, this._width, this._height);
+    var raster = new TentaGL.BufferTexture(gl, this._app.getWidth(), this._app.getHeight());
     raster.renderToMe(gl, renderFunc);
     this._pixels = raster.getPixelData(gl);
     raster.clean(gl);
@@ -152,7 +153,9 @@ TentaGL.Picker.prototype = {
       return path[path.length-1];
     }
   },
+  
 };
+
 
 /** The ID of the picker's shader program in the ShaderLib. */
 TentaGL._shaderID = "pickShader";
