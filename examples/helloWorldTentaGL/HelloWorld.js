@@ -215,8 +215,6 @@ HelloWorldApp.prototype = {
     this.axesGroup.add(this.createSphereSprite([0,0,0], "white"));
     this.axesGroup.add(this.createSphereSprite([0,0,0], "black"));
     
-    this.picker = new TentaGL.Picker(this);
-    
     this.camGroup = new TentaGL.SceneGroup();
     this.camGroup.add(this.createSphereSprite([15,0,0], "black"));
   },
@@ -232,11 +230,11 @@ HelloWorldApp.prototype = {
     
     // Picker test
     if(this._mouse.isLeftPressed()) {
-      this.picker.update(gl, this.drawScene.bind(this), false);
+      this.getPicker().update(gl, this.drawScene.bind(this), false);
       
       var mx = this._mouse.getX();
       var my = this.getHeight() - this._mouse.getY()
-      var sprite = this.picker.getSpriteAt(mx, my);
+      var sprite = this.getPicker().getSpriteAt(mx, my);
       console.log(sprite);
       
     //  if(sprite && sprite.setText) {
@@ -353,7 +351,7 @@ HelloWorldApp.getInstance = function() {
 function webGLStart() {
   HelloWorldApp.getInstance().start();
   
-  
+  /*
   var req = new XMLHttpRequest();
   req.onload = function() { // for async
     console.log("\"\"\"\n" + this.responseText + "\n\"\"\"");
@@ -361,4 +359,5 @@ function webGLStart() {
   req.open("get", "../../shaders/picker.frag", false);
   req.send(); 
   console.log(req.responseText); // for sync
+  */
 }

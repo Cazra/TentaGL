@@ -40,7 +40,12 @@ TentaGL.Application = function(container, attrs) {
   this._canvas = this._gl.canvas;
   
   this._keyboard = new TentaGL.Keyboard(container);
-  this._mouse = new TentaGL.Mouse(container);
+  this._mouse = new TentaGL.Mouse(canvas);
+  this._picker = new TentaGL.Picker(this);
+  
+  container.onresize = function() {
+    console.log(container.offsetWidth, container.offsetHeight);
+  };
   
   this._resizeListeners = [];
 };
@@ -138,6 +143,19 @@ TentaGL.Application.prototype = {
     return this._gl;
   },
   
+  //////// Picker
+  
+  
+  /** 
+   * Returns the applicaiton's picker.
+   * @return {TentaGL.Picker}
+   */
+  getPicker:function() {
+    return this._picker;
+  },
+  
+  
+  
   //////// Dimensions
   
   
@@ -146,7 +164,7 @@ TentaGL.Application.prototype = {
    * @return {Number}
    */
   getWidth:function() {
-    return this._container.offsetWidth;
+    return this._canvas.offsetWidth;
   },
   
   /**
@@ -154,7 +172,7 @@ TentaGL.Application.prototype = {
    * @return {Number}
    */
   getHeight:function() {
-    return this._container.offsetHeight;
+    return this._canvas.offsetHeight;
   },
   
   /**

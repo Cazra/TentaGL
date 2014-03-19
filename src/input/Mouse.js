@@ -29,9 +29,9 @@
  * left, middle, and right buttons, and vertical and horizontal mouse wheel 
  * scroll detection.
  * @constructor
- * @param {DOM div element} container  The div element containing the WebGL Canvas.
+ * @param {DOM canvas element} canvas  The canvas element containing the application.
  */
-TentaGL.Mouse = function(container) {
+TentaGL.Mouse = function(canvas) {
   
   this._xy = [0, 0];
   this._xyPage = [0, 0];
@@ -61,9 +61,13 @@ TentaGL.Mouse = function(container) {
   
   var self = this; // closure magic!
   
-  container.onmousemove = function(evt) {
+  canvas.onmousemove = function(evt) {
     var xy = TentaGL.DOM.getAbsolutePosition(this);
-    xy = [evt.pageX - xy[0], evt.pageY - xy[1]];
+    var rect = canvas.getBoundingClientRect();
+    var left = TentaGL.Math.clamp(Math.floor(rect.left), 0, canvas.width);
+    var top = TentaGL.Math.clamp(Math.floor(rect.top), 0, canvas.height);
+    
+    xy = [evt.clientX - left, evt.clientY - top];
     var xyPage = [evt.pageX, evt.pageY];
     
     self._xy = xy;
@@ -73,12 +77,12 @@ TentaGL.Mouse = function(container) {
   
   
   // Prevent right-click from opening the context menu.
-  container.oncontextmenu = function(evt) {
+  canvas.oncontextmenu = function(evt) {
     return false;
   };
   
   
-  container.onmousedown = function(evt) {
+  canvas.onmousedown = function(evt) {
   //  console.log(evt);
     self._pressedSinceLast[evt.which] = true;
     
@@ -94,12 +98,12 @@ TentaGL.Mouse = function(container) {
     }
   };
   
-  container.onmouseup = function(evt) {
+  canvas.onmouseup = function(evt) {
   //  console.log(evt);
     self._releasedSinceLast[evt.which] = true;
   };
   
-  container.onmousewheel = function(evt) {
+  canvas.onmousewheel = function(evt) {
   //  console.log(evt);
     if(evt.wheelDeltaY < 0) {
       self._wheelTicksYSinceLast--;
