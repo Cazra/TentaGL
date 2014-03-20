@@ -35,7 +35,7 @@ var TentaGL = {
   versionMajor:0, 
   
   /** The minor version number of this framework. */
-  versionMinor:8,
+  versionMinor:9,
   
   
   //////// Canvas/Context creation
@@ -58,7 +58,7 @@ var TentaGL = {
     try {
       
       // Create the WebGL context for the canvas.
-      var gl = canvas.getContext("webgl", attrs) || canvas.getContext("experimental-webgl", attrs);
+      var gl = canvas.getContext("webgl", attrs) || canvas.getContext("experimental-webgl", attrs) || canvas.getContext("webkit-3d", attrs) || canvas.getContext("moz-webgl", attrs);
       TentaGL.setViewport(gl, [0, 0, canvas.width, canvas.height]);
       TentaGL.resetProjection();
       TentaGL.resetTransform();
