@@ -31,6 +31,25 @@ TentaGL.MaterialLib = {
   /** Dictionary of Materials, each keyed by a unique string name. */
   _materials:{},
   
+  
+  /** 
+   * Removes all Materials from the library and the GL context.
+   * @param {WebGLRenderingContext} gl
+   */
+  clean:function(gl) {
+    for(var i in this._materials) {
+      this._materials[i].clean(gl);
+    }
+    this._materials = {};
+  },
+  
+  
+  reset:function(gl) {
+    this.clean(gl);
+  },
+  
+  
+  
   /** 
    * Retrieves a Material by name. An Error is thrown if the material doesn't 
    * exist in the library. 

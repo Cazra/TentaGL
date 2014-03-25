@@ -68,6 +68,7 @@ TentaGL.Application.prototype = {
     TentaGL.ShaderLib.reset(gl);
     TentaGL.BlendStateLib.reset(gl);
     TentaGL.ModelLib.reset(gl);
+    TentaGL.MaterialLib.reset(gl);
     
     this.initShaders();
     this.initMaterials();
@@ -82,6 +83,20 @@ TentaGL.Application.prototype = {
    * iteration so that the application tries to run at 60 frames per second. 
    */
   run:function(timestamp) {
+    this._isRunning = true;
+    
+    // Check to see if the application was scheduled to end or be hard reset.
+    if(this._endFlag) {
+      this._endFlag = false;
+      this._isRunning = false;
+      
+      if(this._hardResetFlag) {
+        this._hardResetFlag = false;
+        this.start();
+      }
+      return;
+    }
+    
     // Initialize timing on the first frame.
     if(!this._lastTimestamp) {
       this._lastTimestamp = timestamp;
@@ -110,9 +125,33 @@ TentaGL.Application.prototype = {
     
     this._lastTimestamp = timestamp;
     this._fpsCount++;
-    requestAnimationFrame(this.run.bind(this));
+    
+    this._nextFrameID = requestAnimationFrame(this.run.bind(this));
   },
   
+  
+  /** Returns true if the application is currently running. */
+  isRunning:function() {
+    return this._isRunning;
+  },
+  
+  
+  
+  /** 
+   * Schedules this application to end at the start of the next frame. 
+   */
+  end:function() {
+    this._endFlag = true;
+  },
+  
+  
+  /**
+   * Schedules this application to end and then restart at the start of the next frame.
+   */
+  hardReset:function() {
+    this.end();
+    this._hardResetFlag = true;
+  },
   
   
   //////// DOM and context
