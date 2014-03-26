@@ -31,7 +31,7 @@
  * can be zoomed in and out by scrolling the mouse wheel.
  */
 TentaGL.ArcballCamera = function(eye, center, up) {
-  TentaGL.Camera.call(this, eye, center, up);
+  TentaGL.Camera3D.call(this, eye, center, up);
   
   // Save initial distance.
   var look = this.getLookVector();
@@ -305,7 +305,7 @@ TentaGL.ArcballCamera.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.ArcballCamera, TentaGL.Camera);
+TentaGL.Inheritance.inherit(TentaGL.ArcballCamera, TentaGL.Camera3D);
 
 
 
