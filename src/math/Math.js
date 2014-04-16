@@ -86,9 +86,29 @@ TentaGL.Math = {
    * @param {Number} value
    * @param {Number} min
    * @param {Number} max
+   * @return {Number}
    */
   clamp:function(value, min, max) {
     return Math.min(max, Math.max(value, min));
+  },
+  
+  
+  /** 
+   * Wraps the specified value to the range [min, max).
+   * @param {Number} value
+   * @param {Number} min
+   * @param {Number} max
+   * @return {Number}
+   */
+  wrap:function(value, min, max) {
+    var rangeSize = max-min;
+    
+    var x = (value - min) % rangeSize;
+    if(x < 0) {
+      x += rangeSize;
+    }
+    
+    return x + min;
   },
   
   

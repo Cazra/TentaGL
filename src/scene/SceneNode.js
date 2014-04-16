@@ -622,16 +622,6 @@ TentaGL.SceneNode.prototype = {
     look = vec3.transformQuat(vec3.create(), look, qToLocal);
     up = vec3.transformQuat(vec3.create(), up, qToLocal);
     
-    /*
-    var q = TentaGL.Math.getQuatFromTo(this.getBaseLook(), look);
-    this.setQuat(q);
-    
-    if(up) {
-      var curUp = this.getUp();
-      var q2 = TentaGL.Math.getQuatFromTo(curUp, up);
-      this.mulQuat(q2);
-    }
-    */
     this.setQuat(TentaGL.Math.getOrientation(this.getBaseLook(), this.getBaseUp(), look, up));
   },
   

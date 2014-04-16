@@ -565,12 +565,33 @@ TentaGL.Model.prototype = {
   },
   
   
+  /** 
+   * Returns a clone of this model whose texture coordinates are scaled.
+   * @return {TentaGL.Model}
+   */
   scaleTexST:function(s, t) {
     var result = this.clone();
     for(var i in result._vertices) {
       var v = result._vertices[i];
       var st = v.getTexST();
       v.setTexST(st[0]*s, st[1]*t);
+    }
+    return result;
+  },
+  
+  
+  /** 
+   * Returns a clone of this model where all T tex coordinates are 1 minus
+   * their original value. This will make the textures for the model become
+   * upside down. 
+   * @return {TentaGL.Model}
+   */
+  flipTexT:function() {
+    var result = this.clone();
+    for(var i in result._vertices) {
+      var v = result._vertices[i];
+      var st = v.getTexST();
+      v.setTexST(st[0], 1-st[1]);
     }
     return result;
   },

@@ -49,6 +49,7 @@ TentaGL.Camera.prototype = {
   
   /** 
    * Returns the view matrix for this camera. 
+   * Override this.
    * @return {mat4}
    */
   getViewTransform:function() {
@@ -57,6 +58,7 @@ TentaGL.Camera.prototype = {
   
   /** 
    * Returns the projection matrix for this camera.
+   * Override this.
    * @param {Number} aspect   The aspect ratio of our viewport.
    * @return {mat4}
    */

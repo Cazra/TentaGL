@@ -43,10 +43,10 @@ TentaGL.Camera2D = function(eye, width, height) {
   this._width = width;
   this._height = height;
   
-  this._center = vec2.fromValues(Math.floor(this._width/2), Math.floor(this._height/2));
+  this._anchor = vec2.fromValues(Math.floor(this._width/2), Math.floor(this._height/2));
   
   this._angle = 0.0;
-  this._scale = 1.0;
+  this._zoom = 1.0;
 };
 
 
@@ -58,11 +58,28 @@ TentaGL.Camera2D.prototype = {
   //////// Eye position
   
   /** 
-   * Returns the position of the camera's eye in world space.
+   * Returns the position of the camera's eye. This is camera's position in world space.
    * @return {vec2}
    */
   getEye:function() {
     return vec2.clone(this._eye);
+  },
+  
+  
+  /** 
+   * Returns the X coordinate of the camera's eye. 
+   * @return {Number}
+   */
+  getX:function() {
+    return this._eye[0];
+  },
+  
+  /** 
+   * Returns the Y coordinate of the camera's eye. 
+   * @return {Number}
+   */
+  getY:function() {
+    return this._eye[1];
   },
   
   
@@ -94,6 +111,123 @@ TentaGL.Camera2D.prototype = {
     return this._height;
   },
   
+  //////// Anchor position
+  
+  /** 
+   * Returns the camera's anchor position - the position of its eye in 
+   * viewport coordinates. 
+   * @return {vec2}
+   */
+  getAnchor:function() {
+    return this._anchor;
+  },
+  
+  
+  /** 
+   * Sets the camera's anchor position. 
+   * @param {vec2} anchor
+   */
+  setAnchor:function(anchor) {
+    this._anchor = vec2.fromValues(anchor[0], anchor[1]);
+  },
+  
+  
+  //////// Angle
+  
+  
+  /** 
+   * Returns the clockwise rotation angle of the camera, in radians. 
+   * @return {Number}
+   */
+  getAngle:function() {
+    return this._angle;
+  },
+  
+  
+  /** 
+   * Sets the camera's clockwise rotation angle, in radians.
+   * @param {Number} rads
+   */
+  setAngle:function(rads) {
+    this._angle = rads;
+  },
+  
+  
+  
+  //////// Zoom
+  
+  /** 
+   * Returns the zoom of the camera.
+   * @return {Number}
+   */
+  getZoom:function() {
+    return this._zoom;
+  },
+  
+  /** 
+   * Sets the zoom of the camera. 
+   * The default zoom level is 1.0.
+   * The scene zooms in as zoom approaches positive infinity.
+   * The scene zooms out as zoom approaches 0.
+   * @param {Number} zoom
+   */
+  setZoom:function(zoom) {
+    this._zoom = zoom;
+  },
+  
+  
+  //////// controls
+  
+  
+  
+  controlWithMouse:function(mouse, viewWidth, viewHeight) {
+    // do nothing
+  },
+  
+  //////// Transforms
+  
+  
+  /** 
+   * Returns the view matrix for this camera. 
+   * @return {mat4}
+   */
+  getViewTransform:function() {
+    var m = mat4.create();
+    
+    var eyeT = mat4.create();
+    mat4.translate(eyeT, eyeT, [-this._eye[0], -this._eye[1], 0]);
+    mat4.mul(m, eyeT, m);
+    
+    var rotT = mat4.create();
+    mat4.rotateZ(rotT, rotT, this._angle);
+    mat4.mul(m, rotT, m);
+    
+    var zoomT = mat4.create();
+    mat4.scale(zoomT, zoomT, [this._zoom, this._zoom, 1]);
+    mat4.mul(m, zoomT, m);
+    
+    var anchorT = mat4.create();
+    mat4.translate(anchorT, anchorT, [this._anchor[0], this._anchor[1], 0]);
+    mat4.mul(m, anchorT, m);
+    
+    return m;
+  },
+  
+  
+  
+  /** 
+   * Returns the projection matrix for this camera.
+   * @param {Number} aspect   The aspect ratio of our viewport.
+   * @return {mat4}
+   */
+  getProjectionTransform:function() {
+    var m = mat4.create();
+    m[0] = 2/this.getWidth();
+    m[5] = -2/this.getHeight();
+    m[12] = -1;
+    m[13] = 1;
+    return m;
+  },
 };
 
 
