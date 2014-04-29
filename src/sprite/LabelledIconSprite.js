@@ -67,8 +67,6 @@ TentaGL.LabelledIconSprite.prototype = {
     this._label = new TentaGL.TextIconSprite([0, 0.3, 0.001], labelText, font, fontColor);
     this._label.scaleToHeight(0.5);
     this._label.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.BOTTOM);
-    //this._label.addPickEventListener(this);
-    //this._label.setParent(this);
     this.addComponent(this._label);
     
     // The label has a filter that gives it a darker outline.
@@ -79,8 +77,6 @@ TentaGL.LabelledIconSprite.prototype = {
     this._labelBG = new TentaGL.IconSprite([0, 0.3, 0.0005], labelBGTexName);
     this._labelBG.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.BOTTOM);
     this._labelBG.setScaleXYZ([this._label.getScaleX()+0.1, this._label.getScaleY(), 1]);
-    //this._labelBG.addPickEventListener(this);
-    //this._labelBG.setParent(this);
     this.addComponent(this._labelBG);
   },
   
