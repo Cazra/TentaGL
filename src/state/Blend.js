@@ -28,32 +28,130 @@
  * graphics state. Therefore, it is strongly encouraged for TentaGL
  * applications to change the blending state of the gl context through this
  * API instead of directly through the gl context.
- * 
- * TODO
  */
 TentaGL.Blend = {
   
   _enabled: false,
   
-  _equation: TentaGL.GL_FUNC_ADD,
+  _equation: GL_FUNC_ADD,
   
-  _srcFunc: TentaGL.GL_ONE,
+  _srcFunc: GL_ONE,
   
-  _dstFunc: TentaGL.GL_ZERO,
+  _dstFunc: GL_ZERO,
+  
+  _red: 0.0,
+  
+  _green: 0.0,
+  
+  _blue: 0.0,
+  
+  _alpha: 0.0,
   
   
-  
+  /** 
+   * Enables or disables blending. 
+   * @param {WebGLRenderingContext} gl
+   * @param {boolean} enabled
+   */
   setEnabled:function(gl, enabled) {
     if(this._enabled != enabled) {
       this._enabled = enabled;
       
       if(enabled) {
-        gl.enable(gl.BLEND);
+        gl.enable(GL_BLEND);
       }
       else {
-        gl.disable(gl.BLEND);
+        gl.disable(GL_BLEND);
       }
     }
   },
+  
+  
+  /** 
+   * Returns whether blending is enabled in the gl state. 
+   * @return {boolean}
+   */
+  isEnabled:function() {
+    return this._enabled;
+  },
+  
+  
+  
+  
+  /** 
+   * Sets the blend equation and blend functions.
+   * @param {WebGLRenderingContext} gl
+   * @param {glEnum} equation   Any allowed value for gl.blendEquation
+   * @param {glEnum} srcFunc    Any allowed source function value for gl.blendFunc.
+   * @param {glEnum} dstFunc    Any allowed dest function value for gl.blendFunc.
+   */
+  setEquation:function(gl, equation, srcFunc, dstFunc) {
+    if(this._equation != equation) {
+      this._equation = equation;
+      gl.blendEquation(equation);
+    }
+    
+    if(this._srcFunc != srcFunc || this._dstFunc != dstFunc) {
+      this._srcFunc = srcFunc;
+      this._dstFunc = dstFunc;
+      
+      gl.blendFunc(srcFunc, dstFunc);
+    }
+  },
+  
+  
+  /** 
+   * Returns the equation being used for blending.
+   * @return {glEnum}
+   */
+  getEquation:function() {
+    return this._equation;
+  },
+  
+  
+  /** 
+   * Returns the source function used for blending.
+   * @return {glEnum}
+   */
+  getSrcFunc:function() {
+    return this._srcFunc;
+  },
+  
+  
+  /** 
+   * Returns the dest function used for blending.
+   * @return {glEnum}
+   */
+  getDstFunc:function() {
+    return this._dstFunc;
+  },
+  
+  
+  
+  /** 
+   * Sets the blend color.
+   * @param {WebGLRenderingContext} gl
+   * @param {TentaGL.Color} color
+   */
+  setBlendColor:function(gl, color) {
+    if(this._red != color.getRed() || this._green != color.getGreen() || this._blue != color.getBlue() || this._alpha != color.getAlpha()) {
+      this._red = color.getRed();
+      this._green = color.getGreen();
+      this._blue = color.getBlue();
+      this._alpha = color.getAlpha();
+      
+      gl.blendColor(this._red, this._green, this._blue, this._alpha);
+    }
+  },
+  
+  
+  /** 
+   * Returns the blending color.
+   * @return {TentaGL.Color}
+   */
+  getBlendColor:function() {
+    var color = TentaGL.Color.RGBA(this._red, this._green, this._blue, this._alpha);
+    return color;
+  }
   
 };

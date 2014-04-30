@@ -187,13 +187,13 @@ TentaGL.PixelData.prototype = {
 TentaGL.PixelData.GLTexture = function(gl, glTex, x, y, w, h) {
   
   var fb = gl.createFramebuffer();
-  gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, glTex, 0);
+  gl.bindFramebuffer(GL_FRAMEBUFFER, fb);
+  gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glTex, 0);
   
   var data = new Uint8Array(w*h*4);
-  gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, data);
+  gl.readPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
   
-  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.bindFramebuffer(GL_FRAMEBUFFER, null);
   gl.deleteFramebuffer(fb);
   
   return new TentaGL.PixelData(data, w, h);

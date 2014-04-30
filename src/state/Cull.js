@@ -22,39 +22,41 @@
  SOFTWARE.
 */
 
-/**
- * Rendering modes are functions that set up the state of the gl context
- * for some specific mode of rendering. Each rendering mode function
- * accepts a WebGLRenderingContext as an argument.
- */ 
-
-
-
-/** A 3D rendering mode for opaque objects. */
-TentaGL.RenderMode.MODE_3D_OPAQUE = function(gl) {
-  TentaGL.Blend.setEnabled(gl, false);
-  TentaGL.Depth.setEnabled(gl, true);
-  TentaGL.Cull.setEnabled(gl, false);
-};
-
-
-/** A 3D rendering mode for translucent objects. */
-TentaGL.RenderMode.MODE_3D_TRANS = function(gl) {
-  TentaGL.Blend.setEnabled(gl, true);
-  TentaGL.Blend.setEquation(gl, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+/** 
+ * A simple API for setting the face-culling state of the gl context.
+ */
+TentaGL.Cull = {
   
-  TentaGL.Depth.setEnabled(gl, false);
-  TentaGL.Cull.setEnabled(gl, false);
-};
-
-
-
-/** a 2D rendering mode for opaque and translucent objects. */
-TentaGL.RenderMode.MODE_2D = function(gl) {
-  TentaGL.Blend.setEnabled(gl, true);
-  TentaGL.Blend.setEquation(gl, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  _mode: GL_NONE,
   
-  TentaGL.Depth.setEnabled(gl, false);
-  TentaGL.Cull.setEnabled(gl, false);
+  
+  /** 
+   * Sets the face-culling mode for the gl context. 
+   * @param {WebGLRenderingContext} gl
+   * @param {glEnum} mode   Any allowed value for gl.cullFace.
+   */
+  setMode:function(gl, mode) {
+    if(this._mode != mode) {
+      this._mode = mode;
+      
+      if(mode == GL_NONE) {
+        gl.disable(GL_CULL_FACE);
+      }
+      else {
+        gl.enable(GL_CULL_FACE);
+        gl.cullFace(mode);
+      }
+    }
+  },
+  
+  
+  /** 
+   * Returns the face-culling mode being used.
+   */
+  getMode:function() {
+    return this._mode;
+  },
+  
+  
 };
 

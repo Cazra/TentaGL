@@ -117,43 +117,6 @@ var TentaGL = {
   },
   
   
-  
-  //////// GL RenderBuffers
-  
-  
-  /** 
-   * Creates an off-screen depth buffer.
-   * @param {WebGLRenderingContext} gl
-   * @param {int} width
-   * @param {int} height
-   * @return {WebGLRenderbuffer}
-   */
-  createDepthbuffer: function(gl, width, height) {
-    var buffer = gl.createRenderbuffer();
-    gl.bindRenderbuffer(gl.RENDERBUFFER, buffer);
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
-    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-    return buffer;
-  },
-  
-  
-  /**
-   * Creates an off-screen stencil buffer.
-   * @param {WebGLRenderingContext} gl
-   * @param {int} width
-   * @param {int} height
-   * @return {WebGLRenderbuffer}
-   */
-  createStencilBuffer: function(gl, width, height) {
-    var buffer = gl.createRenderbuffer();
-    gl.bindRenderbuffer(gl.RENDERBUFFER, buffer);
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
-    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-    return buffer;
-  },
-  
-  
-  
   //////// GL textures
   
   /** 
@@ -371,7 +334,7 @@ var TentaGL = {
       gl.clearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
     }
     
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(GL_COLOR_BUFFER_BIT);
   },
   
   
@@ -379,9 +342,9 @@ var TentaGL = {
    * Clears the depth buffer.
    * @param {WebGLRenderingContext} gl   
    */
-  clearDepthBuffer:function(gl) {
-    gl.clear(gl.DEPTH_BUFFER_BIT);
-  },
+//  clearDepthBuffer:function(gl) {
+//    gl.clear(gl.DEPTH_BUFFER_BIT);
+//  },
   
   
   /**
@@ -452,81 +415,31 @@ TentaGL._defaultRenderFilter = function(sprite) {
  */
 TentaGL.glTypeName = function(type){
   return TentaGL._glTypeName[type];
-  /*
-  switch(type) {
-    case 0x1400:
-      return "BYTE";
-    case 0x1401:
-      return "UNSIGNED_BYTE";
-    case 0x1402:
-      return "SHORT";
-    case 0x1403:
-      return "UNSIGNED_SHORT";
-    case 0x1404:
-      return "INT";
-    case 0x1405:
-      return "UNSIGNED_INT";
-    case 0x1406:
-      return "FLOAT";
-    case 0x8B50:
-      return "FLOAT_VEC2";
-    case 0x8B51:
-      return "FLOAT_VEC3";
-    case 0x8B52:
-      return "FLOAT_VEC4";
-    case 0x8B53:
-      return "INT_VEC2";
-    case 0x8B54:
-      return "INT_VEC3";
-    case 0x8B55:
-      return "INT_VEC4";
-    case 0x8B56:
-      return "BOOL";
-    case 0x8B57:
-      return "BOOL_VEC2";
-    case 0x8B58:
-      return "BOOL_VEC3";
-    case 0x8B59:
-      return "BOOL_VEC4";
-    case 0x8B5A:
-      return "FLOAT_MAT2";
-    case 0x8B5B:
-      return "FLOAT_MAT3";
-    case 0x8B5C:
-      return "FLOAT_MAT4";
-    case 0x8B5E:
-      return "SAMPLER_2D";
-    case 0x8B60:
-      return "SAMPLER_CUBE";
-    default:
-      return "";
-  }
-  */
 };
 
 TentaGL._glTypeName = [];
-TentaGL._glTypeName[0x1400] = "BYTE";
-TentaGL._glTypeName[0x1401] = "UNSIGNED_BYTE";
-TentaGL._glTypeName[0x1402] = "SHORT";
-TentaGL._glTypeName[0x1403] = "UNSIGNED_SHORT";
-TentaGL._glTypeName[0x1404] = "INT";
-TentaGL._glTypeName[0x1405] = "UNSIGNED_INT";
-TentaGL._glTypeName[0x1406] = "FLOAT";
-TentaGL._glTypeName[0x8B50] = "FLOAT_VEC2";
-TentaGL._glTypeName[0x8B51] = "FLOAT_VEC3";
-TentaGL._glTypeName[0x8B52] = "FLOAT_VEC4";
-TentaGL._glTypeName[0x8B53] = "INT_VEC2";
-TentaGL._glTypeName[0x8B54] = "INT_VEC3";
-TentaGL._glTypeName[0x8B55] = "INT_VEC4";
-TentaGL._glTypeName[0x8B56] = "BOOL";
-TentaGL._glTypeName[0x8B57] = "BOOL_VEC2";
-TentaGL._glTypeName[0x8B58] = "BOOL_VEC3";
-TentaGL._glTypeName[0x8B59] = "BOOL_VEC4";
-TentaGL._glTypeName[0x8B5A] = "FLOAT_MAT2";
-TentaGL._glTypeName[0x8B5B] = "FLOAT_MAT3";
-TentaGL._glTypeName[0x8B5C] = "FLOAT_MAT4";
-TentaGL._glTypeName[0x8B5E] = "SAMPLER_2D";
-TentaGL._glTypeName[0x8B60] = "SAMPLER_CUBE";
+TentaGL._glTypeName[GL_BYTE]            = "BYTE";
+TentaGL._glTypeName[GL_UNSIGNED_BYTE]   = "UNSIGNED_BYTE";
+TentaGL._glTypeName[GL_SHORT]           = "SHORT";
+TentaGL._glTypeName[GL_UNSIGNED_SHORT]  = "UNSIGNED_SHORT";
+TentaGL._glTypeName[GL_INT]             = "INT";
+TentaGL._glTypeName[GL_UNSIGNED_INT]    = "UNSIGNED_INT";
+TentaGL._glTypeName[GL_FLOAT]           = "FLOAT";
+TentaGL._glTypeName[GL_FLOAT_VEC2]      = "FLOAT_VEC2";
+TentaGL._glTypeName[GL_FLOAT_VEC3]      = "FLOAT_VEC3";
+TentaGL._glTypeName[GL_FLOAT_VEC4]      = "FLOAT_VEC4";
+TentaGL._glTypeName[GL_INT_VEC2]        = "INT_VEC2";
+TentaGL._glTypeName[GL_INT_VEC3]        = "INT_VEC3";
+TentaGL._glTypeName[GL_INT_VEC4]        = "INT_VEC4";
+TentaGL._glTypeName[GL_BOOL]            = "BOOL";
+TentaGL._glTypeName[GL_BOOL_VEC2]       = "BOOL_VEC2";
+TentaGL._glTypeName[GL_BOOL_VEC3]       = "BOOL_VEC3";
+TentaGL._glTypeName[GL_BOOL_VEC4]       = "BOOL_VEC4";
+TentaGL._glTypeName[GL_FLOAT_MAT2]      = "FLOAT_MAT2";
+TentaGL._glTypeName[GL_FLOAT_MAT3]      = "FLOAT_MAT3";
+TentaGL._glTypeName[GL_FLOAT_MAT4]      = "FLOAT_MAT4";
+TentaGL._glTypeName[GL_SAMPLER_2D]      = "SAMPLER_2D";
+TentaGL._glTypeName[GL_SAMPLER_CUBE]    = "SAMPLER_CUBE";
 
 /** 
  * Returns the size of a WebGL type in units of its base type. Returns -1 if 
@@ -536,75 +449,29 @@ TentaGL._glTypeName[0x8B60] = "SAMPLER_CUBE";
  */
 TentaGL.glSizeUnits = function(type){
   return TentaGL._glSizeUnits[type];
-  /*
-  switch(type) {
-    case 0x1400: // "BYTE"
-      return 1;
-    case 0x1401: // "UNSIGNED_BYTE"
-      return 1;
-    case 0x1402: // "SHORT"
-      return 1;
-    case 0x1403: // "UNSIGNED_SHORT"
-      return 1;
-    case 0x1404: // "INT"
-      return 1;
-    case 0x1405: // "UNSIGNED_INT"
-      return 1;
-    case 0x1406: // "FLOAT"
-      return 1;
-    case 0x8B50: // "FLOAT_VEC2"
-      return 2;
-    case 0x8B51: // "FLOAT_VEC3"
-      return 3;
-    case 0x8B52: // "FLOAT_VEC4"
-      return 4;
-    case 0x8B53: // "INT_VEC2"
-      return 2;
-    case 0x8B54: // "INT_VEC3"
-      return 3;
-    case 0x8B55: // "INT_VEC4"
-      return 4;
-    case 0x8B56: // "BOOL"
-      return 1;
-    case 0x8B57: // "BOOL_VEC2"
-      return 2;
-    case 0x8B58: // "BOOL_VEC3"
-      return 3;
-    case 0x8B59: // "BOOL_VEC4"
-      return 4;
-    case 0x8B5A: // "FLOAT_MAT2"
-      return 4;
-    case 0x8B5B: // "FLOAT_MAT3"
-      return 9;
-    case 0x8B5C: // "FLOAT_MAT4"
-      return 16;
-    default:
-      return -1;
-  }
-  */
 };
 
 TentaGL._glSizeUnits = [];
-TentaGL._glSizeUnits[0x1400] = 1; // BYTE
-TentaGL._glSizeUnits[0x1401] = 1; // UNSIGNED_BYTE
-TentaGL._glSizeUnits[0x1402] = 1; // SHORT
-TentaGL._glSizeUnits[0x1403] = 1; // UNSIGNED_SHORT
-TentaGL._glSizeUnits[0x1404] = 1; // INT
-TentaGL._glSizeUnits[0x1405] = 1; // UNSIGNED_INT
-TentaGL._glSizeUnits[0x1406] = 1; // FLOAT
-TentaGL._glSizeUnits[0x8B50] = 2; // FLOAT_VEC2
-TentaGL._glSizeUnits[0x8B51] = 3; // FLOAT_VEC3
-TentaGL._glSizeUnits[0x8B52] = 4; // FLOAT_VEC4
-TentaGL._glSizeUnits[0x8B53] = 2; // INT_VEC2
-TentaGL._glSizeUnits[0x8B54] = 3; // INT_VEC3
-TentaGL._glSizeUnits[0x8B55] = 4; // INT_VEC4
-TentaGL._glSizeUnits[0x8B56] = 1; // BOOL
-TentaGL._glSizeUnits[0x8B57] = 2; // BOOL_VEC2
-TentaGL._glSizeUnits[0x8B58] = 3; // BOOL_VEC3
-TentaGL._glSizeUnits[0x8B59] = 4; // BOOL_VEC4
-TentaGL._glSizeUnits[0x8B5A] = 4; // FLOAT_MAT2
-TentaGL._glSizeUnits[0x8B5B] = 9; // FLOAT_MAT3
-TentaGL._glSizeUnits[0x8B5C] = 16; // FLOAT_MAT4
+TentaGL._glSizeUnits[GL_BYTE]           = 1; // BYTE
+TentaGL._glSizeUnits[GL_UNSIGNED_BYTE]  = 1; // UNSIGNED_BYTE
+TentaGL._glSizeUnits[GL_SHORT]          = 1; // SHORT
+TentaGL._glSizeUnits[GL_UNSIGNED_SHORT] = 1; // UNSIGNED_SHORT
+TentaGL._glSizeUnits[GL_INT]            = 1; // INT
+TentaGL._glSizeUnits[GL_UNSIGNED_INT]   = 1; // UNSIGNED_INT
+TentaGL._glSizeUnits[GL_FLOAT]          = 1; // FLOAT
+TentaGL._glSizeUnits[GL_FLOAT_VEC2]     = 2; // FLOAT_VEC2
+TentaGL._glSizeUnits[GL_FLOAT_VEC3]     = 3; // FLOAT_VEC3
+TentaGL._glSizeUnits[GL_FLOAT_VEC4]     = 4; // FLOAT_VEC4
+TentaGL._glSizeUnits[GL_INT_VEC2]       = 2; // INT_VEC2
+TentaGL._glSizeUnits[GL_INT_VEC3]       = 3; // INT_VEC3
+TentaGL._glSizeUnits[GL_INT_VEC4]       = 4; // INT_VEC4
+TentaGL._glSizeUnits[GL_BOOL]           = 1; // BOOL
+TentaGL._glSizeUnits[GL_BOOL_VEC2]      = 2; // BOOL_VEC2
+TentaGL._glSizeUnits[GL_BOOL_VEC3]      = 3; // BOOL_VEC3
+TentaGL._glSizeUnits[GL_BOOL_VEC4]      = 4; // BOOL_VEC4
+TentaGL._glSizeUnits[GL_FLOAT_MAT2]     = 4; // FLOAT_MAT2
+TentaGL._glSizeUnits[GL_FLOAT_MAT3]     = 9; // FLOAT_MAT3
+TentaGL._glSizeUnits[GL_FLOAT_MAT4]     = 16; // FLOAT_MAT4
 
 
 /** 
@@ -617,64 +484,17 @@ TentaGL.glSizeBytes = function(type){
   var units = TentaGL.glSizeUnits(type);
   type = TentaGL.glUnitType(type);
   return units*TentaGL._glSizeBytes[type];
-  
-  /*
-  switch(type) {
-    case 0x1400: // "BYTE"
-      return units*1;
-    case 0x1401: // "UNSIGNED_BYTE"
-      return units*1;
-    case 0x1402: // "SHORT"
-      return units*2;
-    case 0x1403: // "UNSIGNED_SHORT"
-      return units*2;
-    case 0x1404: // "INT"
-      return units*4;
-    case 0x1405: // "UNSIGNED_INT"
-      return units*4;
-    case 0x1406: // "FLOAT"
-      return units*4;
-    case 0x8B50: // "FLOAT_VEC2"
-      return units*4;
-    case 0x8B51: // "FLOAT_VEC3"
-      return units*4;
-    case 0x8B52: // "FLOAT_VEC4"
-      return units*4;
-    case 0x8B53: // "INT_VEC2"
-      return units*4;
-    case 0x8B54: // "INT_VEC3"
-      return units*4;
-    case 0x8B55: // "INT_VEC4"
-      return units*4;
-    case 0x8B56: // "BOOL" - bools have the same size as a uint: 32-bits.
-      return units*4;
-    case 0x8B57: // "BOOL_VEC2"
-      return units*4;
-    case 0x8B58: // "BOOL_VEC3"
-      return units*4;
-    case 0x8B59: // "BOOL_VEC4"
-      return units*4;
-    case 0x8B5A: // "FLOAT_MAT2"
-      return units*4;
-    case 0x8B5B: // "FLOAT_MAT3"
-      return units*4;
-    case 0x8B5C: // "FLOAT_MAT4"
-      return units*4;
-    default:
-      return -1;
-  }
-  */
 };
 
 TentaGL._glSizeBytes = [];
-TentaGL._glSizeBytes[0x1400] = 1; // BYTE
-TentaGL._glSizeBytes[0x1401] = 1; // UNSIGNED_BYTE
-TentaGL._glSizeBytes[0x1402] = 2; // SHORT
-TentaGL._glSizeBytes[0x1403] = 2; // UNSIGNED_SHORT
-TentaGL._glSizeBytes[0x1404] = 4; // INT
-TentaGL._glSizeBytes[0x1405] = 4; // UNSIGNED_INT
-TentaGL._glSizeBytes[0x1406] = 4; // FLOAT
-TentaGL._glSizeBytes[0x8B56] = 4; // BOOL
+TentaGL._glSizeBytes[GL_BYTE]           = 1;
+TentaGL._glSizeBytes[GL_UNSIGNED_BYTE]  = 1;
+TentaGL._glSizeBytes[GL_SHORT]          = 2;
+TentaGL._glSizeBytes[GL_UNSIGNED_SHORT] = 2;
+TentaGL._glSizeBytes[GL_INT]            = 4;
+TentaGL._glSizeBytes[GL_UNSIGNED_INT]   = 4;
+TentaGL._glSizeBytes[GL_FLOAT]          = 4;
+TentaGL._glSizeBytes[GL_BOOL]           = 4;
 
 
 
@@ -690,30 +510,30 @@ TentaGL.glUnitType = function(type){
 };
 
 TentaGL._glUnitTypes = [];
-TentaGL._glUnitTypes[0x1400] = 0x1400; // BYTE
-TentaGL._glUnitTypes[0x1401] = 0x1401; // UNSIGNED_BYTE
-TentaGL._glUnitTypes[0x1402] = 0x1402; // SHORT
-TentaGL._glUnitTypes[0x1403] = 0x1403; // UNSIGNED_SHORT
-TentaGL._glUnitTypes[0x1404] = 0x1404; // INT
-TentaGL._glUnitTypes[0x1405] = 0x1405; // UNSIGNED_INT
-TentaGL._glUnitTypes[0x1406] = 0x1406; // FLOAT
-TentaGL._glUnitTypes[0x8B50] = 0x1406; // FLOAT_VEC2
-TentaGL._glUnitTypes[0x8B51] = 0x1406; // FLOAT_VEC3
-TentaGL._glUnitTypes[0x8B52] = 0x1406; // FLOAT_VEC4
-TentaGL._glUnitTypes[0x8B53] = 0x1404; // INT_VEC2
-TentaGL._glUnitTypes[0x8B54] = 0x1404; // INT_VEC3
-TentaGL._glUnitTypes[0x8B55] = 0x1404; // INT_VEC4
-TentaGL._glUnitTypes[0x8B56] = 0x8B56; // BOOL - bools have the same size as a uint: 32-bits.
-TentaGL._glUnitTypes[0x8B57] = 0x8B56; // BOOL_VEC2
-TentaGL._glUnitTypes[0x8B58] = 0x8B56; // BOOL_VEC3
-TentaGL._glUnitTypes[0x8B59] = 0x8B56; // BOOL_VEC4
-TentaGL._glUnitTypes[0x8B5A] = 0x1406; // FLOAT_MAT2
-TentaGL._glUnitTypes[0x8B5B] = 0x1406; // FLOAT_MAT3
-TentaGL._glUnitTypes[0x8B5C] = 0x1406; // FLOAT_MAT4
+TentaGL._glUnitTypes[GL_BYTE]           = GL_BYTE;
+TentaGL._glUnitTypes[GL_UNSIGNED_BYTE]  = GL_UNSIGNED_BYTE;
+TentaGL._glUnitTypes[GL_SHORT]          = GL_SHORT;
+TentaGL._glUnitTypes[GL_UNSIGNED_SHORT] = GL_UNSIGNED_SHORT;
+TentaGL._glUnitTypes[GL_INT]            = GL_INT;
+TentaGL._glUnitTypes[GL_UNSIGNED_INT]   = GL_UNSIGNED_INT;
+TentaGL._glUnitTypes[GL_FLOAT]          = GL_FLOAT;
+TentaGL._glUnitTypes[GL_FLOAT_VEC2]     = GL_FLOAT;
+TentaGL._glUnitTypes[GL_FLOAT_VEC3]     = GL_FLOAT;
+TentaGL._glUnitTypes[GL_FLOAT_VEC4]     = GL_FLOAT;
+TentaGL._glUnitTypes[GL_INT_VEC2]       = GL_INT;
+TentaGL._glUnitTypes[GL_INT_VEC3]       = GL_INT;
+TentaGL._glUnitTypes[GL_INT_VEC4]       = GL_INT;
+TentaGL._glUnitTypes[GL_BOOL]           = GL_BOOL;
+TentaGL._glUnitTypes[GL_BOOL_VEC2]      = GL_BOOL;
+TentaGL._glUnitTypes[GL_BOOL_VEC3]      = GL_BOOL;
+TentaGL._glUnitTypes[GL_BOOL_VEC4]      = GL_BOOL;
+TentaGL._glUnitTypes[GL_FLOAT_MAT2]     = GL_FLOAT;
+TentaGL._glUnitTypes[GL_FLOAT_MAT3]     = GL_FLOAT;
+TentaGL._glUnitTypes[GL_FLOAT_MAT4]     = GL_FLOAT;
 
 
 
-
+/*
 TentaGL.GL_BYTE = 0x1400;
 TentaGL.GL_UNSIGNED_BYTE = 0x1401;
 TentaGL.GL_SHORT = 0x1402;
@@ -754,8 +574,8 @@ TentaGL.GL_NONE = 0;
 TentaGL.GL_FRONT = 0x0404;
 TentaGL.GL_BACK = 0x0405;
 TentaGL.GL_FRONT_AND_BACK = 0x0408;
+*/
 
-
-TentaGL.mat3Recyclable = mat3.create();
-TentaGL.mat4Recyclable = mat4.create();
+//TentaGL.mat3Recyclable = mat3.create();
+//TentaGL.mat4Recyclable = mat4.create();
 

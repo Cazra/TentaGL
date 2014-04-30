@@ -42,10 +42,10 @@ TentaGL.BlendState = function(enableBlend, enableDepth) {
   this._enableDepth = enableDepth;
   
   this._blendColor = new TentaGL.Color.RGBA(0,0,0,0);
-  this._equation = TentaGL.GL_FUNC_ADD;
+  this._equation = GL_FUNC_ADD;
   
-  this._funcSrc = TentaGL.GL_ONE;
-  this._funcDst = TentaGL.GL_ZERO;
+  this._funcSrc = GL_ONE;
+  this._funcDst = GL_ZERO;
   
   this._cullFront = false;
   this._cullBack = false;
@@ -220,33 +220,33 @@ TentaGL.BlendState.prototype = {
   /** Sets the WebGL context to use this BlendState. */
   useMe:function(gl) {
     if(this._enableBlend) {
-      gl.enable(gl.BLEND);
+      gl.enable(GL_BLEND);
     }
     else {
-      gl.disable(gl.BLEND);
+      gl.disable(GL_BLEND);
     }
     
     if(this._enableDepth) {
-      gl.enable(gl.DEPTH_TEST);
+      gl.enable(GL_DEPTH_TEST);
     }
     else {
-      gl.disable(gl.DEPTH_TEST);
+      gl.disable(GL_DEPTH_TEST);
     }
     
     if(this._cullFront && this._cullBack) {
-      gl.enable(gl.CULL_FACE);
-      gl.cullFace(gl.FRONT_AND_BACK);
+      gl.enable(GL_CULL_FACE);
+      gl.cullFace(GL_FRONT_AND_BACK);
     }
     else if(this._cullFront) {
-      gl.enable(gl.CULL_FACE);
-      gl.cullFace(gl.FRONT);
+      gl.enable(GL_CULL_FACE);
+      gl.cullFace(GL_FRONT);
     }
     else if(this._cullBack) {
-      gl.enable(gl.CULL_FACE);
-      gl.cullFace(gl.BACK);
+      gl.enable(GL_CULL_FACE);
+      gl.cullFace(GL_BACK);
     }
     else {
-      gl.disable(gl.CULL_FACE);
+      gl.disable(GL_CULL_FACE);
     }
     
 

@@ -30,9 +30,9 @@
  *      If this is TentaGL.UNKNOWN, then it will try to determine its actual ID
  *      from TentaGL.AttrProfiles.
  * @param {GLenum} unitType   The unit type of the variable. 
- *      E.g. gl.INT, gl.FLOAT, etc., but not types such as gl.FLOAT_VEC3.
+ *      E.g. GL_INT, GL_FLOAT, etc., but not types such as GL_FLOAT_VEC3.
  * @param {int} sizeUnits   The size of the variable in terms of its unit type.
- *      E.g. gl.FLOAT_VEC3 would be 3 since it is the size of 3 gl.FLOATs.
+ *      E.g. GL_FLOAT_VEC3 would be 3 since it is the size of 3 GL_FLOATs.
  * @param {function} getterFunc   The Vertex prototype function that should be 
  *      called to get the relevant data for the attribute.
  */
@@ -173,19 +173,19 @@ TentaGL.TANG_3F = 4;
 // That should be done before any models are loaded into the ModelLib!
 TentaGL.AttrProfiles = {};
 TentaGL.AttrProfiles[TentaGL.POS_4F] = new TentaGL.AttrProfile( TentaGL.POS_4F, 
-                                                                TentaGL.GL_FLOAT, 
+                                                                GL_FLOAT, 
                                                                 4, 
                                                                 TentaGL.Vertex.prototype.getXYZ);
 TentaGL.AttrProfiles[TentaGL.NORMAL_3F] = new TentaGL.AttrProfile(TentaGL.NORMAL_3F, 
-                                                                  TentaGL.GL_FLOAT, 
+                                                                  GL_FLOAT, 
                                                                   3, 
                                                                   TentaGL.Vertex.prototype.getNormal);
 TentaGL.AttrProfiles[TentaGL.TEX_2F] = new TentaGL.AttrProfile( TentaGL.TEX_2F, 
-                                                                TentaGL.GL_FLOAT, 
+                                                                GL_FLOAT, 
                                                                 2, 
                                                                 TentaGL.Vertex.prototype.getTexST);
 TentaGL.AttrProfiles[TentaGL.TANG_3F] = new TentaGL.AttrProfile(TentaGL.TANG_3F, 
-                                                                TentaGL.GL_FLOAT, 
+                                                                GL_FLOAT, 
                                                                 3, 
                                                                 TentaGL.Vertex.prototype.getTangental);
 

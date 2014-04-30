@@ -40,19 +40,19 @@ TentaGL.BufferTexture = function(gl, width, height, clearColor) {
   
   // Create the frame buffer.
   this._frameBuffer = gl.createFramebuffer();
-  gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
+  gl.bindFramebuffer(GL_FRAMEBUFFER, this._frameBuffer);
   
   // Bind the texture to receive the colors.
   this._tex = TentaGL.createTexture(gl, null, width, height);
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._tex, 0);
+  gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this._tex, 0);
   
   // Bind a RenderBuffer to store depth data.
-  this._depth = TentaGL.createDepthbuffer(gl, width, height);
-  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depth);
+  this._depth = TentaGL.Depth.createBuffer(gl, width, height);
+  gl.framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this._depth);
   
-  gl.bindTexture(gl.TEXTURE_2D, null);
-  gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  gl.bindTexture(GL_TEXTURE_2D, null);
+  gl.bindRenderbuffer(GL_RENDERBUFFER, null);
+  gl.bindFramebuffer(GL_FRAMEBUFFER, null);
 };
 
 
@@ -85,14 +85,14 @@ TentaGL.BufferTexture.prototype = {
   renderToMe:function(gl, renderFunc) {
     var oldViewport = TentaGL.getViewport(gl);
     
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
+    gl.bindFramebuffer(GL_FRAMEBUFFER, this._frameBuffer);
     TentaGL.setViewport(gl, [0, 0, this._width, this._height]);
     
     gl.clearColor(this._clearColor[0], this._clearColor[1], this._clearColor[2], this._clearColor[3]);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderFunc(gl);
     
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindFramebuffer(GL_FRAMEBUFFER, null);
     TentaGL.setViewport(gl, oldViewport);
   },
   
@@ -117,12 +117,12 @@ TentaGL.BufferTexture.prototype = {
     w = w || this._width - x;
     h = h || this._height - y;
     
-    gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
+    gl.bindFramebuffer(GL_FRAMEBUFFER, this._frameBuffer);
     
     var data = new Uint8Array(w*h*4);
-    gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    gl.readPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
     
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindFramebuffer(GL_FRAMEBUFFER, null);
     
     return new TentaGL.PixelData(data, w, h);
   },
@@ -134,8 +134,8 @@ TentaGL.BufferTexture.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   useMe:function(gl) {
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this._tex);
+    gl.activeTexture(GL_TEXTURE0);
+    gl.bindTexture(GL_TEXTURE_2D, this._tex);
     TentaGL.ShaderLib.current(gl).setTex0UniValue(gl, 0);
   }
 };

@@ -308,7 +308,7 @@ HelloWorldApp.prototype = {
     
     // Clear the scene. 
     TentaGL.clearColorBuffer(gl, [0.1, 0.1, 0.3, 1]);
-    TentaGL.clearDepthBuffer(gl);
+    TentaGL.Depth.clear(gl);
 
     // Draw the objects in the scene.
     this.spriteGroup.render(gl, this.camera);

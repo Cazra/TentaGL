@@ -25,11 +25,11 @@
 
 TentaGL.VBORenderer = {
   
-  _mode:TentaGL.GL_TRIANGLES,
+  _mode:GL_TRIANGLES,
   
   /** 
    * Returns the preferred drawing mode for primitives. 
-   * @return {GLenum}   Either gl.LINES or gl.TRIANGLES.
+   * @return {GLenum}   Either GL_LINES or GL_TRIANGLES.
    */
   getDrawMode:function() {
     return this._mode;
@@ -37,40 +37,10 @@ TentaGL.VBORenderer = {
   
   /** 
    * Sets the preferred drawing mode for primitives. 
-   * @param {GLenum} mode   Either gl.LINES or gl.TRIANGLES.
+   * @param {GLenum} mode   Either GL_LINES or GL_TRIANGLES.
    */
   setDrawMode:function(mode) {
     this._mode = mode;
-  },
-  
-  
-  _cull:TentaGL.GL_NONE,
-  
-  /** 
-   * Returns the face culling mode in use. 
-   * @return {GLenum}   Either gl.NONE, gl.FRONT, gl.BACK, or gl.FRONT_AND_BACK.
-   */
-  getCullMode:function() {
-    return this._cull;
-  },
-  
-  /** 
-   * Sets the GL context's face culling state. 
-   * @param {WebGLRenderingContext} gl
-   * @param {GLenum} mode   Either gl.NONE, gl.FRONT, gl.BACK, or gl.FRONT_AND_BACK.
-   */
-  setCullMode:function(gl, mode) {
-    if(this._cull != mode) {
-      this._cull = mode;
-      
-      if(mode == TentaGL.GL_NONE) {
-        gl.disable(gl.CULL_FACE);
-      }
-      else {
-        gl.enable(gl.CULL_FACE);
-        gl.cullFace(mode);
-      }
-    }
   },
   
   
@@ -88,7 +58,7 @@ TentaGL.VBORenderer = {
     var stride = vboData.getStride();
     
     // Bind the vertex data.
-    gl.bindBuffer(gl.ARRAY_BUFFER, attrBuffer);
+    gl.bindBuffer(GL_ARRAY_BUFFER, attrBuffer);
     var attrs = program.getAttributes();
     for(var i=0; i < attrs.length; i++) {
       var attr = attrs[i];
@@ -103,15 +73,15 @@ TentaGL.VBORenderer = {
     }
     
     var mode = this._mode;
-    if(vboData.getDrawMode() == gl.LINES) {
-      mode = gl.LINES;
+    if(vboData.getDrawMode() == GL_LINES) {
+      mode = GL_LINES;
     }
-    this.setCullMode(gl, vboData.getCullMode());
+    TentaGL.Cull.setMode(gl, vboData.getCullMode());
     
     // Bind the index data and draw.
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, elemBuffer);
+    gl.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, elemBuffer);
   //  console.log(model.numIndices());
-    gl.drawElements(mode, vboData.numIndices(), gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(mode, vboData.numIndices(), GL_UNSIGNED_SHORT, 0);
   }
   
 };

@@ -36,8 +36,8 @@
  *    fragment shader.
  */
 TentaGL.ShaderProgram = function(gl, id, vertSrc, fragSrc) {
-  var vert = this._compileShader(gl, gl.VERTEX_SHADER, vertSrc);
-  var frag = this._compileShader(gl, gl.FRAGMENT_SHADER, fragSrc);
+  var vert = this._compileShader(gl, GL_VERTEX_SHADER, vertSrc);
+  var frag = this._compileShader(gl, GL_FRAGMENT_SHADER, fragSrc);
   
   this._id = id;
   this._glProg = this._linkProgram(gl, vert, frag);
@@ -64,12 +64,12 @@ TentaGL.ShaderProgram.prototype = {
    * Compiles a source code for either a vertex shader or fragment shader. 
    * @private
    * @param {WebGLRenderingContext} gl
-   * @param {int} glType  Either gl.VERTEX_SHADER or gl.FRAGMENT_SHADER.
+   * @param {int} glType  Either GL_VERTEX_SHADER or GL_FRAGMENT_SHADER.
    * @param {string} src  The source code for the shader.
    * @return {WebGLShader} The compiled shader.
    */
   _compileShader:function(gl, glType, src) {
-    if(glType != gl.VERTEX_SHADER && glType != gl.FRAGMENT_SHADER) {
+    if(glType != GL_VERTEX_SHADER && glType != GL_FRAGMENT_SHADER) {
       var msg = "Invalid shader type constant: " + glType;
       throw Error(msg);
     }
@@ -83,13 +83,13 @@ TentaGL.ShaderProgram.prototype = {
       gl.compileShader(shader);
       
       // Alert the user of any compile errors for the shader.
-      if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      if(!gl.getShaderParameter(shader, GL_COMPILE_STATUS)) {
         var msg = gl.getShaderInfoLog(shader);
         var typeStr = "";
-        if(glType == gl.VERTEX_SHADER) {
+        if(glType == GL_VERTEX_SHADER) {
           typeStr = "vertex";
         }
-        else if(glType == gl.FRAGMENT_SHADER) {
+        else if(glType == GL_FRAGMENT_SHADER) {
           typeStr = "fragment";
         }
         throw Error("Failed to compile " + typeStr + " shader :\n" + msg);
@@ -114,7 +114,7 @@ TentaGL.ShaderProgram.prototype = {
     gl.attachShader(program, frag);
     gl.linkProgram(program);
     
-    if(!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    if(!gl.getProgramParameter(program, GL_LINK_STATUS)) {
       throw Error("Failed to link shader program.");
     }
     
@@ -178,7 +178,7 @@ TentaGL.ShaderProgram.prototype = {
    */
   _initUniforms:function(gl) {
     var uniMap = {};
-    var numVars = gl.getProgramParameter(this._glProg, gl.ACTIVE_UNIFORMS);
+    var numVars = gl.getProgramParameter(this._glProg, GL_ACTIVE_UNIFORMS);
     console.log("# Active Uniforms: " + numVars);
     
     for(var i = 0; i < numVars; i++) {
@@ -204,7 +204,7 @@ TentaGL.ShaderProgram.prototype = {
    */
   _initAttributes:function(gl) {
     var attrMap = {};
-    var numVars = gl.getProgramParameter(this._glProg, gl.ACTIVE_ATTRIBUTES);
+    var numVars = gl.getProgramParameter(this._glProg, GL_ACTIVE_ATTRIBUTES);
     console.log("# Active Attributes: " + numVars);
     
     for(var i = 0; i < numVars; i++) {
