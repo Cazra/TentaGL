@@ -158,16 +158,16 @@ HelloWorldApp.prototype = {
   /** Overrides TentaGL.Application.initModels */
   initModels:function() {
     var cubeModel = TentaGL.Model.Cube(2, 2, 2);//.cloneCentered();
-    TentaGL.ModelLib.add(this.getGL(), "cube", cubeModel, TentaGL.getDefaultAttrProfileSet());
+    TentaGL.ModelLib.add(this.getGL(), "cube", cubeModel);
     
     var lineModel = TentaGL.Model.Line([0,0,0],[1,1,0]);
-    TentaGL.ModelLib.add(this.getGL(), "line", lineModel, TentaGL.getDefaultAttrProfileSet());
+    TentaGL.ModelLib.add(this.getGL(), "line", lineModel);
     
     var polyLineModel = TentaGL.Model.PolyLine([[0,0,0],[1,1,0],[1,0,1]], true);
-    TentaGL.ModelLib.add(this.getGL(), "polyline", polyLineModel, TentaGL.getDefaultAttrProfileSet());
+    TentaGL.ModelLib.add(this.getGL(), "polyline", polyLineModel);
     
     var cylinderModel = TentaGL.Model.Cylinder(1,2).rotate([1,0,0],TentaGL.TAU/4);
-    TentaGL.ModelLib.add(this.getGL(), "cylinder", cylinderModel, TentaGL.getDefaultAttrProfileSet());
+    TentaGL.ModelLib.add(this.getGL(), "cylinder", cylinderModel);
   },
   
   
@@ -244,7 +244,7 @@ HelloWorldApp.prototype = {
     //  }
     }
     else {
-      //this.drawScene(gl);
+    //  this.drawScene(gl);
     }
     this.drawScene(gl);
   },
@@ -300,11 +300,10 @@ HelloWorldApp.prototype = {
   /** Draws the scene. */
   drawScene:function(gl) {
     TentaGL.ShaderLib.use(gl, "simpleShader");
-    TentaGL.BlendStateLib.useNone(gl);
-  //  TentaGL.BlendStateLib.use(gl, "AlphaComposite");
+    TentaGL.RenderMode.set3DOpaque(gl);
     
     var aspect = gl.canvas.width/gl.canvas.height;
-    TentaGL.setCamera(this.camera, aspect); //this.camera.useMe(aspect);
+    TentaGL.setCamera(this.camera, aspect);
     
     // Clear the scene. 
     TentaGL.clearColorBuffer(gl, [0.1, 0.1, 0.3, 1]);

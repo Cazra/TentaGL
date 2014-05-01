@@ -112,19 +112,28 @@ TentaGL.BufferTexture.prototype = {
    * @return {TentaGL.PixelData}
    */
   getPixelData:function(gl, x, y, w, h) {
-    x = x || 0;
-    y = y || 0;
-    w = w || this._width - x;
-    h = h || this._height - y;
-    
-    gl.bindFramebuffer(GL_FRAMEBUFFER, this._frameBuffer);
-    
-    var data = new Uint8Array(w*h*4);
-    gl.readPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    
-    gl.bindFramebuffer(GL_FRAMEBUFFER, null);
-    
-    return new TentaGL.PixelData(data, w, h);
+      x = x || 0;
+      y = y || 0;
+      w = w || this._width - x;
+      h = h || this._height - y;
+      
+      gl.bindFramebuffer(GL_FRAMEBUFFER, this._frameBuffer);
+      
+      var size = w*h*4;
+      try {
+        var data = new Uint8Array(size);
+        gl.readPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
+      
+        gl.bindFramebuffer(GL_FRAMEBUFFER, null);
+        return new TentaGL.PixelData(data, w, h);
+      }
+      catch(err) {
+        console.log(err, err.getStack());
+        console.log("data size: " + size);
+        
+        gl.bindFramebuffer(GL_FRAMEBUFFER, null);
+        return undefined;
+      }
   },
   
   

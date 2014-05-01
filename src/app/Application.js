@@ -66,7 +66,6 @@ TentaGL.Application.prototype = {
     var gl = this.getGL();
     
     TentaGL.ShaderLib.reset(gl);
-    TentaGL.BlendStateLib.reset(gl);
     TentaGL.ModelLib.reset(gl);
     TentaGL.MaterialLib.reset(gl);
     

@@ -51,16 +51,18 @@ TentaGL.Picker.prototype = {
    */
   update:function(gl, renderFunc, renderToView) {
     var self = this;
+    
+    this._pixels = undefined;
     this._origFilter = TentaGL.getRenderFilter();
     var origShader = TentaGL.ShaderLib.current(gl).getID();
-    var origBlendState = TentaGL.BlendStateLib.current().getID();
     
     // Set up the GL state for picker rendering. 
-    TentaGL.BlendStateLib.useNone(gl);
+    TentaGL.Blend.setEnabled(gl, false);
+    TentaGL.Blend.lock();
     TentaGL.Picker.useShader(gl);
     TentaGL.MaterialLib.useNone();
     TentaGL.ShaderLib.lock();
-    TentaGL.lockClearColor(gl, [0, 0, 0, 1]); //gl.clearColor(0, 0, 0, 1); // Black
+    TentaGL.lockClearColor(gl, [0, 0, 0, 0]); 
     this._nextID = 1;
     this._sprites = [];
     
@@ -84,7 +86,7 @@ TentaGL.Picker.prototype = {
     // Restore the previous state.
     TentaGL.unlockClearColor();
     TentaGL.ShaderLib.unlock();
-    TentaGL.BlendStateLib.use(gl, origBlendState);
+    TentaGL.Blend.unlock();
     TentaGL.ShaderLib.use(gl, origShader);
     TentaGL.setRenderFilter(this._origFilter);
   },
@@ -98,7 +100,7 @@ TentaGL.Picker.prototype = {
    */
   _filterFunction: function(sprite) {
     if(this._origFilter(sprite)) {
-      var id = (0xFF000000 | this._nextID);
+      var id = this._nextID; //(0xFF000000 | this._nextID);
       this._nextID++;
       
       var pickColor = new TentaGL.Color.Hex(id);
@@ -142,15 +144,20 @@ TentaGL.Picker.prototype = {
    * @return {TentaGL.Sprite}
    */
   getSpriteAt:function(x, y, ignoreComposite) {
-    var pixel = this._getPixelAt(x, y);
-    var id = TentaGL.Color.rgba2Hex(pixel[0], pixel[1], pixel[2], pixel[3]);
-    var sprite = this._sprites[id];
-    if(ignoreComposite || !sprite) {
-      return sprite;
+    if(this._pixels) {
+      var pixel = this._getPixelAt(x, y);
+      var id = TentaGL.Color.rgba2Hex(pixel[0], pixel[1], pixel[2], pixel[3]);
+      var sprite = this._sprites[id];
+      if(ignoreComposite || !sprite) {
+        return sprite;
+      }
+      else {
+        var path = sprite.getCompositePath();
+        return path[path.length-1];
+      }
     }
     else {
-      var path = sprite.getCompositePath();
-      return path[path.length-1];
+      return undefined;
     }
   },
   
@@ -158,7 +165,7 @@ TentaGL.Picker.prototype = {
 
 
 /** The ID of the picker's shader program in the ShaderLib. */
-TentaGL._shaderID = "pickShader";
+TentaGL.Picker._shaderID = "pickShader";
 
 /** Source code for the picker's vertex shader. */
 TentaGL.Picker._vShader = 
@@ -202,7 +209,7 @@ TentaGL.Picker._fShader =
  * @return {TentaGL.ShaderProgram}
  */
 TentaGL.Picker.loadShaderProgram = function(gl) {
-  var shaderProgram = TentaGL.ShaderLib.add(gl, TentaGL._shaderID, TentaGL.Picker._vShader, TentaGL.Picker._fShader);
+  var shaderProgram = TentaGL.ShaderLib.add(gl, TentaGL.Picker._shaderID, TentaGL.Picker._vShader, TentaGL.Picker._fShader);
   
   shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
   shaderProgram.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
@@ -220,7 +227,7 @@ TentaGL.Picker.loadShaderProgram = function(gl) {
  * @return {TentaGL.ShaderProgram}
  */
 TentaGL.Picker.useShader = function(gl) {
-  return TentaGL.ShaderLib.use(gl, TentaGL._shaderID);
+  return TentaGL.ShaderLib.use(gl, TentaGL.Picker._shaderID);
 };
 
 

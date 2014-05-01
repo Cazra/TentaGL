@@ -47,6 +47,16 @@ TentaGL.Blend = {
   
   _alpha: 0.0,
   
+  _locked: false,
+  
+  
+  lock:function() {
+    this._locked = true;
+  },
+  
+  unlock:function() {
+    this._locked = false;
+  },
   
   
   /** 
@@ -55,7 +65,7 @@ TentaGL.Blend = {
    * @param {boolean} enabled
    */
   setEnabled:function(gl, enabled) {
-    if(this._enabled != enabled) {
+    if(this._enabled != enabled && !this._locked) {
       this._enabled = enabled;
       
       if(enabled) {

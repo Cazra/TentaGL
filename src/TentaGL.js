@@ -35,7 +35,7 @@ var TentaGL = {
   versionMajor:0, 
   
   /** The minor version number of this framework. */
-  versionMinor:9,
+  versionMinor:10,
   
   
   //////// Canvas/Context creation
@@ -305,13 +305,13 @@ var TentaGL = {
    * @param {WebGLRenderingContext} gl
    * @param {bitwise OR of gl buffer bits} bufferBits   
    *      Optional. The bits specifying which buffers to clear.
-   *      Default to gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT.
+   *      Default to GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT.
    * @param {vec4} rgba   
    *      Optional. The normalized rgba color values to clear the color buffer with. 
    */
   clear:function(gl, bufferBits, rgba) {
     if(!bufferBits) {
-      bufferBits = (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+      bufferBits = (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
     
     if(rgba && !this._clearColorLock) {
@@ -528,51 +528,4 @@ TentaGL._glUnitTypes[GL_FLOAT_MAT2]     = GL_FLOAT;
 TentaGL._glUnitTypes[GL_FLOAT_MAT3]     = GL_FLOAT;
 TentaGL._glUnitTypes[GL_FLOAT_MAT4]     = GL_FLOAT;
 
-
-
-/*
-TentaGL.GL_BYTE = 0x1400;
-TentaGL.GL_UNSIGNED_BYTE = 0x1401;
-TentaGL.GL_SHORT = 0x1402;
-TentaGL.GL_UNSIGNED_SHORT = 0x1403;
-TentaGL.GL_INT = 0x1404;
-TentaGL.GL_UNSIGNED_INT = 0x1405;
-TentaGL.GL_FLOAT = 0x1406;
-TentaGL.GL_FLOAT_VEC2 = 0x8B50;
-TentaGL.GL_FLOAT_VEC3 = 0x8B51;
-TentaGL.GL_FLOAT_VEC4 = 0x8B52;
-TentaGL.GL_INT_VEC2 = 0x8B53;
-TentaGL.GL_INT_VEC3 = 0x8B54;
-TentaGL.GL_INT_VEC4 = 0x8B55;
-TentaGL.GL_BOOL = 0x8B56;
-TentaGL.GL_BOOL_VEC2 = 0x8B57;
-TentaGL.GL_BOOL_VEC3 = 0x8B58;
-TentaGL.GL_BOOL_VEC4 = 0x8B59;
-TentaGL.GL_FLOAT_MAT2 = 0x8B5A;
-TentaGL.GL_FLOAT_MAT3 = 0x8B5B;
-TentaGL.GL_FLOAT_MAT4 = 0x8B5C;
-TentaGL.GL_SAMPLER_2D = 0x8B5E;
-TentaGL.GL_SAMPLER_CUBE = 0x8B60;
-
-TentaGL.GL_FUNC_ADD = 0x8006;
-TentaGL.GL_FUNC_SUBTRACT = 0x800A;
-TentaGL.GL_FUNC_REVERSE_SUBTRACT = 0x800B;
-
-TentaGL.GL_ONE = 1;
-TentaGL.GL_ZERO = 0;
-TentaGL.GL_SRC_ALPHA = 0x0302;
-TentaGL.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
-
-TentaGL.GL_POINTS = 0;
-TentaGL.GL_LINES = 1;
-TentaGL.GL_TRIANGLES = 4;
-
-TentaGL.GL_NONE = 0;
-TentaGL.GL_FRONT = 0x0404;
-TentaGL.GL_BACK = 0x0405;
-TentaGL.GL_FRONT_AND_BACK = 0x0408;
-*/
-
-//TentaGL.mat3Recyclable = mat3.create();
-//TentaGL.mat4Recyclable = mat4.create();
 

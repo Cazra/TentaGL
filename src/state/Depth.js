@@ -45,7 +45,7 @@ TentaGL.Depth = {
    * @param {WebGLRenderingContext} gl
    * @param {boolean} enabled
    */
-  setTestEnabled:function(gl, enabled) {
+  setEnabled:function(gl, enabled) {
     if(this._test != enabled) {
       this._test = enabled;
       

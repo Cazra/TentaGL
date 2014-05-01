@@ -34,7 +34,7 @@
  *      origin instead.
  */
 TentaGL.Model.Plane = function(w, h, flipY) {
-  var model = new TentaGL.Model(TentaGL.GL_TRIANGLES, TentaGL.GL_NONE);
+  var model = new TentaGL.Model(GL_TRIANGLES, GL_NONE);
   
   flipY = flipY || false;
   

@@ -311,15 +311,14 @@ HelloWorldApp.prototype = {
   /** Draws the scene. */
   drawScene:function(gl) {
     TentaGL.ShaderLib.use(gl, "simpleShader");
-    TentaGL.BlendStateLib.useNone(gl);
-  //  TentaGL.BlendStateLib.use(gl, "AlphaComposite");
+    TentaGL.RenderMode.set2D(gl);
     
     var aspect = gl.canvas.width/gl.canvas.height;
     TentaGL.setCamera(this.camera, aspect);
     
     // Clear the scene. 
     TentaGL.clearColorBuffer(gl, [0.1, 0.1, 0.3, 1]);
-    TentaGL.clearDepthBuffer(gl);
+    TentaGL.Depth.clear(gl);
 
     // Draw the objects in the scene.
     this.spriteGroup.render(gl, this.camera);

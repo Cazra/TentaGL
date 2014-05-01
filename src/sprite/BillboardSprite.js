@@ -24,7 +24,7 @@
 
 
 /** 
- * A sprite that is always facing towards the camera's eye and is oriented 
+ * A sprite in 3D space that is always facing towards the camera's eye and is oriented 
  * relative to the camera's up vector. 
  * @constructor
  * @param {vec4} xyz

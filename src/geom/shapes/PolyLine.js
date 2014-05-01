@@ -30,7 +30,7 @@
  * @param {Boolean} closed  Whether the polyline forms a closed polygon.
  */
 TentaGL.Model.PolyLine = function(xyzv, closed) {
-  var model = new TentaGL.Model(TentaGL.GL_LINES);
+  var model = new TentaGL.Model(GL_LINES);
   
   for(var i=0; i<xyzv.length; i++) {
     var xyz = xyzv[i];

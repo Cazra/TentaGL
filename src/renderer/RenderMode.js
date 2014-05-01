@@ -34,7 +34,7 @@ TentaGL.RenderMode = {};
 TentaGL.RenderMode.set3DOpaque = function(gl) {
   TentaGL.Blend.setEnabled(gl, false);
   TentaGL.Depth.setEnabled(gl, true);
-  TentaGL.Cull.setEnabled(gl, false);
+  TentaGL.Cull.setMode(gl, GL_NONE);
 };
 
 
@@ -44,7 +44,7 @@ TentaGL.RenderMode.set3DTrans = function(gl) {
   TentaGL.Blend.setEquation(gl, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
   TentaGL.Depth.setEnabled(gl, false);
-  TentaGL.Cull.setEnabled(gl, false);
+  TentaGL.Cull.setMode(gl, GL_NONE);
 };
 
 
@@ -55,6 +55,6 @@ TentaGL.RenderMode.set2D = function(gl) {
   TentaGL.Blend.setEquation(gl, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
   TentaGL.Depth.setEnabled(gl, false);
-  TentaGL.Cull.setEnabled(gl, false);
+  TentaGL.Cull.setMode(gl, GL_NONE);
 };
 

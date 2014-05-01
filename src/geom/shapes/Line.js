@@ -24,7 +24,7 @@
 
 
 TentaGL.Model.Line = function(xyz1, xyz2) {
-  var model = new TentaGL.Model(TentaGL.GL_LINES);
+  var model = new TentaGL.Model(GL_LINES);
   
   var v1 = new TentaGL.Vertex(xyz1[0], xyz1[1], xyz1[2]);
   v1.setNormal(0, 0, 1);
