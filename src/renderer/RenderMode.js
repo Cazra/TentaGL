@@ -33,7 +33,7 @@ TentaGL.RenderMode = {};
 /** A 3D rendering mode for opaque objects. */
 TentaGL.RenderMode.set3DOpaque = function(gl) {
   TentaGL.Blend.setEnabled(gl, false);
-  TentaGL.Depth.setEnabled(gl, true);
+  TentaGL.DepthBuffer.setEnabled(gl, true);
   TentaGL.Cull.setMode(gl, GL_NONE);
 };
 
@@ -43,7 +43,7 @@ TentaGL.RenderMode.set3DTrans = function(gl) {
   TentaGL.Blend.setEnabled(gl, true);
   TentaGL.Blend.setEquation(gl, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
-  TentaGL.Depth.setEnabled(gl, false);
+  TentaGL.DepthBuffer.setEnabled(gl, false);
   TentaGL.Cull.setMode(gl, GL_NONE);
 };
 
@@ -54,7 +54,7 @@ TentaGL.RenderMode.set2D = function(gl) {
   TentaGL.Blend.setEnabled(gl, true);
   TentaGL.Blend.setEquation(gl, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
-  TentaGL.Depth.setEnabled(gl, false);
+  TentaGL.DepthBuffer.setEnabled(gl, false);
   TentaGL.Cull.setMode(gl, GL_NONE);
 };
 

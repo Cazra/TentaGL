@@ -25,7 +25,7 @@
 /** 
  * A simple API for setting the depth-testing state of the gl context.
  */
-TentaGL.Depth = {
+TentaGL.DepthBuffer = {
   
   _test: false,
   

@@ -59,10 +59,15 @@ TentaGL.Picker.prototype = {
     // Set up the GL state for picker rendering. 
     TentaGL.Blend.setEnabled(gl, false);
     TentaGL.Blend.lock();
-    TentaGL.Picker.useShader(gl);
+    
+    TentaGL.ColorBuffer.setClearColor(gl, [0, 0, 0, 0]);
+    TentaGL.ColorBuffer.lock();
+    
     TentaGL.MaterialLib.useNone();
+    
+    TentaGL.Picker.useShader(gl);
     TentaGL.ShaderLib.lock();
-    TentaGL.lockClearColor(gl, [0, 0, 0, 0]); 
+    
     this._nextID = 1;
     this._sprites = [];
     
@@ -84,9 +89,9 @@ TentaGL.Picker.prototype = {
     
     
     // Restore the previous state.
-    TentaGL.unlockClearColor();
     TentaGL.ShaderLib.unlock();
     TentaGL.Blend.unlock();
+    TentaGL.ColorBuffer.unlock();
     TentaGL.ShaderLib.use(gl, origShader);
     TentaGL.setRenderFilter(this._origFilter);
   },

@@ -301,66 +301,14 @@ var TentaGL = {
   //////// Clear
   
   /** 
-   * Clears the screen buffers. 
+   * Clears the color and depth buffers. 
    * @param {WebGLRenderingContext} gl
-   * @param {bitwise OR of gl buffer bits} bufferBits   
-   *      Optional. The bits specifying which buffers to clear.
-   *      Default to GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT.
    * @param {vec4} rgba   
    *      Optional. The normalized rgba color values to clear the color buffer with. 
    */
-  clear:function(gl, bufferBits, rgba) {
-    if(!bufferBits) {
-      bufferBits = (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-    
-    if(rgba && !this._clearColorLock) {
-      gl.clearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-    }
-    
-    gl.clear(bufferBits);
-  },
-  
-  
-  /** 
-   * Clears the color buffer. 
-   * @param {WebGLRenderingContext} gl
-   * @param {vec4} rgba   Optional. The normalized rgba color values to clear
-   *      the color buffer with. If not provided, it will use whatever clear
-   *      color is currently being used by the GL context.
-   */
-  clearColorBuffer:function(gl, rgba) {
-    if(rgba && !this._clearColorLock) {
-      gl.clearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-    }
-    
-    gl.clear(GL_COLOR_BUFFER_BIT);
-  },
-  
-  
-  
-  /**
-   * Sets the clear color (if not already locked) and prevents it from being
-   * changed until TentaGL.unlockClearColor is called.
-   * @param {WebGLRenderingContext} gl
-   * @param {vec4} rgba   Optional. The normalized rgba color values to 
-   *      use as the locked clear color. If not specified, it will use whatever
-   *      clear color is already being used by the GL context.
-   */
-  lockClearColor:function(gl, rgba) {
-    if(rgba && !this._clearColorLock) {
-      gl.clearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-    }
-    this._clearColorLock = true;
-  },
-  
-  
-  /** 
-   * Unlocks the clear color so that it can be changed with TentaGL.clear or 
-   * TentaGL.lockClearColor.
-   */
-  unlockClearColor:function() {
-    this._clearColorLock = false;
+  clear:function(gl, rgba) {
+    TentaGL.ColorBuffer.setClearColor(gl, rgba);
+    gl.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   },
   
   

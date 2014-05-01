@@ -47,7 +47,7 @@ TentaGL.BufferTexture = function(gl, width, height, clearColor) {
   gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this._tex, 0);
   
   // Bind a RenderBuffer to store depth data.
-  this._depth = TentaGL.Depth.createBuffer(gl, width, height);
+  this._depth = TentaGL.DepthBuffer.createBuffer(gl, width, height);
   gl.framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this._depth);
   
   gl.bindTexture(GL_TEXTURE_2D, null);
