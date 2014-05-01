@@ -25,17 +25,17 @@
 /** 
  * Constructs a model with empty vertex and face index arrays.
  * @constructor
- * @param {GLenum} drawMode   Optional. Either gl.LINES or gl.TRIANGLES. 
- *      Default gl.TRIANGLES.
- * @param {GLenum} cullMode    Optional. Either gl.NONE, gl.FRONT, gl.BACK, 
- *      or gl.FRONT_AND_BACK. Default gl.NONE.
+ * @param {GLenum} drawMode   Optional. Either GL_LINES or GL_TRIANGLES. 
+ *      Default GL_TRIANGLES.
+ * @param {GLenum} cullMode    Optional. Either GL_NONE, GL_FRONT, GL_BACK, 
+ *      or GL_FRONT_AND_BACK. Default GL_NONE.
  */
 TentaGL.Model = function(drawMode, cullMode) {
   if(!drawMode) {
-    drawMode = TentaGL.GL_TRIANGLES;
+    drawMode = GL_TRIANGLES;
   }
   if(!cullMode) {
-    cullMode = TentaGL.GL_NONE;
+    cullMode = GL_NONE;
   }
   
   

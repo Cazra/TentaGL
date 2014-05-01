@@ -136,14 +136,14 @@ var TentaGL = {
     height = height || 1;
     
     var tex = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    gl.bindTexture(GL_TEXTURE_2D, tex);
+    gl.texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     
     // Use gl.NEAREST by default for min-mag filters.
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     return tex;
   },
   
@@ -338,14 +338,6 @@ var TentaGL = {
   },
   
   
-  /**
-   * Clears the depth buffer.
-   * @param {WebGLRenderingContext} gl   
-   */
-//  clearDepthBuffer:function(gl) {
-//    gl.clear(gl.DEPTH_BUFFER_BIT);
-//  },
-  
   
   /**
    * Sets the clear color (if not already locked) and prevents it from being
@@ -397,6 +389,55 @@ var TentaGL = {
   },
   
   
+  
+  //////// WebGL type metadata
+  
+  
+  /** 
+   * Returns the string representation of a WebGL constant representing 
+   * some data type or uniform variable type. 
+   * @param {GLenum}
+   * @return {string}
+   */
+  glTypeName: function(type) {
+    return TentaGL._glTypeName[type];
+  },
+  
+  
+  
+  /** 
+   * Returns the size of a WebGL type in units of its base type.
+   * @param {GLenum}
+   * @return {int}
+   */
+  glSizeUnits: function(type){
+    return TentaGL._glSizeUnits[type];
+  },
+  
+  
+  
+  /** 
+   * Returns the size of a WebGL type in bytes.
+   * @param {GLenum}
+   * @return {int}
+   */
+  glSizeBytes: function(type){
+    var units = TentaGL.glSizeUnits(type);
+    type = TentaGL.glUnitType(type);
+    return units*TentaGL._glSizeBytes[type];
+  },
+  
+  
+  
+  /** 
+   * Returns the unit GL type of the given GL type. For example, the unit type
+   * of FLOAT_VEC3 would be FLOAT.
+   * @param {GLenum}
+   * @return {GLenum}
+   */
+  glUnitType: function(type){
+    return TentaGL._glUnitTypes[type];
+  }
 };
 
 
@@ -405,17 +446,6 @@ TentaGL._defaultRenderFilter = function(sprite) {
   return true;
 };
 
-
-/** 
- * Returns the string representation of a WebGL constant representing 
- * some data type or uniform variable type. Returns "" if it could not
- * be found.
- * @param {GLenum}
- * @return {string}
- */
-TentaGL.glTypeName = function(type){
-  return TentaGL._glTypeName[type];
-};
 
 TentaGL._glTypeName = [];
 TentaGL._glTypeName[GL_BYTE]            = "BYTE";
@@ -441,50 +471,29 @@ TentaGL._glTypeName[GL_FLOAT_MAT4]      = "FLOAT_MAT4";
 TentaGL._glTypeName[GL_SAMPLER_2D]      = "SAMPLER_2D";
 TentaGL._glTypeName[GL_SAMPLER_CUBE]    = "SAMPLER_CUBE";
 
-/** 
- * Returns the size of a WebGL type in units of its base type. Returns -1 if 
- * it could not be found.
- * @param {GLenum}
- * @return {int}
- */
-TentaGL.glSizeUnits = function(type){
-  return TentaGL._glSizeUnits[type];
-};
 
 TentaGL._glSizeUnits = [];
-TentaGL._glSizeUnits[GL_BYTE]           = 1; // BYTE
-TentaGL._glSizeUnits[GL_UNSIGNED_BYTE]  = 1; // UNSIGNED_BYTE
-TentaGL._glSizeUnits[GL_SHORT]          = 1; // SHORT
-TentaGL._glSizeUnits[GL_UNSIGNED_SHORT] = 1; // UNSIGNED_SHORT
-TentaGL._glSizeUnits[GL_INT]            = 1; // INT
-TentaGL._glSizeUnits[GL_UNSIGNED_INT]   = 1; // UNSIGNED_INT
-TentaGL._glSizeUnits[GL_FLOAT]          = 1; // FLOAT
-TentaGL._glSizeUnits[GL_FLOAT_VEC2]     = 2; // FLOAT_VEC2
-TentaGL._glSizeUnits[GL_FLOAT_VEC3]     = 3; // FLOAT_VEC3
-TentaGL._glSizeUnits[GL_FLOAT_VEC4]     = 4; // FLOAT_VEC4
-TentaGL._glSizeUnits[GL_INT_VEC2]       = 2; // INT_VEC2
-TentaGL._glSizeUnits[GL_INT_VEC3]       = 3; // INT_VEC3
-TentaGL._glSizeUnits[GL_INT_VEC4]       = 4; // INT_VEC4
-TentaGL._glSizeUnits[GL_BOOL]           = 1; // BOOL
-TentaGL._glSizeUnits[GL_BOOL_VEC2]      = 2; // BOOL_VEC2
-TentaGL._glSizeUnits[GL_BOOL_VEC3]      = 3; // BOOL_VEC3
-TentaGL._glSizeUnits[GL_BOOL_VEC4]      = 4; // BOOL_VEC4
-TentaGL._glSizeUnits[GL_FLOAT_MAT2]     = 4; // FLOAT_MAT2
-TentaGL._glSizeUnits[GL_FLOAT_MAT3]     = 9; // FLOAT_MAT3
-TentaGL._glSizeUnits[GL_FLOAT_MAT4]     = 16; // FLOAT_MAT4
+TentaGL._glSizeUnits[GL_BYTE]           = 1; 
+TentaGL._glSizeUnits[GL_UNSIGNED_BYTE]  = 1; 
+TentaGL._glSizeUnits[GL_SHORT]          = 1; 
+TentaGL._glSizeUnits[GL_UNSIGNED_SHORT] = 1;
+TentaGL._glSizeUnits[GL_INT]            = 1; 
+TentaGL._glSizeUnits[GL_UNSIGNED_INT]   = 1; 
+TentaGL._glSizeUnits[GL_FLOAT]          = 1; 
+TentaGL._glSizeUnits[GL_FLOAT_VEC2]     = 2; 
+TentaGL._glSizeUnits[GL_FLOAT_VEC3]     = 3; 
+TentaGL._glSizeUnits[GL_FLOAT_VEC4]     = 4; 
+TentaGL._glSizeUnits[GL_INT_VEC2]       = 2;
+TentaGL._glSizeUnits[GL_INT_VEC3]       = 3; 
+TentaGL._glSizeUnits[GL_INT_VEC4]       = 4; 
+TentaGL._glSizeUnits[GL_BOOL]           = 1; 
+TentaGL._glSizeUnits[GL_BOOL_VEC2]      = 2; 
+TentaGL._glSizeUnits[GL_BOOL_VEC3]      = 3; 
+TentaGL._glSizeUnits[GL_BOOL_VEC4]      = 4;
+TentaGL._glSizeUnits[GL_FLOAT_MAT2]     = 4; 
+TentaGL._glSizeUnits[GL_FLOAT_MAT3]     = 9;
+TentaGL._glSizeUnits[GL_FLOAT_MAT4]     = 16; 
 
-
-/** 
- * Returns the size of a WebGL type in bytes. Returns -1 if 
- * it could not be found.
- * @param {GLenum}
- * @return {int}
- */
-TentaGL.glSizeBytes = function(type){
-  var units = TentaGL.glSizeUnits(type);
-  type = TentaGL.glUnitType(type);
-  return units*TentaGL._glSizeBytes[type];
-};
 
 TentaGL._glSizeBytes = [];
 TentaGL._glSizeBytes[GL_BYTE]           = 1;
@@ -496,18 +505,6 @@ TentaGL._glSizeBytes[GL_UNSIGNED_INT]   = 4;
 TentaGL._glSizeBytes[GL_FLOAT]          = 4;
 TentaGL._glSizeBytes[GL_BOOL]           = 4;
 
-
-
-/** 
- * Returns the unit GL type of the given GL type. For example, the unit type
- * of FLOAT_VEC3 would be FLOAT.
- * Returns -1 if the type is not recognized.
- * @param {GLenum}
- * @return {GLenum}
- */
-TentaGL.glUnitType = function(type){
-  return TentaGL._glUnitTypes[type];
-};
 
 TentaGL._glUnitTypes = [];
 TentaGL._glUnitTypes[GL_BYTE]           = GL_BYTE;

@@ -48,6 +48,7 @@ TentaGL.Blend = {
   _alpha: 0.0,
   
   
+  
   /** 
    * Enables or disables blending. 
    * @param {WebGLRenderingContext} gl

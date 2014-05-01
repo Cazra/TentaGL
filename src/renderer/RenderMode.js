@@ -27,11 +27,11 @@
  * for some specific mode of rendering. Each rendering mode function
  * accepts a WebGLRenderingContext as an argument.
  */ 
-
+TentaGL.RenderMode = {};
 
 
 /** A 3D rendering mode for opaque objects. */
-TentaGL.RenderMode.MODE_3D_OPAQUE = function(gl) {
+TentaGL.RenderMode.set3DOpaque = function(gl) {
   TentaGL.Blend.setEnabled(gl, false);
   TentaGL.Depth.setEnabled(gl, true);
   TentaGL.Cull.setEnabled(gl, false);
@@ -39,7 +39,7 @@ TentaGL.RenderMode.MODE_3D_OPAQUE = function(gl) {
 
 
 /** A 3D rendering mode for translucent objects. */
-TentaGL.RenderMode.MODE_3D_TRANS = function(gl) {
+TentaGL.RenderMode.set3DTrans = function(gl) {
   TentaGL.Blend.setEnabled(gl, true);
   TentaGL.Blend.setEquation(gl, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
@@ -50,7 +50,7 @@ TentaGL.RenderMode.MODE_3D_TRANS = function(gl) {
 
 
 /** a 2D rendering mode for opaque and translucent objects. */
-TentaGL.RenderMode.MODE_2D = function(gl) {
+TentaGL.RenderMode.set2D = function(gl) {
   TentaGL.Blend.setEnabled(gl, true);
   TentaGL.Blend.setEquation(gl, GL_FUNC_ADD, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   

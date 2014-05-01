@@ -63,16 +63,16 @@ TentaGL.VBOData = function(gl, model, attrProfileSet) {
   }
   
   this._attrBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, this._attrBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(attrData), gl.STATIC_DRAW);
+  gl.bindBuffer(GL_ARRAY_BUFFER, this._attrBuffer);
+  gl.bufferData(GL_ARRAY_BUFFER, new Float32Array(attrData), GL_STATIC_DRAW);
 //  console.log("Attr data array: " + attrData);
   
   var elemData = model.getIndices();
   
   this._numIndices = model.numIndices();
   this._elemBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._elemBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(elemData), gl.STATIC_DRAW);
+  gl.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._elemBuffer);
+  gl.bufferData(GL_ELEMENT_ARRAY_BUFFER, new Uint16Array(elemData), GL_STATIC_DRAW);
   
 //  console.log("Elem data array: " + elemData);
   
@@ -145,7 +145,7 @@ TentaGL.VBOData.prototype = {
   
   /** 
    * Returns the primitive drawing mode preferred for rendering this model. 
-   * @return {GLenum}   Either gl.LINES or gl.TRIANGLES.
+   * @return {GLenum}   Either GL_LINES or GL_TRIANGLES.
    */
   getDrawMode:function() {
     return this._mode;
