@@ -53,7 +53,7 @@ TentaGL.Picker.prototype = {
     var self = this;
     
     this._pixels = undefined;
-    this._origFilter = TentaGL.getRenderFilter();
+    this._origFilter = TentaGL.SceneNode.getRenderFilter();
     var origShader = TentaGL.ShaderLib.current(gl).getID();
     
     // Set up the GL state for picker rendering. 
@@ -72,7 +72,7 @@ TentaGL.Picker.prototype = {
     this._sprites = [];
     
     this._gl = gl;
-    TentaGL.setRenderFilter(this._filterFunction.bind(this));
+    TentaGL.SceneNode.setRenderFilter(this._filterFunction.bind(this));
     
     if(renderToView) {
       renderFunc(gl);
@@ -93,7 +93,7 @@ TentaGL.Picker.prototype = {
     TentaGL.Blend.unlock();
     TentaGL.ColorBuffer.unlock();
     TentaGL.ShaderLib.use(gl, origShader);
-    TentaGL.setRenderFilter(this._origFilter);
+    TentaGL.SceneNode.setRenderFilter(this._origFilter);
   },
   
   

@@ -48,12 +48,12 @@ TentaGL.BillboardSprite.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   render:function(gl) {
-    if(!this.isVisible() || !TentaGL.renderFilter(this)) {
+    if(!this.isVisible() || !TentaGL.SceneNode.filter(this)) {
       return;
     }
     TentaGL.pushTransform();
     
-    var camera = TentaGL.getCamera();
+    var camera = TentaGL.Camera.get(gl);
     var camEye = camera.getEye();
     this.billboardWorldPoint(camEye, camera.getUp())
     

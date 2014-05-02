@@ -28,6 +28,8 @@ TentaGL.Renderable = {};
 
 TentaGL.Renderable.prototype = {
   
+  isaRenderable:true,
+  
   /** 
    * Renders this object to the scene being rendered by the GL context.  
    * @param {WebGLRenderingContext} gl

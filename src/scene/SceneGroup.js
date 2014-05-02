@@ -189,7 +189,7 @@ TentaGL.SceneGroup.prototype = {
     // TODO: Better sorted rendering. This doesn't sort descendants of descendants.
     
     // Sort the children nodes.
-    var viewTrans = TentaGL.getCamera().getViewTransform();
+    var viewTrans = TentaGL.Camera.get(gl).getViewTransform();
     this._children.sort(function(a, b) {
       var aPos = a.getWorldXYZ();
       vec3.transformMat4(aPos, aPos, viewTrans);

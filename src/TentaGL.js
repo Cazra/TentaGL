@@ -24,10 +24,8 @@
 
 
  /** 
-  * The singleton root object for TentaGL. All other object types in TentaGL
-  * are accessed through this.
-  * It also has some utilities for creating the GL context and modifying
-  * some custom properties of it that TentaGL uses.
+  * The TentaGL namespace.
+  * It also has some utilities for getting metadata about GL data types.
   */
 var TentaGL = { 
   
@@ -59,7 +57,7 @@ var TentaGL = {
       
       // Create the WebGL context for the canvas.
       var gl = canvas.getContext("webgl", attrs) || canvas.getContext("experimental-webgl", attrs) || canvas.getContext("webkit-3d", attrs) || canvas.getContext("moz-webgl", attrs);
-      TentaGL.setViewport(gl, [0, 0, canvas.width, canvas.height]);
+      TentaGL.Viewport.set(gl, [0, 0, canvas.width, canvas.height]);
       TentaGL.resetProjection();
       TentaGL.resetTransform();
       this._normalTrans = mat3.create();
@@ -85,35 +83,6 @@ var TentaGL = {
     canvas.width = container.offsetWidth;
     canvas.height = container.offsetHeight;
     return canvas;
-  },
-  
-  
-  
-  //////// GL viewport
-  
-  /** 
-   * Returns the rectangle data describing the GL context's current viewport.
-   * @param {WebGLRenderingContext} gl
-   * @return {length-4 int array} Contains the viewport metrics: 
-   *      x, y, width, and height in that order.
-   */
-  getViewport:function(gl) {
-    return [gl.viewX, gl.viewY, gl.viewWidth, gl.viewHeight];
-  },
-  
-  
-  /** 
-   * Sets the rectangular viewport area for the GL context. 
-   * @param {WebGLRenderingContext} gl
-   * @param {length-4 int array} xywh   An array containing in-order the new 
-   *      viewport rectangle's x, y, width, and height.
-   */
-  setViewport: function(gl, xywh) {
-    gl.viewX = xywh[0];
-    gl.viewY = xywh[1];
-    gl.viewWidth = xywh[2];
-    gl.viewHeight = xywh[3];
-    gl.viewport(xywh[0], xywh[1], xywh[2], xywh[3]);
   },
   
   
@@ -257,47 +226,6 @@ var TentaGL = {
   },
   
   
-  
-  //////// RenderFilter
-  
-  /** 
-   * Returns the filter function used for rendering. 
-   * If a sprite returns false for the filter, then it will not be rendered.
-   * @return {function(TentaGL.Sprite)}
-   */
-  getRenderFilter: function() {
-    return this._renderFilter;
-  },
-  
-  /** 
-   * Sets the filter function used for rendering. 
-   * If a sprite returns false for the filter, then it will not be rendered.
-   * @param {function(TentaGL.Sprite)}
-   */
-  setRenderFilter: function(filterFunc) {
-    this._renderFilter = filterFunc;
-  },
-  
-  /** 
-   * Resets the render filtering function to the default filter, which returns 
-   * true for all sprites.
-   */
-  resetRenderFilter: function() {
-    this._renderFilter = TentaGL._defaultRenderFilter;
-  },
-  
-  /** 
-   * Filters out which sprites are renderable.
-   * If this function returns false for a sprite, then that sprite will 
-   * not be rendered. 
-   * @param {TentaGL.Sprite} sprite
-   * @param {Boolean}
-   */
-  renderFilter:function(sprite) {
-    return (!this._renderFilter || this._renderFilter(sprite));
-  },
-  
-  
   //////// Clear
   
   /** 
@@ -310,32 +238,6 @@ var TentaGL = {
     TentaGL.ColorBuffer.setClearColor(gl, rgba);
     gl.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   },
-  
-  
-  //////// Camera
-  
-  /** 
-   * Returns the camera that is being used to render scenes. 
-   * @return {TentaGL.Camera}
-   */
-  getCamera:function() {
-    return this._camera;
-  },
-  
-  /** 
-   * Sets the camera that is being used to render scenes. 
-   * This also resets the MVP and normal transforms to the base transforms
-   * provided by the camera.
-   * @param {TentaGL.Camera} camera
-   * @param {Number} aspect   The aspect ratio for the view.
-   */
-  setCamera:function(camera, aspect) {
-    this._camera = camera;
-    
-    this.setTransform(camera.getViewTransform());
-    this.setProjection(camera.getProjectionTransform(aspect));
-  },
-  
   
   
   //////// WebGL type metadata

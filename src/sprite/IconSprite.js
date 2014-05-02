@@ -184,12 +184,12 @@ TentaGL.IconSprite.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   render:function(gl) {
-    if(!this.isVisible() || !TentaGL.renderFilter(this)) {
+    if(!this.isVisible() || !TentaGL.SceneNode.filter(this)) {
       return;
     }
     TentaGL.pushTransform();
     
-    var camera = TentaGL.getCamera();
+    var camera = TentaGL.Camera.get(gl);
     var camEye = camera.getEye();
     this.billboardWorldPlane(vec3.negate(vec3.create(), camera.getLook()), camera.getUp())
     

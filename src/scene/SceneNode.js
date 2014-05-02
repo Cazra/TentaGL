@@ -56,6 +56,8 @@ TentaGL.SceneNode.prototype = {
   
   constructor:TentaGL.SceneNode,
   
+  isaSceneNode: true,
+  
   /** 
    * Frees any GL memory and resources used only by this SceneNode. 
    * This should be called before disposing of the node. The default 
@@ -956,7 +958,7 @@ TentaGL.SceneNode.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   render:function(gl) {
-    if(!this.isVisible() || !TentaGL.renderFilter(this)) {
+    if(!this.isVisible() || !TentaGL.SceneNode.filter(this)) {
       return;
     }
     TentaGL.pushTransform();
@@ -976,6 +978,60 @@ TentaGL.SceneNode.prototype = {
    */
   draw:function(gl) {}
 };
+
+
+/** 
+ * Always returns true for all nodes. 
+ * @param {TentaGL.SceneNode} node
+ * @return {boolean}
+ */
+TentaGL.SceneNode.defaultRenderFilter = function(node) {
+  return true;
+};
+
+/** 
+ * Returns the function being used as the rendering filter for the scene graph.
+ * If the render filter has not been set, it will be set to the default filter,
+ * which always returns true.
+ * @return {function(node : TentaGL.SceneNode) : boolean}
+ */
+TentaGL.SceneNode.getRenderFilter = function() {
+  if(!TentaGL.SceneNode._renderFilter) {
+    TentaGL.SceneNode.resetRenderFilter();
+  }
+  return TentaGL.SceneNode._renderFilter;
+};
+
+/**
+ * Sets the function used as the rendering filter for the scene graph.
+ * This rendering filter is used to tell the scene graph whether a node 
+ * (and everything underneath it in the tree) should be rendered. 
+ * The node will be rendered if the current rendering filter returns true for it.
+ * @param {function(node : TentaGL.SceneNode) : boolean} filter
+ */
+TentaGL.SceneNode.setRenderFilter = function(filter) {
+  TentaGL.SceneNode._renderFilter = filter;
+};
+
+
+/** 
+ * Sets the scene graph's rendering filter to the default one, 
+ * which always returns true. 
+ */
+TentaGL.SceneNode.resetRenderFilter = function() {
+  TentaGL.SceneNode.setRenderFilter(TentaGL.SceneNode.defaultRenderFilter);
+};
+
+
+/** 
+ * Calls the current rendering filter on a SceneNode and returns the filter's result. 
+ * @param {TentaGL.SceneNode} node
+ * @return {boolean}
+ */
+TentaGL.SceneNode.filter = function(node) {
+  return TentaGL.SceneNode.getRenderFilter()(node);
+};
+
 
 TentaGL.Inheritance.inherit(TentaGL.SceneNode, TentaGL.Renderable);
 

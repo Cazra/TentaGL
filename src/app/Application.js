@@ -113,7 +113,7 @@ TentaGL.Application.prototype = {
     // Reset the GL states for this iteration.
     TentaGL.resetTransform();
     TentaGL.resetProjection();
-    TentaGL.resetRenderFilter();
+    TentaGL.SceneNode.resetRenderFilter();
     
     // Poll the input devices.
     this._keyboard.poll();
@@ -239,7 +239,7 @@ TentaGL.Application.prototype = {
     
     canvas.width = w;
     canvas.height = h;
-    TentaGL.setViewport(this.getGL(), [0,0,w,h]);
+    TentaGL.Viewport.set(this.getGL(), [0,0,w,h]);
     
     container.style.width = w;
     container.style.height = h;
