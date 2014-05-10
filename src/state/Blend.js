@@ -31,31 +31,13 @@
  */
 TentaGL.Blend = {
   
-  _enabled: false,
   
-  _equation: GL_FUNC_ADD,
-  
-  _srcFunc: GL_ONE,
-  
-  _dstFunc: GL_ZERO,
-  
-  _red: 0.0,
-  
-  _green: 0.0,
-  
-  _blue: 0.0,
-  
-  _alpha: 0.0,
-  
-  _locked: false,
-  
-  
-  lock:function() {
-    this._locked = true;
+  lock:function(gl) {
+    gl._blendLocked = true;
   },
   
-  unlock:function() {
-    this._locked = false;
+  unlock:function(gl) {
+    gl._blendLocked = false;
   },
   
   
@@ -65,8 +47,8 @@ TentaGL.Blend = {
    * @param {boolean} enabled
    */
   setEnabled:function(gl, enabled) {
-    if(this._enabled != enabled && !this._locked) {
-      this._enabled = enabled;
+    if(gl._blendEnabled != enabled && !gl._blendLocked) {
+      gl._blendEnabled = enabled;
       
       if(enabled) {
         gl.enable(GL_BLEND);
@@ -82,8 +64,8 @@ TentaGL.Blend = {
    * Returns whether blending is enabled in the gl state. 
    * @return {boolean}
    */
-  isEnabled:function() {
-    return this._enabled;
+  isEnabled:function(gl) {
+    return gl._blendEnabled;
   },
   
   
@@ -97,14 +79,14 @@ TentaGL.Blend = {
    * @param {glEnum} dstFunc    Any allowed dest function value for gl.blendFunc.
    */
   setEquation:function(gl, equation, srcFunc, dstFunc) {
-    if(this._equation != equation) {
-      this._equation = equation;
+    if(gl._blendEquation != equation) {
+      gl._blendEquation = equation;
       gl.blendEquation(equation);
     }
     
-    if(this._srcFunc != srcFunc || this._dstFunc != dstFunc) {
-      this._srcFunc = srcFunc;
-      this._dstFunc = dstFunc;
+    if(gl._blendSrcFunc != srcFunc || gl._blendDstFunc != dstFunc) {
+      gl._blendSrcFunc = srcFunc;
+      gl._blendDstFunc = dstFunc;
       
       gl.blendFunc(srcFunc, dstFunc);
     }
@@ -115,54 +97,80 @@ TentaGL.Blend = {
    * Returns the equation being used for blending.
    * @return {glEnum}
    */
-  getEquation:function() {
-    return this._equation;
+  getEquation:function(gl) {
+    return gl._blendEquation;
   },
   
   
   /** 
-   * Returns the source function used for blending.
+   * Returns the source function used for blending in a gl context.
+   * @param {WebGLRenderingContext} gl
    * @return {glEnum}
    */
-  getSrcFunc:function() {
-    return this._srcFunc;
+  getSrcFunc:function(gl) {
+    return gl._blendSrcFunc;
   },
   
   
   /** 
-   * Returns the dest function used for blending.
+   * Returns the dst function used for blending in a gl context.
    * @return {glEnum}
    */
-  getDstFunc:function() {
-    return this._dstFunc;
+  getDstFunc:function(gl) {
+    return gl._blendDstFunc;
   },
   
   
   
   /** 
-   * Sets the blend color.
+   * Sets the blend color for a gl context.
    * @param {WebGLRenderingContext} gl
    * @param {TentaGL.Color} color
    */
   setBlendColor:function(gl, color) {
-    if(this._red != color.getRed() || this._green != color.getGreen() || this._blue != color.getBlue() || this._alpha != color.getAlpha()) {
-      this._red = color.getRed();
-      this._green = color.getGreen();
-      this._blue = color.getBlue();
-      this._alpha = color.getAlpha();
+    var r = color.getRed();
+    var g = color.getGreen();
+    var b = color.getBlue();
+    var a = color.getAlpha();
+    
+    if(gl._blendRed != r || gl._blendGreen != g || gl._blendBlue != b || gl._blendAlpha != a) {
+      gl._blendRed = r;
+      gl._blendGreen = g;
+      gl._blendBlue = b;
+      gl._blendAlpha = a;
       
-      gl.blendColor(this._red, this._green, this._blue, this._alpha);
+      gl.blendColor(r, g, b, a);
     }
   },
   
   
   /** 
-   * Returns the blending color.
+   * Returns the blending color being used by a gl context.
+   * @param {WebGLRenderingContext} gl
    * @return {TentaGL.Color}
    */
-  getBlendColor:function() {
-    var color = TentaGL.Color.RGBA(this._red, this._green, this._blue, this._alpha);
+  getBlendColor:function(gl) {
+    var color = TentaGL.Color.RGBA(gl._blendRed, gl._blendGreen, gl._blendBlue, gl._blendAlpha);
     return color;
+  },
+  
+  
+  /** 
+   * Resets the metadata about the gl context's blending state. 
+   * @param {WebGLRenderingContext} gl
+   */
+  reset: function(gl) {
+    gl._blendLocked = false;
+    gl._blendEnabled = false;
+    
+    gl._blendEquation = GL_FUNC_ADD;
+    gl._blendSrcFunc = GL_ONE;
+    gl._blendDstFunc = GL_ZERO;
+    
+    gl._blendRed = 0;
+    gl._blendGreen = 0;
+    gl._blendBlue = 0;
+    gl._blendAlpha = 0;
   }
   
 };

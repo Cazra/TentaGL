@@ -41,6 +41,7 @@ TentaGL.Texture.prototype = {
   
   constructor:TentaGL.Texture,
   
+  isaTexture: true,
   
   /** 
    * Sets the contents of the texture to the data in a PixelData object.
@@ -72,7 +73,7 @@ TentaGL.Texture.prototype = {
   },
   
   /** 
-   * Returns the lcoation of this texture in GL memory.
+   * Returns the location of this texture in GL memory.
    * @return {WebGLTexture}
    */
   getLocation:function() {

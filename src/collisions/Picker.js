@@ -54,19 +54,19 @@ TentaGL.Picker.prototype = {
     
     this._pixels = undefined;
     this._origFilter = TentaGL.SceneNode.getRenderFilter();
-    var origShader = TentaGL.ShaderLib.current(gl).getID();
+    var origShader = TentaGL.ShaderLib.currentName(gl);
     
     // Set up the GL state for picker rendering. 
     TentaGL.Blend.setEnabled(gl, false);
-    TentaGL.Blend.lock();
+    TentaGL.Blend.lock(gl);
     
-    TentaGL.ColorBuffer.setClearColor(gl, [0, 0, 0, 0]);
-    TentaGL.ColorBuffer.lock();
+    TentaGL.ColorBuffer.setClearColor(gl, TentaGL.Color.RGBA(0, 0, 0, 0));
+    TentaGL.ColorBuffer.lock(gl);
     
     TentaGL.MaterialLib.useNone();
     
     TentaGL.Picker.useShader(gl);
-    TentaGL.ShaderLib.lock();
+    TentaGL.ShaderLib.lock(gl);
     
     this._nextID = 1;
     this._sprites = [];
@@ -89,9 +89,9 @@ TentaGL.Picker.prototype = {
     
     
     // Restore the previous state.
-    TentaGL.ShaderLib.unlock();
-    TentaGL.Blend.unlock();
-    TentaGL.ColorBuffer.unlock();
+    TentaGL.ShaderLib.unlock(gl);
+    TentaGL.Blend.unlock(gl);
+    TentaGL.ColorBuffer.unlock(gl);
     TentaGL.ShaderLib.use(gl, origShader);
     TentaGL.SceneNode.setRenderFilter(this._origFilter);
   },
@@ -214,15 +214,16 @@ TentaGL.Picker._fShader =
  * @return {TentaGL.ShaderProgram}
  */
 TentaGL.Picker.loadShaderProgram = function(gl) {
-  var shaderProgram = TentaGL.ShaderLib.add(gl, TentaGL.Picker._shaderID, TentaGL.Picker._vShader, TentaGL.Picker._fShader);
+  var program = new TentaGL.ShaderProgram(gl, TentaGL.Picker._vShader, TentaGL.Picker._fShader);
+  TentaGL.ShaderLib.add(gl, TentaGL.Picker._shaderID, program);
   
-  shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-  shaderProgram.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+  program.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+  program.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
   
-  shaderProgram.bindMVPTransUni("mvpTrans");
-  shaderProgram.bindPickIDUni("pickID");
+  program.bindMVPTransUni("mvpTrans");
+  program.bindPickIDUni("pickID");
   
-  return shaderProgram;
+  return program;
 };
 
 

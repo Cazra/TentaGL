@@ -54,15 +54,18 @@ HelloWorldApp.prototype = {
   
   /** Overrides TentaGL.Application.initShaders */
   initShaders:function() {
-    var shaderProgram = TentaGL.ShaderLib.addFromURLs(this.getGL(), "simpleShader", "../../shaders/simple.vert", "../../shaders/simple.frag");
+    var gl = this.getGL();
     
-    shaderProgram.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-    shaderProgram.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-    shaderProgram.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+    var simpleShader = TentaGL.ShaderProgram.fromURL(gl, "../../shaders/simple.vert", "../../shaders/simple.frag");
+    TentaGL.ShaderLib.add(gl, "simpleShader", simpleShader);
     
-    shaderProgram.bindMVPTransUni("mvpTrans");
-    shaderProgram.bindNormalTransUni("normalTrans");
-    shaderProgram.bindTex0Uni("tex");
+    simpleShader.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+    simpleShader.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
+    simpleShader.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+    
+    simpleShader.bindMVPTransUni("mvpTrans");
+    simpleShader.bindNormalTransUni("normalTrans");
+    simpleShader.bindTex0Uni("tex");
   },
   
   
@@ -306,7 +309,7 @@ HelloWorldApp.prototype = {
     TentaGL.Camera.set(gl, this.camera, aspect);
     
     // Clear the scene. 
-    TentaGL.clear(gl, [0.1, 0.1, 0.3, 1]);
+    TentaGL.clear(gl, TentaGL.Color.RGBA(0.1, 0.1, 0.3, 1));
   //  TentaGL.DepthBuffer.clear(gl);
 
     // Draw the objects in the scene.

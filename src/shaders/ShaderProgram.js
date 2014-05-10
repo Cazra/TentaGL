@@ -23,23 +23,21 @@
 */
 
 /** 
- * Constructs a shader program and loads it into the WebGL context. 
+ * Constructs a shader program and loads it into a WebGL context. 
  * If any compile errors occur while compiling the vertex or fragment shaders
  * or while linking the program, they are printed to the console 
  * and an Error is thrown.
  * @constructor
  * @param {WebGLRenderingContext} gl  The WebGL context.
- * @param {string} id   A unique ID for this program in the ShaderLib.
  * @param {string} vertSrc  The source code string for the program's 
  *    vertex shader.
  * @param {string} fragSrc  The source code string for the program's
  *    fragment shader.
  */
-TentaGL.ShaderProgram = function(gl, id, vertSrc, fragSrc) {
+TentaGL.ShaderProgram = function(gl, vertSrc, fragSrc) {
   var vert = this._compileShader(gl, GL_VERTEX_SHADER, vertSrc);
   var frag = this._compileShader(gl, GL_FRAGMENT_SHADER, fragSrc);
   
-  this._id = id;
   this._glProg = this._linkProgram(gl, vert, frag);
   this._uniforms = this._initUniforms(gl);
   this._attributes = this._initAttributes(gl);
@@ -50,14 +48,6 @@ TentaGL.ShaderProgram = function(gl, id, vertSrc, fragSrc) {
 TentaGL.ShaderProgram.prototype = {
   
   constructor: TentaGL.ShaderProgram,
-  
-  /** 
-   * Returns the ID for this shader program.
-   * @return {string}
-   */
-  getID:function() {
-    return this._id;
-  },
   
   
   /** 
@@ -123,10 +113,10 @@ TentaGL.ShaderProgram.prototype = {
   
   
   /** 
-   * Returns the WebGLProgram for this ProgramShader used by the WebGL context.
+   * Returns the location for this ProgramShader in GL memory.
    * @return {WebGLProgram}
    */
-  getWebGLProgram:function() {
+  getLocation:function() {
     return this._glProg;
   },
   
@@ -574,4 +564,32 @@ TentaGL.ShaderProgram.prototype = {
     this._pickIDUni = this.getUniform(uniName);
   },
 };
+
+
+/** 
+ * Produces a ShaderProgram from the shader source code files at the 
+ * specified URLs. 
+ * If any compile errors occur while compiling the vertex or fragment shaders
+ * or while linking the program, they are printed to the console 
+ * and an Error is thrown.
+ * This function uses blocking ajax requests. 
+ * @param {WebGLRenderingContext} gl
+ * @param {string} vertURL   The URL of the vertex shader source code.
+ * @param {string} fragURL   The URL of the fragment shader source code.
+ * @return {TentaGL.ShaderProgram}
+ */
+TentaGL.ShaderProgram.fromURL = function(gl, vertURL, fragURL) {
+  var req = new XMLHttpRequest();
+  
+  req.open("get", vertURL, false);
+  req.send();
+  var vertSrc = req.responseText;
+  
+  req.open("get", fragURL, false);
+  req.send();
+  var fragSrc = req.responseText;
+  
+  return new TentaGL.ShaderProgram(gl, vertSrc, fragSrc);
+};
+
 

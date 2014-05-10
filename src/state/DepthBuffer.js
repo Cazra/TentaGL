@@ -27,27 +27,31 @@
  */
 TentaGL.DepthBuffer = {
   
-  _test: false,
+  /** 
+   * Resets the metadata about the depth buffer test for a gl context.
+   * @param {WebGLRenderingContext} gl
+   */
+  reset: function(gl) {
+    gl._depthEnabled = false;
+    gl._depthFunc = GL_LESS;
+    gl._depthWrite = true;
+    
+    gl._depthWinNear = 0;
+    gl._depthWinFar = 1;
+    
+    gl._depthClearVal = 1;
+  },
   
-  _func: GL_LESS,
-  
-  _write: true,
-  
-  _wNear: 0,
-  
-  _wFar: 1,
-  
-  _clearVal: 1,
   
   
   /** 
-   * Enables or disables the depth test for texels. 
+   * Enables or disables the texel depth test for a gl context. 
    * @param {WebGLRenderingContext} gl
    * @param {boolean} enabled
    */
   setEnabled:function(gl, enabled) {
-    if(this._test != enabled) {
-      this._test = enabled;
+    if(gl._depthEnabled != enabled) {
+      gl._depthEnabled = enabled;
       
       if(enabled) {
         gl.enable(GL_DEPTH_TEST);
@@ -60,11 +64,12 @@ TentaGL.DepthBuffer = {
   
   
   /** 
-   * Returns whether the depth test is enabled.
+   * Returns whether the texel depth test is enabled for a gl context.
+   * @param {WebGLRenderingContext} gl
    * @return {boolean}
    */
-  isTestEnabled:function() {
-    return this._enabled;
+  isTestEnabled:function(gl) {
+    return gl._depthEnabled;
   },
   
   
@@ -75,8 +80,8 @@ TentaGL.DepthBuffer = {
    * @param {glEnum} func
    */
   setFunc:function(gl, func) {
-    if(this._func != func) {
-      this._func = func;
+    if(gl._depthFunc != func) {
+      gl._depthFunc = func;
       
       gl.depthFunc(func);
     }
@@ -85,10 +90,11 @@ TentaGL.DepthBuffer = {
   
   /** 
    * Returns the depth comparison function being used. 
+   * @param {WebGLRenderingContext} gl
    * @return {glEnum}
    */
-  getFunc:function() {
-    return this._func;
+  getFunc:function(gl) {
+    return gl._depthFunc;
   },
   
   
@@ -98,8 +104,8 @@ TentaGL.DepthBuffer = {
    * @param {boolean} enabled
    */
   setMaskEnabled:function(gl, enabled) {
-    if(this._write != enabled) {
-      this._write = enabled;
+    if(gl._depthWrite != enabled) {
+      gl._depthWrite = enabled;
       
       gl.depthMask(enabled);
     }
@@ -108,10 +114,11 @@ TentaGL.DepthBuffer = {
   
   /** 
    * Returns whether the depth buffer is enabled for writing.
+   * @param {WebGLRenderingContext} gl
    * @return {boolean}
    */
-  isMaskEnabled:function() {
-    return this._write;
+  isMaskEnabled:function(gl) {
+    return gl._depthWrite;
   },
   
   
@@ -128,9 +135,9 @@ TentaGL.DepthBuffer = {
     near = TentaGL.Math.clamp(near, 0, 1);
     far = TentaGL.Math.clamp(far, 0, 1);
     
-    if(this._wNear != near || this._wFar != far) {
-      this._wNear = near;
-      this._wFar = far;
+    if(gl._depthWinNear != near || gl._depthWinFar != far) {
+      gl._depthWinNear = near;
+      gl._depthWinFar = far;
       
       gl.depthRange(near, far);
     }
@@ -139,19 +146,21 @@ TentaGL.DepthBuffer = {
   
   /** 
    * Returns the mapping of the near clipping plane to window coordinates.
+   * @param {WebGLRenderingContext} gl
    * @return {float}
    */
-  getRangeNear:function() {
-    return this._wNear;
+  getRangeNear:function(gl) {
+    return gl._depthWinNear;
   },
   
   
   /** 
    * Returns the mapping of the far clipping plane to window coordinates.
+   * @param {WebGLRenderingContext} gl
    * @return {float}
    */
-  getRangeFar:function() {
-    return this._wFar;
+  getRangeFar:function(gl) {
+    return gl._depthWinFar;
   },
   
   
@@ -162,8 +171,8 @@ TentaGL.DepthBuffer = {
    */
   setClearValue:function(gl, value) {
     value = TentaGL.Math.clamp(value, 0, 1);
-    if(this._clearVal != value) {
-      this._clearVal = value;
+    if(gl._depthClearVal != value) {
+      gl._depthClearVal = value;
       
       gl.clearDepth(value);
     }    
@@ -172,10 +181,11 @@ TentaGL.DepthBuffer = {
   
   /** 
    * Returns the clear value for the depth buffer.
+   * @param {WebGLRenderingContext} gl
    * @return {float}
    */
   getClearValue:function() {
-    return this._clearVal;
+    return gl._depthClearVal;
   },
   
   

@@ -201,20 +201,17 @@ TentaGL.PixelData.GLTexture = function(gl, glTex, x, y, w, h) {
 
 
 /** 
- * Extracts PixelData from an image at the specifed path. 
+ * Extracts PixelData from an image at the specifed url. 
  * Due to the asynchronous behavior of loading images, a callback function
  * should be provided to use the resulting PixelData.
- * @param {string} imagePath
- * @param {function} callback   The callback function takes a single parameter -
- *      the TentaGL.PixelData produced by this function. This callback should
- *      be responsible for any post-processing of the image, including 
- *      application of RGBAFilters and loading it into Materials for use in
- *      the GL context.
+ * @param {string} url
+ * @param {function(data : TentaGL.PixelData) : undefined} callback   
+ *      A callback for any post-processing of the PixelData for the image,  
+ *      including application of RGBAFilters and loading it into Materials for 
+ *      use in the GL context.
  */
-TentaGL.PixelData.loadImage = function(imagePath, callback) {
-  var img = new Image();
-  img.onload = function() {
-    
+TentaGL.PixelData.loadImage = function(url, callback) {
+  TentaGL.ImageLoader.load(url, function(img) {
     // Produce a canvas that we can draw our image on and read pixels back from.
     var canvas = document.createElement("canvas");
     canvas.width = img.width;
@@ -225,8 +222,7 @@ TentaGL.PixelData.loadImage = function(imagePath, callback) {
     // then process it with our callback.
     var result = TentaGL.PixelData.Canvas(canvas);
     callback(result);
-  };
-  img.src = imagePath;
+  });
 };
 
 

@@ -23,47 +23,40 @@
 */
 
 /** 
- * A simple API for setting the face-culling state of the gl context.
+ * An API for fetching and loading images. 
  */
-TentaGL.Cull = {
+TentaGL.ImageLoader = {
+  
+  
+  _numLoading: 0,
+  
   
   /** 
-   * Sets the face-culling mode for the gl context. 
-   * @param {WebGLRenderingContext} gl
-   * @param {glEnum} mode   Any allowed value for gl.cullFace.
+   * Fetches and loads an image from a URL. 
+   * @param {string} url
+   * @param {function(image : Image) : undefined} successCB    Callback for when the image is successfully loaded.
+   * @param {function : undefined} errorCB      Optional. Callback for when there is an error loading the image.
    */
-  setMode:function(gl, mode) {
-    if(gl._cullMode != mode) {
-      gl._cullMode = mode;
-      
-      if(mode == GL_NONE) {
-        gl.disable(GL_CULL_FACE);
-      }
-      else {
-        gl.enable(GL_CULL_FACE);
-        gl.cullFace(mode);
+  load: function(url, successCB, errorCB) {
+    this._numLoading++;
+    
+    if(!errorCB) {
+      errorCB = function() {
+        throw new Error("Could not load image at " + url + ".");
       }
     }
+    
+    var image = new Image();
+    image.onload = function() {
+      successCB(image);
+      this._numLoading--;
+    };
+    image.src = url;
   },
   
   
-  /** 
-   * Returns the face-culling mode being used.
-   * @param {WebGLRenderingContext} gl
-   */
-  getMode:function(gl) {
-    return gl._cullMode;
-  },
   
-  
-  /** 
-   * Resets the metadata about the face-culling state for a gl context. 
-   * @param {WebGLRenderingContext} gl
-   */
-  reset: function(gl) {
-    gl._cullMode = GL_NONE;
+  isLoading: function() {
+    return (this._numLoading > 0);
   }
-  
-  
 };
-

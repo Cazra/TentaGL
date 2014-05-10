@@ -61,6 +61,8 @@ TentaGL.BufferTexture.prototype = {
   
   constructor:TentaGL.BufferTexture,
   
+  isaBufferTexture: true,
+  
   
   /** Removes the Texture and the FrameBuffer from GL memory. */
   clean:function(gl) {

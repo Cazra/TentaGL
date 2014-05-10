@@ -57,11 +57,20 @@ var TentaGL = {
       
       // Create the WebGL context for the canvas.
       var gl = canvas.getContext("webgl", attrs) || canvas.getContext("experimental-webgl", attrs) || canvas.getContext("webkit-3d", attrs) || canvas.getContext("moz-webgl", attrs);
+      
+      // Initialize its state data.
+      TentaGL.Blend.reset(gl);
+      TentaGL.Cull.reset(gl);
+      TentaGL.DepthBuffer.reset(gl);
+      TentaGL.Scissor.reset(gl);
+      TentaGL.Stencil.reset(gl);
+      
       TentaGL.Viewport.set(gl, [0, 0, canvas.width, canvas.height]);
       TentaGL.resetProjection();
       TentaGL.resetTransform();
       this._normalTrans = mat3.create();
       this._mvpTrans = mat4.create();
+      
       return gl;
     }
     catch(e) {
@@ -231,11 +240,10 @@ var TentaGL = {
   /** 
    * Clears the color and depth buffers. 
    * @param {WebGLRenderingContext} gl
-   * @param {vec4} rgba   
-   *      Optional. The normalized rgba color values to clear the color buffer with. 
+   * @param {TentaGL.Color} color   Optional. The clear color to use.
    */
-  clear:function(gl, rgba) {
-    TentaGL.ColorBuffer.setClearColor(gl, rgba);
+  clear:function(gl, color) {
+    TentaGL.ColorBuffer.setClearColor(gl, color);
     gl.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   },
   

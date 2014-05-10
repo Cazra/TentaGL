@@ -27,9 +27,15 @@
  */
 TentaGL.Stencil = {
   
-  _test: false,
+  /** 
+   * Resets the metadata about the stencil-testing state of a gl context.
+   * @param {WebGLRenderingContext} gl
+   */
+  reset: function(gl) {
+    gl._stencilEnabled = false;
+    gl._stencilClearVal = 0;
+  },
   
-  _clearVal: 0,
   
   /**
    * Enables or disables stencil testing. 
@@ -37,8 +43,8 @@ TentaGL.Stencil = {
    * @param {boolean} enabled
    */
   setTestEnabled:function(gl, enabled) {
-    if(this._test != enabled) {
-      this._test = enabled;
+    if(gl._stencilEnabled != enabled) {
+      gl._stencilEnabled = enabled;
       
       if(enabled) {
         gl.enable(GL_STENCIL_TEST);
@@ -55,7 +61,7 @@ TentaGL.Stencil = {
    * @return {boolean}
    */
   isStencilEnabled:function() {
-    return this._test;
+    return gl._stencilEnabled;
   },
   
   
@@ -65,8 +71,8 @@ TentaGL.Stencil = {
    * @param {uint} value
    */
   setClearValue:function(gl, value) {
-    if(this._clearVal != value) {
-      this._clearVal = value;
+    if(gl._stencilClearVal != value) {
+      gl._stencilClearVal = value;
       
       gl.clearStencil(value);
     }
@@ -78,7 +84,7 @@ TentaGL.Stencil = {
    * @return {uint}
    */
   getClearValue:function() {
-    return this._clearVal;
+    return gl._stencilClearVal;
   },
   
   

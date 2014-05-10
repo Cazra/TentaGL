@@ -27,73 +27,75 @@
  */ 
 TentaGL.ColorBuffer = {
   
-  _red: 0,
   
-  _green: 0,
+  /** 
+   * Resets the metadata about the gl context's color buffer state. 
+   * @param {WebGLRenderingContext} gl
+   */
+  reset: function(gl) {
+    gl._cbLock = false;
+    
+    gl._cbRed = 0;
+    gl._cbGreen = 0;
+    gl._cbBlue = 0;
+    gl._cbAlpha = 0;
+    
+    gl._cbWriteRed = true;
+    gl._cbWriteGreen = true;
+    gl._cbWriteBlue = true;
+    gl._cbWriteAlpha = true;
+  },
   
-  _blue: 0,
   
-  _alpha: 0,
-
-  
-  _writeRed: true,
-  
-  _writeGreen: true,
-  
-  _writeBlue: true,
-  
-  _writeAlpha: true,
-  
-  
-  _lock: false,
-  
-  
-  /** Locks the clear color so that it cannot be changed through this API until unlock is called. */
-  lock:function() {
-    this._lock = true;
+  /** 
+   * Locks the clear color so that it cannot be changed through this API 
+   * until unlock is called. 
+   */
+  lock:function(gl) {
+    gl._cbLock = true;
   },
   
   
   /** Unlocks the clear color. */
-  unlock:function() {
-    this._lock = false;
+  unlock:function(gl) {
+    gl._cbLock = false;
   },
   
   
   
   /** 
-   * Sets the color used to clear the color buffer. 
+   * Sets the color used to clear the color buffer for a gl context. 
    * @param {WebGLRenderingContext} gl
-   * @param {vec4} rgba   Normalized rgba color values.
+   * @param {TentaGL.Color} color
    */
-  setClearColor:function(gl, rgba) {
-    if(!this._lock) {
-      this._red = rgba[0];
-      this._green = rgba[1];
-      this._blue = rgba[2];
-      this._alpha = rgba[3];
+  setClearColor:function(gl, color) {
+    if(!gl._cbLock) {
+      gl._cbRed = color.getRed();
+      gl._cbGreen = color.getGreen();
+      gl._cbBlue = color.getBlue();
+      gl._cbAlpha = color.getAlpha();
       
-      gl.clearColor(this._red, this._green, this._blue, this._alpha);
+      gl.clearColor(gl._cbRed, gl._cbGreen, gl._cbBlue, gl._cbAlpha);
     }
   },
   
   
   /** 
-   * Returns the clear color in normalized rgba format. 
+   * Returns the clear color for a gl context. 
    * @return {vec4}
    */
-  getClearColor:function() {
-    return vec4.fromValues(this._red, this._green, this._blue, this._alpha);
+  getClearColor:function(gl) {
+    return vec4.fromValues(gl._cbRed, gl._cbGreen, gl._cbBlue, gl._cbAlpha);
   },
   
   
   /** Sets which color components are writable in the buffer. */
   setWriteable:function(gl, red, green, blue, alpha) {
+    gl._cbWriteRed = red;
+    gl._cbWriteGreen = green;
+    gl._cbWriteBlue = blue;
+    gl._cbWriteAlpha = alpha;
     
-    this._writeRed = red;
-    this._writeGreen = green;
-    this._writeBlue = blue;
-    this._writeAlpha = alpha;
     gl.colorMask(red, green, blue, alpha);
   },
   
@@ -103,12 +105,16 @@ TentaGL.ColorBuffer = {
    * @param {WebGLRenderingContext} gl
    * @param {TentaGL.Color} color   Optional. Specify the clear color.
    */
-  clear:function(gl, rgba) {
-    if(rgba) {
-      this.setClearColor(gl, rgba);
+  clear:function(gl, color) {
+    if(color) {
+      this.setClearColor(gl, color);
     }
     gl.clear(GL_COLOR_BUFFER_BIT);
   },
+  
+  
+  
+  
   
 };
 

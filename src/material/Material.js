@@ -28,6 +28,8 @@ TentaGL.Material = function() {};
 
 TentaGL.Material.prototype = {
   
+  isaMaterial: true,
+  
   /** 
    * Cleans up any GL resources associated with the Material. 
    * The resources are deleted from GL memory using the appropriate WebGL

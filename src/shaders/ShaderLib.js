@@ -23,32 +23,20 @@
 */
 
 /** 
- * A singleton containing a library of loaded shader programs. 
- * This is essentially just a fancy associative array, so once a program has
- * been added to it with ShaderLib.add, the program can be accessed with 
- * ShaderLib["myProgramName"]. The programs can be accessed either by their
- * name or by their WebGLProgram object.
+ * An API for managing the set of shader programs loaded in a gl context.
  */
 TentaGL.ShaderLib = {
   
   
-  /** The collection of loaded shader programs. */
-  _programs: {},
-  
-  
   /** 
-   * If true, then the ShaderLib cannot change what program is used by 
-   * the GL context. See the lock() and unlock() methods.
+   * Removes all loaded shader programs the shader library for a gl context. 
+   * @param {WebGLRenderingContext} gl
    */
-  _locked: false,
-  
-  
-  /** Removes all loaded shader programs from the library and GL context. */
   clean:function(gl) {
-    for(var i in this._programs) {
-      this._programs[i].clean(gl);
+    for(var i in gl._shaderLib) {
+      gl._shaderLib[i].clean(gl);
     }
-    this._programs = {};
+    gl._shaderLib = {};
   },
   
   
@@ -61,73 +49,35 @@ TentaGL.ShaderLib = {
   reset:function(gl) {
     this.clean(gl);
     TentaGL.Picker.loadShaderProgram(gl);
+    
+    gl._shaderLibLocked = false;
   },
   
   
   /** 
-   * Attempts to load a new shader program into the shaderLib. If there are any
-   * errors compiling the shader program, those errors are printed to the 
-   * console and an Error is thrown.
-   * @param {WebGLRenderingContext} gl  The WebGL context.
-   * @param {string} name  The name used to access the shader program in 
-   *    the library.
-   * @param {string} vertSrc  The source code string for the program's 
-   *    vertex shader.
-   * @param {string} fragSrc  The source code string for the program's
-   *    fragment shader.
-   * @return {TentaGL.ShaderProgram} The created ShaderProgram.
+   * Adds a program to the shader library of a gl context. 
+   * @param {WebGLRenderingContext} gl
+   * @param {string} name
+   * @param {TentaGL.ShaderProgram} program
+   * @return {TentaGL.ShaderProgram}  The ShaderProgram that was added.
    */
-  add:function(gl, name, vertSrc, fragSrc) {
-    var program = new TentaGL.ShaderProgram(gl, name, vertSrc, fragSrc);
-    var glProg = program.getWebGLProgram();
-    
-    this[name] = program;
-    this[glProg] = program;
-    
+  add: function(gl, name, program) {
+    gl._shaderLib[name] = program;
     return program;
-  }, 
-  
-  
-  /** 
-   * Attempts to load a new shader program into the shaderLib. If there are any
-   * errors compiling the shader program, those errors are printed to the 
-   * console and an Error is thrown.
-   * @param {WebGLRenderingContext} gl  The WebGL context.
-   * @param {string} name  The name used to access the shader program in 
-   *    the library.
-   * @param {string} vertURL  The URL to the file containing the vertex shader source code.
-   * @param {string} fragURL  The URL to the file containing the fragment shader source code.
-   * @return {TentaGL.ShaderProgram} The created ShaderProgram.
-   */
-  addFromURLs:function(gl, name, vertURL, fragURL) {
-    var req = new XMLHttpRequest();
-    
-    req.open("get", vertURL, false);
-    req.send();
-    var vertSrc = req.responseText;
-    
-    req.open("get", fragURL, false);
-    req.send();
-    var fragSrc = req.responseText;
-    
-    return this.add(gl, name, vertSrc, fragSrc);
   },
   
   
   /** 
-   * Deletes the shader program with the specified name from the 
-   * ShaderLib and WebGL context. 
+   * Deletes the shader program with the specified name from a gl context.
+   * @param {WebGLRenderingContext} gl
+   * @param {string} name
    */
   remove:function(gl, name) {
-    var program = this[name];
-    var glProg = program.getWebGLProgram();
-    
-    // Delete it from the WebGL context.
-    program.deleteMe(gl);
+    var program = gl._shaderLib[name];
+    program.clean(gl);
     
     // Remove the program from the library's associative arrays.
-    delete this[name];
-    delete this[glProg];
+    delete gl._shaderLib[name];
   },
   
   /** 
@@ -135,15 +85,15 @@ TentaGL.ShaderLib = {
    * @return {TentaGL.ShaderProgram} The shader program now being used.
    */
   use:function(gl, name) {
-    if(this._locked || this._currentName === name) {
+    if(gl._shaderLibLocked || gl._shaderLibCurrentName === name) {
       return;
     }
     
-    var program = this[name];
+    var program = gl._shaderLib[name];
     program.useMe(gl);
     
-    this._currentProgram = program;
-    this._currentName = name;
+    gl._shaderLibCurrentProgram = program;
+    gl._shaderLibCurrentName = name;
     TentaGL.MaterialLib.useNone();
     
     return program;
@@ -154,7 +104,13 @@ TentaGL.ShaderLib = {
    * @return {TentaGL.ShaderProgram}
    */
   current:function(gl) {
-    return this._currentProgram;
+    return gl._shaderLibCurrentProgram;
+  },
+  
+  
+  /** Returns the ID of the ShaderProgram currently being used. */
+  currentName: function(gl) {
+    return gl._shaderLibCurrentName;
   },
   
   
@@ -162,16 +118,16 @@ TentaGL.ShaderLib = {
    * Locks the ShaderLib so that it can't change which shader program is being 
    * used by the GL context. 
    */
-  lock:function() {
-    this._locked = true;
+  lock:function(gl) {
+    gl._shaderLibLocked = true;
   },
   
   /** 
    * Unlocks the ShaderLib so that it can once again be able to change
    * which shader program is being used by the GL context.
    */
-  unlock:function() {
-    this._locked = false;
+  unlock:function(gl) {
+    gl._shaderLibLocked = false;
   }
 };
 

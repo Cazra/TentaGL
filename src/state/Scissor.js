@@ -30,6 +30,18 @@
 TentaGL.Scissor = {
   
   
+  /** Resets the meta-data about the scissor test state for a gl context. */
+  reset: function(gl) {
+    gl._scissorX = 0;
+    gl._scissorY = 0;
+    gl._scissorWidth = 1;
+    gl._scissorHeight = 1;
+    
+    gl._scissorEnabled = false;
+  },
+  
+  
+  
   /** 
    * Specifies the scissor rectangle for the gl context. 
    * @param {WebGLRenderingContext}

@@ -24,22 +24,19 @@
 
 
 /** 
- * A singleton for loading and caching VBO data for models. 
+ * An API for managing and rendering VBO data for 3D models loaded in a gl context.
  */
 TentaGL.ModelLib = {
-  
-  /** A mapping of model IDs to their VBO data. */
-  _vboData:{},
   
   /** 
    * Removes all the cached VBO data from GL memory and from this library. 
    * @return {WebGLRenderingContext} gl
    */
   clean:function(gl) {
-    for(var id in this._vboData) {
-      this._vboData[id].clean(gl);
+    for(var id in gl._vboData) {
+      gl._vboData[id].clean(gl);
     }
-    this._vboData = {};
+    gl._vboData = {};
   },
   
   
@@ -60,22 +57,20 @@ TentaGL.ModelLib = {
   
   
   /** 
-   * Creates and adds the VBO data for a model to the library, intended to be 
-   * used only with the specified shader. (This may change once I figure out 
-   * some way to allow different shaders to use the same VBOs)
+   * Creates and adds the VBO data for a model to the library.
    * @param {WebGLRenderingContext} gl
    * @param {string} modelID  The uniqueID that identifies the VBO data for the 
    *      model in this library.
    * @param {TentaGL.Model} model   The model that the VBO data will be 
    *      produced from.
-   * @param {associative arry: {int} -> {TentaGL.AttrProfile}} attrProfileSet  
-   *      Optional.
+   * @param {map: int -> TentaGL.AttrProfile} attrProfileSet    Optional.
    *      The set of attributes to be stored in the model's VBO data.
    *      A model's VBO data can be rendered by a shader program only
    *      by a shader program only if the program's AttrProfile is a subset 
    *      of the VBO data's AttrProfile.
    *      If this isn't provided, it will automatically use the default set from
    *      TentaGL.getDefaultAttrProfileSet().
+   * @return {TentaGL.VBOData} The VBO data produced for the model.
    */
   add:function(gl, modelID, model, attrProfileSet) {
   //  console.log("Creating VBO for " + modelID + " with profiles set ");
@@ -86,20 +81,23 @@ TentaGL.ModelLib = {
     }
     
     var vbo = new TentaGL.VBOData(gl, model, attrProfileSet);
-    this._vboData[modelID] = vbo;
+    gl._vboData[modelID] = vbo;
+    
+    return vbo;
   },
   
   
   /** 
    * Returns the VBOData for the specified model ID. 
+   * @param {WebGLRenderingContext} gl
    * @param {string} modelID
    * @return {TentaGL.VBOData}
    */
-  get:function(modelID) {
-    if(this._vboData[modelID] === undefined) {
+  get:function(gl, modelID) {
+    if(gl._vboData[modelID] === undefined) {
       throw Error("ModelLib does not contain VBOData for " + modelID + ".");
     }
-    return this._vboData[modelID];
+    return gl._vboData[modelID];
   },
   
   
@@ -110,19 +108,19 @@ TentaGL.ModelLib = {
    * @param {string} modelID
    */
   remove:function(gl, modelID) {
-    var vbo = this._vboData[modelID];
+    var vbo = gl._vboData[modelID];
     vbo.clean(gl);
-    delete this._vboData[modelID];
+    delete gl._vboData[modelID];
   },
   
   
   /** 
-   * Renders a model from this library with the VBORenderer. 
+   * Renders a model from this library. 
    * @param {WebGLRenderingContext} gl
    * @param {string} modelID
    */
   render:function(gl, modelID) {
-    var vboData = TentaGL.ModelLib.get(modelID);
+    var vboData = this.get(gl, modelID);
     TentaGL.VBORenderer.render(gl, vboData);
   }
   

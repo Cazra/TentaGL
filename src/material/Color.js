@@ -41,6 +41,7 @@ TentaGL.Color.prototype = {
   
   constructor:TentaGL.Color,
   
+  isaColor: true,
   
   /** 
    * Materials are required to provide a clean({WebGLRenderingContext}) method. 
