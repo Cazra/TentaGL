@@ -33,7 +33,7 @@ var TentaGL = {
   versionMajor:0, 
   
   /** The minor version number of this framework. */
-  versionMinor:11,
+  versionMinor:12,
   
   
   //////// Canvas/Context creation
@@ -66,8 +66,7 @@ var TentaGL = {
       TentaGL.Stencil.reset(gl);
       
       TentaGL.Viewport.set(gl, [0, 0, canvas.width, canvas.height]);
-      TentaGL.resetProjection();
-      TentaGL.resetTransform();
+      TentaGL.ViewTrans.reset(gl);
       this._normalTrans = mat3.create();
       this._mvpTrans = mat4.create();
       
@@ -94,146 +93,7 @@ var TentaGL = {
     return canvas;
   },
   
-  
-  //////// GL textures
-  
-  /** 
-   * Creates an initially empty texture in GL memory. By default, this texture 
-   * Displays as solid red and has its min-mag filters set to gl.NEAREST.
-   * @param {WebGLRenderingContext} gl
-   * @param {Uint8Array} data   Optional. RGBA array of pixel data. This is
-   *      allowed to be null, in which case the resulting appearance will be
-   *      undefined (Displays white for me). Defaults to null.
-   * @param {int} width   Optional. Width of the texture. Defaults to 1.
-   * @param {int} height  Optional. Height of the texture. Defaults to 1.
-   * @return {WebGLTexture}
-   */
-  createTexture: function(gl, data, width, height) {
-    data = data || null;
-    width = width || 1;
-    height = height || 1;
-    
-    var tex = gl.createTexture();
-    gl.bindTexture(GL_TEXTURE_2D, tex);
-    gl.texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    
-    // Use gl.NEAREST by default for min-mag filters.
-    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    return tex;
-  },
-  
-  
-  
-  
-  //////// MVP and Normal transforms
-  
-  /** 
-   * Sets the model-view transform matrix.
-   * @param {mat4} trans  The new model-view transform matrix.
-   */
-  setTransform: function(trans) {
-    this._modelViewTrans = trans;
-  },
-  
-  
-  /** 
-   * Multiplies the model-view transform matrix (M) by another matrix (T) so 
-   * that the result is M = M x T.
-   * @param {mat4} trans
-   */
-  mulTransform: function(trans) {
-    mat4.mul(this._modelViewTrans, this._modelViewTrans, trans);
-  },
-  
-  
-  /** 
-   * Multiplies the model-view transform matrix (M) by another matrix (T) so 
-   * that the result is M = T x M.
-   * @param {mat4} trans
-   */
-  premulTransform: function(trans) {
-    mat4.mul(this._modelViewTrans, trans, this._modelViewTrans);
-  },
-  
-  
-  /** 
-   * Saves the current model-view transform matrix onto the transform stack. 
-   */
-  pushTransform: function() {
-    this._transformStack.push(mat4.clone(this._modelViewTrans));
-  },
-  
-  /**
-   * Restores the current model-view transform matrix from the transform stack.
-   */
-  popTransform: function() {
-    this._modelViewTrans = this._transformStack.pop();
-  },
-  
-  /** 
-   * Resets the model-view transform matrix to the identity matrix and empties
-   * the transform stack.
-   */
-  resetTransform: function() {
-    this.setTransform(mat4.create());
-    this._transformStack = [];
-  },
-  
-  
-  /** 
-   * Sets the projection transform matrix.
-   * @param {mat4} trans  The new projection matrix.
-   */
-  setProjection: function(trans) {
-    this._projTrans = trans;
-  },
-  
-  
-  /** 
-   * Multiplies the projection transform matrix (M) by another matrix (T) so 
-   * that the result is M = M x T.
-   * @param {mat4} trans
-   */
-  mulProjection: function(trans) {
-    mat4.mul(this._projTrans, this._projTrans, trans);
-  },
-  
-  
-  /** 
-   * Multiplies the projection transform matrix (M) by another matrix (T) so 
-   * that the result is M = T x M.
-   * @param {mat4} trans
-   */
-  premulProjection: function(trans) {
-    mat4.mul(this._projTrans, trans, this._projTrans);
-  },
-  
-  
- /** 
-  * Resets the projection transform matrix to the identity matrix.
-  */
-  resetProjection: function() {
-    this.setProjection(mat4.create());
-  },
-  
-  
-  /** 
-   * Updates the MVP and normal transform matrix uniform variables in the 
-   * currently bound shader program, using the current projection and 
-   * model-view matrices.
-   * @param {WebGLRenderingContext} gl
-   */
-  updateMVPUniforms: function(gl) {
-    mat3.normalFromMat4(this._normalTrans, this._modelViewTrans);
-    TentaGL.ShaderLib.current(gl).setNormalTransUniValue(gl, this._normalTrans);
-    
-    mat4.mul(this._mvpTrans, this._projTrans, this._modelViewTrans);
-    TentaGL.ShaderLib.current(gl).setMVPTransUniValue(gl, this._mvpTrans);
-  },
-  
+
   
   //////// Clear
   

@@ -190,18 +190,18 @@ TentaGL.IconSprite.prototype = {
     if(!this.isVisible() || !TentaGL.SceneNode.filter(this)) {
       return;
     }
-    TentaGL.pushTransform();
+    TentaGL.ViewTrans.push(gl);
     
-    var camera = TentaGL.Camera.get(gl);
+    var camera = TentaGL.ViewTrans.getCamera(gl);
     var camEye = camera.getEye();
     this.billboardWorldPlane(vec3.negate(vec3.create(), camera.getLook()), camera.getUp())
     
-    TentaGL.mulTransform(this.getModelTransform());
-    TentaGL.updateMVPUniforms(gl);
+    TentaGL.ViewTrans.mul(gl, this.getModelTransform());
+    TentaGL.ViewTrans.updateMVPUniforms(gl);
     
     this.draw(gl);
     
-    TentaGL.popTransform();
+    TentaGL.ViewTrans.pop(gl);
   },
   
   

@@ -111,8 +111,8 @@ TentaGL.Application.prototype = {
     }
     
     // Reset the GL states for this iteration.
-    TentaGL.resetTransform();
-    TentaGL.resetProjection();
+    var gl = this.getGL();
+    TentaGL.ViewTrans.reset(gl);
     TentaGL.SceneNode.resetRenderFilter();
     
     // Poll the input devices.

@@ -296,7 +296,7 @@ HelloWorldApp.prototype = {
     TentaGL.RenderMode.set3DOpaque(gl);
     
     var aspect = gl.canvas.width/gl.canvas.height;
-    TentaGL.Camera.set(gl, this.camera, aspect);
+    TentaGL.ViewTrans.setCamera(gl, this.camera, aspect);
     
     // Clear the scene. 
     TentaGL.clear(gl, TentaGL.Color.RGBA(0.1, 0.1, 0.3, 1));

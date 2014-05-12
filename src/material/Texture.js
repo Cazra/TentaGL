@@ -30,7 +30,7 @@
  * @param {WebGLRenderingContext} gl
  */
 TentaGL.Texture = function(gl) {
-    this._tex = TentaGL.createTexture(gl);
+    this._tex = TentaGL.Texture.create(gl);
     this._width = 1;
     this._height = 1;
 };
@@ -239,6 +239,35 @@ TentaGL.Texture.prototype = {
 };
 
 TentaGL.Inheritance.inherit(TentaGL.Texture, TentaGL.Material);
+
+
+/** 
+ * Creates an initially empty texture in GL memory. By default, this texture 
+ * Displays as solid red and has its min-mag filters set to gl.NEAREST.
+ * @param {WebGLRenderingContext} gl
+ * @param {Uint8Array} data   Optional. RGBA array of pixel data. This is
+ *      allowed to be null, in which case the resulting appearance will be
+ *      undefined (Displays white for me). Defaults to null.
+ * @param {int} width   Optional. Width of the texture. Defaults to 1.
+ * @param {int} height  Optional. Height of the texture. Defaults to 1.
+ * @return {WebGLTexture}
+ */
+TentaGL.Texture.create = function(gl, data, width, height) {
+  data = data || null;
+  width = width || 1;
+  height = height || 1;
+  
+  var tex = gl.createTexture();
+  gl.bindTexture(GL_TEXTURE_2D, tex);
+  gl.texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  
+  // Use gl.NEAREST by default for min-mag filters.
+  gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  gl.texParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  return tex;
+};
 
 
 

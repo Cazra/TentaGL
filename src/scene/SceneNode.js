@@ -961,14 +961,14 @@ TentaGL.SceneNode.prototype = {
     if(!this.isVisible() || !TentaGL.SceneNode.filter(this)) {
       return;
     }
-    TentaGL.pushTransform();
+    TentaGL.ViewTrans.push(gl);
     
-    TentaGL.mulTransform(this.getModelTransform());
-    TentaGL.updateMVPUniforms(gl);
+    TentaGL.ViewTrans.mul(gl, this.getModelTransform());
+    TentaGL.ViewTrans.updateMVPUniforms(gl);
     
     this.draw(gl);
     
-    TentaGL.popTransform();
+    TentaGL.ViewTrans.pop(gl);
   },
   
   

@@ -68,32 +68,3 @@ TentaGL.Camera.prototype = {
 };
 
 
-/** 
- * Returns the camera being used for the view and projection 
- * transforms by the gl context. 
- * @param {WebGLRenderingContext} gl
- * @return {TentaGL.Camera}
- */
-TentaGL.Camera.get = function(gl) {
-  return gl._camera;
-};
-
-
-/** 
- * Sets the camera being used for the view and projection transforms by the 
- * gl context. The gl context's transforms are set to those of the camera, 
- * effectively reseting the scene transform to the view-projection matrix.
- * @param {WebGLRenderingContext} gl
- * @param {TentaGL.Camera} camera
- * @param {float} aspect    The aspect ratio for the view.
- */
-TentaGL.Camera.set = function(gl, camera, aspect) {
-  gl._camera = camera;
-  
-  TentaGL.setTransform(camera.getViewTransform());
-  TentaGL.setProjection(camera.getProjectionTransform(aspect));
-};
-
-
-
-

@@ -540,7 +540,7 @@ TentaGL.ShaderProgram.prototype = {
   //// Picking
   
   /** 
-   * Sets the value of the float uniform variable bound to store opacity.
+   * Sets the value of the vec4 uniform variable bound to store the picking ID.
    * An error is thrown if a uniform hasn't been bound to the sprites' model 
    * transform matrices.
    * @param {WebGLRenderingContext} gl
@@ -555,8 +555,8 @@ TentaGL.ShaderProgram.prototype = {
   
   
   /** 
-   * Binds the float uniform variable with the specified name in this
-   * ShaderProgram to store the opacity.
+   * Binds the vec4 uniform variable with the specified name in this
+   * ShaderProgram to store the picking ID.
    * An error is thrown if the specified uniform doesn't exist in this program.
    * @param {string} uniName
    */
