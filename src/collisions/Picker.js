@@ -63,7 +63,7 @@ TentaGL.Picker.prototype = {
     TentaGL.ColorBuffer.setClearColor(gl, TentaGL.Color.RGBA(0, 0, 0, 0));
     TentaGL.ColorBuffer.lock(gl);
     
-    TentaGL.MaterialLib.useNone();
+    TentaGL.MaterialLib.useNone(gl);
     
     TentaGL.Picker.useShader(gl);
     TentaGL.ShaderLib.lock(gl);
@@ -76,7 +76,7 @@ TentaGL.Picker.prototype = {
     
     if(renderToView) {
       renderFunc(gl);
-      TentaGL.MaterialLib.useNone();
+      TentaGL.MaterialLib.useNone(gl);
       this._nextID = 1;
     }
     

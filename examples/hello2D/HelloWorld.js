@@ -86,17 +86,17 @@ HelloWorldApp.prototype = {
   initMaterials:function() {
     var gl = this.getGL();
 
-    TentaGL.MaterialLib.add("myColor", TentaGL.Color.RGBA(1, 0, 0, 1));
+    TentaGL.MaterialLib.add(gl, "myColor", TentaGL.Color.RGBA(1, 0, 0, 1));
     
-    var coinBlock = TentaGL.Texture.Image(gl, "../../images/sampleTex.png");
-    TentaGL.MaterialLib.add("coinBlock", coinBlock);
+    var coinBlock = TentaGL.Texture.fromURL(gl, "../../images/sampleTex.png");
+    TentaGL.MaterialLib.add(gl, "coinBlock", coinBlock);
     
     var icon = new TentaGL.Texture(gl);
-    TentaGL.PixelData.loadImage("../../images/iconNew.png", function(pixelData) {
+    TentaGL.PixelData.fromURL("../../images/iconNew.png", function(pixelData) {
       pixelData = pixelData.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,200,255));
       pixelData = pixelData.crop(7,6, 17,21);
       
-    //  TentaGL.PixelData.loadImage("../../images/iconNewAlpha.png", function(alphaImg) {
+    //  TentaGL.PixelData.fromURL("../../images/iconNewAlpha.png", function(alphaImg) {
     //    alphaImg = alphaImg.crop(7,6, 17,21);
     //    
     //    pixelData = pixelData.filter(new TentaGL.RGBAFilter.AlphaMap(alphaImg));
@@ -105,27 +105,18 @@ HelloWorldApp.prototype = {
       
       icon.setPixelData(gl, pixelData);
     });
-    TentaGL.MaterialLib.add("iconNew", icon);
+    TentaGL.MaterialLib.add(gl, "iconNew", icon);
     
     
     // Canvas doodling
     {
       var canvas = TentaGL.Canvas2D.createRoundedRect(100, 100, 32,TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1)); // TentaGL.Canvas2D.createCircle(100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
       TentaGL.Canvas2D.removeAlpha(canvas);
-      var canvasPixels = TentaGL.PixelData.Canvas(canvas);
+      var canvasPixels = TentaGL.PixelData.fromCanvas(canvas);
       
-      // Clipping/Masking filter test
-      /*
-      var clipCanvas = TentaGL.Canvas2D.create(canvas.width, canvas.height);
-      TentaGL.Canvas2D.drawCircle(clipCanvas, 0, 0, 100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
-      var clipPixels = TentaGL.PixelData.Canvas(clipCanvas);
-      canvasPixels = canvasPixels.filter(new TentaGL.RGBAFilter.ClipMap(clipPixels));
-      */
-      
-      
-      var circle = new TentaGL.Texture(gl); //TentaGL.Texture.Canvas(gl, canvas);
+      var circle = new TentaGL.Texture(gl); //TentaGL.Texture.fromCanvas(gl, canvas);
       circle.setPixelData(gl, canvasPixels);
-      TentaGL.MaterialLib.add("testCircle", circle);
+      TentaGL.MaterialLib.add(gl, "testCircle", circle);
     }
     
     
@@ -133,40 +124,40 @@ HelloWorldApp.prototype = {
     {
       var tex = new TentaGL.Texture(gl);
       var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 1, 0, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
-      TentaGL.MaterialLib.add("green", tex);
+      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+      TentaGL.MaterialLib.add(gl, "green", tex);
     }
     
     // blue
     {
       var tex = new TentaGL.Texture(gl);
       var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 0, 1, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
-      TentaGL.MaterialLib.add("blue", tex);
+      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+      TentaGL.MaterialLib.add(gl, "blue", tex);
     }
     
     // red
     {
       var tex = new TentaGL.Texture(gl);
       var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(1, 0, 0, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
-      TentaGL.MaterialLib.add("red", tex);
+      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+      TentaGL.MaterialLib.add(gl, "red", tex);
     }
     
     // white
     {
       var tex = new TentaGL.Texture(gl);
       var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(1, 1, 1, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
-      TentaGL.MaterialLib.add("white", tex);
+      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+      TentaGL.MaterialLib.add(gl, "white", tex);
     }
     
     // black
     {
       var tex = new TentaGL.Texture(gl);
       var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 0, 0, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.Canvas(canvas));
-      TentaGL.MaterialLib.add("black", tex);
+      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+      TentaGL.MaterialLib.add(gl, "black", tex);
     }
   },
   

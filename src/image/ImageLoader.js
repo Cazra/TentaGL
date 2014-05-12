@@ -55,7 +55,10 @@ TentaGL.ImageLoader = {
   },
   
   
-  
+  /** 
+   * Returns true if the ImageLoader is still loading 1 or more images. 
+   * @return {boolean}
+   */
   isLoading: function() {
     return (this._numLoading > 0);
   }

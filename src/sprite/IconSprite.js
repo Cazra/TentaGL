@@ -35,6 +35,8 @@
 TentaGL.IconSprite = function(xyz, texName) {
   TentaGL.BillboardSprite.call(this, xyz);
   this._texName = texName;
+  this._iconWidth = 1;
+  this._iconHeight = 1;
 };
 
 
@@ -69,16 +71,17 @@ TentaGL.IconSprite.prototype = {
    * Returns this icon's texture material. 
    * @return {TentaGL.Texture}
    */
-  getTexture:function() {
-    return TentaGL.MaterialLib.get(this._texName);
+  getTexture:function(gl) {
+    return TentaGL.MaterialLib.get(gl, this._texName);
   },
   
   
   /** 
    * Returns the PixelData for the icon's texture material.
+   * @return {TentaGL.PixelData}
    */
-  getPixelData:function() {
-    return this.getTexture().getPixelData();
+  getPixelData:function(gl) {
+    return this.getTexture(gl).getPixelData();
   },
   
   
@@ -89,7 +92,7 @@ TentaGL.IconSprite.prototype = {
    * @return {int}
    */
   getIconWidth:function() {
-    return this.getTexture().getWidth();
+    return this._iconWidth; // this.getTexture().getWidth();
   },
   
   /**
@@ -97,7 +100,7 @@ TentaGL.IconSprite.prototype = {
    * @return {int}
    */
   getIconHeight:function() {
-    return this.getTexture().getHeight();
+    return this._iconHeight; // this.getTexture().getHeight();
   },
   
   
@@ -205,6 +208,11 @@ TentaGL.IconSprite.prototype = {
   /** Draws the icon's texture onto a unit plane. */
   draw:function(gl) {    
     TentaGL.MaterialLib.use(gl, this._texName);
+    
+    var tex = this.getTexture(gl);
+    this._iconWidth = tex.getWidth();
+    this._iconHeight = tex.getHeight();
+    
     TentaGL.ModelLib.render(gl, "unitPlane");
   }
 };

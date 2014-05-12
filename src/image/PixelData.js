@@ -184,7 +184,7 @@ TentaGL.PixelData.prototype = {
  * @param {int} w
  * @param {int} h
  */
-TentaGL.PixelData.GLTexture = function(gl, glTex, x, y, w, h) {
+TentaGL.PixelData.fromGLTexture = function(gl, glTex, x, y, w, h) {
   
   var fb = gl.createFramebuffer();
   gl.bindFramebuffer(GL_FRAMEBUFFER, fb);
@@ -200,17 +200,18 @@ TentaGL.PixelData.GLTexture = function(gl, glTex, x, y, w, h) {
 };
 
 
+
 /** 
- * Extracts PixelData from an image at the specifed url. 
+ * Produces PixelData from an image at the specifed url. 
  * Due to the asynchronous behavior of loading images, a callback function
- * should be provided to use the resulting PixelData.
+ * must be provided to use the resulting PixelData.
  * @param {string} url
  * @param {function(data : TentaGL.PixelData) : undefined} callback   
  *      A callback for any post-processing of the PixelData for the image,  
- *      including application of RGBAFilters and loading it into Materials for 
- *      use in the GL context.
+ *      including application of RGBAFilters and loading it into a gl context's
+ *      MaterialLib.
  */
-TentaGL.PixelData.loadImage = function(url, callback) {
+TentaGL.PixelData.fromURL = function(url, callback) {
   TentaGL.ImageLoader.load(url, function(img) {
     // Produce a canvas that we can draw our image on and read pixels back from.
     var canvas = document.createElement("canvas");
@@ -220,7 +221,7 @@ TentaGL.PixelData.loadImage = function(url, callback) {
     
     // Extract the pixel data from the canvas with our image rendered to it,
     // then process it with our callback.
-    var result = TentaGL.PixelData.Canvas(canvas);
+    var result = TentaGL.PixelData.fromCanvas(canvas);
     callback(result);
   });
 };
@@ -228,11 +229,11 @@ TentaGL.PixelData.loadImage = function(url, callback) {
 
 
 /** 
- * Extracts PixelData from a Canvas element. 
+ * Produces PixelData from a Canvas element. 
  * @param {Canvas} canvas
  * @return {TentaGL.PixelData}
  */
-TentaGL.PixelData.Canvas = function(canvas) {
+TentaGL.PixelData.fromCanvas = function(canvas) {
 //  var container = document.getElementById("imgDebug");
 //  container.appendChild(canvas);
   

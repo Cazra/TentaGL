@@ -94,7 +94,7 @@ TentaGL.ShaderLib = {
     
     gl._shaderLibCurrentProgram = program;
     gl._shaderLibCurrentName = name;
-    TentaGL.MaterialLib.useNone();
+    TentaGL.MaterialLib.useNone(gl);
     
     return program;
   },

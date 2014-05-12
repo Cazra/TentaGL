@@ -37,10 +37,10 @@ TentaGL.MaterialLib = {
    * @param {WebGLRenderingContext} gl
    */
   clean:function(gl) {
-    for(var i in this._materials) {
-      this._materials[i].clean(gl);
+    for(var i in gl._materialLib) {
+      gl._materialLib[i].clean(gl);
     }
-    this._materials = {};
+    gl._materialLib = {};
   },
   
   
@@ -53,11 +53,12 @@ TentaGL.MaterialLib = {
   /** 
    * Retrieves a Material by name. An Error is thrown if the material doesn't 
    * exist in the library. 
+   * @param {WebGLRenderingContext} gl
    * @param {string} name
    * @return {TentaGL.Material}
    */
-  get:function(name) {
-    var material = this._materials[name];
+  get:function(gl, name) {
+    var material = gl._materialLib[name];
     if(material === undefined) {
       throw Error("Material " + name + " doesn't exist.");
     }
@@ -68,11 +69,12 @@ TentaGL.MaterialLib = {
   
   /** 
    * Returns true iff this library contains a Material with the specified name. 
+   * @param {WebGLRenderingContext} gl
    * @param {string} name
    * @return {Boolean}
    */
-  has:function(name) {
-    return (this._materials[name] !== undefined);
+  has:function(gl, name) {
+    return (gl._materialLib[name] !== undefined);
   },
   
   
@@ -82,15 +84,15 @@ TentaGL.MaterialLib = {
    * @param {TentaGL.Material} material
    * @return {TentaGL.Material} The material added to the library.
    */
-  add:function(name, material) {
-    if(this._materials[name] !== undefined) {
+  add:function(gl, name, material) {
+    if(gl._materialLib[name] !== undefined) {
       throw Error("Material " + name + " already exists.");
     }
-    if(!TentaGL.Inheritance.objImplements(material, TentaGL.Material)) {
+    if(!material.isaMaterial) {
       throw Error("Object for " + name + " isn't a material!");
     }
     
-    this._materials[name] = material;
+    gl._materialLib[name] = material;
     console.log("Added material " + name);
     
     return material;
@@ -103,13 +105,13 @@ TentaGL.MaterialLib = {
    * @param {string} name
    */
   remove:function(gl, name) {
-    var material = this._materials[name];
+    var material = gl._materialLib[name];
     if(material === undefined) {
       throw Error("Material " + name + " doesn't exist.");
     }
     
     material.clean(gl);
-    delete this._materials[name];
+    delete gl._materialLib[name];
   },
   
   
@@ -119,37 +121,24 @@ TentaGL.MaterialLib = {
    * @param {string} name
    */
   use:function(gl, name) {
-    if(this._currentName === name) {
+    if(gl._materialLibCurrentName === name) {
       return;
     }
     
-    var material = this._materials[name];
+    var material = gl._materialLib[name];
     if(material === undefined) {
       throw Error("Material " + name + " doesn't exist.");
     }
     
     material.useMe(gl);
-    this._currentName = name;
+    gl._materialLibCurrentName = name;
   },
   
   
   /** Sets the library to not currently be using a material. */
-  useNone:function() {
-    this._currentName = undefined;
+  useNone:function(gl) {
+    gl._materialLibCurrentName = undefined;
   },
-  
-  
-  
-  /** Returns true iff all the Materials in the library are loaded. */
-  allLoaded:function() {
-    for(var name in this._materials) {
-      if(!this._materials[name].isLoaded()) {
-        return false;
-      }
-    }
-    return true;
-  }
-  
   
 };
 

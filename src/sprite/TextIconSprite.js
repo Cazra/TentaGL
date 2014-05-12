@@ -213,13 +213,13 @@ TentaGL.TextIconSprite.prototype = {
   update:function(gl) {
     // Create the GL texture for this sprite if it hasn't already been created. 
     if(!this._texCreated) {
-      TentaGL.MaterialLib.add(this.getTextureName(), new TentaGL.Texture(gl));
+      TentaGL.MaterialLib.add(gl, this.getTextureName(), new TentaGL.Texture(gl));
       this._texCreated = true;
     }
     
     // Render the text to a canvas and extract the PixelData. Then use a filter
     // to get rid of edge alpha colors.
-    var textIconPixelData = TentaGL.PixelData.Canvas(TentaGL.Canvas2D.createString(this._text, this._font, this._color));
+    var textIconPixelData = TentaGL.PixelData.fromCanvas(TentaGL.Canvas2D.createString(this._text, this._font, this._color));
     textIconPixelData = textIconPixelData.filter(new TentaGL.RGBAFilter.OneColor(this._color, this._tolerance));
     
     // Apply any filters to the canvas text.
@@ -230,7 +230,7 @@ TentaGL.TextIconSprite.prototype = {
     }
     
     // Update the GL texture with our updated PixelData.
-    this.getTexture().setPixelData(gl, textIconPixelData);
+    this.getTexture(gl).setPixelData(gl, textIconPixelData);
     this._needsUpdate = false;
   },
   

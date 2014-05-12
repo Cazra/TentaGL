@@ -33,7 +33,6 @@ TentaGL.Texture = function(gl) {
     this._tex = TentaGL.createTexture(gl);
     this._width = 1;
     this._height = 1;
-    this._loaded = false;
 };
 
 
@@ -57,9 +56,8 @@ TentaGL.Texture.prototype = {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
     this._width = width;
     this._height = height;
-    this._loaded = true;
     
-    TentaGL.MaterialLib.useNone();
+    TentaGL.MaterialLib.useNone(gl);
   },
   
   
@@ -78,14 +76,6 @@ TentaGL.Texture.prototype = {
    */
   getLocation:function() {
     return this._tex;
-  },
-  
-  /** 
-   * Returns true iff the resource for this texture has finished loading.
-   * @return {Boolean}
-   */
-  isLoaded:function() {
-    return this._loaded;
   },
   
   
@@ -227,17 +217,7 @@ TentaGL.Texture.prototype = {
     w = w || this._width - x;
     h = h || this._height - y;
     
-    var fb = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._tex, 0);
-    
-    var data = new Uint8Array(w*h*4);
-    gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, data);
-    
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.deleteFramebuffer(fb);
-    
-    return new TentaGL.PixelData(data, w, h);
+    return TentaGL.PixelData.fromGLTexture(gl, this._tex, x, y, w, h);
   },
   
   
@@ -261,15 +241,28 @@ TentaGL.Inheritance.inherit(TentaGL.Texture, TentaGL.Material);
 
 
 /** 
- * Returns a new Texture constructed from an image. 
+ * Returns a new Texture constructed from an image at a specified URL. 
  * @param {WebGLRenderingContext} gl
- * @param {string} imagePath  The filepath to the image.
+ * @param {string} url  The filepath to the image.
+ * @param {function(data: PixelData) : PixelData} processCB    Optional. A 
+ *      callback function for doing any post-processing on the image's pixel
+ *      data BEFORE it is loaded into the texture. The resulting PixelData
+ *      should be returned in the callback.
+ * @param {function(tex: TentaGL.Texture) : undefined} texStateCB   Optional. 
+ *      A callback function for setting up any gl properties for the texture 
+ *      AFTER its pixel data has been loaded.
  * @return {TentaGL.Texture}
  */
-TentaGL.Texture.Image = function(gl, imagePath) {  
+TentaGL.Texture.fromURL = function(gl, url, pixelsCB, texStateCB) {  
   var result = new TentaGL.Texture(gl);
-  TentaGL.PixelData.loadImage(imagePath, function(pixelData) {
+  TentaGL.PixelData.fromURL(url, function(pixelData) {
+    if(pixelsCB) {
+      pixelData = pixelsCB(pixelData);
+    }
     result.setPixelData(gl, pixelData);
+    if(texStateCB) {
+      texStateCB(result);
+    }
   });
   return result;
 };
@@ -278,12 +271,19 @@ TentaGL.Texture.Image = function(gl, imagePath) {
 /** 
  * Returns a new Texture constructed from a Canvas element. 
  * @param {WebGLRenderingContext} gl
- * @param {string} imagePath  The filepath to the image.
+ * @param {Canvas} canvas
+ * @param {function(data: PixelData) : PixelData} processCB    Optional. A 
+ *      callback function for doing any post-processing on the canvas's pixel
+ *      data BEFORE it is loaded into the texture. The resulting PixelData
+ *      should be returned in the callback.
+ * @param {function(tex: TentaGL.Texture) : undefined} texStateCB   Optional. 
+ *      A callback function for setting up any gl properties for the texture 
+ *      AFTER its pixel data has been loaded.
  * @return {TentaGL.Texture}
  */
-TentaGL.Texture.Canvas = function(gl, canvas) {
-  var pixelData = TentaGL.PixelData.Canvas(canvas);
-  return TentaGL.Texture.PixelData(gl, pixelData);
+TentaGL.Texture.fromCanvas = function(gl, canvas, pixelsCB, texStateCB) {
+  var pixelData = TentaGL.PixelData.fromCanvas(canvas);
+  return TentaGL.Texture.fromPixelData(gl, pixelData, pixelsCB, texStateCB);
 };
 
 
@@ -292,11 +292,26 @@ TentaGL.Texture.Canvas = function(gl, canvas) {
  * Returns a new Texture constructed from a PixelData object.
  * @param {WebGLRenderingContext} gl
  * @param {TentaGL.PixelData} pixelData
+ * @param {function(data: PixelData) : PixelData} processCB    Optional. 
+ *      A callback function for doing any post-processing on the pixel
+ *      data BEFORE it is loaded into the texture. The resulting PixelData
+ *      should be returned in the callback.
+ * @param {function(tex: TentaGL.Texture) : undefined} texStateCB   Optional. 
+ *      A callback function for setting up any gl properties for the texture 
+ *      AFTER its pixel data has been loaded.
  * @return {TentaGL.Texture}
  */
-TentaGL.Texture.PixelData = function(gl, pixelData) {
+TentaGL.Texture.fromPixelData = function(gl, pixelData, pixelsCB, texStateCB) {
+  if(pixelsCB) {
+    pixelData = pixelsCB(pixelData);
+  }
+  
   var result = new TentaGL.Texture(gl);
   result.setPixelData(gl, pixelData);
+  
+  if(texStateCB) {
+    texStateCB(result);
+  }
   return result;
 };
 
