@@ -31,6 +31,7 @@
  */
 TentaGL.Picker = function(app) {
   this._app = app;
+  this._bytes = new Uint8Array(4);
 };
 
 
@@ -80,11 +81,19 @@ TentaGL.Picker.prototype = {
       this._nextID = 1;
     }
     
+    // Update the size of the buffer used for picking, if necessary.
+    var w = this._app.getWidth();
+    var h = this._app.getHeight();
+    var minSize = w*h*4;
+    if(minSize > this._bytes.length) {
+      this._bytes = new Uint8Array(minSize);
+    }
+    
     // Render to the offscreen raster, cache the pixel data, 
     // and then delete the offscreen raster.
-    var raster = new TentaGL.BufferTexture(gl, this._app.getWidth(), this._app.getHeight());
+    var raster = new TentaGL.BufferTexture(gl, w, h);
     raster.renderToMe(gl, renderFunc);
-    this._pixels = raster.getPixelData(gl);
+    this._pixels = raster.getPixelData(gl, 0, 0, w, h, this._bytes);
     raster.clean(gl);
     
     

@@ -32,11 +32,12 @@
  * @param {WebGLRenderingContext} gl
  * @param {int} width   The desired width of the texture.
  * @param {int} height  The desired height of the texture.
+ * @param {TentaGL.Color} clearColor    Optional. The clear color for the buffer.
  */
 TentaGL.BufferTexture = function(gl, width, height, clearColor) {
   this._width = width;
   this._height = height;
-  this._clearColor = clearColor || [0, 0, 0, 1];
+  this._clearColor = clearColor || TentaGL.Color.RGBA(0, 0, 0, 0);
   
   // Create the frame buffer.
   this._frameBuffer = gl.createFramebuffer();
@@ -89,9 +90,7 @@ TentaGL.BufferTexture.prototype = {
     
     gl.bindFramebuffer(GL_FRAMEBUFFER, this._frameBuffer);
     TentaGL.Viewport.set(gl, [0, 0, this._width, this._height]);
-    
-    gl.clearColor(this._clearColor[0], this._clearColor[1], this._clearColor[2], this._clearColor[3]);
-    gl.clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    TentaGL.clear(gl, this._clearColor);
     renderFunc(gl);
     
     gl.bindFramebuffer(GL_FRAMEBUFFER, null);
@@ -111,31 +110,17 @@ TentaGL.BufferTexture.prototype = {
    *      Defaults to the width of this texture.
    * @param {int} h Optional. The height of the area containing the pixel data.
    *      Defaults to the height of this texture.
+   * @param {Uint8Array} bytes      Optional. A pre-allocated byte array to store 
+   *      the pixel data in. The size of this array should be at least 4*w*h. 
    * @return {TentaGL.PixelData}
    */
-  getPixelData:function(gl, x, y, w, h) {
+  getPixelData:function(gl, x, y, w, h, bytes) {
       x = x || 0;
       y = y || 0;
       w = w || this._width - x;
       h = h || this._height - y;
       
-      gl.bindFramebuffer(GL_FRAMEBUFFER, this._frameBuffer);
-      
-      var size = w*h*4;
-      try {
-        var data = new Uint8Array(size);
-        gl.readPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
-      
-        gl.bindFramebuffer(GL_FRAMEBUFFER, null);
-        return new TentaGL.PixelData(data, w, h);
-      }
-      catch(err) {
-        console.log(err, err.getStack());
-        console.log("data size: " + size);
-        
-        gl.bindFramebuffer(GL_FRAMEBUFFER, null);
-        return undefined;
-      }
+      return TentaGL.PixelData.fromGLTexture(gl, this._tex, x, y, w, h, bytes);
   },
   
   

@@ -209,15 +209,17 @@ TentaGL.Texture.prototype = {
    * @param {int} y   Optional. Default 0.
    * @param {int} w   Optional. Defaults to the width of the texture - x.
    * @param {int} h   Optional. Defaults to the height of the texture - y.
+   * @param {Uint8Array} bytes      Optional. A pre-allocated byte array to store 
+   *      the pixel data in. The size of this array should be at least 4*w*h. 
    * @return {TentaGL.PixelData}
    */
-  getPixelData:function(gl, x, y, w, h) {
+  getPixelData:function(gl, x, y, w, h, bytes) {
     x = x || 0;
     y = y || 0;
     w = w || this._width - x;
     h = h || this._height - y;
     
-    return TentaGL.PixelData.fromGLTexture(gl, this._tex, x, y, w, h);
+    return TentaGL.PixelData.fromGLTexture(gl, this._tex, x, y, w, h, bytes);
   },
   
   

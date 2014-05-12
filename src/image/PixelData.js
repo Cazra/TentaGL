@@ -183,20 +183,24 @@ TentaGL.PixelData.prototype = {
  * @param {int} y
  * @param {int} w
  * @param {int} h
+ * @param {Uint8Array} bytes      Optional. A pre-allocated byte array to store 
+ *      the pixel data in. The size of this array should be at least 4*w*h. 
  */
-TentaGL.PixelData.fromGLTexture = function(gl, glTex, x, y, w, h) {
+TentaGL.PixelData.fromGLTexture = function(gl, glTex, x, y, w, h, bytes) {
   
   var fb = gl.createFramebuffer();
   gl.bindFramebuffer(GL_FRAMEBUFFER, fb);
   gl.framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, glTex, 0);
   
-  var data = new Uint8Array(w*h*4);
-  gl.readPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  if(!bytes) {
+    bytes = new Uint8Array(w*h*4);
+  }
+  gl.readPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
   
   gl.bindFramebuffer(GL_FRAMEBUFFER, null);
   gl.deleteFramebuffer(fb);
   
-  return new TentaGL.PixelData(data, w, h);
+  return new TentaGL.PixelData(bytes, w, h);
 };
 
 
