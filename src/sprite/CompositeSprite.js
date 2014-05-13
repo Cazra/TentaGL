@@ -87,5 +87,5 @@ TentaGL.CompositeSprite.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.CompositeSprite, TentaGL.Sprite);
+Util.Inheritance.inherit(TentaGL.CompositeSprite, TentaGL.Sprite);
 

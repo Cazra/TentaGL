@@ -47,5 +47,5 @@ TentaGL.PickEvent.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.PickEvent, TentaGL.Event);
+Util.Inheritance.inherit(TentaGL.PickEvent, TentaGL.Event);
 

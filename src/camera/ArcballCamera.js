@@ -305,7 +305,7 @@ TentaGL.ArcballCamera.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.ArcballCamera, TentaGL.Camera3D);
+Util.Inheritance.inherit(TentaGL.ArcballCamera, TentaGL.Camera3D);
 
 
 

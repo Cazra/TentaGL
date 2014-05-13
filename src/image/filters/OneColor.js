@@ -88,6 +88,6 @@ TentaGL.RGBAFilter.OneColor.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.OneColor, TentaGL.RGBAFilter);
+Util.Inheritance.inherit(TentaGL.RGBAFilter.OneColor, TentaGL.RGBAFilter);
 
 

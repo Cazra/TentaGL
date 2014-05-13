@@ -1033,6 +1033,6 @@ TentaGL.SceneNode.filter = function(node) {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.SceneNode, TentaGL.Renderable);
+Util.Inheritance.inherit(TentaGL.SceneNode, TentaGL.Renderable);
 
 

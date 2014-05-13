@@ -117,7 +117,7 @@ TentaGL.Attribute.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.Attribute, TentaGL.ShaderVar);
+Util.Inheritance.inherit(TentaGL.Attribute, TentaGL.ShaderVar);
 
 
 

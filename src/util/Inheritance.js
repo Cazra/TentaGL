@@ -23,43 +23,17 @@
 */
 
 
+// Construct the Util namespace if it doesn't exist.
+var Util;
+if(!Util) {
+  Util = {};
+}
+
+
 /** 
- * Utility object for mimicking and testing for type inheritance.
- * TentaGL uses this inheritance code, but you are by no means forced to use it
- * in your own application code. 
+ * Utility object for implementing type inheritance.
  */
-TentaGL.Inheritance = {
-  
-  /** 
-   * Tests if an object implements an interface. 
-   * This returns true iff for each method in the interface, the object
-   * implements that method and accepts a number of arguments for that method
-   * equal to at least the number of arguments expected by that method in the 
-   * interface.
-   * @param {Object} obj
-   * @param {Object} interface  Some singleton object with only method fields. 
-   *      This object defines what methods are expected from objects 
-   *      implementing the interface.
-   * @return {Boolean}
-   */
-  objImplements:function(obj, intf) {
-    for(var i in intf) {
-      if(!obj[i] || obj[i].length === undefined) {
-        console.log(i + " not present.");
-        console.log(obj);
-        return false;
-      }
-      
-      if(obj[i].length < intf[i].length) {
-        console.log("Has " + obj[i].length + " arguments, expected " + intf[i].length);
-        console.log(obj);
-        return false;
-      }
-      
-    }
-    return true;
-  },
-  
+Util.Inheritance = {
   
   /**
    * Makes an object type's prototype inherit the fields of a parent type's 

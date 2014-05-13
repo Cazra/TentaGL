@@ -77,6 +77,6 @@ TentaGL.RGBAFilter.AddColor.RGBBytes = function(r, g, b) {
 
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.AddColor, TentaGL.RGBAFilter);
+Util.Inheritance.inherit(TentaGL.RGBAFilter.AddColor, TentaGL.RGBAFilter);
 
 

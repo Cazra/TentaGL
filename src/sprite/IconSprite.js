@@ -219,4 +219,4 @@ TentaGL.IconSprite.prototype = {
 
 
 
-TentaGL.Inheritance.inherit(TentaGL.IconSprite, TentaGL.BillboardSprite);
+Util.Inheritance.inherit(TentaGL.IconSprite, TentaGL.BillboardSprite);

@@ -325,7 +325,7 @@ HelloWorldApp.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(HelloWorldApp, TentaGL.Application);
+Util.Inheritance.inherit(HelloWorldApp, TentaGL.Application);
 
 
 /** 

@@ -71,7 +71,7 @@ TentaGL.Uniform.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.Uniform, TentaGL.ShaderVar);
+Util.Inheritance.inherit(TentaGL.Uniform, TentaGL.ShaderVar);
 
 
 

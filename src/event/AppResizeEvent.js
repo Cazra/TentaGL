@@ -80,5 +80,5 @@ TentaGL.AppResizeEvent.prototype = {
   }
 };
 
-TentaGL.Inheritance.inherit(TentaGL.AppResizeEvent, TentaGL.Event);
+Util.Inheritance.inherit(TentaGL.AppResizeEvent, TentaGL.Event);
 

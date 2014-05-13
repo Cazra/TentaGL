@@ -214,5 +214,5 @@ TentaGL.SceneGroup.prototype = {
   }
 };
 
-TentaGL.Inheritance.inherit(TentaGL.SceneGroup, TentaGL.SceneNode);
+Util.Inheritance.inherit(TentaGL.SceneGroup, TentaGL.SceneNode);
 

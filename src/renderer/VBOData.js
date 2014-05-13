@@ -50,7 +50,7 @@ TentaGL.VBOData = function(gl, model, attrProfileSet) {
       var attr = attrProfileSet[j];
       var values = attr.getValues(vertex);
       
-    //  console.log("  " + attr.id() + " : " + TentaGL.Debug.arrayString(values));
+    //  console.log("  " + attr.id() + " : " + Util.Debug.arrayString(values));
       
       this._byteOffsets[j] = offset;
       offset += attr.sizeBytes();

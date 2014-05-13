@@ -214,6 +214,6 @@ TentaGL.LabelledIconSprite.prototype = {
   },
 };
 
-TentaGL.Inheritance.inherit(TentaGL.LabelledIconSprite, TentaGL.CompositeSprite);
-TentaGL.Inheritance.inherit(TentaGL.LabelledIconSprite, TentaGL.PickEventListener);
+Util.Inheritance.inherit(TentaGL.LabelledIconSprite, TentaGL.CompositeSprite);
+Util.Inheritance.inherit(TentaGL.LabelledIconSprite, TentaGL.PickEventListener);
 

@@ -82,6 +82,6 @@ TentaGL.RGBAFilter.TransparentColor.RGBBytes = function(r, g, b) {
 
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.TransparentColor, TentaGL.RGBAFilter);
+Util.Inheritance.inherit(TentaGL.RGBAFilter.TransparentColor, TentaGL.RGBAFilter);
 
 

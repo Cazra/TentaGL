@@ -68,6 +68,6 @@ TentaGL.RGBAFilter.MaskMap.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.RGBAFilter.MaskMap, TentaGL.RGBAFilter);
+Util.Inheritance.inherit(TentaGL.RGBAFilter.MaskMap, TentaGL.RGBAFilter);
 
 

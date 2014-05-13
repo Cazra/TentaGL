@@ -354,7 +354,7 @@ TentaGL.Color.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.Color, TentaGL.Material);
+Util.Inheritance.inherit(TentaGL.Color, TentaGL.Material);
 
 
 

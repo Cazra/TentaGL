@@ -23,14 +23,19 @@
 */
 
 
+// Construct the Util namespace if it doesn't exist.
+var Util;
+if(!Util) {
+  Util = {};
+}
+
+
 /** 
  * This utility object contains a bunch of helpful debugging methods.
  */
- 
- 
- TentaGL.Debug = {
+Util.Debug = {
   
-  /** Returns a string representation of an array. */
+  /** Returns a string representation of an array or typed array. */
   arrayString:function(array) {
     var result = "[";
     var first = true;

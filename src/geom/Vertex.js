@@ -267,7 +267,7 @@ TentaGL.Vertex.prototype = {
    */
   transform:function(transform) {
   //  console.log("transform vertex!");
-  //  console.log("  transform: " + TentaGL.Debug.arrayString(transform));
+  //  console.log("  transform: " + Util.Debug.arrayString(transform));
   //  console.log("  old XYZ: " + this.getX() + ", " + this.getY() + ", " + this.getZ());
     
     var xyz = vec4.transformMat4(vec4.create(), this.getXYZ(), transform);

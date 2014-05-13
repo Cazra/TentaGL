@@ -459,4 +459,4 @@ TentaGL.Camera3D.prototype = {
 };
 
 
-TentaGL.Inheritance.inherit(TentaGL.Camera3D, TentaGL.Camera);
+Util.Inheritance.inherit(TentaGL.Camera3D, TentaGL.Camera);
