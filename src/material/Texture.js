@@ -275,8 +275,8 @@ TentaGL.Texture.create = function(gl, data, width, height) {
  * Returns a new Texture constructed from an image at a specified URL. 
  * @param {WebGLRenderingContext} gl
  * @param {string} url  The filepath to the image.
- * @param {function(data: PixelData) : PixelData} processCB    Optional. A 
- *      callback function for doing any post-processing on the image's pixel
+ * @param {function(data: PixelData) : PixelData} pixelsCB    Optional. A 
+ *      callback function for doing any processing on the image's pixel
  *      data BEFORE it is loaded into the texture. The resulting PixelData
  *      should be returned in the callback.
  * @param {function(tex: TentaGL.Texture) : undefined} texStateCB   Optional. 
@@ -304,7 +304,7 @@ TentaGL.Texture.fromURL = function(gl, url, pixelsCB, texStateCB) {
  * @param {WebGLRenderingContext} gl
  * @param {Canvas} canvas
  * @param {function(data: PixelData) : PixelData} processCB    Optional. A 
- *      callback function for doing any post-processing on the canvas's pixel
+ *      callback function for doing any processing on the canvas's pixel
  *      data BEFORE it is loaded into the texture. The resulting PixelData
  *      should be returned in the callback.
  * @param {function(tex: TentaGL.Texture) : undefined} texStateCB   Optional. 
@@ -323,8 +323,8 @@ TentaGL.Texture.fromCanvas = function(gl, canvas, pixelsCB, texStateCB) {
  * Returns a new Texture constructed from a PixelData object.
  * @param {WebGLRenderingContext} gl
  * @param {TentaGL.PixelData} pixelData
- * @param {function(data: PixelData) : PixelData} processCB    Optional. 
- *      A callback function for doing any post-processing on the pixel
+ * @param {function(data: PixelData) : PixelData} pixelsCB    Optional. 
+ *      A callback function for doing any processing on the pixel
  *      data BEFORE it is loaded into the texture. The resulting PixelData
  *      should be returned in the callback.
  * @param {function(tex: TentaGL.Texture) : undefined} texStateCB   Optional. 
@@ -346,4 +346,22 @@ TentaGL.Texture.fromPixelData = function(gl, pixelData, pixelsCB, texStateCB) {
   return result;
 };
 
+
+/** 
+ * Creates an 8x8 texture of a solid color.
+ * @param {WebGLRenderingContext} gl
+ * @param {TentaGL.Color} color
+ * @param {function(data: PixelData) : PixelData} pixelsCB    Optional. 
+ *      A callback function for doing any processing on the pixel
+ *      data BEFORE it is loaded into the texture. The resulting PixelData
+ *      should be returned in the callback.
+ * @param {function(tex: TentaGL.Texture) : undefined} texStateCB   Optional. 
+ *      A callback function for setting up any gl properties for the texture 
+ *      AFTER its pixel data has been loaded.
+ * @return {TentaGL.Texture}
+ */
+TentaGL.Texture.fromColor = function(gl, color, pixelsCB, texStateCB) {
+  var canvas = TentaGL.Canvas2D.createRect(8, 8, false, 0, color);
+  return TentaGL.Texture.fromCanvas(gl, canvas, pixelsCB, texStateCB);
+};
 
