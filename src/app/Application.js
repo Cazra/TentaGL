@@ -61,7 +61,7 @@ TentaGL.Application.prototype = {
     this.run(0);
   },
   
-  /** Initializes the application's shaders, materials, and models. */
+  /** Cleans and initializes the application's shaders, materials, and models. */
   initResources:function() {
     var gl = this.getGL();
     
@@ -84,17 +84,11 @@ TentaGL.Application.prototype = {
   run:function(timestamp) {
     this._isRunning = true;
     
-    // Check to see if the application was scheduled to end or be hard reset.
-    if(this._endFlag) {
-      this._endFlag = false;
-      this._isRunning = false;
-      
-      if(this._hardResetFlag) {
-        this._hardResetFlag = false;
-        this.start();
-      }
+    // Check for any scheduled conditions that would exit the update loop.
+    if(this._tryEndApp() || this._tryResetApp() || this.isPaused()) {
       return;
     }
+    
     
     // Initialize timing on the first frame.
     if(!this._lastTimestamp) {
@@ -129,6 +123,52 @@ TentaGL.Application.prototype = {
   },
   
   
+  /** 
+   * Checks if the application is scheduled to end. 
+   * @return {boolean} true iff it is scheduled to end.
+   */
+  _tryEndApp: function() {
+    if(this._endFlag) {
+      console.log("Ending application");
+      
+      this._endFlag = false;
+      this._isRunning = false;
+      
+      return true;
+    }
+    else {
+      return false;
+    }
+  },
+  
+  /** 
+   * Checks if the application is scheduled to hard-reset. 
+   * @return {boolean} true iff it is scheduled to hard-reset.
+   */
+  _tryResetApp: function() {
+    if(this._hardResetFlag) {
+      console.log("Reseting application");
+      
+      this._hardResetFlag = false;
+      this.start();
+      
+      return true;
+    }
+    else {
+      return false;
+    }
+  },
+  
+  /** 
+   * Checks if the application is hard-paused.
+   * @return {boolean} true iff it is hard-paused.
+   */
+  isPaused: function() {
+    return this._isPaused;
+  },
+  
+  
+  
   /** Returns true if the application is currently running. */
   isRunning:function() {
     return this._isRunning;
@@ -148,10 +188,28 @@ TentaGL.Application.prototype = {
    * Schedules this application to end and then restart at the start of the next frame.
    */
   hardReset:function() {
-    this.end();
     this._hardResetFlag = true;
   },
   
+  
+  /** 
+   * Sets whether the application is hard-paused. While the application is 
+   * hard-paused, it will not execute any iterations of the update loop until 
+   * it is unpaused.
+   * @param {boolean} paused
+   */
+  setPaused:function(paused) {
+    if(paused) {
+      this._isPaused = true;
+    }
+    else if(this._isPaused) {
+      this._isPaused = false;
+      
+      if(this._isRunning) {
+        this.run(0);
+      }
+    }
+  },
   
   //////// DOM and context
   
