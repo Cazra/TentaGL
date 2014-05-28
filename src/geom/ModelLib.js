@@ -45,6 +45,11 @@ TentaGL.ModelLib = {
    * common models:
    * "unitPlane" - a 1x1 square whose lower-left corner is at (0,0,0) and whose
    *               upper-right corner is at (1,1,0).
+   * "unitLine" - a line extending from (0,0,0) to (1,1,1).
+   * "unitCube" - a 1x1x1 cube whose origin is in its lower-left-back corner.
+   * "unitSphere" - an approximated sphere with a radius of 1.
+   * "unitSprite" - a unitPlane whose T texture axis is inverted. Intended for
+   *                drawing images in 2D mode so that they won't appear upside-down.
    */
   reset:function(gl) {
     this.clean(gl);
@@ -52,6 +57,7 @@ TentaGL.ModelLib = {
     this.add(gl, "unitLine", new TentaGL.Model.Line([0,0,0], [1,1,1]));
     this.add(gl, "unitCube", new TentaGL.Model.Cube(1,1,1));
     this.add(gl, "unitSphere", new TentaGL.Model.Sphere(1));
+    this.add(gl, "unitSprite", (new TentaGL.Model.Plane(1,1)).flipTexT());
   },
   
   

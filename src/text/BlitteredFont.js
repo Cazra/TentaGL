@@ -34,11 +34,18 @@
  * @param {uint} charW            The width of each character image in the sprite map.
  * @param {uint} charH            The height of each character image in the sprite map.
  */
-TentaGL.BlitteredFont = function(pixelData, monospaced, charW, charH) {
+TentaGL.BlitteredFont = function(pixelData, monospaced, charW, charH, hPad, vPad) {
   this._createChars(pixelData, monospaced, charW, charH);
   
-  this._hPad = 1;
-  this._vPad = 1;
+  if(hPad === undefined) {
+    hPad = 1;
+  }
+  if(vPad === undefined) {
+    vPad = 1;
+  }
+  
+  this._hPad = hPad;
+  this._vPad = vPad;
   
   this._texIDPrefix = "bfont" + TentaGL.BlitteredFont._count + ":";
   TentaGL.BlitteredFont._count++;
@@ -67,6 +74,10 @@ TentaGL.BlitteredFont.prototype = {
   
   /** 
    * Creates the pixel data for each of the characters in this blittered font.
+   * @param {TentaGL.PixelData} pixelData   The pixel data for the font map image.
+   * @param {boolean} monospaced    Whether the blittered font is monospaced.
+   * @param {uint} charW            The width of a single character image in the font map.
+   * @param {uint} charH            The height of a single character image in the font map.
    */
   _createChars: function(pixelData, monospaced, charW, charH) {
     this._charPixData = {};
@@ -134,6 +145,65 @@ TentaGL.BlitteredFont.prototype = {
     }
   },
   
+  
+  /** 
+   * Returns whether the blittered font is monospaced.
+   * @return {boolean}
+   */
+  isMonospaced: function() {
+    return this._monospaced;
+  },
+  
+  
+  /** 
+   * Returns the height, in pixels, of a single line of text rendered with 
+   * the blittered font. 
+   * @return {uint}
+   */
+  getLineHeight: function() {
+    return this._charH;
+  },
+  
+  
+  /**  
+   * Returns the PixelData for a particular character in the blittered font.
+   * @param {string} ch   The character.
+   * @return {TentaGL.PixelData}
+   */
+  getCharPixelData: function(ch) {
+    return this._charPixData[ch];
+  },
+  
+  
+  /** 
+   * Returns the width, in pixels, of a particular character in the blittered font.
+   * For a monospaced font, this returns the same value for all characters.
+   * @param {string} ch   The character.
+   * @return {uint}
+   */
+  getCharWidth: function(ch) {
+    return this._charWidths[cd];
+  },
+  
+  
+  /** 
+   * Returns the horizontal padding between characters for this blittered font, 
+   * in pixels.
+   * @return {uint}
+   */
+  getHorizontalPadding: function() {
+    return this._padH;
+  },
+  
+  
+  /** 
+   * Returns the 
+   */
+  getVerticalPadding: function() {
+    return this._padV;
+  },
+  
+  
   /** 
    * Creates the textures for each character in the blittered font in the 
    * GL context. 
@@ -146,6 +216,77 @@ TentaGL.BlitteredFont.prototype = {
       var charTex = TentaGL.Texture.fromPixelData(gl, this._charPixData[c]);
       TentaGL.MaterialLib.add(gl, id, charTex);
     }
+  },
+  
+  
+  /** 
+   * Renders a string using the blittered font.
+   * @param {WebGLRenderingContext} gl
+   * @param {string} text     The text to be rendered.
+   * @param {boolean} yFlipped    Whether the y axis is flipped.  
+   *      If true, y increases down. Else, y increases up.
+   */
+  renderString: function(gl, text, yFlipped, charH) {
+    // If this is the MaterialLib doesn't have the textures loaded, load them.
+    if(!TentaGL.MaterialLib.has(gl, this._texIDPrefix + " ")) {
+      this._createTextures(gl);
+    }
+    
+    var h = this.getLineHeight();
+    var vPad = this.getVerticalPadding();
+    var hPad = this.getHorizontalPadding();
+    
+    TentaGL.ViewTrans.push(gl);
+    
+    // If charH was provided, uniformly scale the transform so that each 
+    // character's height will be charH.
+    if(charH) {
+      var s = charH/h;
+      TentaGL.ViewTrans.scale(gl, [s,s]);
+    }
+    
+    // Render the text line by line.
+    var lines = text.split("\n");
+    for(var i=0; i < lines.length; i++) {
+      var line = lines[i];
+      
+      TentaGL.ViewTrans.push(gl);
+      
+      // Render the line character by character.
+      for(var j=0; j < line.length; j++) {
+        var ch = line.charAt(j);
+        var texID = this._texIDPrefix + ch;
+        var w = this.getCharWidth(ch);
+        
+        TentaGL.MaterialLib.use(gl, texID);
+        
+        // Render the character.
+        TentaGL.ViewTrans.push(gl);
+        TentaGL.ViewTrans.scale(gl, [w,h]);
+        if(yFlipped) {
+          TentaGL.ModelLib.render(gl, "unitSprite");
+        }
+        else {
+          TentaGL.ModelLib.render(gl, "unitPlane");
+        }
+        TentaGL.ViewTrans.pop(gl);
+        
+        // Translate over to next character.
+        TentaGL.ViewTrans.translate(gl, [w + hPad, 0]);
+      }
+      
+      TentaGL.ViewTrans.pop(gl);
+      
+      // Translate down to next line.
+      if(yFlipped) {
+        TentaGL.ViewTrans.translate(gl, [0, h + vPad]);
+      }
+      else {
+        TentaGL.ViewTrans.translate(gl, [0, -(h + vPad)]);
+      }
+    }
+    
+    TentaGL.ViewTrans.pop(gl);
   }
   
 };

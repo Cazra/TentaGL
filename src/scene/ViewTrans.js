@@ -61,6 +61,57 @@ TentaGL.ViewTrans = {
   
   
   /** 
+   * Translates the model-view transform matrix. 
+   * This is equivalent to calling TentaGL.ViewTrans.mul(gl, T), 
+   * where T is a translation transform matrix.
+   * @param {WebGLRenderingContext} gl
+   * @param {vec3} xyz  The amount to translate along each axis.
+   */
+  translate: function(gl, xyz) {
+    if(!xyz[2]) {
+      xyz[2] = 0;
+    }
+    var trans = mat4.create();
+    mat4.translate(trans, trans, xyz);
+    
+    this.mul(gl, trans);
+  },
+  
+  
+  /** 
+   * Rotates the model-view transform matrix about an axis. 
+   * @param {WebGLRenderingContext} gl
+   * @param {vec3} axis   The axis to rotate around.
+   * @param {number} rads   The angle, in radians.
+   */
+  rotate: function(gl, axis, rads) {
+    var q = quat.create();
+    quat.setAxisAngle(q, axis, rads);
+    
+    var trans = mat4.create();
+    mat4.fromQuat(trans, q);
+    
+    this.mul(gl, trans);
+  },
+  
+  
+  /** 
+   * Scales the model-view transform matrix. 
+   * @param {WebGLRenderingContext} gl
+   * @param {vec3} xyz  The amount to scale along each axis.
+   */
+  scale: function(gl, xyz) {
+    if(!xyz[2]) {
+      xyz[2] = 1;
+    }
+    var trans = mat4.create();
+    mat4.scale(trans, trans, xyz);
+    
+    this.mul(gl, trans);
+  },
+  
+  
+  /** 
    * Multiplies the model-view transform matrix (M) by another matrix (T) so 
    * that the result is M = T x M.
    * @param {WebGLRenderingContext} gl
