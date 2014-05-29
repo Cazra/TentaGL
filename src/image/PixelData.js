@@ -170,7 +170,41 @@ TentaGL.PixelData.prototype = {
     }
     
     return new TentaGL.PixelData(data, w, h);
-  }
+  },
+  
+  
+  /** 
+   * Produces a canvas element from this pixel data. 
+   * @return {canvas element}
+   */
+  toCanvas: function() {
+    var canvas = document.createElement("canvas");
+    var w = canvas.width = this.getWidth();
+    var h = canvas.height = this.getHeight();
+    
+    var ctx = canvas.getContext("2d");
+    var imgData = ctx.createImageData(w,h);
+    
+    for(var si=0; si < this._pixels.length; si+=4) {
+      var xy = TentaGL.PixelData.indexToXY(si, w);
+      var x = xy[0];
+      var y = h-xy[1]-1;
+      
+      var di = TentaGL.PixelData.xyToIndex(x, y, w);
+      
+      imgData.data[di] = this._pixels[si];
+      imgData.data[di+1] = this._pixels[si + 1];
+      imgData.data[di+2] = this._pixels[si + 2];
+      imgData.data[di+3] = this._pixels[si + 3];
+    }
+    
+    ctx.putImageData(imgData, 0, 0);
+    
+    var container = document.getElementById("imgDebug");
+    container.appendChild(canvas);
+    
+    return canvas;
+  },
 };
 
 
@@ -237,9 +271,8 @@ TentaGL.PixelData.fromURL = function(url, callback) {
  * @return {TentaGL.PixelData}
  */
 TentaGL.PixelData.fromCanvas = function(canvas) {
-//  var container = document.getElementById("imgDebug");
-//  container.appendChild(canvas);
-  
+  var container = document.getElementById("imgDebug");
+  container.appendChild(canvas);
   
   var width = canvas.width;
   var height = canvas.height;

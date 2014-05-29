@@ -85,6 +85,7 @@ HelloWorldApp.prototype = {
   /** Overrides TentaGL.Application.initMaterials */
   initMaterials:function() {
     var gl = this.getGL();
+    var self = this;
 
     TentaGL.MaterialLib.add(gl, "myColor", TentaGL.Color.RGBA(1, 0, 0, 1));
     
@@ -159,6 +160,14 @@ HelloWorldApp.prototype = {
       tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
       TentaGL.MaterialLib.add(gl, "black", tex);
     }
+    
+    
+    // blittered font: Final Fontasy
+    var fontMapPixels = TentaGL.PixelData.fromURL("../../images/finalFontasy.png", function(pixels) {
+      pixels = pixels.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,0,255));
+      
+      self.blitFont = new TentaGL.BlitteredFont(pixels, false, 10, 10, 1, 1);
+    });
   },
   
   
@@ -228,6 +237,10 @@ HelloWorldApp.prototype = {
   
   /** Overrides TentaGL.Application.update */
   update:function() {
+    if(TentaGL.ImageLoader.isLoading()) {
+      console.log("Loading images...");
+      return;
+    }
     var gl = this.getGL();
     
     // Scene application code
@@ -315,6 +328,8 @@ HelloWorldApp.prototype = {
   //  TentaGL.DepthBuffer.clear(gl);
 
     // Draw the objects in the scene.
+    this.blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [0,100,0], true);
+    
     this.spriteGroup.render(gl, this.camera);
     this.axesGroup.render(gl);
     this.camGroup.render(gl);

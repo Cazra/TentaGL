@@ -87,20 +87,20 @@ TentaGL.BlitteredFont.prototype = {
     this._charW = charW;
     this._charH = charH;
     
-    for(var c = 32; i < 128; i++) {
+    for(var c = 32; c < 128; c++) {
       var i = (c-32)%16;
-      var j = (c-32)/16;
+      var j = Math.floor((c-32)/16);
       
       var x = 1 + i*(charW + 2);
-      var y = pixelData.getHeight() - (1 + j*(charH + 2)) - 1;
+      var y = pixelData.getHeight() - (1 + charH + j*(2 + charH));
       
       var charID = String.fromCharCode(c);
       var charPix = pixelData.crop(x, y, charW, charH);
       
       
-      if(monospaced && c != 32) {
+      if(!monospaced && c != 32) {
         var left = 0;
-        var right = charPix.getWidth();
+        var right = charPix.getWidth() - 1;
         
         // Find the left border.
         var leftFound = false;
@@ -135,12 +135,16 @@ TentaGL.BlitteredFont.prototype = {
         var w = right - left + 1;
         charPix = charPix.crop(left, 0, w, charH);
         
-        this._charWidths[charId] = w;
+        this._charWidths[charID] = w;
         this._charPixData[charID] = charPix;
+        
+        charPix.toCanvas();
       }
       else {
-        this._charWidths[charId] = charW;
+        this._charWidths[charID] = charW;
         this._charPixData[charID] = charPix;
+        
+        charPix.toCanvas();
       }
     }
   },
@@ -182,7 +186,7 @@ TentaGL.BlitteredFont.prototype = {
    * @return {uint}
    */
   getCharWidth: function(ch) {
-    return this._charWidths[cd];
+    return this._charWidths[ch];
   },
   
   
@@ -192,7 +196,7 @@ TentaGL.BlitteredFont.prototype = {
    * @return {uint}
    */
   getHorizontalPadding: function() {
-    return this._padH;
+    return this._hPad;
   },
   
   
@@ -200,7 +204,7 @@ TentaGL.BlitteredFont.prototype = {
    * Returns the 
    */
   getVerticalPadding: function() {
-    return this._padV;
+    return this._vPad;
   },
   
   
@@ -226,7 +230,7 @@ TentaGL.BlitteredFont.prototype = {
    * @param {boolean} yFlipped    Whether the y axis is flipped.  
    *      If true, y increases down. Else, y increases up.
    */
-  renderString: function(gl, text, yFlipped, charH) {
+  renderString: function(gl, text, xyz, yFlipped, charH) {
     // If this is the MaterialLib doesn't have the textures loaded, load them.
     if(!TentaGL.MaterialLib.has(gl, this._texIDPrefix + " ")) {
       this._createTextures(gl);
@@ -237,6 +241,8 @@ TentaGL.BlitteredFont.prototype = {
     var hPad = this.getHorizontalPadding();
     
     TentaGL.ViewTrans.push(gl);
+    
+    TentaGL.ViewTrans.translate(gl, xyz);
     
     // If charH was provided, uniformly scale the transform so that each 
     // character's height will be charH.
@@ -263,6 +269,7 @@ TentaGL.BlitteredFont.prototype = {
         // Render the character.
         TentaGL.ViewTrans.push(gl);
         TentaGL.ViewTrans.scale(gl, [w,h]);
+        TentaGL.ViewTrans.updateMVPUniforms(gl);
         if(yFlipped) {
           TentaGL.ModelLib.render(gl, "unitSprite");
         }
@@ -290,3 +297,5 @@ TentaGL.BlitteredFont.prototype = {
   }
   
 };
+
+

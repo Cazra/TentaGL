@@ -38,6 +38,7 @@ TentaGL.ImageLoader = {
    * @param {function : undefined} errorCB      Optional. Callback for when there is an error loading the image.
    */
   load: function(url, successCB, errorCB) {
+    var self = this;
     this._numLoading++;
     
     if(!errorCB) {
@@ -49,7 +50,7 @@ TentaGL.ImageLoader = {
     var image = new Image();
     image.onload = function() {
       successCB(image);
-      this._numLoading--;
+      self._numLoading--;
     };
     image.src = url;
   },
