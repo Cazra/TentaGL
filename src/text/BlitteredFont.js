@@ -33,9 +33,13 @@
  * @param {boolean} monospaced    Whether the font is monospaced.
  * @param {uint} charW            The width of each character image in the sprite map.
  * @param {uint} charH            The height of each character image in the sprite map.
+ * @param {int} hPad              The horizontal padding between rendered characters, in pixels.
+ * @param {int} vPad              The vertical padding between rendered characters, in pixels.
  */
 TentaGL.BlitteredFont = function(pixelData, monospaced, charW, charH, hPad, vPad) {
-  this._createChars(pixelData, monospaced, charW, charH);
+  if(pixelData) {
+    this._createChars(pixelData, monospaced, charW, charH);
+  }
   
   if(hPad === undefined) {
     hPad = 1;
@@ -231,6 +235,10 @@ TentaGL.BlitteredFont.prototype = {
    *      If true, y increases down. Else, y increases up.
    */
   renderString: function(gl, text, xyz, yFlipped, charH) {
+    if(!this._charPixData) {
+      return;
+    }
+    
     // If this is the MaterialLib doesn't have the textures loaded, load them.
     if(!TentaGL.MaterialLib.has(gl, this._texIDPrefix + " ")) {
       this._createTextures(gl);
@@ -298,4 +306,30 @@ TentaGL.BlitteredFont.prototype = {
   
 };
 
+
+/** 
+ * Produces a BlitteredFont from an fontmap image at some url. 
+ * @param {string} url
+ * @param {boolean} monospaced    Whether the font is monospaced.
+ * @param {uint} charW            The width of each character image in the sprite map.
+ * @param {uint} charH            The height of each character image in the sprite map.
+ * @param {int} hPad              The horizontal padding between rendered characters, in pixels.
+ * @param {int} vPad              The vertical padding between rendered characters, in pixels.
+ * @param {function(pixels: TentaGL.PixelData): TentaGL.PixelData} pixelsCB  
+ *      Optional. A callback function that manipulates the pixel data from the 
+ *      fontmap image before using it to create the data for the blittered font.
+ */
+TentaGL.BlitteredFont.fromURL = function(url, monospaced, charW, charH, hPad, vPad, pixelsCB) {
+  var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charW, charH, hPad, vPad);
+  
+  TentaGL.PixelData.fromURL(url, function(pixels) {
+    if(pixelsCB) {
+      pixels = pixelsCB(pixels);
+    }
+    
+    bFont._createChars(pixels, monospaced, charW, charH);
+  });
+  
+  return bFont;
+};
 

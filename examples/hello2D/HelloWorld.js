@@ -163,11 +163,12 @@ HelloWorldApp.prototype = {
     
     
     // blittered font: Final Fontasy
-    var fontMapPixels = TentaGL.PixelData.fromURL("../../images/finalFontasy.png", function(pixels) {
-      pixels = pixels.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,0,255));
-      
-      self.blitFont = new TentaGL.BlitteredFont(pixels, false, 10, 10, 1, 1);
-    });
+    this.blitFont = TentaGL.BlitteredFont.fromURL("../../images/finalFontasy.png", 
+      false, 10, 10, 1, 1, 
+      function(pixels) {
+        return pixels.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,0,255));
+      }
+    );
   },
   
   
