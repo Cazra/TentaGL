@@ -318,6 +318,7 @@ TentaGL.BlitteredFont.prototype = {
  * @param {function(pixels: TentaGL.PixelData): TentaGL.PixelData} pixelsCB  
  *      Optional. A callback function that manipulates the pixel data from the 
  *      fontmap image before using it to create the data for the blittered font.
+ * @return {TentaGL.BlitteredFont}
  */
 TentaGL.BlitteredFont.fromURL = function(url, monospaced, charW, charH, hPad, vPad, pixelsCB) {
   var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charW, charH, hPad, vPad);
@@ -329,6 +330,31 @@ TentaGL.BlitteredFont.fromURL = function(url, monospaced, charW, charH, hPad, vP
     
     bFont._createChars(pixels, monospaced, charW, charH);
   });
+  
+  return bFont;
+};
+
+
+
+/** 
+ * Produces a BlitteredFont from a Font with some Color.
+ * @param {TentaGL.Font} font
+ * @param {TentaGL.Color} color
+ * @param {function(pixels: TentaGL.PixelData): TentaGL.PixelData} pixelsCB  
+ *      Optional. A callback function that manipulates the pixel data from the 
+ *      fontmap image before using it to create the data for the blittered font.
+ * @return {TentaGL.BlitteredFont}
+ */
+TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
+  var monospaced = (font.getType() == "monospace");
+  var dimsEm = font.getStringDimensions("M");
+  var charW = dimsEm[0];
+  var charH = dimsEm[1];
+  
+  var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charW, charH, hPad, vPad);
+  
+  // TODO: Create a canvas for the fontmap and use the canvas's PixelData to 
+  // create the blittered font's data.
   
   return bFont;
 };

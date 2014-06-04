@@ -151,6 +151,8 @@ TentaGL.Font.prototype = {
   /** 
    * Returns the appoximate pixel dimensions of a string of text displayed 
    * with this font in a canvas 2D context. 
+   * @param {string} str
+   * @return {[width: uint, height: uint]}
    */
   getStringDimensions:function(str) {
     var canvas = document.createElement("canvas");
