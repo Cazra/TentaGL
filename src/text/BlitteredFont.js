@@ -227,17 +227,53 @@ TentaGL.BlitteredFont.prototype = {
   },
   
   
-  // TODO
-  getRenderedDimensions: function(text) {
-    if(!this._charPixData) {
+  /** 
+   * Returns the dimensions of a string rendered with this blittered font.
+   * @param {string} text
+   * @param {number} charH    Optional. If provided, the text will be uniformly 
+   *      scaled such that every character's height is charH units. If omitted, 
+   *      each character's height in units will be equal to the character pixel 
+   *      height for this blittered font.
+   * @return {[width: number, height: number]}
+   */
+  getStringDimensions: function(text, charH) {
+    if(!this._charWidths) {
       return [0, 0];
     }
     
-    var h = this.getLineHeight();
+    var width = 0;
+    var height = 0;
+    
+    var lineHeight = this.getLineHeight();
     var vPad = this.getVerticalPadding();
     var hPad = this.getHorizontalPadding();
     
+    var s = 1;
+    if(charH) {
+      s = charH/lineHeight;
+    }
     
+    var lines = text.split("\n");
+    for(var i=0; i < lines.length; i++) {
+      var line = lines[i];
+      
+      var lineWidth = 0;
+      
+      for(var j=0; j < line.length; j++) {
+        var ch = line.charAt(j);
+        var w = this.getCharWidth(ch);
+        
+        lineWidth += w + hPad;
+      }
+      
+      if(lineWidth > width) {
+        width = lineWidth;
+      }
+      
+      height += lineHeight + vPad;
+    }
+    
+    return [width, height];
   },
   
   
@@ -370,21 +406,15 @@ TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
   var charW = dimsEm[0];
   var charH = dimsEm[1];
   
-  console.log(dimsEm);
-  
   var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charW, charH, hPad, vPad);
   
   // Create a canvas for the fontmap.
-  
-  
   var bgColor;
   if(color.getRed() + color.getGreen() + color.getBlue() > 1.5) {
     bgColor = new TentaGL.Color.RGBA(0,0,0,1);
-    console.log("black bg");
   }
   else {
     bgColor = new TentaGL.Color.RGBA(1,1,1,1);
-    console.log("white bg");
   }
   
   var canvas = TentaGL.Canvas2D.create((charW + 2)*16, (charH + 2)*6, bgColor);
@@ -397,7 +427,6 @@ TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
     var y = 1 + j*(charH + 2);
     
     var charID = String.fromCharCode(c);
-    console.log(charID, x, y, charW, charH);
     
     var charCanvas = TentaGL.Canvas2D.create(charW, charH, bgColor);
     TentaGL.Canvas2D.drawString(charCanvas, charID, font, color, 0, 0);

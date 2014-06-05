@@ -24,19 +24,13 @@
 
 
 /** 
- * A sprite that displays a 2D icon floating in 3D space. It always faces  
- * the plane behind the camera, rather than at the camera eye like 
- * BillboardSprite does.
+ * An interface for a sprite that always faces the plane behind the camera, 
+ * rather than at the camera eye like BillboardSprite does.
  * @constructor
- * @param {vec4} xyz
- * @param {string} texName  The name of the texture in MaterialLib used by 
- *      this sprite.
+ * @param {vec3} xyz
  */
-TentaGL.IconSprite = function(xyz, texName) {
-  TentaGL.BillboardSprite.call(this, xyz);
-  this._texName = texName;
-  this._iconWidth = 1;
-  this._iconHeight = 1;
+TentaGL.IconSprite = function(xyz) {
+  TentaGL.Sprite.call(this, xyz);
 };
 
 
@@ -46,65 +40,26 @@ TentaGL.IconSprite.prototype = {
   
   isaIconSprite:true,
   
-  //////// Texture properties
+  
+  //////// Metrics
   
   /** 
-   * Returns the name of this icon's texture material. 
-   * @return {string}
+   * Returns icon's width. Override this.
+   * @return {number}
    */
-  getTextureName:function() {
-    return this._texName;
-  },
-  
-  
-  /** 
-   * Changes the texture material used by this icon to the one with the 
-   * specified name. 
-   * @param {string} name
-   */
-  setTextureName:function(name) {
-    this._texName = name;
-  },
-  
-  
-  /** 
-   * Returns this icon's texture material. 
-   * @return {TentaGL.Texture}
-   */
-  getTexture:function(gl) {
-    return TentaGL.MaterialLib.get(gl, this._texName);
-  },
-  
-  
-  /** 
-   * Returns the PixelData for the icon's texture material.
-   * @return {TentaGL.PixelData}
-   */
-  getPixelData:function(gl) {
-    return this.getTexture(gl).getPixelData();
-  },
-  
-  
-  //////// Texture dimensions
-  
-  /** 
-   * Returns the icon's pixel width. 
-   * @return {int}
-   */
-  getIconWidth:function() {
-    return this._iconWidth; // this.getTexture().getWidth();
-  },
+  getIconWidth:function() {},
   
   /**
-   * Returns the icon's pixel height.
-   * @return {int}
+   * Returns icon's height. Override this.
+   * @return {number}
    */
-  getIconHeight:function() {
-    return this._iconHeight; // this.getTexture().getHeight();
-  },
+  getIconHeight:function() {},
   
   
-  /** Returns the aspect ratio of the icon. */
+  /** 
+   * Returns the aspect ratio of the icon. 
+   * @return {number}
+   */
   getIconAspect:function() {
     return this.getIconWidth()/this.getIconHeight();
   },
@@ -205,18 +160,13 @@ TentaGL.IconSprite.prototype = {
   },
   
   
-  /** Draws the icon's texture onto a unit plane. */
-  draw:function(gl) {    
-    TentaGL.MaterialLib.use(gl, this._texName);
-    
-    var tex = this.getTexture(gl);
-    this._iconWidth = tex.getWidth();
-    this._iconHeight = tex.getHeight();
-    
-    TentaGL.ModelLib.render(gl, "unitPlane");
-  }
+  /** 
+   * Sets the materials for and draws the Models making up this sprite. 
+   * Override this. 
+   */
+  draw:function(gl) {},
 };
 
 
 
-Util.Inheritance.inherit(TentaGL.IconSprite, TentaGL.BillboardSprite);
+Util.Inheritance.inherit(TentaGL.IconSprite, TentaGL.Sprite);

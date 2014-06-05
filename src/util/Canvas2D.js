@@ -311,8 +311,6 @@ TentaGL.Canvas2D = {
   drawImage: function(canvas, img, x, y, w, h) {
     var g = canvas.getContext("2d");
     
-    console.log(canvas, img, x, y, w, h);
-    
     if(w && h) {
       g.drawImage(img, x, y, w, h);
     }

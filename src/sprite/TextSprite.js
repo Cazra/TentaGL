@@ -44,9 +44,10 @@ TentaGL.TextSprite = function(xyz, text, blitFont, yFlipped, charH) {
   }
   
   this._blitFont = blitFont;
-  this._text = text;
-  this._yFlipped = yFlipped;
   this._charH = charH;
+  this._yFlipped = yFlipped;
+  
+  this.setText(text);
 };
 
 
@@ -56,6 +57,9 @@ TentaGL.TextSprite.prototype = {
   
   isaTextSprite: true,
   
+  
+  
+  //////// Text
   
   /** 
    * Returns the text displayed by this sprite.
@@ -71,8 +75,15 @@ TentaGL.TextSprite.prototype = {
    */
   setText: function(text) {
     this._text = text;
+    
+    var dims = this._blitFont.getStringDimensions(text, this._charH);
+    this._width = dims[0];
+    this._height = dims[1];
   },
   
+  
+  
+  //////// Font
   
   /** 
    * Returns the BlitteredFont used to render this sprite's text.
@@ -92,6 +103,7 @@ TentaGL.TextSprite.prototype = {
   },
   
   
+  //////// Metrics
   
   /** 
    * Returns the preferred height of a single line of text displayed by this 
@@ -118,6 +130,27 @@ TentaGL.TextSprite.prototype = {
   },
   
   
+  /** 
+   * Returns the width of the text rendered in this sprite.
+   * @return {number}
+   */
+  getWidth: function() {
+    return this._width;
+  },
+  
+  
+  /** 
+   * Returns the height of the text rendered in this sprite. 
+   * @return {number}
+   */
+  getHeight: function() {
+    return this._height;
+  },
+  
+  
+  
+  
+  //////// Rendering
   
   /** 
    * Draws the sprite.

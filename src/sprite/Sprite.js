@@ -34,9 +34,8 @@
  * bindMVPTransUni and bindNormalTransUni methods after the 
  * ShaderProgram is created, but before any sprites are rendered.
  * @constructor
- * @param {vec4} xyz  Optional. If the sprite's world coordinates aren't 
- *      provided, they will be set to [0, 0, 0, 1]. 
- *      The 4th coordinate will be replaced with 1.
+ * @param {vec3} xyz  Optional. If the sprite's world coordinates aren't 
+ *      provided, they will be set to [0, 0, 0]. 
  */
 TentaGL.Sprite = function(xyz) {
   TentaGL.SceneNode.call(this, xyz);

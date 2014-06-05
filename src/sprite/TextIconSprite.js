@@ -25,53 +25,18 @@
 
 
 /** 
- * An IconSprite for displaying 2D text that always faces toward the plane 
- * behind a camera. Text IconSprites use alpha color components. 
- * The text parts of their textures have alpha = 1. All other parts of their
- * textures have alpha = 0. To render them properly in your shader, I recommend
- * discarding texels whose alpha color components are 0.
- * A new TEXTure (puns!) is automatically produced and added to the MaterialLib
- * when an instance of this sprite is created.
+ * A TextSprite that is also an IconSprite. It displays 2D text in 3D space that
+ * is always oriented to face the plane behind the camera.
  * @constructor
  * @param {vec4} xyz
  * @param {string} text
- * @param {TentaGL.Font} font   Optional. Default Arial Monospace 16.
- * @param {TentaGL.Color} color   Optional. Default black.
- * @param {Number} antialiasTolerance   Optional. Range [0, 1]. Default 0.5.
+ * @param {TentaGL.BlitteredFont} blitFont    The BlitteredFont used to render 
+ *      the text.
  */
-TentaGL.TextIconSprite = function(xyz, text, font, color, antialiasTolerance) {
-  if(!antialiasTolerance) {
-    antialiasTolerance = 0.5;
-  }
-  if(!color) {
-    color = new TentaGL.Color.RGBA(0, 0, 0, 1);
-  }
-  if(!font) {
-    font = new TentaGL.Font("Arial", "Monospace", 16);
-  }
-  
-  var texName = "_text:" + TentaGL.TextIconSprite.count;
-  TentaGL.IconSprite.call(this, xyz, texName);
-  
-  this._text = text;
-  this._font = font;
-  this._color = color;
-  this._tolerance = antialiasTolerance;
-  
-  this._texCreated = false;
-  this._needsUpdate = true;
-  
-  var dims = font.getStringDimensions(text);
-  this._width = dims[0];
-  this._height = dims[1];
-  
-  TentaGL.TextIconSprite.count++;
+TentaGL.TextIconSprite = function(xyz, text, blitFont) {
+  TentaGL.IconSprite.call(this);
+  TentaGL.TextSprite.call(this, xyz, text, blitFont);
 };
-
-/** 
- * A counter used to ensure assign a unique material to each TextIconSprite. 
- */
-TentaGL.TextIconSprite.count = 0;
 
 
 TentaGL.TextIconSprite.prototype = {
@@ -80,172 +45,36 @@ TentaGL.TextIconSprite.prototype = {
   
   isaTextIconSprite:true,
   
-  
-  //////// GL cleanup
-  
-  /** Removes the internal texture for this sprite form the MaterialLib and GL memory.  */
-  clean:function(gl) {
-    if(this._texCreated) {
-      TentaGL.MaterialLib.remove(gl, this.getTextureName());
-    }
-  },
-  
-  
-  //////// Text content and style
+  //////// Metrics
   
   /** 
-   * Returns the sprite's text. 
-   * @return {string}
-   */
-  getText:function() {
-    return this._text;
-  },
-  
-  
-  /** 
-   * Sets the sprite's text. 
-   * @param {string} text
-   */
-  setText:function(text) {
-    this._text = text;
-    
-    var dims = this._font.getStringDimensions(text);
-    this._width = dims[0];
-    this._height = dims[1];
-    
-    this._needsUpdate = true;
-  },
-  
-  
-  /** 
-   * Returns the sprite's font.
-   * @return {TentaGL.Font}
-   */
-  getFont:function() {
-    return this._font;
-  },
-  
-  
-  /** 
-   * Sets the font of this sprite. 
-   * @param {TentaGL.Font} font
-   */
-  setFont:function(font) {
-    this._font = font;
-    this._needsUpdate = true;
-  },
-  
-  
-  /**
-   * Returns the sprite's color. 
-   * @return {TentaGL.Color}
-   */
-  getColor:function() {
-    return this._color;
-  },
-  
-  
-  /** 
-   * Sets the color of this sprite.
-   * @param {TentaGL.Color} color
-   */
-  setColor:function(color) {
-    this._color = color;
-    this._needsUpdate = true;
-  },
-  
-  
-  /** 
-   * Returns the sprite's anti-alias tolerance.
-   * @return {Number}
-   */
-  getAntialiasTolerance:function() {
-    return this._tolerance;
-  },
-  
-  /** 
-   * Sets the anti-aliasing tolerance of this sprite. 
-   * @param {Number} tolerance
-   */
-  setAntialiasTolerance:function(tolerance) {
-    this._tolerance = tolerance;
-    this._needsUpdate = true;
-  },
-  
-  //////// Texture Dimensions
-  
-  /** 
-   * Returns the base pixel width of the text. 
+   * Returns the pixel width of the icon's text. 
    * @return {int}
    */
   getIconWidth:function() {
-    return this._width;
+    return this.getWidth();
   },
   
-  
-  /** 
-   * Returns the base pixel height of the text. 
+  /**
+   * Returns the pixel height of the icon's text.
    * @return {int}
    */
   getIconHeight:function() {
-    return this._height;
-  },
-  
-  //////// Filters
-  
-  /**  
-   * Sets a list of filters to apply to the text whenever it is updated. 
-   * @param {Array{TentaGL.RGBAFilter}} filters
-   */
-  setFilters:function(filters) {
-    this._filters = filters;
-    this._needsUpdate = true;
+    return this.getHeight(); 
   },
   
   
   //////// Rendering
   
   /** 
-   * Updates the internal texture used to display the text for this sprite. 
-   * The texture is created in GL memory the first time this method is called.
+   * Draws the sprite.
    * @param {WebGLRenderingContext} gl
    */
-  update:function(gl) {
-    // Create the GL texture for this sprite if it hasn't already been created. 
-    if(!this._texCreated) {
-      TentaGL.MaterialLib.add(gl, this.getTextureName(), new TentaGL.Texture(gl));
-      this._texCreated = true;
-    }
-    
-    // Render the text to a canvas and extract the PixelData. Then use a filter
-    // to get rid of edge alpha colors.
-    var textIconPixelData = TentaGL.PixelData.fromCanvas(TentaGL.Canvas2D.createString(this._text, this._font, this._color));
-    textIconPixelData = textIconPixelData.filter(new TentaGL.RGBAFilter.OneColor(this._color, this._tolerance));
-    
-    // Apply any filters to the canvas text.
-    if(this._filters) {
-      for(var i in this._filters) {
-        textIconPixelData = textIconPixelData.filter(this._filters[i]);
-      }
-    }
-    
-    // Update the GL texture with our updated PixelData.
-    this.getTexture(gl).setPixelData(gl, textIconPixelData);
-    this._needsUpdate = false;
-  },
-  
-  
-  
-  /** Updates the TEXTure if necessary and then draws the sprite. */
-  draw:function(gl) {
-    if(this._needsUpdate) {
-      this.update(gl);
-    }
-    
-    TentaGL.IconSprite.prototype.draw.call(this, gl);
+  draw: function(gl) {
+    this.getBlitteredFont().renderString(gl, this._text, [0,0,0], this._yFlipped, 1);
   }
 };
 
-
 Util.Inheritance.inherit(TentaGL.TextIconSprite, TentaGL.IconSprite);
+Util.Inheritance.inherit(TentaGL.TextIconSprite, TentaGL.TextSprite);
 
