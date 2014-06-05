@@ -227,12 +227,31 @@ TentaGL.BlitteredFont.prototype = {
   },
   
   
+  // TODO
+  getRenderedDimensions: function(text) {
+    if(!this._charPixData) {
+      return [0, 0];
+    }
+    
+    var h = this.getLineHeight();
+    var vPad = this.getVerticalPadding();
+    var hPad = this.getHorizontalPadding();
+    
+    
+  },
+  
+  
   /** 
    * Renders a string using the blittered font.
    * @param {WebGLRenderingContext} gl
    * @param {string} text     The text to be rendered.
-   * @param {boolean} yFlipped    Whether the y axis is flipped.  
-   *      If true, y increases down. Else, y increases up.
+   * @param {vec3} xyz        The position to render the text at.
+   * @param {boolean} yFlipped    Optional. Whether the y axis is flipped.  
+   *      If true, y increases down. Else, y increases up. Default false.
+   * @param {number} charH    Optional. If provided, the text will be uniformly 
+   *      scaled such that every character's height is charH units. If omitted, 
+   *      each character's height in units will be equal to the character pixel 
+   *      height for this blittered font.
    */
   renderString: function(gl, text, xyz, yFlipped, charH) {
     if(!this._charPixData) {

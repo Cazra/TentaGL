@@ -49,6 +49,11 @@ HelloWorldApp.prototype = {
   },
   
   
+  createTestTextSprite2D: function(xy, text, bFont) {
+    return new TentaGL.TextSprite(xy, text, bFont, true);
+  },
+  
+  
   createSphereSprite:function(xyz, materialName) {
     var gl = this.getGL();
     
@@ -156,7 +161,7 @@ HelloWorldApp.prototype = {
       }
     );
     
-    var font = new TentaGL.Font("Arial", "sans-serif", 36);
+    var font = new TentaGL.Font("Arial", "sans-serif", 16);
     this.blitFont2 = TentaGL.BlitteredFont.fromFont(font, TentaGL.Color.RGBA(0.5, 0.5, 1, 1), 1, 1);
   },
   
@@ -211,6 +216,8 @@ HelloWorldApp.prototype = {
     
     this.testSprite2D = this.createTestSprite2D([64, 32]);
     
+    this.textSprite1 = this.createTestTextSprite2D([0,100,0], "The quick, brown fox \njumped over the lazy dog.", this.blitFont);
+    this.textSprite2 = this.createTestTextSprite2D([0,-50,0], "The quick, brown fox \njumped over the lazy dog.", this.blitFont2);
     
     this.axesGroup = new TentaGL.SceneGroup();
     this.axesGroup.add(this.createSphereSprite([10,0,0], "red"));
@@ -318,8 +325,10 @@ HelloWorldApp.prototype = {
   //  TentaGL.DepthBuffer.clear(gl);
 
     // Draw the objects in the scene.
-    this.blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [0,100,0], true);
-    this.blitFont2.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [0,-50,0], true, 16);
+    //this.blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [0,100,0], true);
+    //this.blitFont2.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [0,-50,0], true);
+    this.textSprite1.render(gl);
+    this.textSprite2.render(gl);
     
     this.spriteGroup.render(gl, this.camera);
     this.axesGroup.render(gl);
