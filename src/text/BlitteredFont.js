@@ -347,15 +347,63 @@ TentaGL.BlitteredFont.fromURL = function(url, monospaced, charW, charH, hPad, vP
  */
 TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
   var monospaced = (font.getType() == "monospace");
-  var dimsEm = font.getStringDimensions("M");
+  var dimsEm = font.getStringDimensions("W");
   var charW = dimsEm[0];
   var charH = dimsEm[1];
   
+  console.log(dimsEm);
+  
   var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charW, charH, hPad, vPad);
   
-  // TODO: Create a canvas for the fontmap and use the canvas's PixelData to 
-  // create the blittered font's data.
+  // Create a canvas for the fontmap.
+  
+  
+  var bgColor;
+  if(color.getRed() + color.getGreen() + color.getBlue() > 1.5) {
+    bgColor = new TentaGL.Color.RGBA(0,0,0,1);
+    console.log("black bg");
+  }
+  else {
+    bgColor = new TentaGL.Color.RGBA(1,1,1,1);
+    console.log("white bg");
+  }
+  
+  var canvas = TentaGL.Canvas2D.create((charW + 2)*16, (charH + 2)*6, bgColor);
+  
+  for(var c = 32; c < 128; c++) {
+    var i = (c-32)%16;
+    var j = Math.floor((c-32)/16);
+    
+    var x = 1 + i*(charW + 2);
+    var y = 1 + j*(charH + 2);
+    
+    var charID = String.fromCharCode(c);
+    console.log(charID, x, y, charW, charH);
+    
+    var charCanvas = TentaGL.Canvas2D.create(charW, charH, bgColor);
+    TentaGL.Canvas2D.drawString(charCanvas, charID, font, color, 0, 0);
+    
+    TentaGL.Canvas2D.drawImage(canvas, charCanvas, x, y);
+  }
+  
+  
+  
+  
+  // Convert our fontmap canvas to PixelData. Make the bgColor transparent
+  // and use the pixelsCB to apply any other filters provided by the user.
+  var pixels = TentaGL.PixelData.fromCanvas(canvas);
+  pixels = pixels.filter(new TentaGL.RGBAFilter.OneColor(color, 0.5));
+  if(pixelsCB) {
+    pixels = pixelsCB(pixels);
+  }
+  
+  // Set the pixel data for the blittered font.
+  bFont._createChars(pixels, monospaced, charW, charH);
   
   return bFont;
 };
+
+
+
+
 

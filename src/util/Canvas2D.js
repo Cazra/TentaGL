@@ -35,12 +35,18 @@ TentaGL.Canvas2D = {
    * Creates and returns a Canvas element of the specified width and height. 
    * @param {int} width
    * @param {int} height
+   * @param {TentaGL.Color} color   Optional. A background color for the canvas.
    * @return {Canvas}
    */
-  create:function(width, height) {
+  create:function(width, height, color) {
     var canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
+    
+    if(color) {
+      this.drawRect(canvas, 0, 0, width, height, false, 0, color);
+    }
+    
     return canvas;
   },
   
@@ -51,6 +57,7 @@ TentaGL.Canvas2D = {
    * any textures produced from canvas renderings. Otherwise you'll end up
    * with a messy white-ish outline.
    * @param {Canvas} canvas
+   * @return {Canvas}
    */
   removeAlpha:function(canvas) {
     var g = canvas.getContext("2d");
@@ -145,6 +152,7 @@ TentaGL.Canvas2D = {
    * @param {TentaGL.Color} stroke  The color for the edge of the circle.
    * @param {Number} edgeW    The thickness of the edge of the circle.
    * @param {TentaGL.Color} fill    The color for the interior of the circle.
+   * @return {Canvas}
    */
   drawCircle:function(canvas, cx, cy, r, stroke, edgeW, fill) {
     var g = canvas.getContext("2d");
@@ -173,6 +181,7 @@ TentaGL.Canvas2D = {
    * @param {TentaGL.Color} stroke  The color for the edge of the circle.
    * @param {Number} edgeW    The thickness of the edge of the circle.
    * @param {TentaGL.Color} fill    The color for the interior of the circle.
+   * @return {Canvas}
    */
   createCircle:function(r, stroke, edgeW, fill) {
     var sideLen = r*2 + edgeW;
@@ -192,6 +201,7 @@ TentaGL.Canvas2D = {
    * @param {TentaGL.Color} stroke  The color for the edge of the rectangle.
    * @param {Number} edgeW  The thickness of the edge of the rectangle.
    * @param {TentaGL.Color} fill    The color of the interior of the rectangle.
+   * @return {Canvas}
    */
   drawRect:function(canvas, x, y, w, h, stroke, edgeW, fill) {
     var g = canvas.getContext("2d");
@@ -218,6 +228,7 @@ TentaGL.Canvas2D = {
    * @param {TentaGL.Color} stroke  The color for the edge of the rectangle.
    * @param {Number} edgeW  The thickness of the edge of the rectangle.
    * @param {TentaGL.Color} fill    The color of the interior of the rectangle.
+   * @return {Canvas}
    */
   createRect:function(w, h, stroke, edgeW, fill) {
     var canvas = this.create(w + edgeW, h + edgeW);
@@ -237,6 +248,7 @@ TentaGL.Canvas2D = {
    * @param {TentaGL.Color} stroke  The color for the edge of the rectangle.
    * @param {Number} edgeW  The thickness of the edge of the rectangle.
    * @param {TentaGL.Color} fill    The color of the interior of the rectangle.
+   * @return {Canvas}
    */
   drawRoundedRect:function(canvas, x, y, w, h, r, stroke, edgeW, fill) {
     var g = canvas.getContext("2d");
@@ -276,11 +288,88 @@ TentaGL.Canvas2D = {
    * @param {TentaGL.Color} stroke  The color for the edge of the rectangle.
    * @param {Number} edgeW  The thickness of the edge of the rectangle.
    * @param {TentaGL.Color} fill    The color of the interior of the rectangle.
+   * @return {Canvas}
    */
   createRoundedRect:function(w, h, r, stroke, edgeW, fill) {
     var canvas = this.create(w + edgeW, h + edgeW);
     this.drawRoundedRect(canvas, edgeW/2, edgeW/2, w, h, r, stroke, edgeW, fill);
     return canvas;
+  },
+  
+  
+  
+  /** 
+   * Draws an image or canvas element onto a canvas. 
+   * @param {Canvas} canvas
+   * @param {Image | Canvas} 
+   * @param {int} x   The x coordinate of the image's left edge.
+   * @param {int} y   The y coordinate of the image's top edge.
+   * @param {uint} w  Optional. The stretched width of the image.
+   * @param {uint} h  Optional. The stretched height of the image.
+   * @return {Canvas}
+   */
+  drawImage: function(canvas, img, x, y, w, h) {
+    var g = canvas.getContext("2d");
+    
+    console.log(canvas, img, x, y, w, h);
+    
+    if(w && h) {
+      g.drawImage(img, x, y, w, h);
+    }
+    else {
+      g.drawImage(img, x, y);
+    }
+    return canvas;
+  },
+  
+  
+  /** 
+   * Creates a new canvas with a rendered image.
+   * The canvas is fitted to the size of the image.
+   * @param {Image | Canvas} img
+   * @param {int} w   Optional. The stretched width of the image.
+   * @param {int} h   Optional. The stretched height of the image.
+   * @return {Canvas}
+   */
+  createImage: function(img, w, h) {
+    var canvasW, canvasH;
+    if(w) {
+      canvasW = w;
+    }
+    else {
+      canvasW = img.width;
+    }
+    
+    if(h) {
+      canvasH = h;
+    }
+    else {
+      canvasH = img.height;
+    }
+    
+    var canvas = this.create(canvasW, canvasH);
+    this.drawImage(canvas, img, 0, 0, w, h);
+    return canvas;
+  },
+  
+  
+  /** 
+   * Creates a canvas as a cropped copy of an existing canvas or image.
+   * @param {Image | Canvas} src
+   * @param {uint} x  The left edge of the cropping region.
+   * @param {uint} y  The top edge of the cropping region.
+   * @param {uint} w  The width of the cropping region.
+   * @param {uint} h  The height of the cropping region.
+   * @return {Canvas}
+   */
+  crop: function(src, x, y, w, h) {
+    var canvas = this.create(w, h);
+    var g = canvas.getContext("2d");
+    
+    g.drawImage(src, x, y, w, h, 0, 0);
+    
+    return canvas;
   }
+  
 };
 

@@ -25,13 +25,11 @@ HelloWorldApp.prototype = {
     font.setBold(true);
     var color = TentaGL.Color.RGBA(0.5, 0.5, 0.5, 1);
     
-    var sprite = new TentaGL.Sprite(xyz); //new TentaGL.TextIconSprite(xyz, "Hello World!\nHow are you?", font, color); //new TentaGL.IconSprite(xyz, "iconNew");
-  //  sprite.scaleToHeight(1);
+    var sprite = new TentaGL.Sprite(xyz);
     sprite.draw = function(gl) {
       TentaGL.MaterialLib.use(gl, "coinBlock");
       TentaGL.ModelLib.render(gl, "cylinder");
     };
-  //  sprite.setAnchorXYZ([1,1,1]);
     sprite.setScaleUni(0.25);
     
     return sprite;
@@ -110,56 +108,44 @@ HelloWorldApp.prototype = {
     
     
     // Canvas doodling
-    {
-      var canvas = TentaGL.Canvas2D.createRoundedRect(100, 100, 32,TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1)); // TentaGL.Canvas2D.createCircle(100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
-      TentaGL.Canvas2D.removeAlpha(canvas);
-      var canvasPixels = TentaGL.PixelData.fromCanvas(canvas);
-      
-      var circle = new TentaGL.Texture(gl); //TentaGL.Texture.fromCanvas(gl, canvas);
-      circle.setPixelData(gl, canvasPixels);
-      TentaGL.MaterialLib.add(gl, "testCircle", circle);
-    }
+    var canvas = TentaGL.Canvas2D.createRoundedRect(100, 100, 32,TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1)); // TentaGL.Canvas2D.createCircle(100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
+    TentaGL.Canvas2D.removeAlpha(canvas);
+    var canvasPixels = TentaGL.PixelData.fromCanvas(canvas);
+    
+    var circle = new TentaGL.Texture(gl); //TentaGL.Texture.fromCanvas(gl, canvas);
+    circle.setPixelData(gl, canvasPixels);
+    TentaGL.MaterialLib.add(gl, "testCircle", circle);
     
     
     // green
-    {
-      var tex = new TentaGL.Texture(gl);
-      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 1, 0, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-      TentaGL.MaterialLib.add(gl, "green", tex);
-    }
+    var tex = new TentaGL.Texture(gl);
+    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(0, 1, 0, 1));
+    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+    TentaGL.MaterialLib.add(gl, "green", tex);
     
     // blue
-    {
-      var tex = new TentaGL.Texture(gl);
-      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 0, 1, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-      TentaGL.MaterialLib.add(gl, "blue", tex);
-    }
+    var tex = new TentaGL.Texture(gl);
+    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(0, 0, 1, 1));
+    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+    TentaGL.MaterialLib.add(gl, "blue", tex);
     
     // red
-    {
-      var tex = new TentaGL.Texture(gl);
-      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(1, 0, 0, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-      TentaGL.MaterialLib.add(gl, "red", tex);
-    }
+    var tex = new TentaGL.Texture(gl);
+    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(1, 0, 0, 1));
+    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+    TentaGL.MaterialLib.add(gl, "red", tex);
     
     // white
-    {
-      var tex = new TentaGL.Texture(gl);
-      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(1, 1, 1, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-      TentaGL.MaterialLib.add(gl, "white", tex);
-    }
+    var tex = new TentaGL.Texture(gl);
+    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(1, 1, 1, 1));
+    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+    TentaGL.MaterialLib.add(gl, "white", tex);
     
     // black
-    {
-      var tex = new TentaGL.Texture(gl);
-      var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 0, 0, 1));
-      tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-      TentaGL.MaterialLib.add(gl, "black", tex);
-    }
+    var tex = new TentaGL.Texture(gl);
+    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(0, 0, 0, 1));
+    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
+    TentaGL.MaterialLib.add(gl, "black", tex);
     
     
     // blittered font: Final Fontasy
@@ -169,6 +155,9 @@ HelloWorldApp.prototype = {
         return pixels.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,0,255));
       }
     );
+    
+    var font = new TentaGL.Font("Arial", "sans-serif", 36);
+    this.blitFont2 = TentaGL.BlitteredFont.fromFont(font, TentaGL.Color.RGBA(0.5, 0.5, 1, 1), 1, 1);
   },
   
   
@@ -330,6 +319,7 @@ HelloWorldApp.prototype = {
 
     // Draw the objects in the scene.
     this.blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [0,100,0], true);
+    this.blitFont2.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [0,-50,0], true, 16);
     
     this.spriteGroup.render(gl, this.camera);
     this.axesGroup.render(gl);
