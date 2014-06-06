@@ -70,7 +70,7 @@ TentaGL.ArcballCamera.prototype = {
    *      sphere's surface.
    */
   projectMouseToUnitSphere:function(mouseXY, viewWidth, viewHeight) {
-    var r = viewHeight/2;
+    var r = Math.max(viewHeight, viewWidth)/2;
     var ir = 1/r;
     
     // Translate model so the origin is in the middle of the view. Also, flip the Y axis.
