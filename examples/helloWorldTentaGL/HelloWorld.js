@@ -43,24 +43,6 @@ HelloWorldApp.prototype = {
     return sprite;
   },
   
-  /**
-   * Produces a test text sprite that always billboards towards the camera.
-   * @param {vec4} xyz  The sprite's position in local space.
-   * @param {string} str    The text displayed by the sprite.
-   * @return {TentaGL.TextIconSprite}
-   */
-//  createTestTextSprite: function(xyz, str) {
-//    var gl = this.getGL();
-//    
-//    var font = new TentaGL.Font("Arial", "sans-serif", 24);
-//    font.setBold(true);
-//    var color = TentaGL.Color.RGBA(0.5, 0.5, 0.5, 1);
-//    
-//    var sprite = new TentaGL.TextIconSprite(xyz, str, font, color); 
-//    sprite.scaleToHeight(1);
-//    
-//    return sprite;
-//  },
   
   
   /** 
@@ -76,8 +58,15 @@ HelloWorldApp.prototype = {
    */
   createTextIconSprite: function(xyz, str) {
     var sprite = new TentaGL.TextIconSprite(xyz, str, this.blitFont);
-  //  sprite.scaleToHeight(1);
-    
+    return sprite;
+  },
+  
+  
+  /** 
+   * Produces a sprite of a labelled icon.
+   */
+  createLabelledIconSprite: function(xyz, str) {
+    var sprite = new TentaGL.LabelledIconSprite(xyz, "iconNew" ,str, "labelBG", this.blitFont2);
     return sprite;
   },
   
@@ -174,6 +163,15 @@ HelloWorldApp.prototype = {
     TentaGL.MaterialLib.add(gl, "black", black);
     
     
+    // Label BG icon
+    var canvas = TentaGL.Canvas2D.createRoundedRect(300, 100, 32, false, 0, TentaGL.Color.RGBA(0.3, 0.3, 0.3, 1));
+    TentaGL.Canvas2D.removeAlpha(canvas);
+    
+    var pixels = TentaGL.PixelData.fromCanvas(canvas);
+    pixels = pixels.filter(TentaGL.RGBAFilter.MulColor.RGBA(1, 1, 1, 1));
+    var labelBG = TentaGL.Texture.fromPixelData(gl, pixels);
+    TentaGL.MaterialLib.add(gl, "labelBG", labelBG);
+    
     
     // blittered font: Final Fontasy
     this.blitFont = TentaGL.BlitteredFont.fromURL("../../images/finalFontasy.png", 
@@ -182,6 +180,13 @@ HelloWorldApp.prototype = {
         return pixels.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,0,255));
       }
     );
+    
+    var font = new TentaGL.Font("Arial", "sans-serif", 36);
+    var fColor = TentaGL.Color.RGBA(1,1,1,1);
+    this.blitFont2 = TentaGL.BlitteredFont.fromFont(font, fColor, 1, 1, function(pixels) {
+      pixels = pixels.filter(TentaGL.RGBAFilter.OutlineColor.RGBBytes(150,150,200));
+      return pixels;
+    });
   },
   
   
@@ -249,6 +254,8 @@ HelloWorldApp.prototype = {
     this.camGroup.add(this.createSphereSprite([15,0,0], "black"));
     
     this.textSprite = this.createTextIconSprite([1,1,1], "Hello, \nWorld!");
+    
+    this.labelledIconSprite = this.createLabelledIconSprite([3,3,3], "New sprite");
   },
   
   
@@ -354,7 +361,7 @@ HelloWorldApp.prototype = {
     
     this.textSprite.render(gl);
     
-    
+    this.labelledIconSprite.render(gl);
   },
   
   

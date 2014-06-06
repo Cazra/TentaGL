@@ -27,15 +27,21 @@
 /** 
  * A TextSprite that is also an IconSprite. It displays 2D text in 3D space that
  * is always oriented to face the plane behind the camera.
+ * The line height of a TextIconSprite is 1 unit, unscaled.
  * @constructor
  * @param {vec4} xyz
  * @param {string} text
  * @param {TentaGL.BlitteredFont} blitFont    The BlitteredFont used to render 
  *      the text.
  */
-TentaGL.TextIconSprite = function(xyz, text, blitFont) {
+TentaGL.TextIconSprite = function(xyz, text, blitFont, lineHeight) {
   TentaGL.IconSprite.call(this);
   TentaGL.TextSprite.call(this, xyz, text, blitFont);
+  
+  if(!lineHeight) {
+    lineHeight = 1;
+  }
+  this._lineHeight = lineHeight;
 };
 
 
@@ -45,6 +51,43 @@ TentaGL.TextIconSprite.prototype = {
   
   isaTextIconSprite:true,
   
+
+  //////// Alignment
+  
+  /** 
+   * Sets the horizontal and vertical alignment of the icon relative to its anchor. 
+   * @param {enum: TentaGL.Align} horizontal  LEFT, CENTER, or RIGHT
+   * @param {enum: TentaGL.Alight} vertical   TOP, CENTER, or BOTTOM
+   */
+  setAlignment:function(horizontal, vertical) {
+    var x = undefined;
+    var y = undefined;
+    
+    // Set horizontal alignment.
+    if(horizontal == TentaGL.Align.LEFT) {
+      x =0;
+    }
+    else if(horizontal == TentaGL.Align.CENTER) {
+      x = this.getIconWidth()/2;
+    }
+    else if(horizontal == TentaGL.Align.RIGHT) {
+      x = this.getIconWidth();
+    }
+    
+    // Set vertical alignment.
+    if(vertical == TentaGL.Align.BOTTOM) {
+      y = 0;
+    }
+    else if(vertical == TentaGL.Align.CENTER) {
+      y = 0.5;
+    }
+    else if(vertical == TentaGL.Align.TOP) {
+      y = 1;
+    }
+    this.setAnchorXYZ([x,y,0]);
+  },
+  
+  
   //////// Metrics
   
   /** 
@@ -52,7 +95,7 @@ TentaGL.TextIconSprite.prototype = {
    * @return {int}
    */
   getIconWidth:function() {
-    return this.getWidth();
+    return this.getWidth()/this.getHeight()*this.getLineHeight();
   },
   
   /**
@@ -60,7 +103,25 @@ TentaGL.TextIconSprite.prototype = {
    * @return {int}
    */
   getIconHeight:function() {
-    return this.getHeight(); 
+    return this.getLineHeight();
+  },
+  
+  
+  /** 
+   * Returns the height of a line of text rendered for this TextIconSprite.
+   * @return {number}
+   */
+  getLineHeight: function() {
+    return this._lineHeight;
+  },
+  
+  
+  /** 
+   * Sets the height of a line of text rendered for this TextIconSprite. 
+   * @param {number} h
+   */
+  setLineHeight: function(h) {
+    this._lineHeight = h;
   },
   
   
@@ -71,7 +132,7 @@ TentaGL.TextIconSprite.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   draw: function(gl) {
-    this.getBlitteredFont().renderString(gl, this._text, [0,0,0], this._yFlipped, 1);
+    this.getBlitteredFont().renderString(gl, this._text, [0,0,0], this._yFlipped, this._lineHeight);
   }
 };
 

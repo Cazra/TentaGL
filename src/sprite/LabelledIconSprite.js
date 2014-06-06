@@ -29,12 +29,14 @@
  * @param {vec3} xyz
  * @param {string} iconTexName    The name of the Material to use for the icon.
  * @param {string} labelText      The text to be displayed as the label.
+ * @param {string} labelBGTexName   The name of the texture used for the frame around the label.
+ * @param {TentaGL.BlitteredFont} blitFont  The blittered font used to render the text.
  */
-TentaGL.LabelledIconSprite = function(xyz, iconTexName, labelText, labelBGTexName, font) {
+TentaGL.LabelledIconSprite = function(xyz, iconTexName, labelText, labelBGTexName, blitFont) {
   TentaGL.CompositeSprite.call(this, xyz);
   
   this._createIcon(iconTexName);
-  this._createLabel(labelText, labelBGTexName, font);
+  this._createLabel(labelText, labelBGTexName, blitFont);
 };
 
 
@@ -49,7 +51,7 @@ TentaGL.LabelledIconSprite.prototype = {
    * @private 
    */
   _createIcon:function(iconTexName) {
-    this._icon = new TentaGL.IconSprite([0, 0, 0], iconTexName);
+    this._icon = new TentaGL.ImageIconSprite([0, 0, 0], iconTexName);
     this._icon.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.CENTER);
     
     this.addComponent(this._icon);
@@ -58,38 +60,28 @@ TentaGL.LabelledIconSprite.prototype = {
   
   /** 
    * Creates the sprites for the label and its frame.
-   * @private 
+   * @param {string} labelText      The text to be displayed as the label.
+   * @param {string} labelBGTexName   The name of the texture used for the frame around the label.
+   * @param {TentaGL.BlitteredFont} blitFont  The blittered font used to render the text.
    */
-  _createLabel:function(labelText, labelBGTexName, font) {
-    var fontColor = TentaGL.Color.RGBA(1, 1, 1, 1);
-    
+  _createLabel:function(labelText, labelBGTexName, blitFont) {
     // Create the label sprite.
-    this._label = new TentaGL.TextIconSprite([0, 0.3, 0.001], labelText, font, fontColor);
-    this._label.scaleToHeight(0.5);
+    this._label = new TentaGL.TextIconSprite([0, 0.3, 0.001], labelText, blitFont, 0.5);
+  //  this._label.scaleToHeight(0.5);
     this._label.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.BOTTOM);
     this.addComponent(this._label);
     
-    // The label has a filter that gives it a darker outline.
-    var outline = TentaGL.RGBAFilter.OutlineColor.RGBBytes(150,150,200);
-    this._label.setFilters([outline]);
-    
     // Create the label background.
-    this._labelBG = new TentaGL.IconSprite([0, 0.3, 0.0005], labelBGTexName);
+    this._labelBG = new TentaGL.ImageIconSprite([0, 0.3, 0.0005], labelBGTexName);
     this._labelBG.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.BOTTOM);
-    this._labelBG.setScaleXYZ([this._label.getScaleX()+0.1, this._label.getScaleY(), 1]);
+    this._fitLabelBG();
     this.addComponent(this._labelBG);
   },
   
   
-  /** 
-   * When we're done with this, we need to clean up to free the label's texture 
-   * from GL memory. 
-   * @param {WebGLRenderingContext} gl
-   */
-  clean:function(gl) {
-    this._label.clean(gl);
+  _fitLabelBG: function() {
+    this._labelBG.setScaleXYZ([this._label.getIconWidth()+0.1, this._label.getIconHeight(), 1]);
   },
-  
   
   //////// Icon
   
@@ -128,8 +120,8 @@ TentaGL.LabelledIconSprite.prototype = {
    */
   setText:function(text) {
     this._label.setText(text);
-    this._label.scaleToHeight(0.5);
-    this._labelBG.setScaleXYZ([this._label.getScaleX()+0.1, this._label.getScaleY(), 1]);
+  //  this._label.scaleToHeight(0.5);
+    this._fitLabelBG();
   },
   
   

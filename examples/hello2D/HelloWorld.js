@@ -255,7 +255,6 @@ HelloWorldApp.prototype = {
     //  if(sprite && sprite.setText) {
     //    sprite.setColor(new TentaGL.Color.RGBA(1,0,0,1));
     //    sprite.setText("X__X You clicked me...\nI am dead now.");
-    //    sprite.scaleToHeight(1);
     //  }
     }
     else {

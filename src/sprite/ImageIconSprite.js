@@ -25,6 +25,7 @@
 
 /** 
  * An IconSprite for displaying an image.
+ * All ImageIconSprites are 1 unit tall, unscaled.
  * @constructor
  * @param {vec3} xyz
  * @param {string} texName  The name of the image's texture in MaterialLib.
@@ -32,8 +33,8 @@
 TentaGL.ImageIconSprite = function(xyz, texName) {
   TentaGL.IconSprite.call(this, xyz);
   this._texName = texName;
-  this._iconWidth = 1;
-  this._iconHeight = 1;
+  this._texWidth = 1;
+  this._texHeight = 1;
 };
 
 
@@ -82,24 +83,77 @@ TentaGL.ImageIconSprite.prototype = {
   },
   
   
-  //////// Texture dimensions
+  //////// Alignment 
+  
+  
+  /** 
+   * Sets the horizontal and vertical alignment of the icon relative to its anchor. 
+   * @param {enum: TentaGL.Align} horizontal  LEFT, CENTER, or RIGHT
+   * @param {enum: TentaGL.Alight} vertical   TOP, CENTER, or BOTTOM
+   */
+  setAlignment:function(horizontal, vertical) {
+    var x = undefined;
+    var y = undefined;
+    
+    // Set horizontal alignment.
+    if(horizontal == TentaGL.Align.LEFT) {
+      x =0;
+    }
+    else if(horizontal == TentaGL.Align.CENTER) {
+      x = 0.5;
+    }
+    else if(horizontal == TentaGL.Align.RIGHT) {
+      x = 1;
+    }
+    
+    // Set vertical alignment.
+    if(vertical == TentaGL.Align.BOTTOM) {
+      y = 0;
+    }
+    else if(vertical == TentaGL.Align.CENTER) {
+      y = 0.5;
+    }
+    else if(vertical == TentaGL.Align.TOP) {
+      y = 1;
+    }
+    this.setAnchorXYZ([x,y,0]);
+  },
+  
+  
+  //////// Metrics
+  
+  /** 
+   * Returns width of the icon. 
+   * @return {number}
+   */
+  getIconWidth:function() {
+    return this._texWidth/this._texHeight;
+  },
+  
+  /**
+   * Returns the height of the icon.
+   * @return {number}
+   */
+  getIconHeight:function() {
+    return 1; 
+  },
+  
   
   /** 
    * Returns the pixel width of the icon's image. 
    * @return {int}
    */
-  getIconWidth:function() {
-    return this._iconWidth;
+  getTextureWidth: function() {
+    return this._texWidth;
   },
   
   /**
    * Returns the pixel height of the icon's image.
    * @return {int}
    */
-  getIconHeight:function() {
-    return this._iconHeight; 
+  getTextureHeight: function() {
+    return this._texHeight; 
   },
-  
   
   
   //////// Rendering
@@ -110,9 +164,13 @@ TentaGL.ImageIconSprite.prototype = {
     TentaGL.MaterialLib.use(gl, this._texName);
     
     var tex = this.getTexture(gl);
-    this._iconWidth = tex.getWidth();
-    this._iconHeight = tex.getHeight();
+    this._texWidth = tex.getWidth();
+    this._texHeight = tex.getHeight();
     
+    var iconW = this.getIconWidth();
+    var iconH = this.getIconHeight();
+    
+    TentaGL.ViewTrans.scale(gl, [iconW, iconW]);
     TentaGL.ModelLib.render(gl, "unitPlane");
   }
 };

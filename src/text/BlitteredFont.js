@@ -144,6 +144,13 @@ TentaGL.BlitteredFont.prototype = {
         
         charPix.toCanvas();
       }
+      else if(!monospaced && c == 32) {
+        // None-monospaced spaces are half an em wide.
+        this._charWidths[charID] = charW/2;
+        this._charPixData[charID] = charPix;
+        
+        charPix.toCanvas();
+      }
       else {
         this._charWidths[charID] = charW;
         this._charPixData[charID] = charPix;

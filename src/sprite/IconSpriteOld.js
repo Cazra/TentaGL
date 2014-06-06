@@ -24,42 +24,87 @@
 
 
 /** 
- * An interface for a sprite that always faces the plane behind the camera, 
- * rather than at the camera eye like BillboardSprite does.
+ * A sprite that displays a 2D icon floating in 3D space. It always faces  
+ * the plane behind the camera, rather than at the camera eye like 
+ * BillboardSprite does.
  * @constructor
- * @param {vec3} xyz
+ * @param {vec4} xyz
+ * @param {string} texName  The name of the texture in MaterialLib used by 
+ *      this sprite.
  */
-TentaGL.IconSprite = function(xyz) {
-  TentaGL.Sprite.call(this, xyz);
+TentaGL.IconSpriteOld = function(xyz, texName) {
+  TentaGL.BillboardSprite.call(this, xyz);
+  this._texName = texName;
+  this._iconWidth = 1;
+  this._iconHeight = 1;
 };
 
 
-TentaGL.IconSprite.prototype = {
+TentaGL.IconSpriteOld.prototype = {
   
-  constructor:TentaGL.IconSprite,
+  constructor:TentaGL.IconSpriteOld,
   
-  isaIconSprite:true,
+  isaIconSpriteOld:true,
   
-  
-  //////// Metrics
+  //////// Texture properties
   
   /** 
-   * Returns icon's width. Override this.
-   * @return {number}
+   * Returns the name of this icon's texture material. 
+   * @return {string}
    */
-  getIconWidth:function() {},
+  getTextureName:function() {
+    return this._texName;
+  },
+  
+  
+  /** 
+   * Changes the texture material used by this icon to the one with the 
+   * specified name. 
+   * @param {string} name
+   */
+  setTextureName:function(name) {
+    this._texName = name;
+  },
+  
+  
+  /** 
+   * Returns this icon's texture material. 
+   * @return {TentaGL.Texture}
+   */
+  getTexture:function(gl) {
+    return TentaGL.MaterialLib.get(gl, this._texName);
+  },
+  
+  
+  /** 
+   * Returns the PixelData for the icon's texture material.
+   * @return {TentaGL.PixelData}
+   */
+  getPixelData:function(gl) {
+    return this.getTexture(gl).getPixelData();
+  },
+  
+  
+  //////// Texture dimensions
+  
+  /** 
+   * Returns the icon's pixel width. 
+   * @return {int}
+   */
+  getIconWidth:function() {
+    return this._iconWidth; // this.getTexture().getWidth();
+  },
   
   /**
-   * Returns icon's height. Override this.
-   * @return {number}
+   * Returns the icon's pixel height.
+   * @return {int}
    */
-  getIconHeight:function() {},
+  getIconHeight:function() {
+    return this._iconHeight; // this.getTexture().getHeight();
+  },
   
   
-  /** 
-   * Returns the aspect ratio of the icon. 
-   * @return {number}
-   */
+  /** Returns the aspect ratio of the icon. */
   getIconAspect:function() {
     return this.getIconWidth()/this.getIconHeight();
   },
@@ -68,11 +113,37 @@ TentaGL.IconSprite.prototype = {
   //////// Alignment
   
   /** 
-   * Sets the horizontal and vertical alignment of the icon relative to its anchor. Override this!
-   * @param {enum: TentaGL.Align} horizontal  LEFT, CENTER, or RIGHT
-   * @param {enum: TentaGL.Alight} vertical   TOP, CENTER, or BOTTOM
+   * Sets the horizontal and vertical alignment of the icon relative to its anchor. 
+   * @param {TentaGL.Align} horizontal  LEFT, CENTER, or RIGHT
+   * @param {TentaGL.Alight} vertical   TOP, CENTER, or BOTTOM
    */
-  setAlignment:function(horizontal, vertical) {},
+  setAlignment:function(horizontal, vertical) {
+    var x = undefined;
+    var y = undefined;
+    
+    // Set horizontal alignment.
+    if(horizontal == TentaGL.Align.LEFT) {
+      x =0;
+    }
+    else if(horizontal == TentaGL.Align.CENTER) {
+      x = 0.5;
+    }
+    else if(horizontal == TentaGL.Align.RIGHT) {
+      x = 1;
+    }
+    
+    // Set vertical alignment.
+    if(vertical == TentaGL.Align.BOTTOM) {
+      y = 0;
+    }
+    else if(vertical == TentaGL.Align.CENTER) {
+      y = 0.5;
+    }
+    else if(vertical == TentaGL.Align.TOP) {
+      y = 1;
+    }
+    this.setAnchorXYZ([x,y,0]);
+  },
   
   
   //////// Scaling
@@ -134,13 +205,18 @@ TentaGL.IconSprite.prototype = {
   },
   
   
-  /** 
-   * Sets the materials for and draws the Models making up this sprite. 
-   * Override this. 
-   */
-  draw:function(gl) {},
+  /** Draws the icon's texture onto a unit plane. */
+  draw:function(gl) {    
+    TentaGL.MaterialLib.use(gl, this._texName);
+    
+    var tex = this.getTexture(gl);
+    this._iconWidth = tex.getWidth();
+    this._iconHeight = tex.getHeight();
+    
+    TentaGL.ModelLib.render(gl, "unitPlane");
+  }
 };
 
 
 
-Util.Inheritance.inherit(TentaGL.IconSprite, TentaGL.Sprite);
+Util.Inheritance.inherit(TentaGL.IconSpriteOld, TentaGL.BillboardSprite);

@@ -78,7 +78,7 @@ TentaGL.TextIconSpriteOld.prototype = {
   
   constructor:TentaGL.TextIconSpriteOld,
   
-  isaTextIconSprite:true,
+  isaTextIconSpriteOld:true,
   
   
   //////// GL cleanup

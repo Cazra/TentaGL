@@ -201,7 +201,9 @@ TentaGL.PixelData.prototype = {
     ctx.putImageData(imgData, 0, 0);
     
     var container = document.getElementById("imgDebug");
-    container.appendChild(canvas);
+    if(container) {
+      container.appendChild(canvas);
+    }
     
     return canvas;
   },
@@ -272,7 +274,9 @@ TentaGL.PixelData.fromURL = function(url, callback) {
  */
 TentaGL.PixelData.fromCanvas = function(canvas) {
   var container = document.getElementById("imgDebug");
-  container.appendChild(canvas);
+  if(container) {
+    container.appendChild(canvas);
+  }
   
   var width = canvas.width;
   var height = canvas.height;
