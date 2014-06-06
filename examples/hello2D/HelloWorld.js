@@ -243,6 +243,18 @@ HelloWorldApp.prototype = {
     // Scene application code
     this.updateScene(gl);
     
+    
+    // Camera reset
+    if(this._keyboard.justPressed(KeyCode.R)) {
+      this.camera.setAngle(0);
+    }
+    
+    if(this._keyboard.isPressed(KeyCode.Q)) {
+      this.camera.setAngle(this.camera.getAngle() + TentaGL.TAU/360);
+    }
+    
+    this.camera.controlWithMouse(this._mouse, this.getWidth(), this.getHeight());
+    
     // Picker test
     if(this._mouse.isLeftPressed()) {
       this.getPicker().update(gl, this.drawScene.bind(this), false);

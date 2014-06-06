@@ -132,6 +132,25 @@ TentaGL.Camera2D.prototype = {
   },
   
   
+  /** 
+   * Sets the camera's anchor position such that the camera's transform is 
+   * unchanged. I.E., the camera appears to be at the same position.
+   * @param {vec2} anchor
+   */
+  moveAnchor: function(anchor) {
+    var df = [anchor[0] - this._anchor[0], anchor[1] - this._anchor[1]];
+    
+    var rsTransInv = mat4.invert(mat4.create(), this._getRotateScaleTransform());
+    dfWorld = vec2.transformMat4(vec2.create(), df, rsTransInv);
+    
+    this._eye[0] += dfWorld[0];
+    this._eye[1] += dfWorld[1];
+    
+    this._anchor[0] = anchor[0];
+    this._anchor[1] = anchor[1];
+  },
+  
+  
   //////// Angle
   
   
@@ -181,10 +200,106 @@ TentaGL.Camera2D.prototype = {
   
   
   controlWithMouse:function(mouse, viewWidth, viewHeight) {
-    // do nothing
+    var mouseX = mouse.getX()*this.getWidth()/viewWidth;
+    var mouseY = mouse.getY()*this.getHeight()/viewHeight;
+    
+    
+    
+    // Zoom in by scrolling the mouse wheel up.
+    if(mouse.scrollUpAmount() > 0) {
+      this.moveAnchor([mouseX, mouseY]);
+      for(var i = 0; i < mouse.scrollUpAmount(); i++) {
+        this.setZoom(this.getZoom() * 10/9);
+      }
+    }
+    
+    // Zoom out by scrolling the mouse wheel down.
+    if(mouse.scrollDownAmount() > 0) {
+      this.moveAnchor([mouseX, mouseY]);
+      for(var i = 0; i < mouse.scrollDownAmount(); i++) {
+        this.setZoom(this.getZoom() * 9/10);
+      }
+    }
+    
+    // Pan the camera by left-dragging the mouse.
+    if(mouse.isLeftPressed()) {
+      this.drag(mouse.getXY(), viewWidth, viewHeight);
+    }
+    if(mouse.justLeftReleased()) {
+      this.endDrag();
+    }
+  },
+  
+  
+  /** 
+   * Pans the camera with a dragging motion. 
+   * @param {vec2} screenPt   The point of the thing dragging the camera, in 
+   *      screen coordinates. Most likely the mouse.
+   * @param {int} viewWidth   The width of the viewport.
+   * @param {int} viewHeight  The height of the viewport.
+   */
+  drag: function(screenPt, viewWidth, viewHeight) {
+    if(!this._dragPrev) {
+      this._updatePrevDragPt(screenPt, viewWidth, viewHeight);
+    }
+    
+    var worldPt = this.screenToWorld(screenPt, viewWidth, viewHeight);
+    var dragX = this._dragPrev[0] - worldPt[0];
+    var dragY = this._dragPrev[1] - worldPt[1];
+    
+    this._eye[0] = this._dragEyeStart[0] + dragX;
+    this._eye[1] = this._dragEyeStart[1] + dragY;
+    
+    var anchorX = screenPt[0]*this.getWidth()/viewWidth;
+    var anchorY = screenPt[1]*this.getHeight()/viewHeight;
+    this.moveAnchor([anchorX, anchorY]);
+    
+    this._updatePrevDragPt(screenPt, viewWidth, viewHeight);
+  },
+  
+  
+  /** 
+   * Updates the previous drag state. 
+   * @param {vec2} screenPt   The point of the thing dragging the camera, in 
+   *      screen coordinates. Most likely the mouse.
+   * @param {int} viewWidth   The width of the viewport.
+   * @param {int} viewHeight  The height of the viewport.
+   */
+  _updatePrevDragPt: function(screenPt, viewWidth, viewHeight) {
+    var worldPt = this.screenToWorld(screenPt, viewWidth, viewHeight);
+    this._dragPrev = worldPt;
+    this._dragEyeStart = vec2.clone(this._eye);
+  },
+  
+  
+  /** 
+   * Causes the camera drag to end.
+   */
+  endDrag: function() {
+    this._dragPrev = undefined;
+    this._dragEyeStart = undefined;
   },
   
   //////// Transforms
+  
+  
+  /** 
+   * Returns only the Rotate x Scale part of the view transform matrix.
+   * @return {mat4}
+   */
+  _getRotateScaleTransform: function() {
+    var m = mat4.create();
+    
+    var rotT = mat4.create();
+    mat4.rotateZ(rotT, rotT, this._angle);
+    mat4.mul(m, rotT, m);
+    
+    var zoomT = mat4.create();
+    mat4.scale(zoomT, zoomT, [this._zoom, this._zoom, 1]);
+    mat4.mul(m, zoomT, m);
+    
+    return m;
+  },
   
   
   /** 
@@ -198,13 +313,8 @@ TentaGL.Camera2D.prototype = {
     mat4.translate(eyeT, eyeT, [-this._eye[0], -this._eye[1], 0]);
     mat4.mul(m, eyeT, m);
     
-    var rotT = mat4.create();
-    mat4.rotateZ(rotT, rotT, this._angle);
-    mat4.mul(m, rotT, m);
-    
-    var zoomT = mat4.create();
-    mat4.scale(zoomT, zoomT, [this._zoom, this._zoom, 1]);
-    mat4.mul(m, zoomT, m);
+    var rsT = this._getRotateScaleTransform();
+    mat4.mul(m, rsT, m);
     
     var anchorT = mat4.create();
     mat4.translate(anchorT, anchorT, [this._anchor[0], this._anchor[1], 0]);
@@ -217,7 +327,6 @@ TentaGL.Camera2D.prototype = {
   
   /** 
    * Returns the projection matrix for this camera.
-   * @param {Number} aspect   The aspect ratio of our viewport.
    * @return {mat4}
    */
   getProjectionTransform:function() {
@@ -228,6 +337,49 @@ TentaGL.Camera2D.prototype = {
     m[13] = 1;
     return m;
   },
+  
+  
+  
+  
+  /** 
+   * Transforms a point from screen coordinates to world coordinates.
+   * @param {vec2} screenPt   The point in view coordinates.
+   * @param {int} viewWidth   The width of the viewport.
+   * @param {int} viewHeight  The height of the viewport.
+   * @return {vec2}
+   */
+  screenToWorld: function(screenPt, viewWidth, viewHeight) {
+    var result = [screenPt[0], screenPt[1]];
+    
+    result[0] *= this.getWidth()/viewWidth;
+    result[1] *= this.getHeight()/viewHeight;
+    
+    var viewInv = this.getViewTransform();
+    mat4.invert(viewInv, viewInv);
+    
+    vec2.transformMat4(result, result, viewInv);
+    return result;
+  },
+  
+  
+  /** 
+   * Transform a point from world coordinates to screen coordinates.
+   * @param {vec2} worldPt    The point in world coordinates.
+   * @param {int} viewWidth   The width of the viewport.
+   * @param {int} viewHeight  The height of the viewport.
+   * @return {vec2}
+   */
+  worldToScreen: function(worldPt, viewWidth, viewHeight) {
+    result = [worldPt[0], worldPt[1]];
+    
+    var viewTrans = this.getViewTransform();
+    vec2.transformMat4(result, result, viewTrans);
+    
+    result[0] *= viewWidth/this.getWidth();
+    result[1] *= viewHeight/this.getHeight();
+    
+    return result;
+  }
 };
 
 
