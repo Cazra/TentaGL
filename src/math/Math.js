@@ -30,7 +30,9 @@ TentaGL.TAU = 2*Math.PI;
 
 /** Math utilities. Algebraic!! */
 TentaGL.Math = {
-
+  
+  //////// Coordinates
+  
   /** 
    * Converts cartesian XYZ coordinates to polar [radius, thetaY, thetaX] coordinates, 
    * with thetaX and thetaY given in radians. Note that in our polar coordinate 
@@ -80,6 +82,8 @@ TentaGL.Math = {
   },
   
   
+  //////// Ranges
+  
   
   /** 
    * Clamps the specified value to the range [min, max]. 
@@ -112,6 +116,62 @@ TentaGL.Math = {
   },
   
   
+  //////// Vectors
+  
+  
+  /**
+   * Returns the angle from u to v, rotated around their cross product. 
+   * @param {vec3} u
+   * @param {vec3} v
+   * @return {number}
+   */
+  vectorAngle: function(u, v) {
+    var uHat = vec3.normalize(vec3.create(), u);
+    var vHat = vec3.normalize(vec3.create(), v);
+    
+    var n = vec3.cross(vec3.create(), u, v);
+    nMag = vec3.length(n);
+    
+    var theta = Math.acos(vec3.dot(uHat, vHat));
+    if(nMag < 0) {
+      theta = TentaGL.TAU - theta;
+    }
+    
+    return theta;
+  },
+  
+  
+  
+  /** 
+   * Computes a unit vector parametrically rotated between two vectors.
+   * @param {vec3} u
+   * @param {vec3} v
+   * @param {number} alpha  A parametric value in the range [0,1].
+   */
+  tweenVector: function(u, v, alpha) {
+    var uHat = vec3.normalize(vec3.create(), u);
+    var vHat = vec3.normalize(vec3.create(), v);
+    
+    var n = vec3.cross(vec3.create(), u, v);
+    nMag = vec3.length(n);
+    
+    var theta = Math.acos(vec3.dot(uHat, vHat));
+    if(nMag < 0) {
+      theta = TentaGL.TAU - theta;
+    }
+    else if(nMag == 0) {
+      n = [0,0,1];
+    }
+    n = vec3.normalize(n, n);
+    
+    var q = quat.setAxisAngle(quat.create(), n, theta*alpha);
+    return vec3.transformQuat(vec3.create(), uHat, q);
+  },
+  
+  
+  //////// Spaces
+  
+  
   /** 
    * Returns a matrix for changing a vector from basis B' to a vector in the 
    * standard basis of R^3. 
@@ -136,6 +196,9 @@ TentaGL.Math = {
     return m;
   },
   
+  
+  
+  //////// Orientation
   
   /** 
    * Gets the quaternion for rotating from one vector to another. 
@@ -181,6 +244,11 @@ TentaGL.Math = {
     return q;
   },
   
+  
+  
+  
+  
+  ////////
   
   /** 
    * Returns the first power of two >= to value.

@@ -28,6 +28,7 @@
  * @param {Array{vec3}} xyzv  The xyz coordinates for each vertex, in order, 
  *      making up the polyline.
  * @param {Boolean} closed  Whether the polyline forms a closed polygon.
+ * @return {TentaGL.Model}
  */
 TentaGL.Model.PolyLine = function(xyzv, closed) {
   var model = new TentaGL.Model(GL_LINES);
