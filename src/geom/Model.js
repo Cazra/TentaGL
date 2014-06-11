@@ -154,6 +154,22 @@ TentaGL.Model.prototype = {
   },
   
   
+  /** 
+   * Returns the index of a vertex in this model. If not found, -1 is returned.
+   * @param {TentaGL.Vertex} vertex
+   * @return {uint}
+   */
+  indexOfVertex: function(vertex) {
+    for(var i=0; i < this._vertices.length; i++) {
+      if(this._vertices[i] == vertex) {
+        return i;
+      }
+    }
+    
+    return -1;
+  },
+  
+  
   //////// Line index operations
   
   /** Returns the number of lines defining this model. */
@@ -364,6 +380,54 @@ TentaGL.Model.prototype = {
     }
     return this._faces;
   },
+  
+  
+  /** 
+   * Returns the array of triangular faces that use the nth vertex in this 
+   * model. 
+   * @param {uint} n  The index of the vertex.
+   * @return {array: uint}
+   */
+  getFacesContainingVertex: function(n) {
+    var result = [];
+    
+    var faces = this.getFaces();
+    
+    for(var i=0; i<faces.length; i++) {
+      var face = faces[i];
+      
+      if(face[0] == n || face[1] == n || face[2] == n) {
+        result.push(i);
+      }
+    }
+    
+    return result;
+  },
+  
+  
+  /** 
+   * Automatically generates the normal vector for each vertex by normalizing
+   * the sum of the normals of adjacent faces.
+   */
+  generateVertexNormals: function() {
+    var faceNormals = this.getFaceNormals();
+    
+    for(var i=0; i<this._vertices.length; i++) {
+      var vertex = this._vertices[i];
+      var adjFaces = this.getFacesContainingVertex(i);
+      
+      var n = [0,0,0];
+      
+      for(var j=0; j<adjFaces.length; j++) {
+        var faceIndex = adjFaces[j];
+        vec3.add(n, n, faceNormals[faceIndex])
+      }
+      
+      vec3.normalize(n, n);
+      vertex.setNormal(n[0], n[1], n[2]);
+    }
+  },
+  
   
   //////// Properties computations
   
