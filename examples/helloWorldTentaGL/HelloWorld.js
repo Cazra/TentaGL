@@ -91,24 +91,18 @@ HelloWorldApp.prototype = {
   },
   
   
-  /** Overrides TentaGL.Application.initShaders */
+  
+  //////// Required Application interface implementations
+  
+  
+  /** We are required to override TentaGL.Application.initShaders */
   initShaders:function() {
     var gl = this.getGL();
-    
-    var simpleShader = TentaGL.ShaderProgram.fromURL(gl, "../../shaders/simple.vert", "../../shaders/simple.frag");
-    TentaGL.ShaderLib.add(gl, "simpleShader", simpleShader);
-    
-    simpleShader.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-    simpleShader.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-    simpleShader.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
-    
-    simpleShader.bindMVPTransUni("mvpTrans");
-    simpleShader.bindNormalTransUni("normalTrans");
-    simpleShader.bindTex0Uni("tex");
+    TentaGL.ShaderProgram.loadSimpleShader(gl, "simpleShader");
   },
   
   
-  /** Overrides TentaGL.Application.initMaterials */
+  /** We are required to override TentaGL.Application.initMaterials */
   initMaterials:function() {
     var gl = this.getGL();
     var self = this;
@@ -137,30 +131,12 @@ HelloWorldApp.prototype = {
     TentaGL.MaterialLib.add(gl, "testCircle", circle);
     
     
-    // green
-    var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 1, 0, 1));
-    var green = TentaGL.Texture.fromCanvas(gl, canvas);
-    TentaGL.MaterialLib.add(gl, "green", green);
-    
-    // blue
-    var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 0, 1, 1));
-    var blue = TentaGL.Texture.fromCanvas(gl, canvas);
-    TentaGL.MaterialLib.add(gl, "blue", blue);
-    
-    // red
-    var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(1, 0, 0, 1));
-    var red = TentaGL.Texture.fromCanvas(gl, canvas);
-    TentaGL.MaterialLib.add(gl, "red", red);
-    
-    // white
-    var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(1, 1, 1, 1));
-    var white = TentaGL.Texture.fromCanvas(gl, canvas);
-    TentaGL.MaterialLib.add(gl, "white", white);
-    
-    // black
-    var canvas = TentaGL.Canvas2D.createRect(10, 10, false, 0, TentaGL.Color.RGBA(0, 0, 0, 1));
-    var black = TentaGL.Texture.fromCanvas(gl, canvas);
-    TentaGL.MaterialLib.add(gl, "black", black);
+    // solid colors
+    TentaGL.MaterialLib.add(gl, "green", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 1, 0, 1)));
+    TentaGL.MaterialLib.add(gl, "blue", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 0, 1, 1)));
+    TentaGL.MaterialLib.add(gl, "red", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(1, 0, 0, 1)));
+    TentaGL.MaterialLib.add(gl, "white", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(1, 1, 1, 1)));
+    TentaGL.MaterialLib.add(gl, "black", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 0, 0, 1)));
     
     
     // Label BG icon
@@ -190,7 +166,7 @@ HelloWorldApp.prototype = {
   },
   
   
-  /** Overrides TentaGL.Application.initModels */
+  /** We are required to override TentaGL.Application.initModels */
   initModels:function() {
     var cubeModel = TentaGL.Model.Cube(2, 2, 2);//.cloneCentered();
     TentaGL.ModelLib.add(this.getGL(), "cube", cubeModel);
@@ -206,7 +182,7 @@ HelloWorldApp.prototype = {
   },
   
   
-  /** Overrides TentaGL.Application.reset */
+  /** We are required to override TentaGL.Application.reset */
   reset:function() {
     this.camera = new TentaGL.ArcballCamera([10, 10, 10], [0, 0, 0]);
     this.rX = 0;
@@ -260,7 +236,7 @@ HelloWorldApp.prototype = {
   
   
   
-  /** Overrides TentaGL.Application.update */
+  /** We are required to override TentaGL.Application.update */
   update:function() {
     if(TentaGL.ImageLoader.isLoading()) {
       console.log("Loading image data...");
@@ -292,6 +268,10 @@ HelloWorldApp.prototype = {
     }
     this.drawScene(gl);
   },
+  
+  
+  
+  //////// Update/render helpers
   
   
   /** Runs the scene application logic. */

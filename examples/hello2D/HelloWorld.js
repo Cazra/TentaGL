@@ -68,24 +68,14 @@ HelloWorldApp.prototype = {
   },
   
   
-  /** Overrides TentaGL.Application.initShaders */
+  /** We are required to override TentaGL.Application.initShaders */
   initShaders:function() {
     var gl = this.getGL();
-    
-    var simpleShader = TentaGL.ShaderProgram.fromURL(gl, "../../shaders/simple.vert", "../../shaders/simple.frag");
-    TentaGL.ShaderLib.add(gl, "simpleShader", simpleShader);
-    
-    simpleShader.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-    simpleShader.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-    simpleShader.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
-    
-    simpleShader.bindMVPTransUni("mvpTrans");
-    simpleShader.bindNormalTransUni("normalTrans");
-    simpleShader.bindTex0Uni("tex");
+    TentaGL.ShaderProgram.loadSimpleShader(gl, "simpleShader");
   },
   
   
-  /** Overrides TentaGL.Application.initMaterials */
+  /** We are required to override TentaGL.Application.initMaterials */
   initMaterials:function() {
     var gl = this.getGL();
     var self = this;
@@ -95,20 +85,13 @@ HelloWorldApp.prototype = {
     var coinBlock = TentaGL.Texture.fromURL(gl, "../../images/sampleTex.png");
     TentaGL.MaterialLib.add(gl, "coinBlock", coinBlock);
     
-    var icon = new TentaGL.Texture(gl);
-    TentaGL.PixelData.fromURL("../../images/iconNew.png", function(pixelData) {
-      pixelData = pixelData.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,200,255));
-      pixelData = pixelData.crop(7,6, 17,21);
-      
-    //  TentaGL.PixelData.fromURL("../../images/iconNewAlpha.png", function(alphaImg) {
-    //    alphaImg = alphaImg.crop(7,6, 17,21);
-    //    
-    //    pixelData = pixelData.filter(new TentaGL.RGBAFilter.AlphaMap(alphaImg));
-    //    icon.setPixelData(gl, pixelData);
-    //  });
-      
-      icon.setPixelData(gl, pixelData);
-    });
+    var icon = TentaGL.Texture.fromURL(gl, "../../images/iconNew.png", 
+      function(pixelData) {
+        pixelData = pixelData.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,200,255));
+        pixelData = pixelData.crop(7,6, 17,21);
+        return pixelData;
+      }
+    );
     TentaGL.MaterialLib.add(gl, "iconNew", icon);
     
     
@@ -122,35 +105,12 @@ HelloWorldApp.prototype = {
     TentaGL.MaterialLib.add(gl, "testCircle", circle);
     
     
-    // green
-    var tex = new TentaGL.Texture(gl);
-    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(0, 1, 0, 1));
-    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-    TentaGL.MaterialLib.add(gl, "green", tex);
-    
-    // blue
-    var tex = new TentaGL.Texture(gl);
-    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(0, 0, 1, 1));
-    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-    TentaGL.MaterialLib.add(gl, "blue", tex);
-    
-    // red
-    var tex = new TentaGL.Texture(gl);
-    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(1, 0, 0, 1));
-    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-    TentaGL.MaterialLib.add(gl, "red", tex);
-    
-    // white
-    var tex = new TentaGL.Texture(gl);
-    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(1, 1, 1, 1));
-    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-    TentaGL.MaterialLib.add(gl, "white", tex);
-    
-    // black
-    var tex = new TentaGL.Texture(gl);
-    var canvas = TentaGL.Canvas2D.create(10, 10, TentaGL.Color.RGBA(0, 0, 0, 1));
-    tex.setPixelData(gl, TentaGL.PixelData.fromCanvas(canvas));
-    TentaGL.MaterialLib.add(gl, "black", tex);
+    // solid colors
+    TentaGL.MaterialLib.add(gl, "green", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 1, 0, 1)));
+    TentaGL.MaterialLib.add(gl, "blue", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 0, 1, 1)));
+    TentaGL.MaterialLib.add(gl, "red", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(1, 0, 0, 1)));
+    TentaGL.MaterialLib.add(gl, "white", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(1, 1, 1, 1)));
+    TentaGL.MaterialLib.add(gl, "black", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 0, 0, 1)));
     
     
     // blittered font: Final Fontasy
@@ -166,7 +126,7 @@ HelloWorldApp.prototype = {
   },
   
   
-  /** Overrides TentaGL.Application.initModels */
+  /** We are required to override TentaGL.Application.initModels */
   initModels:function() {
     var cubeModel = TentaGL.Model.Cube(2, 2, 2);//.cloneCentered();
     TentaGL.ModelLib.add(this.getGL(), "cube", cubeModel, TentaGL.getDefaultAttrProfileSet());
@@ -185,7 +145,7 @@ HelloWorldApp.prototype = {
   },
   
   
-  /** Overrides TentaGL.Application.reset */
+  /** We are required to override TentaGL.Application.reset */
   reset:function() {
     this.camera = new TentaGL.Camera2D([0, 0], 320, 240); //new TentaGL.ArcballCamera([10, 10, 10], [0, 0, 0]);
     this.camera.setEye([64,32]);
@@ -232,7 +192,7 @@ HelloWorldApp.prototype = {
   
   
   
-  /** Overrides TentaGL.Application.update */
+  /** We are required to override TentaGL.Application.update */
   update:function() {
     if(TentaGL.ImageLoader.isLoading()) {
       console.log("Loading images...");
@@ -333,11 +293,8 @@ HelloWorldApp.prototype = {
     
     // Clear the scene. 
     TentaGL.clear(gl, TentaGL.Color.RGBA(0.1, 0.1, 0.3, 1));
-  //  TentaGL.DepthBuffer.clear(gl);
 
     // Draw the objects in the scene.
-    //this.blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [0,100,0], true);
-    //this.blitFont2.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [0,-50,0], true);
     this.textSprite1.render(gl);
     this.textSprite2.render(gl);
     

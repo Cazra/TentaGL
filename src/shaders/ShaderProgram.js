@@ -593,3 +593,32 @@ TentaGL.ShaderProgram.fromURL = function(gl, vertURL, fragURL) {
 };
 
 
+
+//////// Pre-fabricated ShaderPrograms:
+
+/** 
+ * Loads a simple shader program that applies a model-view-projection 
+ * transform to vertices in the scene and colors texels using a texture.
+ * Lighting/Shading is not provided in this program.
+ * The program is stored in the ShaderLib under the name "simpleShader".
+ * @param {WebGLRenderingContext} gl
+ * @param {name}  The name used to reference the shader program from the ShaderLib.
+ * @return {TentaGL.ShaderProgram}
+ */
+TentaGL.ShaderProgram.loadSimpleShader = function(gl, name) {
+  var program = TentaGL.ShaderProgram.fromURL(gl, "../../shaders/simple.vert", "../../shaders/simple.frag");
+  TentaGL.ShaderLib.add(gl, name, program);
+  
+  program.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+  program.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
+  program.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+  
+  program.bindMVPTransUni("mvpTrans");
+  program.bindNormalTransUni("normalTrans");
+  program.bindTex0Uni("tex");
+  
+  return program;
+};
+
+
+
