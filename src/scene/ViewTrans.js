@@ -209,11 +209,17 @@ TentaGL.ViewTrans = {
    * @param {WebGLRenderingContext} gl
    */
   updateMVPUniforms: function(gl) {
-    mat3.normalFromMat4(gl._normalTrans, gl._modelViewTrans);
-    TentaGL.ShaderLib.current(gl).setNormalTransUniValue(gl, gl._normalTrans);
+    var program = TentaGL.ShaderLib.current(gl);
     
-    mat4.mul(gl._mvpTrans, gl._projTrans, gl._modelViewTrans);
-    TentaGL.ShaderLib.current(gl).setMVPTransUniValue(gl, gl._mvpTrans);
+    if(program.setNormalTrans) {
+      mat3.normalFromMat4(gl._normalTrans, gl._modelViewTrans);
+      program.setNormalTrans(gl, gl._normalTrans);
+    }
+    
+    if(program.setMVPTrans) {
+      mat4.mul(gl._mvpTrans, gl._projTrans, gl._modelViewTrans);
+      program.setMVPTrans(gl, gl._mvpTrans);
+    }
   },
   
   

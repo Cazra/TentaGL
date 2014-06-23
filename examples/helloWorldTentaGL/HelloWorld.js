@@ -98,7 +98,8 @@ HelloWorldApp.prototype = {
   /** We are required to override TentaGL.Application.initShaders */
   initShaders:function() {
     var gl = this.getGL();
-    TentaGL.ShaderProgram.loadSimpleShader(gl, "simpleShader");
+    
+    TentaGL.SimpleShader.load(gl, "simpleShader");
   },
   
   
@@ -365,6 +366,8 @@ HelloWorldApp.getInstance = function() {
     };
     
     HelloWorldApp._instance.resize(Math.floor(window.innerWidth*0.95), Math.floor(window.innerHeight*0.95));
+    
+    TentaGL.ShaderLib.setDefaultShaderPath(HelloWorldApp._instance.getGL(), "../../shaders/");
   }
   return HelloWorldApp._instance;
 };

@@ -132,7 +132,7 @@ TentaGL.BufferTexture.prototype = {
   useMe:function(gl) {
     gl.activeTexture(GL_TEXTURE0);
     gl.bindTexture(GL_TEXTURE_2D, this._tex);
-    TentaGL.ShaderLib.current(gl).setTex0UniValue(gl, 0);
+    TentaGL.ShaderLib.current(gl).setTex(gl, 0);
   }
 };
 

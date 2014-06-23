@@ -393,192 +393,20 @@ TentaGL.ShaderProgram.prototype = {
       var attr = this._attributes[name];
       gl.disableVertexAttribArray(attr.getLocation());
     }
-  },
+  }
   
   
-  //////// TentaGL supported uniforms
-  
-  //// MVPTrans
-  
-  /** 
-   * Sets the value of the mat4 uniform variable bound to store the model-view-
-   * projection transformation matrix.
-   * An error is thrown if a uniform hasn't been bound to the sprites' model 
-   * transform matrices.
-   * @param {WebGLRenderingContext} gl
-   * @param {typed array} value   A typed array of the appropriate type and 
-   *      length for the variable.
-   */
-  setMVPTransUniValue:function(gl, value) {
-    if(this._mvpUni) {
-      this._mvpUni.set(gl, value);
-    }
-  },
-  
-  /** 
-   * Binds the mat4 uniform variable with the specified name in this  
-   * ShaderProgram to store the model-view-projection transformation matrix.
-   * An error is thrown if the specified uniform doesn't exist in this program.
-   * @param {string} uniName
-   */
-  bindMVPTransUni:function(uniName) {
-    this._mvpUni = this.getUniform(uniName);
-  },
-  
-  
-  //// NormalTrans
-  
-  /** 
-   * Sets the value of the mat3 uniform variable bound to store the  
-   * normal transformation matrix.
-   * An error is thrown if a uniform hasn't been bound to the sprites' model 
-   * transform matrices.
-   * @param {WebGLRenderingContext} gl
-   * @param {typed array} value   A typed array of the appropriate type and 
-   *      length for the variable.
-   */
-  setNormalTransUniValue:function(gl, value) {
-    if(this._normalUni) {
-      this._normalUni.set(gl, value);
-    }
-  },
-  
-  /** 
-   * Binds the mat3 uniform variable with the specified name in this  
-   * ShaderProgram to store the normal transformation matrix.
-   * An error is thrown if the specified uniform doesn't exist in this program.
-   * @param {string} uniName
-   */
-  bindNormalTransUni:function(uniName) {
-    this._normalUni = this.getUniform(uniName);
-  },
-  
-  
-  //// Colors
-  
-  /** 
-   * Sets the value of the vec4 uniform variable used to store the RGBA 
-   * values of a color material. 
-   * @param {WebGLRenderingContext} gl
-   * @param {typed array} value   A typed array of the appropriate type and 
-   *      length for the variable.
-   */
-  setColorUniValue:function(gl, value) {
-    if(this._colorUni) {
-      this._colorUni.set(gl, value);
-    }
-  },
-  
-  
-  /** 
-   * Binds the vec4 uniform variable used to store the RGBA values of a color
-   * material.
-   * @param {string} uniName
-   */
-  bindColorUni:function(uniName) {
-    this._colorUni = this.getUniform(uniName);
-  },
-  
-  
-  //// Texture0
-  
-  
-  /** 
-   * Sets the value of the sampler2D uniform variable bound to store the 
-   * texture0 start offset. In most cases, just give it the value 0.
-   * @param {WebGLRenderingContext} gl
-   * @param {int} value
-   */
-  setTex0UniValue:function(gl, value) {
-    if(this._tex0Uni) {
-      this._tex0Uni.set(gl, value);
-    }
-  },
-  
-  
-  /** 
-   * Binds the sampler2D uniform variable with the specified name in this
-   * ShaderProgram to store the start offset for texture0.
-   * @param {string} uniName
-   */
-  bindTex0Uni:function(uniName) {
-    this._tex0Uni = this.getUniform(uniName);
-  },
-  
-  
-  
-  
-  
-  
-  //// Opacity
-  
-  /** 
-   * Sets the value of the float uniform variable bound to store opacity.
-   * An error is thrown if a uniform hasn't been bound to the sprites' model 
-   * transform matrices.
-   * @param {WebGLRenderingContext} gl
-   * @param {typed array} value   A typed array of the appropriate type and 
-   *      length for the variable.
-   */
-  setOpacityUniValue:function(gl, value) {
-    if(this._opacityUni) {
-      this._opacityUni.set(gl, value);
-    }
-  },
-  
-  
-  /** 
-   * Binds the float uniform variable with the specified name in this
-   * ShaderProgram to store the opacity.
-   * An error is thrown if the specified uniform doesn't exist in this program.
-   * @param {string} uniName
-   */
-  bindOpacityUni:function(uniName) {
-    this._opacityUni = this.getUniform(uniName);
-  },
-  
-  //// Picking
-  
-  /** 
-   * Sets the value of the vec4 uniform variable bound to store the picking ID.
-   * An error is thrown if a uniform hasn't been bound to the sprites' model 
-   * transform matrices.
-   * @param {WebGLRenderingContext} gl
-   * @param {typed array} value   A typed array of the appropriate type and 
-   *      length for the variable.
-   */
-  setPickIDUniValue:function(gl, value) {
-    if(this._pickIDUni) {
-      this._pickIDUni.set(gl, value);
-    }
-  },
-  
-  
-  /** 
-   * Binds the vec4 uniform variable with the specified name in this
-   * ShaderProgram to store the picking ID.
-   * An error is thrown if the specified uniform doesn't exist in this program.
-   * @param {string} uniName
-   */
-  bindPickIDUni:function(uniName) {
-    this._pickIDUni = this.getUniform(uniName);
-  },
 };
 
 
 /** 
- * Produces a ShaderProgram from the shader source code files at the 
- * specified URLs. 
- * If any compile errors occur while compiling the vertex or fragment shaders
- * or while linking the program, they are printed to the console 
- * and an Error is thrown.
- * This function uses blocking ajax requests. 
- * @param {WebGLRenderingContext} gl
+ * Loads the vertex and fragment shader source code from their URLs. 
+ * @param {WebGLRenderingContexT} gl
  * @param {string} vertURL   The URL of the vertex shader source code.
  * @param {string} fragURL   The URL of the fragment shader source code.
- * @return {TentaGL.ShaderProgram}
+ * @return {array: [vertSrc : string, fragSrc : string]}
  */
-TentaGL.ShaderProgram.fromURL = function(gl, vertURL, fragURL) {
+TentaGL.ShaderProgram.srcFromURL = function(gl, vertURL, fragURL) {
   var req = new XMLHttpRequest();
   
   req.open("get", vertURL, false);
@@ -589,36 +417,6 @@ TentaGL.ShaderProgram.fromURL = function(gl, vertURL, fragURL) {
   req.send();
   var fragSrc = req.responseText;
   
-  return new TentaGL.ShaderProgram(gl, vertSrc, fragSrc);
+  return [vertSrc, fragSrc];
 };
-
-
-
-//////// Pre-fabricated ShaderPrograms:
-
-/** 
- * Loads a simple shader program that applies a model-view-projection 
- * transform to vertices in the scene and colors texels using a texture.
- * Lighting/Shading is not provided in this program.
- * The program is stored in the ShaderLib under the name "simpleShader".
- * @param {WebGLRenderingContext} gl
- * @param {name}  The name used to reference the shader program from the ShaderLib.
- * @return {TentaGL.ShaderProgram}
- */
-TentaGL.ShaderProgram.loadSimpleShader = function(gl, name) {
-  var program = TentaGL.ShaderProgram.fromURL(gl, "../../shaders/simple.vert", "../../shaders/simple.frag");
-  TentaGL.ShaderLib.add(gl, name, program);
-  
-  program.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-  program.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-  program.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
-  
-  program.bindMVPTransUni("mvpTrans");
-  program.bindNormalTransUni("normalTrans");
-  program.bindTex0Uni("tex");
-  
-  return program;
-};
-
-
 

@@ -71,7 +71,8 @@ HelloWorldApp.prototype = {
   /** We are required to override TentaGL.Application.initShaders */
   initShaders:function() {
     var gl = this.getGL();
-    TentaGL.ShaderProgram.loadSimpleShader(gl, "simpleShader");
+    
+    TentaGL.SimpleShader.load(gl, "simpleShader");
   },
   
   
@@ -224,10 +225,9 @@ HelloWorldApp.prototype = {
       var sprite = this.getPicker().getSpriteAt(mx, my);
       console.log(sprite);
       
-    //  if(sprite && sprite.setText) {
-    //    sprite.setColor(new TentaGL.Color.RGBA(1,0,0,1));
-    //    sprite.setText("X__X You clicked me...\nI am dead now.");
-    //  }
+      if(sprite && sprite.setText) {
+        sprite.setText("X__X You clicked me...\nI am dead now.");
+      }
     }
     else {
       //this.drawScene(gl);
@@ -325,6 +325,8 @@ HelloWorldApp.getInstance = function() {
     };
     
     HelloWorldApp._instance.resize(Math.floor(window.innerWidth*0.95), Math.floor(window.innerHeight*0.95));
+    
+    TentaGL.ShaderLib.setDefaultShaderPath(HelloWorldApp._instance.getGL(), "../../shaders/");
   }
   return HelloWorldApp._instance;
 };

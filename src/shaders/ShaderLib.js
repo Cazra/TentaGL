@@ -48,9 +48,34 @@ TentaGL.ShaderLib = {
    */
   reset:function(gl) {
     this.clean(gl);
-    TentaGL.Picker.loadShaderProgram(gl);
+    //TentaGL.Picker.loadShaderProgram(gl);
+    TentaGL.PickShader.load(gl, TentaGL.Picker.SHADER_ID);
     
     gl._shaderLibLocked = false;
+  },
+  
+  
+  
+  /** 
+   * Returns the default root directory for loading premade ShaderPrograms.
+   * By default, this is "./shaders/".
+   * @param {WebGLRenderingContext} gl
+   */
+  getDefaultShaderPath: function(gl) {
+    if(!gl._shaderDir) {
+      gl._shaderDir = "./shaders/";
+    }
+    return gl._shaderDir;
+  },
+  
+  
+  /** 
+   * Sets the default root directory for loading premade ShaderPrograms.
+   * @param {WebGLRenderingContext} gl
+   * @param {string} dirPath
+   */
+  setDefaultShaderPath: function(gl, dirPath) {
+    gl._shaderDir = dirPath;
   },
   
   
