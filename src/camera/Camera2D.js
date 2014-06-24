@@ -34,8 +34,14 @@
  *      By default, the eye's screen location is in the center of the viewport.
  * @param {uint} width    The pixel width of the camera's resolution.
  * @param {uint} height   The pixel height of the camera's resolution.
+ * @param {boolean} yFlipped  Whether the positive y-axis is in the down direction. Default true.
  */
-TentaGL.Camera2D = function(eye, width, height) {
+TentaGL.Camera2D = function(eye, width, height, yFlipped) {
+  if(yFlipped == undefined) {
+    yFlipped = true;
+  }
+  this._yFlipped = yFlipped;
+  
   var ex = eye[0];
   var ey = eye[1];
   this._eye = vec2.fromValues(ex, ey);
@@ -43,6 +49,7 @@ TentaGL.Camera2D = function(eye, width, height) {
   this._width = width;
   this._height = height;
   
+  // By default, the anchor is located in the center of the viewport.
   this._anchor = vec2.fromValues(Math.floor(this._width/2), Math.floor(this._height/2));
   
   this._angle = 0.0;
@@ -202,8 +209,9 @@ TentaGL.Camera2D.prototype = {
   controlWithMouse:function(mouse, viewWidth, viewHeight) {
     var mouseX = mouse.getX()*this.getWidth()/viewWidth;
     var mouseY = mouse.getY()*this.getHeight()/viewHeight;
-    
-    
+    if(!this._yFlipped) {
+      mouseY = this.getHeight() - mouseY;
+    }
     
     // Zoom in by scrolling the mouse wheel up.
     if(mouse.scrollUpAmount() > 0) {
@@ -239,6 +247,10 @@ TentaGL.Camera2D.prototype = {
    * @param {int} viewHeight  The height of the viewport.
    */
   drag: function(screenPt, viewWidth, viewHeight) {
+    if(!this._yFlipped) {
+      screenPt[1] = viewHeight - screenPt[1];
+    }
+    
     if(!this._dragPrev) {
       this._updatePrevDragPt(screenPt, viewWidth, viewHeight);
     }
@@ -332,9 +344,16 @@ TentaGL.Camera2D.prototype = {
   getProjectionTransform:function() {
     var m = mat4.create();
     m[0] = 2/this.getWidth();
-    m[5] = -2/this.getHeight();
+    m[5] = 2/this.getHeight();
     m[12] = -1;
-    m[13] = 1;
+    
+    if(this._yFlipped) {
+      m[5] *= -1;
+      m[13] = 1;
+    }
+    else {
+      m[13] = -1;
+    }
     return m;
   },
   

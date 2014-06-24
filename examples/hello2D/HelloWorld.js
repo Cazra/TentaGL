@@ -148,7 +148,7 @@ HelloWorldApp.prototype = {
   
   /** We are required to override TentaGL.Application.reset */
   reset:function() {
-    this.camera = new TentaGL.Camera2D([0, 0], 320, 240); //new TentaGL.ArcballCamera([10, 10, 10], [0, 0, 0]);
+    this.camera = new TentaGL.Camera2D([0, 0], 320, 240, false);
     this.camera.setEye([64,32]);
   //  this.camera.setAnchor([0,0]);
   //  this.camera.setZoom(2);
