@@ -26,6 +26,13 @@
  /** 
   * The TentaGL namespace.
   * It also has some utilities for getting metadata about GL data types.
+  *
+  * Dependencies:
+  * The only library dependancy TentaGL has is the glMatrix 2.0 library, used 
+  * for doing vector and matrix math in typed arrays. A minimized js file of the
+  * library is included with the examples, but is not guaranteed to be the most
+  * up to date version. 
+  * glMatrix can be found here: http://glmatrix.net/
   */
 var TentaGL = { 
   

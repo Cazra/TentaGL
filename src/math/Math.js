@@ -82,7 +82,7 @@ TentaGL.Math = {
   },
   
   
-  //////// Ranges
+  //////// Ranges, Domains
   
   
   /** 
@@ -116,6 +116,24 @@ TentaGL.Math = {
   },
   
   
+  /** 
+   * Maps a value within some domain linearlly to a corresponding value within 
+   * some range. 
+   * @param {number} value
+   * @param {array: [number, number]}
+   * @param {array: [number, number]}
+   */
+  linearMap: function(value, domain, range) {
+    var dDomain = domain[1] - domain[0];
+    var dRange = range[1] - range[0];
+    
+    var alpha = (value - domain[0])/dDomain;
+    
+    return range[0] + dRange*alpha;
+  },
+  
+  
+  
   //////// Vectors
   
   
@@ -147,6 +165,7 @@ TentaGL.Math = {
    * @param {vec3} u
    * @param {vec3} v
    * @param {number} alpha  A parametric value in the range [0,1].
+   * @return {vec3}
    */
   tweenVector: function(u, v, alpha) {
     var uHat = vec3.normalize(vec3.create(), u);
@@ -167,6 +186,11 @@ TentaGL.Math = {
     var q = quat.setAxisAngle(quat.create(), n, theta*alpha);
     return vec3.transformQuat(vec3.create(), uHat, q);
   },
+  
+  
+  
+  
+  
   
   
   //////// Spaces
@@ -248,7 +272,7 @@ TentaGL.Math = {
   
   
   
-  ////////
+  //////// Exponents
   
   /** 
    * Returns the first power of two >= to value.
@@ -263,6 +287,10 @@ TentaGL.Math = {
     return pow;
   },
   
+  
+  
+  
+  //////// 
   
   /** 
    * Recyclable vec3s for intermediate Math vector operations so that we don't 
