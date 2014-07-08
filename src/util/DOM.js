@@ -51,7 +51,7 @@ TentaGL.DOM = {
   extractScriptText:function(scriptID) {
     var shaderScript = document.getElementById(scriptID);
     if(!shaderScript) {
-      throw Error("Script ID " + scriptID + " doesn't exist in the document.");
+      throw new Error("Script ID " + scriptID + " doesn't exist in the document.");
     }
     
     // Extract the shader source code from the DOM script element.

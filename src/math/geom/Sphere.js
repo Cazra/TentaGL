@@ -43,6 +43,17 @@ TentaGL.Math.Sphere.prototype = {
   
   isaSphere: true,
   
+  
+  /** 
+   * Creates a clone of this sphere.
+   * @return {TentaGL.Math.Sphere}
+   */
+  clone: function() {
+    return new TentaGL.Math.Sphere(this._radius, this._pt);
+  },
+  
+  
+  
   /** 
    * Returns the radius of the sphere. 
    * @return {ufloat}
@@ -58,6 +69,23 @@ TentaGL.Math.Sphere.prototype = {
   getPoint: function() {
     return this._pt;
   },
+  
+  
+  //////// Distance
+  
+  /** 
+   * Returns the distance from the sphere's surface to some point. 
+   * @param {vec3} pt
+   * @return {number}
+   */
+  distToPt: function(pt) {
+    var v = vec3.sub(vec3.create(), pt, this._pt);
+    return Math.abs(vec3.len(v) - this._radius);
+  },
+  
+  
+  
+  //////// Intersection
   
   
   /** 
@@ -112,5 +140,34 @@ TentaGL.Math.Sphere.prototype = {
   intersectsPlane: function(plane) {
     var centerDist = plane.distToPt(this._pt);
     return (centerDist <= this._radius);
-  }
+  },
+  
+  
+  ////// Rendering
+  
+  
+  /** 
+   * Renders this sphere into the scene. 
+   * @param {WebGLRenderingContext} gl
+   * @param {string} materialName
+   */
+  render: function(gl, materialName) {
+    var pt = vec3.clone(this._pt);
+    var r = this._radius;
+    
+    TentaGL.ViewTrans.push(gl);
+    
+    var m = mat4.create();
+    mat4.translate(m, m, pt);
+    mat4.scale(m, m, [r, r, r]);
+    
+    TentaGL.ViewTrans.mul(gl, m);
+    TentaGL.ViewTrans.updateMVPUniforms(gl);
+    TentaGL.MaterialLib.use(gl, materialName);
+    TentaGL.ModelLib.render(gl, "unitSphere");
+    
+    TentaGL.ViewTrans.pop(gl);
+  },
+  
+  
 };

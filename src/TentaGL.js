@@ -81,7 +81,7 @@ var TentaGL = {
     }
     catch(e) {
       var msg = "Error creating WebGL context: " + e.toString();
-      throw Error(msg);
+      throw new Error(msg);
     }
   },
   

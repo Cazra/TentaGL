@@ -61,7 +61,7 @@ TentaGL.ShaderProgram.prototype = {
   _compileShader:function(gl, glType, src) {
     if(glType != GL_VERTEX_SHADER && glType != GL_FRAGMENT_SHADER) {
       var msg = "Invalid shader type constant: " + glType;
-      throw Error(msg);
+      throw new Error(msg);
     }
     else {
       
@@ -82,7 +82,7 @@ TentaGL.ShaderProgram.prototype = {
         else if(glType == GL_FRAGMENT_SHADER) {
           typeStr = "fragment";
         }
-        throw Error("Failed to compile " + typeStr + " shader :\n" + msg);
+        throw new Error("Failed to compile " + typeStr + " shader :\n" + msg);
       }
       
       return shader;
@@ -105,7 +105,7 @@ TentaGL.ShaderProgram.prototype = {
     gl.linkProgram(program);
     
     if(!gl.getProgramParameter(program, GL_LINK_STATUS)) {
-      throw Error("Failed to link shader program.");
+      throw new Error("Failed to link shader program.");
     }
     
     return program;
@@ -235,7 +235,7 @@ TentaGL.ShaderProgram.prototype = {
   getUniform:function(name) {
     if(!this._uniforms[name] && this._showErrors) {
       console.log("Uniform variable " + name + " doesn't exist.");
-    //  throw Error();
+    //  throw new Error();
     }
     return this._uniforms[name];
   },

@@ -56,7 +56,7 @@ TentaGL.CompositeSprite.prototype = {
    */
   addComponent:function(sceneNode) {
     if(sceneNode.getCompositeParent()) {
-      throw Error("CompositeSprite component cycle detected.");
+      throw new Error("CompositeSprite component cycle detected.");
     }
     
     this._components.push(sceneNode);

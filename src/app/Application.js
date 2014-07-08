@@ -325,7 +325,7 @@ TentaGL.Application.prototype = {
   removeAppResizeListener:function(listener) {
     var index = this._resizeListeners.indexOf(listener);
     if(index == -1) {
-      throw Error("Failed to unsubscribe AppResizeListener.");
+      throw new Error("Failed to unsubscribe AppResizeListener.");
     }
     else {
       this._resizeListeners.splice(index, 1);

@@ -101,7 +101,7 @@ TentaGL.ModelLib = {
    */
   get:function(gl, modelID) {
     if(gl._vboData[modelID] === undefined) {
-      throw Error("ModelLib does not contain VBOData for " + modelID + ".");
+      throw new Error("ModelLib does not contain VBOData for " + modelID + ".");
     }
     return gl._vboData[modelID];
   },

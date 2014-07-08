@@ -120,7 +120,7 @@ TentaGL.VBOData.prototype = {
   getOffset:function(attrProfile) {
     var id = attrProfile.id();
     if(this._byteOffsets[id] === undefined) {
-      throw Error("VBOData does not contain data for AttrProfile: " + attrProfile.toString());
+      throw new Error("VBOData does not contain data for AttrProfile: " + attrProfile.toString());
     }
     else {
       return this._byteOffsets[id];

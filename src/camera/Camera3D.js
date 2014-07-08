@@ -297,7 +297,7 @@ TentaGL.Camera3D.prototype = {
    */
   setMode:function(mode) {
     if(mode != TentaGL.Camera3D.PERSP && mode != TentaGL.Camera3D.ORTHO) {
-      throw Error("Mode " + mode + " not supported.");
+      throw new Error("Mode " + mode + " not supported.");
     }
     this._mode = mode;
   },
@@ -341,7 +341,7 @@ TentaGL.Camera3D.prototype = {
    */
   setZoom:function(zoom) {
     if(zoom <= 0 || zoom >1) {
-      throw Error("Invalid zoom value: " + zoom);
+      throw new Error("Invalid zoom value: " + zoom);
     }
     
     this._zoom = zoom;
@@ -369,7 +369,7 @@ TentaGL.Camera3D.prototype = {
    */
   setClippingPlanes:function(znear, zfar) {
     if(znear <= 0 || zfar <= znear) {
-      throw Error("Invalid values for zNear and zFar planes: " + zNear + ", " + zFar);
+      throw new Error("Invalid values for zNear and zFar planes: " + zNear + ", " + zFar);
     }
     this._znear = znear;
     this._zfar = zfar;

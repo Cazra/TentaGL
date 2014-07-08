@@ -140,7 +140,7 @@ TentaGL.Model.prototype = {
   getVertex:function(index) {
     if(index < 0 || index >= this._vertices.length) {
       var msg = "Index " + index + " out of bounds.";
-      throw Error(msg);
+      throw new Error(msg);
     }
     return this._vertices[index];
   },
@@ -185,10 +185,10 @@ TentaGL.Model.prototype = {
    */
   addLine:function(v1, v2) {
     if(v1 < 0 || v1 >= this._vertices.length) {
-      throw Error("Index " + v1 + " out of bounds.");
+      throw new Error("Index " + v1 + " out of bounds.");
     }
     if(v2 < 0 || v2 >= this._vertices.length) {
-      throw Error("Index " + v2 + " out of bounds.");
+      throw new Error("Index " + v2 + " out of bounds.");
     }
     
     this._indices.push(v1);
@@ -208,7 +208,7 @@ TentaGL.Model.prototype = {
    */
   addLineStrip:function(v) {
     if(v.length < 2) {
-      throw Error("Not enough indices in line strip array.");
+      throw new Error("Not enough indices in line strip array.");
     }
     
     var prev = v[0];
@@ -227,7 +227,7 @@ TentaGL.Model.prototype = {
    */
   addLineLoop:function(v) {
     if(v.length < 2) {
-      throw Error("Not enough indices in line strip array.");
+      throw new Error("Not enough indices in line strip array.");
     }
     
     var prev = v[0];
@@ -281,13 +281,13 @@ TentaGL.Model.prototype = {
    */
   addFace:function(v1, v2, v3) {
     if(v1 < 0 || v1 >= this._vertices.length) {
-      throw Error("Index " + v1 + " out of bounds.");
+      throw new Error("Index " + v1 + " out of bounds.");
     }
     if(v2 < 0 || v2 >= this._vertices.length) {
-      throw Error("Index " + v2 + " out of bounds.");
+      throw new Error("Index " + v2 + " out of bounds.");
     }
     if(v3 < 0 || v3 >= this._vertices.length) {
-      throw Error("Index " + v3 + " out of bounds.");
+      throw new Error("Index " + v3 + " out of bounds.");
     }
     
     this._indices.push(v1);
@@ -327,7 +327,7 @@ TentaGL.Model.prototype = {
    */
   addFaceStrip:function(v) {
     if(v.length < 3) {
-      throw Error("Not enough indices in triangle strip array.");
+      throw new Error("Not enough indices in triangle strip array.");
     }
     
     var inorder = true;
@@ -352,7 +352,7 @@ TentaGL.Model.prototype = {
    */
   addFaceFan:function(v) {
     if(v.length < 3) {
-      throw Error("Not enough indices in triangle strip array.");
+      throw new Error("Not enough indices in triangle strip array.");
     }
     
     for(var i = 2; i < v.length; i++) {
@@ -468,7 +468,7 @@ TentaGL.Model.prototype = {
    */
   getFaceNormal:function(index) {
     if(index < 0 || index >= this.numFaces()) {
-      throw Error("Face index out of bounds: " + index);
+      throw new Error("Face index out of bounds: " + index);
     }
     
     return this.getFaceNormals()[index];
@@ -538,7 +538,7 @@ TentaGL.Model.prototype = {
    */
   getFaceCentroid:function(index) {
     if(index < 0 || index >= this.numFaces()) {
-      throw Error("Face index out of bounds: " + index);
+      throw new Error("Face index out of bounds: " + index);
     }
     
     return this.getFaceCentroids()[index];

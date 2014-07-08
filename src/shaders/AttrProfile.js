@@ -38,7 +38,7 @@
  */
 TentaGL.AttrProfile = function(id, unitType, sizeUnits, getterFunc) {
   if(!getterFunc) {
-    throw Error("Could not create AttrProfile without getter.");
+    throw new Error("Could not create AttrProfile without getter.");
   }
   
   this._unitType = unitType;
@@ -59,7 +59,7 @@ TentaGL.AttrProfile = function(id, unitType, sizeUnits, getterFunc) {
     }
     
     if(!found) {
-      throw Error("AttrProfile doesn't match any registered profiles: " + this.toString());
+      throw new Error("AttrProfile doesn't match any registered profiles: " + this.toString());
     }
   }
   else {
@@ -132,7 +132,7 @@ TentaGL.AttrProfile.prototype = {
     var result = this._getterFunc.call(vertex);
   
     if(result.length != this.sizeUnits()) {
-      throw Error("Vertex attribute is wrong size: " + result.length + ". Expected: " + this.sizeUnits());
+      throw new Error("Vertex attribute is wrong size: " + result.length + ". Expected: " + this.sizeUnits());
     }
     
     return result;

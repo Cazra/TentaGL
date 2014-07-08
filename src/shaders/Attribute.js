@@ -90,7 +90,7 @@ TentaGL.Attribute.prototype = {
     var result = this._getterFunc.call(vertex);
     
     if(result.length != this.getSizeUnits()) {
-      throw Error("Vertex attribute " + this.getName() + " is wrong size: " + result.length + ". Expected: " + this.getSizeUnits());
+      throw new Error("Vertex attribute " + this.getName() + " is wrong size: " + result.length + ". Expected: " + this.getSizeUnits());
     }
     
     return result;

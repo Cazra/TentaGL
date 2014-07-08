@@ -29,8 +29,12 @@
  */
 TentaGL.Math.Line2D = function(p1, p2) {
   this._p1 = vec3.clone(p1);
+  this._p1[2] = 1;
+  
   this._p2 = vec3.clone(p2);
-  this._length = vec3.dist(p1, p2);
+  this._p2[2] = 1;
+  
+  this._length = vec2.dist(p1, p2);
 };
 
 TentaGL.Math.Line2D.prototype = {
@@ -38,6 +42,15 @@ TentaGL.Math.Line2D.prototype = {
   constructor: TentaGL.Math.Line2D,
   
   isaLine2D: true,
+  
+  
+  /** 
+   * Returns a clone of the line. 
+   * @return TentaGL.Math.Line2D
+   */
+  clone: function() {
+    return new TentaGL.Math.Line2D(this._p1, this._p2);
+  },
   
   
   /** 
@@ -60,11 +73,273 @@ TentaGL.Math.Line2D.prototype = {
   
   /** 
    * Returns the length of this line. 
+   * @return {number}
    */
   getLength: function() {
     return this._length;
   },
   
+  
+  /** 
+   * Returns the vector component of the line defined by v = p2 - p1.
+   * @return {vec3}
+   */
+  getVec3: function() {
+    return vec3.sub(vec3.create(), this._p2, this._p1);
+  },
+  
+  
+  /** 
+   * Returns the angle, in radians in the range [-PI, PI], formed from this 
+   * line's vector and the vector of the positive X axis. 
+   * @return {number}
+   */
+  getAngle: function() {
+    var v = this.getVec3();
+    return Math.atan2(v[1], v[0]);
+  },
+  
+  
+  
+  //////// Distance
+  
+  
+  /** 
+   * Returns the distance of a point to this line.
+   * @param {vec3} pt
+   */
+  distToPt: function(pt) {
+    var u = this.getVec3();
+    var v = vec2.sub(vec2.create(), pt, this._p1);
+    var w = vec2.sub(vec2.create(), pt, this._p2);
+    
+    if(vec2.dot(u, v) <= 0) {
+      return vec2.len(v);
+    }
+    else if(vec2.dot(u, w) >= 0) {
+      return vec2.len(w);
+    }
+    else {
+      var uHat = vec2.normalize(vec2.create(), u);
+      var vHat = vec2.normalize(vec2.create(), v);
+      var cross = vec2.cross(vec2.create(), uHat, vHat);
+      
+      return vec2.len(v)*vec3.len(cross);
+    }
+  },
+  
+  
+  /** 
+   * Returns the distance from this line to another. 
+   * @param {TentaGL.Math.Line2D} line
+   * @return {number}
+   */
+  distToLine: function(line) {
+    if(this.intersects(line)) {
+      return 0;
+    }
+    
+    var d1 = this.distToPt(line._p1);
+    var d2 = this.distToPt(line._p2);
+    var d3 = line.distToPt(this._p1);
+    var d4 = line.distToPt(this._p2);
+    
+    return Math.min(d1, d2, d3, d4);
+  },
+  
+  
+  
+  //////// Intersection
+  
+  
+  /**
+   * Returns true iff the line contains some point within a specified distance 
+   * tolerance. 
+   * @param {vec3} pt
+   * @param {ufloat) tolerance    Optional. Default 0.
+   */
+  containsPt: function(pt, tolerance) {
+    if(!tolerance) {
+      tolerance = 0;
+    }
+    
+    return (this.distToPt(pt) <= tolerance);
+  },
+  
+  
+  /** 
+   * Returns true iff this line intersects the other line.
+   * @param {TentaGL.Math.Line2D} line
+   * @return {boolean}
+   */
+  intersects: function(line) {
+    return (this.intersection(line) != undefined);
+  },
+  
+  
+  /** 
+   * Returns the intersection between this line and another, or 
+   * undefined if they don't intersect. This may be a point (vec3), or it could be 
+   * another Line2D if they are collinear.
+   * @param {TentaGL.Math.Line2D} line
+   * @param {ufloat} tolerance
+   * @return {vec3 | TentaGL.Math.Line2D}
+   */
+  intersection: function(line, tolerance) {
+    if(!tolerance) {
+      tolerance = 0;
+    }
+    
+    // If either of the lines have a length of 0, treat them as a point.
+    if(this._length == 0 && line.containsPt(this._p1)) {
+      return this._p1;
+    }
+    else if(line._length ==0 && this.containsPt(line._p1)) {
+      return line._p1;
+    }
+    
+    // Both are lines with length > 0.
+    else {
+
+      // Transform the system so that we are comparing the other line to a unit 
+      // vector facing in +X.
+      var m = mat3.create();
+      mat3.scale(m, m, [1/this._length, 1, 1]);
+      mat3.rotate(m, m, -this.getAngle());
+      mat3.translate(m, m, [-this._p1[0], -this._p1[1]]);
+      
+      var mInv = mat3.invert(mat3.create(), m);
+      
+      var tLine = line.transformMat3(m);
+      var tVec = tLine.getVec3();
+      
+      // The transformed line is parallel to the X axis...
+      if(tVec[1] == 0 && tLine._p1[1] != 0) {
+        
+        // but isn't on the X axis.
+        if(tLine._p1[1] != 0) {
+          return undefined;
+        }
+        
+        // and is on the X axis and contains (0,0)...
+        else if(tLine.containsPt([0,0], tolerance)) {
+          
+          // and also contains (1,0). Therefore, line completely overlaps this.
+          if(tLine.containsPt([1,0], tolerance)) {
+            return this.clone();
+          }
+          
+          // but doesn't contain (1,0). Therefore, line contains part of this.
+          else {
+            var maxPoint = TentaGL.Math.ptsMaxX([tLine._p1, tLine._p2]);
+            vec3.transformMat3(maxPoint, maxPoint, mInv);
+            
+            return new TentaGL.Math.Line2D(this._p1, maxPoint);
+          }
+        }
+        
+        // and is on the X axis and contains (1,0), but not (0,0). Therefore,
+        // line contains part of this.
+        else if(tLine.containsPt([1,0], tolerance)) {
+          var minPoint = TentaGL.Math.ptsMinX([tLine._p1, tLine._p2]);
+          vec3.transformMat3(minPoint, minPoint, mInv);
+          
+          return new TentaGL.Math.Line2D(minPoint, this._p2);
+        }
+      }
+      
+      // The transformed line is not parallel to the X axis, and therefore 
+      // intersects the X axis at some point.
+      else {
+        
+        var s = -tLine._p1[1]/tVec[1];
+        var x = tLine._p1[0] + s*tVec[0];
+        
+        // The transformed lines intersect.
+        if(x >= 0-tolerance && x <= 1+tolerance) {
+          var pt = [x, 0, 1];
+          vec3.transformMat3(pt, pt, mInv);
+          
+          return pt;
+        }
+        
+        // The transformed lines do not intersect.
+        else {
+          return undefined;
+        }
+      }
+    }
+  },
+  
+  
+
+  
+  //////// Transformation
+  
+  /** 
+   * Transforms the points of this line segment using the provided transform 
+   * matrix. 
+   * @param {mat3} m
+   */
+  transformMat3: function(m) {
+    var p1 = vec3.clone(this._p1);
+    p1 = vec3.transformMat3(vec3.create(), p1, m);
+    
+    var p2 = vec3.clone(this._p2);
+    vec3.transformMat3(p2, p2, m);
+    
+    return new TentaGL.Math.Line2D(p1, p2);
+  },
+  
+  
+  /** 
+   * Transforms the points of this line segment using the provided transform 
+   * matrix. 
+   * @param {mat4} m
+   */
+  transformMat4: function(m) {
+    var p1 = vec3.clone(this._p1);
+    vec3.transformMat4(p1, p1, m);
+    
+    var p2 = vec3.clone(this._p2);
+    vec3.transformMat4(p2, p2, m);
+    
+    return new TentaGL.Math.Line2D(p1, p2);
+  },
+  
+  
+  //////// Rendering
+  
+  
+  /** 
+   * Renders this line into the scene. 
+   * @param {WebGLRenderingContext} gl
+   * @param {string} materialName   The name of the material used to color 
+   *      the line.
+   */
+  render: function(gl, materialName) {
+    var p1 = vec3.clone(this._p1);
+    p1[2] = 0;
+    
+    var p2 = vec3.clone(this._p2);
+    p2[2] = 0;
+    
+    var dx = p2[0] - p1[0];
+    var dy = p2[1] - p1[1];
+    
+    TentaGL.ViewTrans.push(gl);
+    
+    var m = mat4.create();
+    mat4.translate(m, m, [p1[0], p1[1], 0]);
+    mat4.scale(m, m, [dx, dy, 0]);
+    
+    TentaGL.ViewTrans.mul(gl, m);
+    TentaGL.ViewTrans.updateMVPUniforms(gl);
+    TentaGL.MaterialLib.use(gl, materialName);
+    TentaGL.ModelLib.render(gl, "unitLine");
+    
+    TentaGL.ViewTrans.pop(gl);
+  },
   
 };
 

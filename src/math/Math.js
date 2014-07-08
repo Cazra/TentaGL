@@ -133,6 +133,134 @@ TentaGL.Math = {
   },
   
   
+  //////// Points
+  
+  /** 
+   * Given a set of 2D or 3D points, return the point with the 
+   * minimum X coordinate. 
+   * @param {array: vec3}
+   */
+  ptsMinX: function(points) {
+    var result;
+    
+    for(var i=0; i < points.length; i++) {
+      var pt = points[i];
+      
+      if(!result || pt[0] < result[0]) {
+        result = pt;
+      }
+    }
+    
+    return result;
+  },
+  
+  /** 
+   * Given a set of 2D or 3D points, return the point with the 
+   * maximum X coordinate. 
+   * @param {array: vec3}
+   */
+  ptsMaxX: function(points) {
+    var result;
+    
+    for(var i=0; i < points.length; i++) {
+      var pt = points[i];
+      
+      if(!result || pt[0] > result[0]) {
+        result = pt;
+      }
+    }
+    
+    return result;
+  },
+  
+  /** 
+   * Given a set of 2D or 3D points, return the point with the 
+   * minimum Y coordinate. 
+   * @param {array: vec3}
+   */
+  ptsMinY: function(points) {
+    var result;
+    
+    for(var i=0; i < points.length; i++) {
+      var pt = points[i];
+      
+      if(!result || pt[1] < result[1]) {
+        result = pt;
+      }
+    }
+    
+    return result;
+  },
+  
+  /** 
+   * Given a set of 2D or 3D points, return the point with the 
+   * maximum Y coordinate. 
+   * @param {array: vec3}
+   */
+  ptsMaxY: function(points) {
+    var result;
+    
+    for(var i=0; i < points.length; i++) {
+      var pt = points[i];
+      
+      if(!result || pt[1] > result[1]) {
+        result = pt;
+      }
+    }
+    
+    return result;
+  },
+  
+  /** 
+   * Given a set of 2D or 3D points, return the point with the 
+   * minimum Z coordinate. 
+   * @param {array: vec3}
+   */
+  ptsMinZ: function(points) {
+    var result;
+    
+    for(var i=0; i < points.length; i++) {
+      var pt = points[i];
+      
+      if(!result || pt[2] < result[2]) {
+        result = pt;
+      }
+    }
+    
+    return result;
+  },
+  
+  /** 
+   * Given a set of 2D or 3D points, return the point with the 
+   * maximum Z coordinate. 
+   * @param {array: vec3}
+   */
+  ptsMaxZ: function(points) {
+    var result;
+    
+    for(var i=0; i < points.length; i++) {
+      var pt = points[i];
+      
+      if(!result || pt[2] > result[2]) {
+        result = pt;
+      }
+    }
+    
+    return result;
+  },
+  
+  
+  ptsEqual: function(p1, p2, tolerance) {
+    if(!tolerance) {
+      tolerance = 0;
+    }
+    
+    var dx = Math.abs(p1[0] - p2[0]);
+    var dy = Math.abs(p1[1] - p2[1]);
+    
+    return (dx <= tolerance && dy <= tolerance);
+  },
+  
   
   //////// Vectors
   

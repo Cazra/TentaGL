@@ -100,6 +100,7 @@ HelloWorldApp.prototype = {
     var gl = this.getGL();
     
     TentaGL.SimpleShader.load(gl, "simpleShader");
+    TentaGL.NormalShader.load(gl, "normalShader");
   },
   
   
@@ -233,6 +234,11 @@ HelloWorldApp.prototype = {
     this.textSprite = this.createTextIconSprite([1,1,1], "Hello, \nWorld!");
     
     this.labelledIconSprite = this.createLabelledIconSprite([3,3,3], "New sprite");
+    
+    this.line1 = new TentaGL.Math.Line2D([2,5], [10,0]);
+    this.line2 = new TentaGL.Math.Line2D([5,2], [10,10]);
+    
+    this.sphere1 = new TentaGL.Math.Sphere(2, [5,0,5]);
   },
   
   
@@ -343,6 +349,18 @@ HelloWorldApp.prototype = {
     this.textSprite.render(gl);
     
     this.labelledIconSprite.render(gl);
+    
+    
+    var linesMat = "green";
+    if(this.line1.intersects(this.line2)) {
+      linesMat = "white";
+    }
+    this.line1.render(gl, linesMat);
+    this.line2.render(gl, linesMat);
+    
+    // Render the sphere, using the normal vector shader.
+    TentaGL.ShaderLib.use(gl, "normalShader");
+    this.sphere1.render(gl, "green");
   },
   
   

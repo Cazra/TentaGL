@@ -125,7 +125,7 @@ TentaGL.Vertex.prototype = {
   getTexST:function() {
     if(this._texST === undefined) {
       var msg = "Vertex 2D texture coordinates have not been defined.";
-      throw Error(msg);
+      throw new Error(msg);
     }
     else {
       return vec2.clone(this._texST);
@@ -166,7 +166,7 @@ TentaGL.Vertex.prototype = {
   getNormal:function() {
     if(this._normal === undefined) {
       var msg = "Vertex surface normal has not been defined.";
-      throw Error(msg);
+      throw new Error(msg);
     }
     else {
       return vec3.clone(this._normal);
@@ -196,7 +196,7 @@ TentaGL.Vertex.prototype = {
   getTangental:function() {
     if(this._tangental === undefined) {
       var msg = "Vertex surface tangental has not been defined.";
-      throw Error(msg);
+      throw new Error(msg);
     }
     else {
       return vec3.clone(this._tangental);
