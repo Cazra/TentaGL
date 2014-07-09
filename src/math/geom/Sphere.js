@@ -163,7 +163,10 @@ TentaGL.Math.Sphere.prototype = {
     
     TentaGL.ViewTrans.mul(gl, m);
     TentaGL.ViewTrans.updateMVPUniforms(gl);
-    TentaGL.MaterialLib.use(gl, materialName);
+    
+    if(materialName) {
+      TentaGL.MaterialLib.use(gl, materialName);
+    }
     TentaGL.ModelLib.render(gl, "unitSphere");
     
     TentaGL.ViewTrans.pop(gl);

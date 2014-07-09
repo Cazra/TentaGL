@@ -34,6 +34,7 @@ TentaGL.Math.InfinitePlane = function(normal, pt) {
   }
   
   this._normal = vec3.clone(normal);
+  this._nHat = vec3.normalize(vec3.create(), this._normal);
   this._pt = vec3.clone(pt);
 };
 
@@ -49,6 +50,15 @@ TentaGL.Math.InfinitePlane.prototype = {
    */
   getNormal: function() {
     return this._normal;
+  },
+  
+  
+  /** 
+   * Returns the plane's unit normal vector. 
+   * @return {vec3}
+   */
+  getUnitNormal: function() {
+    return this._nHat;
   },
   
   
@@ -74,8 +84,7 @@ TentaGL.Math.InfinitePlane.prototype = {
     }
     
     var wHat = vec3.normalize(vec3.create(), w);
-    var nHat = vec3.normalize(vec3.create(), this._normal);
-    var dot = vec3.dot(wHat, nHat);
+    var dot = vec3.dot(wHat, this._nHat);
     
     return Math.abs(wLen*dot);
   },
@@ -143,7 +152,60 @@ TentaGL.Math.InfinitePlane.prototype = {
     if(!tolerance) {
       tolerance = 0;
     }
-    return (this.distToPt(pt) <= tolerance);
+    
+    var c = this.getCoefficients();
+    var result = c[0]*pt[0] + c[1]*pt[1] + c[2]*pt[2] + c[3];
+    
+    return (Math.abs(result) < tolerance);
+  },
+  
+  
+  
+  /** 
+   * Returns an indicator for the position of a point relative to this plane.  
+   * 1 indicates that the point lies above the plane in the direction of its
+   * normal vector. -1 indicates that the point lies below the plane in the 
+   * direction of its inverse normal vector. 0 indicates that the 
+   * point lies on the plane, but is prone to rounding error.
+   * @param {vec3} pt
+   * @return {int}
+   */
+  ptRelative: function(pt) {
+    var u = vec3.sub(vec3.create(), pt, this._pt);
+    vec3.normalize(u, u);
+    
+    var dot = vec3.dot(this._nHat, u);
+    
+    if(dot > 0) {
+      return 1;
+    }
+    else if(dot < 0) {
+      return -1;
+    }
+    else {
+      return 0;
+    }
+  },
+  
+  /** 
+   * Tests if a point lies above the plane in the direction 
+   * of its normal vector.
+   * @param {vec3} pt
+   * @return {boolean}
+   */
+  ptIsAbove: function(pt) {
+    return (ptRelative(pt) == 1);
+  },
+  
+  /** 
+   * Tests if a point lies below the plane in the direction 
+   * of its inverse normal vector.
+   * @param {vec3} pt
+   * @return {boolean}
+   */
+  ptIsBelow: function(pt) {
+    return (ptRelative(pt) == -1);
   }
+  
 };
 

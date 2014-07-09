@@ -126,6 +126,8 @@ TentaGL.ModelLib = {
    * @param {string} modelID
    */
   render:function(gl, modelID) {
+    TentaGL.ViewTrans.updateMVPUniforms(gl);
+    
     var vboData = this.get(gl, modelID);
     TentaGL.VBORenderer.render(gl, vboData);
   }

@@ -24,21 +24,18 @@
 
 /** 
  * A pre-fabricated shader program that applies a model-view-projection 
- * transform to vertices in the scene and colors texels using the
- * interpolated normal vector of their surface.
- * Normal vector components in the range [-1, 1] will be converted into a 
- * corresponding normalized color component in the range [0,1].
- * The color's alpha component will be derived from the texture passed to the
- * shader.
+ * transform to vertices in the scene and colors texels using a texture.
+ * Lighting/Shading is not provided in this program.
  * @param {WebGLRenderingContext} gl
  */
-TentaGL.NormalShader = function(gl) {
+TentaGL.LinearGradientShader = function(gl) {
   var shaderRoot = TentaGL.ShaderLib.getDefaultShaderPath(gl);
   
-  var vertURL = shaderRoot + "normal.vert";
-  var fragURL = shaderRoot + "normal.frag";
+  var vertURL = shaderRoot + "gradientLinear.vert";
+  var fragURL = shaderRoot + "gradientLinear.frag";
   var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
   
+  console.log("\nCreating linear gradient shader");
   TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
   
   this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
@@ -47,14 +44,19 @@ TentaGL.NormalShader = function(gl) {
   
   this._mvpUni = this.getUniform("mvpTrans");
   this._normalUni = this.getUniform("normalTrans");
-  this._texUni = this.getUniform("tex");
+  
+  this._startPtUni = this.getUniform("p");
+  this._gradVectorUni = this.getUniform("u");
+  this._colorsUni = this.getUniform("colors");
+  this._breakPtsUni = this.getUniform("breakPts");
+  this._breakPtCountUni = this.getUniform("breakPtCount");
 };
 
-TentaGL.NormalShader.prototype = {
+TentaGL.LinearGradientShader.prototype = {
   
-  constructor: TentaGL.NormalShader,
+  constructor: TentaGL.LinearGradientShader,
   
-  isaSimpleShader: true,
+  isaLinearGradientShader: true,
   
   
   /** 
@@ -79,29 +81,80 @@ TentaGL.NormalShader.prototype = {
   
   
   /** 
-   * Sets the value of the uniform variable for the primary texture offset. 
-   * @param {WebGLRenderingContext} gl
-   * @param {int}
+   * Sets the start point of the gradient from which the gradient vector 
+   * is projected.
+   * @param {vec2} pt     The point, in normalized texture coordinates.
    */
-  setTex: function(gl, value) {
-    this._texUni.set(gl, [value]);
+  setStartPoint: function(gl, pt) {
+    this._startPtUni.set(gl, pt);
+    
+   // console.log(pt);
   },
+  
+  
+  /** 
+   * Sets the vector indicating the direction and length of the gradient. 
+   * @param {vec2} v    The vector, in normalized texture coordinates.
+   */
+  setGradVector: function(gl, v) {
+    this._gradVectorUni.set(gl, v);
+    
+  //  console.log(v);
+  },
+  
+  
+  /** 
+   * Sets the uniform variable for the array of gradient colors corresponding 
+   * to each break point. 
+   * The shader supports colors for up to 16 break points.
+   * @param {WebGLRenderingContext} gl
+   * @param {array: TentaGL.Color} colors
+   */
+  setColors: function(gl, colors) {
+    var arr = [];
+    
+    for(var i=0; i<colors.length; i++) {
+      arr.push(colors[i].getRed());
+      arr.push(colors[i].getGreen());
+      arr.push(colors[i].getBlue());
+      arr.push(colors[i].getAlpha());
+    }
+    
+    this._colorsUni.set(gl, arr);
+    
+    // console.log(arr);
+  },
+  
+  
+  /** 
+   * Sets the parametric values for the break points along the gradient vector. 
+   * The shader supports up to 16 break points.
+   * Each of these values should be in the range [0, 1].
+   * @param {WebGLRenderingContext} gl
+   * @param {array: float} pts
+   */
+  setBreakPoints: function(gl, pts) {
+    this._breakPtsUni.set(gl, pts);
+    this._breakPtCountUni.set(gl, [pts.length]);
+    
+  //  console.log(pts, pts.length);
+  }
 };
 
 
 /** 
- * Loads NormalShader into the ShaderLib, with the specified name. 
+ * Loads LinearGradientShader into the ShaderLib, with the specified name. 
  * @param {WebGLRenderingContext} gl
  * @param {name}  The name used to reference the shader program from the ShaderLib.
  * @return {TentaGL.ShaderProgram}
  */
-TentaGL.NormalShader.load = function(gl, name) {
-  var program = new TentaGL.NormalShader(gl);
+TentaGL.LinearGradientShader.load = function(gl, name) {
+  var program = new TentaGL.LinearGradientShader(gl);
   TentaGL.ShaderLib.add(gl, name, program);
   
   return program;
 };
 
 
-Util.Inheritance.inherit(TentaGL.NormalShader, TentaGL.ShaderProgram);
+Util.Inheritance.inherit(TentaGL.LinearGradientShader, TentaGL.ShaderProgram);
 

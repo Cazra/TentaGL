@@ -962,10 +962,8 @@ TentaGL.SceneNode.prototype = {
       return;
     }
     TentaGL.ViewTrans.push(gl);
-    
+
     TentaGL.ViewTrans.mul(gl, this.getModelTransform());
-    TentaGL.ViewTrans.updateMVPUniforms(gl);
-    
     this.draw(gl);
     
     TentaGL.ViewTrans.pop(gl);

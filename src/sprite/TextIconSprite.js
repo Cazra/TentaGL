@@ -51,59 +51,25 @@ TentaGL.TextIconSprite.prototype = {
   
   isaTextIconSprite:true,
   
-
-  //////// Alignment
-  
-  /** 
-   * Sets the horizontal and vertical alignment of the icon relative to its anchor. 
-   * @param {enum: TentaGL.Align} horizontal  LEFT, CENTER, or RIGHT
-   * @param {enum: TentaGL.Alight} vertical   TOP, CENTER, or BOTTOM
-   */
-  setAlignment:function(horizontal, vertical) {
-    var x = undefined;
-    var y = undefined;
-    
-    // Set horizontal alignment.
-    if(horizontal == TentaGL.Align.LEFT) {
-      x =0;
-    }
-    else if(horizontal == TentaGL.Align.CENTER) {
-      x = this.getIconWidth()/2;
-    }
-    else if(horizontal == TentaGL.Align.RIGHT) {
-      x = this.getIconWidth();
-    }
-    
-    // Set vertical alignment.
-    if(vertical == TentaGL.Align.BOTTOM) {
-      y = 0;
-    }
-    else if(vertical == TentaGL.Align.CENTER) {
-      y = 0.5;
-    }
-    else if(vertical == TentaGL.Align.TOP) {
-      y = 1;
-    }
-    this.setAnchorXYZ([x,y,0]);
-  },
-  
   
   //////// Metrics
   
   /** 
-   * Returns the pixel width of the icon's text. 
+   * Returns the width of this icon.. 
    * @return {int}
    */
   getIconWidth:function() {
-    return this.getWidth()/this.getHeight()*this.getLineHeight();
+    var dims = this.getBlitteredFont().getStringDimensions(this._text, this._lineHeight);
+    return dims[0];
   },
   
   /**
-   * Returns the pixel height of the icon's text.
+   * Returns the height of this icon.
    * @return {int}
    */
   getIconHeight:function() {
-    return this.getLineHeight();
+    var dims = this.getBlitteredFont().getStringDimensions(this._text, this._lineHeight);
+    return dims[1];
   },
   
   
@@ -132,6 +98,9 @@ TentaGL.TextIconSprite.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   draw: function(gl) {
+    var dims = this.getBlitteredFont().getStringDimensions(this._text, this._lineHeight);
+    TentaGL.ViewTrans.translate(gl, [0, dims[1] - this._lineHeight, 0]);
+    
     this.getBlitteredFont().renderString(gl, this._text, [0,0,0], this._yFlipped, this._lineHeight);
   }
 };

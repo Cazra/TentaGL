@@ -22,6 +22,7 @@ HelloWorldApp.prototype = {
     var gl = this.getGL();
 
     var sprite = new TentaGL.Sprite(xyz); 
+    
     sprite.draw = function(gl) {
       TentaGL.MaterialLib.use(gl, "testCircle");
       TentaGL.ModelLib.render(gl, "cylinder");
@@ -42,7 +43,6 @@ HelloWorldApp.prototype = {
     
     return sprite;
   },
-  
   
   
   /** 
@@ -92,6 +92,32 @@ HelloWorldApp.prototype = {
   
   
   
+  /** 
+   * Produces a rectangular sprite with a gradient texture. 
+   * @param {vec4} xyz  The sprite's position in local space.
+   * @return {TentaGL.Sprite}
+   */
+  createGradientSprite: function(xyz) {
+    var gl = this.getGL();
+    
+    var sprite = new TentaGL.Sprite(xyz);
+    sprite.draw = function(gl) {
+      
+      var oldShader = TentaGL.ShaderLib.currentName(gl);
+      
+      TentaGL.ShaderLib.use(gl, "gradientShader");
+      TentaGL.MaterialLib.use(gl, "grad1");
+      TentaGL.ModelLib.render(gl, "unitPlane");
+      
+      TentaGL.ShaderLib.use(gl, oldShader);
+    };
+    sprite.setScaleXYZ([4,3,1]);
+    
+    return sprite;
+  },
+  
+  
+  
   //////// Required Application interface implementations
   
   
@@ -99,8 +125,16 @@ HelloWorldApp.prototype = {
   initShaders:function() {
     var gl = this.getGL();
     
-    TentaGL.SimpleShader.load(gl, "simpleShader");
-    TentaGL.NormalShader.load(gl, "normalShader");
+    try {
+      TentaGL.LinearGradientShader.load(gl, "gradientShader");
+      TentaGL.SimpleShader.load(gl, "simpleShader");
+      TentaGL.NormalShader.load(gl, "normalShader");
+      
+    }
+    catch(e) {
+      console.log(e.message);
+      throw new Error();
+    }
   },
   
   
@@ -140,6 +174,12 @@ HelloWorldApp.prototype = {
     TentaGL.MaterialLib.add(gl, "white", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(1, 1, 1, 1)));
     TentaGL.MaterialLib.add(gl, "black", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 0, 0, 1)));
     
+    // Gradients
+    var grad1 = new TentaGL.Gradient([0,0], [1,0]);
+    grad1.addBreakPt(0, TentaGL.Color.RGBA(1,0,0,1))
+    grad1.addBreakPt(0.6, TentaGL.Color.RGBA(1,1,0,1))
+    grad1.addBreakPt(0.9, TentaGL.Color.RGBA(1,1,1,1));
+    TentaGL.MaterialLib.add(gl, "grad1", grad1);
     
     // Label BG icon
     var canvas = TentaGL.Canvas2D.createRoundedRect(300, 100, 32, false, 0, TentaGL.Color.RGBA(0.3, 0.3, 0.3, 1));
@@ -233,12 +273,12 @@ HelloWorldApp.prototype = {
     
     this.textSprite = this.createTextIconSprite([1,1,1], "Hello, \nWorld!");
     
-    this.labelledIconSprite = this.createLabelledIconSprite([3,3,3], "New sprite");
+    this.labelledIconSprite = this.createLabelledIconSprite([3,3,3], "New sprite\nWith 2 lines!");
     
     this.line1 = new TentaGL.Math.Line2D([2,5], [10,0]);
     this.line2 = new TentaGL.Math.Line2D([5,2], [10,10]);
     
-    this.sphere1 = new TentaGL.Math.Sphere(2, [5,0,5]);
+    this.gradSprite = this.createGradientSprite([0, 0, -1]);
   },
   
   
@@ -338,7 +378,7 @@ HelloWorldApp.prototype = {
     
     // Clear the scene. 
     TentaGL.clear(gl, TentaGL.Color.RGBA(0.1, 0.1, 0.3, 1));
-
+    
     // Draw the objects in the scene.
     this.blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [10,10,0], false, 1);
     
@@ -358,9 +398,20 @@ HelloWorldApp.prototype = {
     this.line1.render(gl, linesMat);
     this.line2.render(gl, linesMat);
     
-    // Render the sphere, using the normal vector shader.
+    
+    
+    // Render a sphere, using the normal vector shader.
     TentaGL.ShaderLib.use(gl, "normalShader");
-    this.sphere1.render(gl, "green");
+    (new TentaGL.Math.Sphere(2, [5,0,5])).render(gl, "white");
+    TentaGL.ShaderLib.use(gl, "simpleShader");
+    
+    this.gradSprite.render(gl);
+  //  TentaGL.ShaderLib.use(gl, "gradientShader");
+  //  TentaGL.MaterialLib.use(gl, "grad1");
+  //  (new TentaGL.Math.Sphere(2, [15,0,5])).render(gl);
+  //  TentaGL.ShaderLib.use(gl, "simpleShader");
+    
+    
   },
   
   

@@ -35,6 +35,7 @@ TentaGL.SimpleShader = function(gl) {
   var fragURL = shaderRoot + "simple.frag";
   var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
   
+  console.log("\nCreating SimpleShader");
   TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
   
   this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
@@ -80,7 +81,7 @@ TentaGL.SimpleShader.prototype = {
    * @param {int}
    */
   setTex: function(gl, value) {
-    this._texUni.set(gl, value);
+    this._texUni.set(gl, [value]);
   },
 };
 

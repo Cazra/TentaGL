@@ -280,7 +280,7 @@ TentaGL.BlitteredFont.prototype = {
       height += lineHeight + vPad;
     }
     
-    return [width, height];
+    return [width*s, height*s];
   },
   
   

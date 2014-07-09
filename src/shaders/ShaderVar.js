@@ -32,10 +32,15 @@
  */
 TentaGL.ShaderVar = function(info, glProg) {
   this._name = info.name;
+  if(this._name.indexOf("[") >= 0) {
+    this._name = this._name.substring(0, this._name.indexOf("["));
+  }
+  
   this._size = info.size;
   this._type = info.type;
   this._sizeBytes = info.size*TentaGL.glSizeBytes(info.type);
-  this._sizeUnits = info.size*TentaGL.glSizeUnits(info.type);
+  this._sizeUnits = TentaGL.glSizeUnits(info.type);
+  this._isArray = (this._size > 1);
   
   this._glProg = glProg;
 };
@@ -56,10 +61,20 @@ TentaGL.ShaderVar.prototype = {
   /** 
    * Returns the size of the variable. 
    * Variables other than arrays will have a size of 1.
+   * For arrays, this will return the capacity of the array.
    * @return {GLint}
    */
   getSize:function() {
     return this._size;
+  },
+  
+  
+  /** 
+   * Returns whether this variable is an array of values. 
+   * @return {boolean}
+   */
+  isArray:function() {
+    return this._isArray;
   },
   
   

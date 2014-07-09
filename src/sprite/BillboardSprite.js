@@ -58,8 +58,6 @@ TentaGL.BillboardSprite.prototype = {
     this.billboardWorldPoint(camEye, camera.getUp())
     
     TentaGL.ViewTrans.mul(gl, this.getModelTransform());
-    TentaGL.ViewTrans.updateMVPUniforms(gl);
-    
     this.draw(gl);
     
     TentaGL.ViewTrans.pop(gl);

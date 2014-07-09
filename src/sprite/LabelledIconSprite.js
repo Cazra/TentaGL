@@ -67,7 +67,6 @@ TentaGL.LabelledIconSprite.prototype = {
   _createLabel:function(labelText, labelBGTexName, blitFont) {
     // Create the label sprite.
     this._label = new TentaGL.TextIconSprite([0, 0.3, 0.001], labelText, blitFont, 0.5);
-  //  this._label.scaleToHeight(0.5);
     this._label.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.BOTTOM);
     this.addComponent(this._label);
     
@@ -80,7 +79,11 @@ TentaGL.LabelledIconSprite.prototype = {
   
   
   _fitLabelBG: function() {
-    this._labelBG.setScaleXYZ([this._label.getIconWidth()+0.1, this._label.getIconHeight(), 1]);
+    this._labelBG.setScaleXYZ([
+      this._label.getIconWidth()/this._labelBG.getIconWidth()+0.1, 
+      this._label.getIconHeight()/this._labelBG.getIconHeight(), 
+      1
+    ]);
   },
   
   //////// Icon
@@ -120,7 +123,6 @@ TentaGL.LabelledIconSprite.prototype = {
    */
   setText:function(text) {
     this._label.setText(text);
-  //  this._label.scaleToHeight(0.5);
     this._fitLabelBG();
   },
   
@@ -197,9 +199,9 @@ TentaGL.LabelledIconSprite.prototype = {
     var camEye = camera.getEye();
     this.billboardWorldPlane(vec3.negate(vec3.create(), camera.getLook()), camera.getUp())
     
-    TentaGL.ViewTrans.mul(gl, this.getModelTransform());
-    TentaGL.ViewTrans.updateMVPUniforms(gl);
+    this._fitLabelBG();
     
+    TentaGL.ViewTrans.mul(gl, this.getModelTransform());
     this.draw(gl);
     
     TentaGL.ViewTrans.pop(gl);

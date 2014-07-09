@@ -31,6 +31,9 @@
  */
 TentaGL.IconSprite = function(xyz) {
   TentaGL.Sprite.call(this, xyz);
+  
+  this._hAlign = TentaGL.Align.LEFT;
+  this._vAlign = TentaGL.Align.BOTTOM;
 };
 
 
@@ -68,11 +71,47 @@ TentaGL.IconSprite.prototype = {
   //////// Alignment
   
   /** 
-   * Sets the horizontal and vertical alignment of the icon relative to its anchor. Override this!
+   * Sets the horizontal and vertical alignment properties of the icon. 
    * @param {enum: TentaGL.Align} horizontal  LEFT, CENTER, or RIGHT
    * @param {enum: TentaGL.Alight} vertical   TOP, CENTER, or BOTTOM
    */
-  setAlignment:function(horizontal, vertical) {},
+  setAlignment:function(horizontal, vertical) {
+    this._hAlign = horizontal;
+    this._vAlign = vertical;
+    
+    this._updateAlignment();
+  },
+  
+  
+  
+  _updateAlignment: function() {
+    var x = undefined;
+    var y = undefined;
+    
+    // Set horizontal alignment.
+    if(this._hAlign == TentaGL.Align.LEFT) {
+      x =0;
+    }
+    else if(this._hAlign == TentaGL.Align.CENTER) {
+      x = this.getIconWidth()/2;
+    }
+    else if(this._hAlign == TentaGL.Align.RIGHT) {
+      x = this.getIconWidth();
+    }
+    
+    // Set vertical alignment.
+    if(this._vAlign == TentaGL.Align.BOTTOM) {
+      y = 0;
+    }
+    else if(this._vAlign == TentaGL.Align.CENTER) {
+      y = this.getIconHeight()/2;
+    }
+    else if(this._vAlign == TentaGL.Align.TOP) {
+      y = this.getIconHeight();
+    }
+    
+    this.setAnchorXYZ([x,y,0]);
+  },
   
   
   //////// Scaling
@@ -82,7 +121,7 @@ TentaGL.IconSprite.prototype = {
    * width and height, respectively.
    */
   scaleIconDims:function() {
-    this.setScaleXYZ(this.getIconWidth(), this.getIconHeight(), 1);
+    this.setScaleXYZ([this.getIconWidth(), this.getIconHeight(), 1]);
   },
   
   
@@ -121,13 +160,13 @@ TentaGL.IconSprite.prototype = {
     }
     TentaGL.ViewTrans.push(gl);
     
+    this._updateAlignment();
+    
     var camera = TentaGL.ViewTrans.getCamera(gl);
     var camEye = camera.getEye();
     this.billboardWorldPlane(vec3.negate(vec3.create(), camera.getLook()), camera.getUp())
     
     TentaGL.ViewTrans.mul(gl, this.getModelTransform());
-    TentaGL.ViewTrans.updateMVPUniforms(gl);
-    
     this.draw(gl);
     
     TentaGL.ViewTrans.pop(gl);

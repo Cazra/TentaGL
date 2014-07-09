@@ -153,8 +153,7 @@ TentaGL.Math.Line2D.prototype = {
   
   
   /**
-   * Returns true iff the line contains some point within a specified distance 
-   * tolerance. 
+   * Returns true iff the line contains some point.
    * @param {vec3} pt
    * @param {ufloat) tolerance    Optional. Default 0.
    */
@@ -163,7 +162,22 @@ TentaGL.Math.Line2D.prototype = {
       tolerance = 0;
     }
     
-    return (this.distToPt(pt) <= tolerance);
+    var u = this.getVec3();
+    var s;
+    if(this._length == 0) {
+      s = 0;
+    }
+    else if(u[0] == 0) {
+      s = (pt[1] - this._p1[1])/u[1];
+    }
+    else {
+      s = (pt[0] - this._p1[0])/u[0];
+    }
+    
+    var x = this._p1[0] + s*u[0];
+    var y = this._p1[1] + s*u[1];
+    
+    return Math.ptsEqual(pt, [x,y], tolerance);
   },
   
   
@@ -307,6 +321,72 @@ TentaGL.Math.Line2D.prototype = {
     return new TentaGL.Math.Line2D(p1, p2);
   },
   
+  
+  //////// Axis of separation
+  
+  /**  
+   * Returns an indicator of where the specified point lies in relation to 
+   * this line. 1 indicates that the segment must be rotated in the direction
+   * from +X to -Y to point towards the point. -1 Indicates that the segment
+   * must be rotated from +X to +Y. 0 Indicates that the point lies exactly
+   * on the line, if it were projected infinitely in both of its directions.
+   * 0 is rare, however and likely will involve rounding errors. So it is
+   * not recommended for testing collinearness.
+   * @param {vec3} pt
+   * @return {int}
+   */
+  relativeCCW: function(pt) {
+    var u = this.getVec3();
+    var v = vec3.sub(vec3.create(), pt, this._p1);
+    var cross = vec3.cross(v, u, v);
+    
+    if(cross[2] > 0) {
+      return -1;
+    }
+    else if(cross[2] < 0) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  },
+  
+  
+  /** 
+   * Tests if this point lies "above" the vector of the line. This, of course,
+   * depends upon the direction of the Y axis.
+   * @param {vec3} pt
+   * @param {boolean} yIsDown   Optional. If true, then Y increases downwards 
+   *      in our coordinate system. Default false.
+   * @return {boolean}
+   */
+  ptIsAbove: function(pt, yIsDown) {
+    var rccw = this.relativeCCW(pt);
+    
+    if(yIsDown) {
+      rccw *= -1;
+    }
+    
+    return (rccw < 0);
+  },
+  
+  /** 
+   * Tests if this point lies "below" the vector of the line. This, of course,
+   * depends upon the direction of the Y axis.
+   * @param {vec3} pt
+   * @param {boolean} yIsDown   Optional. If true, then Y increases downwards 
+   *      in our coordinate system. Default false.
+   * @return {boolean}
+   */
+  ptIsBelow: function(pt, yIsDown) {
+    var rccw = this.relativeCCW(pt);
+    
+    if(yIsDown) {
+      rccw *= -1;
+    }
+    
+    return (rccw > 0);
+  },
   
   //////// Rendering
   

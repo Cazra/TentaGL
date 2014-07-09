@@ -83,43 +83,6 @@ TentaGL.ImageIconSprite.prototype = {
   },
   
   
-  //////// Alignment 
-  
-  
-  /** 
-   * Sets the horizontal and vertical alignment of the icon relative to its anchor. 
-   * @param {enum: TentaGL.Align} horizontal  LEFT, CENTER, or RIGHT
-   * @param {enum: TentaGL.Alight} vertical   TOP, CENTER, or BOTTOM
-   */
-  setAlignment:function(horizontal, vertical) {
-    var x = undefined;
-    var y = undefined;
-    
-    // Set horizontal alignment.
-    if(horizontal == TentaGL.Align.LEFT) {
-      x =0;
-    }
-    else if(horizontal == TentaGL.Align.CENTER) {
-      x = 0.5;
-    }
-    else if(horizontal == TentaGL.Align.RIGHT) {
-      x = 1;
-    }
-    
-    // Set vertical alignment.
-    if(vertical == TentaGL.Align.BOTTOM) {
-      y = 0;
-    }
-    else if(vertical == TentaGL.Align.CENTER) {
-      y = 0.5;
-    }
-    else if(vertical == TentaGL.Align.TOP) {
-      y = 1;
-    }
-    this.setAnchorXYZ([x,y,0]);
-  },
-  
-  
   //////// Metrics
   
   /** 
@@ -170,7 +133,7 @@ TentaGL.ImageIconSprite.prototype = {
     var iconW = this.getIconWidth();
     var iconH = this.getIconHeight();
     
-    TentaGL.ViewTrans.scale(gl, [iconW, iconW]);
+    TentaGL.ViewTrans.scale(gl, [iconW, iconH]);
     TentaGL.ModelLib.render(gl, "unitPlane");
   }
 };

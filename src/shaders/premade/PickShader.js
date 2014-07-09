@@ -64,10 +64,10 @@ TentaGL.PickShader.prototype = {
   /** 
    * Sets the value of the uniform variable for the primary texture offset. 
    * @param {WebGLRenderingContext} gl
-   * @param {int}
+   * @param {int} value
    */
   setTex: function(gl, value) {
-    this._texUni.set(gl, value);
+    this._texUni.set(gl, [value]);
   },
   
   

@@ -61,9 +61,9 @@ TentaGL.Uniform.prototype = {
   /** 
    * Sets the value of this Uniform in the GL context.
    * @param {WebGLRenderingContext} gl
-   * @param {typed array} valueArray  A typed array of the appropriate type and 
-   *      length for the variable. In the case of a size 1 INT or FLOAT variable,
-   *      
+   * @param {typed array} valueArray    An array of the appropriate type  
+   *      and length for the variable. This doesn't necessarily need to be a 
+   *      typed array. See WebGL specification, section 5.1: Types.
    */
   set:function(gl, valueArray) {
     TentaGL.Uniform.setters[this._type].call(this, gl, valueArray);
@@ -76,15 +76,15 @@ Util.Inheritance.inherit(TentaGL.Uniform, TentaGL.ShaderVar);
 
 
 TentaGL.Uniform.setters = [];
-TentaGL.Uniform.setters[GL_FLOAT] = function(gl, valueArray) { gl.uniform1f(this._location, valueArray); };
+TentaGL.Uniform.setters[GL_FLOAT] = function(gl, valueArray) { gl.uniform1fv(this._location, valueArray); };
 TentaGL.Uniform.setters[GL_FLOAT_VEC2] = function(gl, valueArray) { gl.uniform2fv(this._location, valueArray); };
 TentaGL.Uniform.setters[GL_FLOAT_VEC3] = function(gl, valueArray) { gl.uniform3fv(this._location, valueArray); };
 TentaGL.Uniform.setters[GL_FLOAT_VEC4] = function(gl, valueArray) { gl.uniform4fv(this._location, valueArray); };
-TentaGL.Uniform.setters[GL_INT] = function(gl, valueArray) { gl.uniform1i(this._location, valueArray); };
+TentaGL.Uniform.setters[GL_INT] = function(gl, valueArray) { gl.uniform1iv(this._location, valueArray); };
 TentaGL.Uniform.setters[GL_INT_VEC2] = function(gl, valueArray) { gl.uniform2iv(this._location, valueArray); };
 TentaGL.Uniform.setters[GL_INT_VEC3] = function(gl, valueArray) { gl.uniform3iv(this._location, valueArray); };
 TentaGL.Uniform.setters[GL_INT_VEC4] = function(gl, valueArray) { gl.uniform4iv(this._location, valueArray); };
 TentaGL.Uniform.setters[GL_FLOAT_MAT2] = function(gl, valueArray) { gl.uniformMatrix2fv(this._location, false, valueArray); };
 TentaGL.Uniform.setters[GL_FLOAT_MAT3] = function(gl, valueArray) { gl.uniformMatrix3fv(this._location, false, valueArray); };
 TentaGL.Uniform.setters[GL_FLOAT_MAT4] = function(gl, valueArray) { gl.uniformMatrix4fv(this._location, false, valueArray); };
-TentaGL.Uniform.setters[GL_SAMPLER_2D] = function(gl, valueArray) { gl.uniform1i(this._location, valueArray); };
+TentaGL.Uniform.setters[GL_SAMPLER_2D] = function(gl, valueArray) { gl.uniform1iv(this._location, valueArray); };
