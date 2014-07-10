@@ -89,12 +89,31 @@ TentaGL.Model.prototype = {
   
   
   /** 
+   * Sets the drawing mode for this model. 
+   * @param {GLenum} mode   Either GL_LINES or GL_TRIANGLES
+   */
+  setDrawMode: function(mode) {
+    this._mode = mode;
+  },
+  
+  
+  /** 
    * Returns the face culling mode used to draw this model. 
    * @return {GLenum}
    */
   getCullMode:function() {
     return this._cull;
   },
+  
+  
+  /** 
+   * Sets the face culling mode for this model. 
+   * @param {GLenum} mode   Either GL_NONE, GL_FRONT, GL_BACK, or GL_FRONT_AND_BACK. 
+   */
+  setCullMode: function(mode) {
+    this._cull = mode;
+  },
+  
   
   //////// Element index data
   
@@ -196,8 +215,11 @@ TentaGL.Model.prototype = {
     
     var vert1 = this._vertices[v1];
     var vert2 = this._vertices[v2];
-    vert1.setTangental(vert1.computeTangental(vert2, vert2));
-    vert2.setTangental(vert2.computeTangental(vert1, vert1));
+    
+    if(vert1.hasTexST() && vert2.hasTexST()) {
+      vert1.setTangental(vert1.computeTangental(vert2, vert2));
+      vert2.setTangental(vert2.computeTangental(vert1, vert1));
+    }
   },
   
   
@@ -298,9 +320,12 @@ TentaGL.Model.prototype = {
     var vert1 = this._vertices[v1];
     var vert2 = this._vertices[v2];
     var vert3 = this._vertices[v3];
-    vert1.setTangental(vert1.computeTangental(vert2, vert3));
-    vert2.setTangental(vert2.computeTangental(vert3, vert1));
-    vert3.setTangental(vert3.computeTangental(vert1, vert2));
+    
+    if(vert1.hasTexST() && vert2.hasTexST() && vert3.hasTexST()) {
+      vert1.setTangental(vert1.computeTangental(vert2, vert3));
+      vert2.setTangental(vert2.computeTangental(vert3, vert1));
+      vert3.setTangental(vert3.computeTangental(vert1, vert2));
+    }
   },
   
   
@@ -427,6 +452,67 @@ TentaGL.Model.prototype = {
       vertex.setNormal(n[0], n[1], n[2]);
     }
   },
+  
+  
+  /** 
+   * Automatically generates the 2D texture coordinates for each vertex in 
+   * the model. 
+   */
+  generate2DTexCoordsSpherical: function() {
+    
+    for(var i=0; i< this._vertices.length; i++) {
+      var vertex = this._vertices[i];
+      var polarCoords = TentaGL.Math.toPolar(vertex.getXYZ());
+      
+      var thetaY = TentaGL.Math.wrap(polarCoords[1], 0, TentaGL.TAU);
+      
+      var s = TentaGL.Math.linearMap(thetaY, [0, TentaGL.TAU], [0, 1]);
+      var t = TentaGL.Math.linearMap(polarCoords[2], [-Math.PI/2, Math.PI/2], [0, 1]);
+      
+      vertex.setTexST(s, t);
+    }
+    
+  },
+  
+  
+  
+  /** 
+   * Computes the surface tangentals for each vertex in this model. 
+   */
+  generateSurfaceTangentals: function() {
+    if(this._mode == GL_LINES) {
+      for(var i=0; i<this._indices.length; i+= 2) {
+        var v1 = this._indices[i];
+        var v2 = this._indices[i+1];
+        
+        var vert1 = this._vertices[v1];
+        var vert2 = this._vertices[v2];
+        
+        if(vert1.hasTexST() && vert2.hasTexST()) {
+          vert1.setTangental(vert1.computeTangental(vert2, vert2));
+          vert2.setTangental(vert2.computeTangental(vert1, vert1));
+        }
+      }
+    }
+    else {
+      for(var i=0; i<this._indices.length; i+= 3) {
+        var v1 = this._indices[i];
+        var v2 = this._indices[i+1];
+        var v3 = this._indices[i+2];
+        
+        var vert1 = this._vertices[v1];
+        var vert2 = this._vertices[v2];
+        var vert3 = this._vertices[v3];
+        
+        if(vert1.hasTexST() && vert2.hasTexST() && vert3.hasTexST()) {
+          vert1.setTangental(vert1.computeTangental(vert2, vert3));
+          vert2.setTangental(vert2.computeTangental(vert3, vert1));
+          vert3.setTangental(vert3.computeTangental(vert1, vert2));
+        }
+      }
+    }
+  },
+  
   
   
   //////// Properties computations

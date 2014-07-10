@@ -23,45 +23,43 @@
 */
 
 /** 
- * An API for fetching and loading images. 
+ * An effectively infinitely distant light source radiating light in a single 
+ * direction. 
+ * @param {vec3} direction    The direction toward the light source.
+ * @param {TentaGL.Color} diffuse   Optional.
+ * @param {TentaGL.Color} specular  Optional.
+ * @param {TentaGL.Color} ambient   Optional.
  */
-TentaGL.ImageLoader = {
+TentaGL.DirectionalLight = function(direction, diffuse, specular, ambient) {
+  TentaGL.Light.call(this, diffuse, specular, ambient);
   
+  this._direction = direction;
+};
+
+TentaGL.DirectionalLight.prototype = {
   
-  _numLoading: 0,
+  constructor: TentaGL.DirectionalLight,
+  
+  isaDirectionalLight: true,
   
   
   /** 
-   * Fetches and loads an image from a URL. 
-   * @param {string} url
-   * @param {function(image : Image) : undefined} successCB    Callback for when the image is successfully loaded.
-   * @param {function : undefined} errorCB      Optional. Callback for when there is an error loading the image.
+   * Returns the direction of the light.
+   * @return {vec3}
    */
-  load: function(url, successCB, errorCB) {
-    var self = this;
-    this._numLoading++;
-    
-    if(!errorCB) {
-      errorCB = function() {
-        self._numLoading--;
-        throw new Error("Could not load image at " + url + ".");
-      }
-    }
-    
-    var image = new Image();
-    image.onload = function() {
-      successCB(image);
-      self._numLoading--;
-    };
-    image.src = url;
+  getDirection: function() {
+    return this._direction;
   },
   
   
   /** 
-   * Returns true if the ImageLoader is still loading 1 or more images. 
-   * @return {boolean}
+   * Sets the direction of the light.
+   * @param {vec3} direction
    */
-  isLoading: function() {
-    return (this._numLoading > 0);
+  setDirection: function(direction) {
+    this._direction[0] = direction[0];
+    this._direction[1] = direction[1];
+    this._direction[2] = direction[2];
   }
 };
+

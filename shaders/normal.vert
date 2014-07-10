@@ -9,7 +9,10 @@ varying vec2 texCoords;
 varying vec3 vNormal;
 
 void main(void) {
+  mat3 nt = normalTrans;
+  
   texCoords = vertexTexCoords;
   gl_Position = mvpTrans * vertexPos;
-  vNormal = normalize(normalTrans*vertexNormal);
+  
+  vNormal = normalize(vertexNormal);
 }

@@ -23,45 +23,59 @@
 */
 
 /** 
- * An API for fetching and loading images. 
+ * Base class for various types of lights. 
+ * @constructor
+ * @param {TentaGL.Color} diffuse   The color of reflected light being  
+ *      scattered in all directions.
+ * @param {TentaGL.Color} specular  The shiny color of the reflected light.
+ * @param {TentaGL.Color} ambient   The color of uniform lighting contributed 
+ *      to the scene, not dependent upon the angle of reflection. 
  */
-TentaGL.ImageLoader = {
+TentaGL.Light = function(diffuse, specular, ambient) {
+  if(!diffuse) {
+    diffuse = TentaGL.Color.RGBA(1, 1, 1, 1);
+  }
+  if(!specular) {
+    specular = TentaGL.Color.RGBA(1, 1, 1, 1);
+  }
+  if(!ambient) {
+    ambient = TentaGL.Color.RGBA(0, 0, 0, 1);
+  }
   
+  this._diffuse = diffuse;
+  this._specular = specular;
+  this._ambient = ambient;
+};
+
+
+TentaGL.Light.prototype = {
   
-  _numLoading: 0,
+  constructor: TentaGL.Light,
   
+  isaLight: true,
   
   /** 
-   * Fetches and loads an image from a URL. 
-   * @param {string} url
-   * @param {function(image : Image) : undefined} successCB    Callback for when the image is successfully loaded.
-   * @param {function : undefined} errorCB      Optional. Callback for when there is an error loading the image.
+   * Returns the light's diffuse color.
+   * @return {TentaGL.Color}
    */
-  load: function(url, successCB, errorCB) {
-    var self = this;
-    this._numLoading++;
-    
-    if(!errorCB) {
-      errorCB = function() {
-        self._numLoading--;
-        throw new Error("Could not load image at " + url + ".");
-      }
-    }
-    
-    var image = new Image();
-    image.onload = function() {
-      successCB(image);
-      self._numLoading--;
-    };
-    image.src = url;
+  getDiffuse: function() {
+    return this._diffuse;
   },
   
+  /** 
+   * Returns the light's specular color.
+   * @return {TentaGL.Color}
+   */
+  getSpecular: function() {
+    return this._specular;
+  },
   
   /** 
-   * Returns true if the ImageLoader is still loading 1 or more images. 
-   * @return {boolean}
+   * Return's the light's ambient color.
    */
-  isLoading: function() {
-    return (this._numLoading > 0);
+  getAmbient: function() {
+    return this._ambient;
   }
 };
+
+

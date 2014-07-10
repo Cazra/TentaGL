@@ -23,45 +23,22 @@
 */
 
 /** 
- * An API for fetching and loading images. 
+ * The most basic light, providing uniform lighting to the scene. 
+ * This type of light doesn't contribute any diffuse or specular lighting.
+ * @constructor
+ * @param {TentaGL.Color} color   The ambient light color.
  */
-TentaGL.ImageLoader = {
-  
-  
-  _numLoading: 0,
-  
-  
-  /** 
-   * Fetches and loads an image from a URL. 
-   * @param {string} url
-   * @param {function(image : Image) : undefined} successCB    Callback for when the image is successfully loaded.
-   * @param {function : undefined} errorCB      Optional. Callback for when there is an error loading the image.
-   */
-  load: function(url, successCB, errorCB) {
-    var self = this;
-    this._numLoading++;
-    
-    if(!errorCB) {
-      errorCB = function() {
-        self._numLoading--;
-        throw new Error("Could not load image at " + url + ".");
-      }
-    }
-    
-    var image = new Image();
-    image.onload = function() {
-      successCB(image);
-      self._numLoading--;
-    };
-    image.src = url;
-  },
-  
-  
-  /** 
-   * Returns true if the ImageLoader is still loading 1 or more images. 
-   * @return {boolean}
-   */
-  isLoading: function() {
-    return (this._numLoading > 0);
-  }
+TentaGL.AmbientLight = function(color) {
+  TentaGL.Light.call(this, TentaGL.Color.RGBA(0,0,0,1), TentaGL.Color.RGBA(0,0,0,1), color);
 };
+
+TentaGL.AmbientLight.prototype = {
+  
+  constructor: TentaGL.AmbientLight,
+  
+  isaAmbientLight: true
+  
+};
+
+Util.Inheritance.inherit(TentaGL.AmbientLight, TentaGL.Light);
+

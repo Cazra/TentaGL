@@ -23,45 +23,46 @@
 */
 
 /** 
- * An API for fetching and loading images. 
+ * A light radiating from a point in all directions. 
+ * @constructor
+ * @param {vec3} xyz    The position of the light source.
+ * @param {TentaGL.Color} diffuse   Optional.
+ * @param {TentaGL.Color} specular  Optional.
+ * @param {TentaGL.Color} ambient   Optional.
  */
-TentaGL.ImageLoader = {
+TentaGL.PointLight = function(xyz, diffuse, specular, ambient) {
+  TentaGL.Light.call(this, diffuse, specular, ambient);
   
+  this._xyz = vec4.clone(xyz);
+  this._xyz[3] = 1;
+}
+
+TentaGL.PointLight.prototype = {
   
-  _numLoading: 0,
+  constructor: TentaGL.PointLight,
   
+  isaPointLight: true,
   
   /** 
-   * Fetches and loads an image from a URL. 
-   * @param {string} url
-   * @param {function(image : Image) : undefined} successCB    Callback for when the image is successfully loaded.
-   * @param {function : undefined} errorCB      Optional. Callback for when there is an error loading the image.
+   * Returns the position of the light.
+   * @return {vec4}
    */
-  load: function(url, successCB, errorCB) {
-    var self = this;
-    this._numLoading++;
-    
-    if(!errorCB) {
-      errorCB = function() {
-        self._numLoading--;
-        throw new Error("Could not load image at " + url + ".");
-      }
-    }
-    
-    var image = new Image();
-    image.onload = function() {
-      successCB(image);
-      self._numLoading--;
-    };
-    image.src = url;
+  getXYZ: function() {
+    return this._xyz;
   },
   
   
   /** 
-   * Returns true if the ImageLoader is still loading 1 or more images. 
-   * @return {boolean}
+   * Sets the position of the light. 
+   * @param {vec3} xyz
    */
-  isLoading: function() {
-    return (this._numLoading > 0);
+  setXYZ: function(xyz) {
+    this._xyz[0] = xyz[0];
+    this._xyz[1] = xyz[1];
+    this._xyz[2] = xyz[2];
   }
+  
 };
+
+Util.Inheritance.inherit(TentaGL.PointLight, TentaGL.Light);
+

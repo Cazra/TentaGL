@@ -142,6 +142,43 @@ HelloWorldApp.prototype = {
   },
   
   
+  /** Creates a sprite using the specified model, material, and shader. */
+  createSprite: function(xyz, modelName, materialName, shaderName) {
+    var gl = this.getGL();
+    
+    if(!modelName) {
+      modelName = "unitSphere";
+    }
+    
+    if(!materialName) {
+      materialName = "green";
+    }
+    
+    if(!shaderName) {
+      shaderName = "simpleShader";
+    }
+    
+    var sprite = new TentaGL.Sprite(xyz);
+    sprite.draw = function(gl) {
+      
+      var oldShader = TentaGL.ShaderLib.currentName(gl);
+      
+      try {
+        TentaGL.ShaderLib.use(gl, shaderName);
+        TentaGL.MaterialLib.use(gl, materialName);
+        TentaGL.ModelLib.render(gl, modelName);
+      }
+      catch (e) {
+        // console.log("sprite resource not ready: " + e.message);
+      }
+      
+      TentaGL.ShaderLib.use(gl, oldShader);
+    };
+    
+    return sprite;
+  },
+  
+  
   
   //////// Required Application interface implementations
   
@@ -241,17 +278,29 @@ HelloWorldApp.prototype = {
   
   /** We are required to override TentaGL.Application.initModels */
   initModels:function() {
+    var gl = this.getGL();
+    
     var cubeModel = TentaGL.Model.Cube(2, 2, 2);//.cloneCentered();
-    TentaGL.ModelLib.add(this.getGL(), "cube", cubeModel);
+    TentaGL.ModelLib.add(gl, "cube", cubeModel);
     
     var lineModel = TentaGL.Model.Line([0,0,0],[1,1,0]);
-    TentaGL.ModelLib.add(this.getGL(), "line", lineModel);
+    TentaGL.ModelLib.add(gl, "line", lineModel);
     
     var polyLineModel = TentaGL.Model.PolyLine([[0,0,0],[1,1,0],[1,0,1]], true);
-    TentaGL.ModelLib.add(this.getGL(), "polyline", polyLineModel);
+    TentaGL.ModelLib.add(gl, "polyline", polyLineModel);
     
     var cylinderModel = TentaGL.Model.Cylinder(1,2).rotate([1,0,0],TentaGL.TAU/4);
-    TentaGL.ModelLib.add(this.getGL(), "cylinder", cylinderModel);
+    TentaGL.ModelLib.add(gl, "cylinder", cylinderModel);
+    
+    
+    TentaGL.Model.ObjReader.fromURL("../../models/teapot.obj", function(models) {
+      console.log("loaded teapot model", models);
+      
+      var model = models["Object001"];
+      model.generate2DTexCoordsSpherical();
+      model.generateSurfaceTangentals();
+      TentaGL.ModelLib.add(gl, "teapot", model);
+    });
   },
   
   
@@ -311,6 +360,8 @@ HelloWorldApp.prototype = {
     
     this.gradSprite = this.createGradientSprite([0, 0, -1]);
     this.gradSprite2 = this.createRadialGradientSprite([4, 0, -1]);
+    
+    this.teapotSprite = this.createSprite([0, 20, 0], "teapot", "green", "normalShader");
   },
   
   
@@ -355,6 +406,15 @@ HelloWorldApp.prototype = {
   
   /** Runs the scene application logic. */
   updateScene:function(gl) {
+    if(TentaGL.ImageLoader.isLoading()) {
+      console.log("Loading images...");
+      return;
+    }
+    if(TentaGL.Model.ObjReader.isLoading()) {
+      console.log("Loading models..." + TentaGL.Model.ObjReader.getNumLoading());
+      return;
+    }
+    
     // Group rotation
     if(this._keyboard.isPressed(KeyCode.W)) {
       this.spriteGroup.rotate([1,0,0], -0.1);
@@ -439,12 +499,8 @@ HelloWorldApp.prototype = {
     
     this.gradSprite.render(gl);
     this.gradSprite2.render(gl);
-  //  TentaGL.ShaderLib.use(gl, "gradientShader");
-  //  TentaGL.MaterialLib.use(gl, "grad1");
-  //  (new TentaGL.Math.Sphere(2, [15,0,5])).render(gl);
-  //  TentaGL.ShaderLib.use(gl, "simpleShader");
     
-    
+    this.teapotSprite.render(gl);
   },
   
   

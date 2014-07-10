@@ -132,6 +132,16 @@ TentaGL.Vertex.prototype = {
     }
   },
   
+  
+  /** 
+   * Returns true iff 2D texture coordsinates have been defined for this vertex. 
+   * @return {boolean}
+   */
+  hasTexST: function() {
+    return (this._texST != undefined);
+  },
+  
+  
   /**
    * Sets the 2D texture coordinates for this vertex.
    * @param {Number} s
@@ -172,6 +182,16 @@ TentaGL.Vertex.prototype = {
       return vec3.clone(this._normal);
     }
   },
+  
+  
+  /** 
+   * Returns true iff the surface normal vector has been defined for this vertex. 
+   * @return {boolean}
+   */
+  hasNormal: function() {
+    return (this._normal != undefined);
+  },
+  
   
   /** 
    * Sets the surface normal vector for this vertex. The stored vector becomes 
