@@ -117,6 +117,31 @@ HelloWorldApp.prototype = {
   },
   
   
+  /** 
+   * Produces a rectangular sprite with a gradient texture. 
+   * @param {vec4} xyz  The sprite's position in local space.
+   * @return {TentaGL.Sprite}
+   */
+  createRadialGradientSprite: function(xyz) {
+    var gl = this.getGL();
+    
+    var sprite = new TentaGL.Sprite(xyz);
+    sprite.draw = function(gl) {
+      
+      var oldShader = TentaGL.ShaderLib.currentName(gl);
+      
+      TentaGL.ShaderLib.use(gl, "gradientShader2");
+      TentaGL.MaterialLib.use(gl, "grad2");
+      TentaGL.ModelLib.render(gl, "unitPlane");
+      
+      TentaGL.ShaderLib.use(gl, oldShader);
+    };
+    sprite.setScaleXYZ([4,3,1]);
+    
+    return sprite;
+  },
+  
+  
   
   //////// Required Application interface implementations
   
@@ -126,10 +151,10 @@ HelloWorldApp.prototype = {
     var gl = this.getGL();
     
     try {
-      TentaGL.LinearGradientShader.load(gl, "gradientShader");
       TentaGL.SimpleShader.load(gl, "simpleShader");
       TentaGL.NormalShader.load(gl, "normalShader");
-      
+      TentaGL.LinearGradientShader.load(gl, "gradientShader");
+      TentaGL.RadialGradientShader.load(gl, "gradientShader2");
     }
     catch(e) {
       console.log(e.message);
@@ -180,6 +205,12 @@ HelloWorldApp.prototype = {
     grad1.addBreakPt(0.6, TentaGL.Color.RGBA(1,1,0,1))
     grad1.addBreakPt(0.9, TentaGL.Color.RGBA(1,1,1,1));
     TentaGL.MaterialLib.add(gl, "grad1", grad1);
+    
+    var grad2 = new TentaGL.Gradient([0.3,0.3], [0.5,0]);
+    grad2.addBreakPt(0, TentaGL.Color.RGBA(0,0,1,1))
+    grad2.addBreakPt(0.6, TentaGL.Color.RGBA(0,1,1,1))
+    grad2.addBreakPt(1, TentaGL.Color.RGBA(1,1,1,1));
+    TentaGL.MaterialLib.add(gl, "grad2", grad2);
     
     // Label BG icon
     var canvas = TentaGL.Canvas2D.createRoundedRect(300, 100, 32, false, 0, TentaGL.Color.RGBA(0.3, 0.3, 0.3, 1));
@@ -279,6 +310,7 @@ HelloWorldApp.prototype = {
     this.line2 = new TentaGL.Math.Line2D([5,2], [10,10]);
     
     this.gradSprite = this.createGradientSprite([0, 0, -1]);
+    this.gradSprite2 = this.createRadialGradientSprite([4, 0, -1]);
   },
   
   
@@ -406,6 +438,7 @@ HelloWorldApp.prototype = {
     TentaGL.ShaderLib.use(gl, "simpleShader");
     
     this.gradSprite.render(gl);
+    this.gradSprite2.render(gl);
   //  TentaGL.ShaderLib.use(gl, "gradientShader");
   //  TentaGL.MaterialLib.use(gl, "grad1");
   //  (new TentaGL.Math.Sphere(2, [15,0,5])).render(gl);
