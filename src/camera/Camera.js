@@ -64,7 +64,7 @@ TentaGL.Camera.prototype = {
    */
   getProjectionTransform:function(aspect) {
     return mat4.create();
-  },
+  }
 };
 
 

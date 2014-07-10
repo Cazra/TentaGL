@@ -62,7 +62,7 @@ TentaGL.RGBAFilter.prototype = {
     dstData[index+1] = g;
     dstData[index+2] = b;
     dstData[index+3] = a;
-  },
+  }
   
 };
 

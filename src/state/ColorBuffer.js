@@ -110,7 +110,7 @@ TentaGL.ColorBuffer = {
       this.setClearColor(gl, color);
     }
     gl.clear(GL_COLOR_BUFFER_BIT);
-  },
+  }
   
   
   

@@ -82,7 +82,7 @@ TentaGL.SimpleShader.prototype = {
    */
   setTex: function(gl, value) {
     this._texUni.set(gl, [value]);
-  },
+  }
 };
 
 

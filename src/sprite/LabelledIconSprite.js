@@ -205,7 +205,7 @@ TentaGL.LabelledIconSprite.prototype = {
     this.draw(gl);
     
     TentaGL.ViewTrans.pop(gl);
-  },
+  }
 };
 
 Util.Inheritance.inherit(TentaGL.LabelledIconSprite, TentaGL.CompositeSprite);

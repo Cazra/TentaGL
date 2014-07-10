@@ -67,7 +67,7 @@ TentaGL.BillboardSprite.prototype = {
    * Sets the materials for and draws the Models making up this sprite. 
    * Override this. 
    */
-  draw:function(gl) {},
+  draw:function(gl) {}
 };
 
 

@@ -384,7 +384,7 @@ TentaGL.Application.prototype = {
    * Runs an iteration of the application loop and renders the application. 
    * Override this. 
    */
-  update:function() {},
+  update:function() {}
   
   
   

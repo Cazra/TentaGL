@@ -170,7 +170,7 @@ TentaGL.Math.Sphere.prototype = {
     TentaGL.ModelLib.render(gl, "unitSphere");
     
     TentaGL.ViewTrans.pop(gl);
-  },
+  }
   
   
 };

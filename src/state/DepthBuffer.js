@@ -211,5 +211,5 @@ TentaGL.DepthBuffer = {
     gl.renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
     gl.bindRenderbuffer(GL_RENDERBUFFER, null);
     return buffer;
-  },
+  }
 };

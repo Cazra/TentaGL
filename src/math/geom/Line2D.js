@@ -419,7 +419,7 @@ TentaGL.Math.Line2D.prototype = {
     TentaGL.ModelLib.render(gl, "unitLine");
     
     TentaGL.ViewTrans.pop(gl);
-  },
+  }
   
 };
 

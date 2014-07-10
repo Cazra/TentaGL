@@ -176,7 +176,7 @@ TentaGL.Picker.prototype = {
     else {
       return undefined;
     }
-  },
+  }
   
 };
 

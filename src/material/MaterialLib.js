@@ -138,7 +138,7 @@ TentaGL.MaterialLib = {
   /** Sets the library to not currently be using a material. */
   useNone:function(gl) {
     gl._materialLibCurrentName = undefined;
-  },
+  }
   
 };
 

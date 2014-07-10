@@ -338,7 +338,7 @@ TentaGL.Mouse.prototype = {
    */
   scrollRightAmount:function() {
     return Math.abs(Math.max(this._wheelTicksX, 0));
-  },
+  }
 };
 
 

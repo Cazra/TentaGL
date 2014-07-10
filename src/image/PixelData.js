@@ -206,7 +206,7 @@ TentaGL.PixelData.prototype = {
     }
     
     return canvas;
-  },
+  }
 };
 
 

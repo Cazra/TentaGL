@@ -128,7 +128,7 @@ TentaGL.Math.Line3D.prototype = {
       
       return vec3.len(v)*vec3.len(cross);
     }
-  },
+  }
   
 };
 

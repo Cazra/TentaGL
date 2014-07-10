@@ -102,5 +102,5 @@ TentaGL.Stencil = {
     gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     return buffer;
-  },
+  }
 };

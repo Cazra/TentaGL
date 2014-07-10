@@ -426,6 +426,6 @@ TentaGL.Math = {
    */
   _vec3_1:vec3.create(),
   _vec3_2:vec3.create(),
-  _vec3_3:vec3.create(),
+  _vec3_3:vec3.create()
   
 };
