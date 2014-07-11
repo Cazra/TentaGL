@@ -156,6 +156,49 @@ TentaGL.ViewTrans = {
   },
   
   
+  //////// View transform
+  
+  /** 
+   * Sets the view transform matrix (and model-view transform matrix). 
+   * @param {WebGLRenderingContext} gl
+   * @param {mat4} trans  The new view matrix.
+   */
+  setView: function(gl, trans) {
+    this.set(trans);
+    gl._viewTrans = trans;
+  },
+  
+  
+  /** 
+   * Returns the current view transform matrix.
+   * @return {mat4}
+   */
+  getView: function(gl) {
+    return gl._viewTrans;
+  },
+  
+  
+  /** 
+   * Multiplies the view transform matrix (M) by another matrix (T) so that the
+   * result is M = M x T.
+   * @param {WebGLRenderingContext} gl
+   * @param {mat4} trans
+   */
+  mulView: function(gl, trans) {
+    mat4.mul(gl._viewTrans, gl._viewTrans, trans);
+  },
+  
+  /** 
+   * Multiplies the view transform matrix (M) by another matrix (T) so 
+   * that the result is M = T x M.
+   * @param {WebGLRenderingContext} gl
+   * @param {mat4} trans
+   */
+  premulView: function(gl, trans) {
+    mat4.mul(gl._viewTrans, trans, gl._viewTrans);
+  },
+  
+  
   //////// Projection transform
   
   /** 
@@ -219,6 +262,11 @@ TentaGL.ViewTrans = {
     if(program.setMVPTrans) {
       mat4.mul(gl._mvpTrans, gl._projTrans, gl._modelViewTrans);
       program.setMVPTrans(gl, gl._mvpTrans);
+    }
+    
+    if(program.setVPTrans) {
+      mat4.mul(gl._vTrans, gl._projTrans, gl._viewTrans);
+      program.setVPTrans(gl, gl._vTrans);
     }
   },
   

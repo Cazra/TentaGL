@@ -35,6 +35,7 @@ TentaGL.PointLight = function(xyz, diffuse, specular, ambient) {
   
   this._xyz = vec4.clone(xyz);
   this._xyz[3] = 1;
+  this._attenuation = [1, 0, 0];
 }
 
 TentaGL.PointLight.prototype = {
@@ -60,6 +61,33 @@ TentaGL.PointLight.prototype = {
     this._xyz[0] = xyz[0];
     this._xyz[1] = xyz[1];
     this._xyz[2] = xyz[2];
+  },
+  
+  
+  /** 
+   * Returns the attenuation coefficients for the light. Unless
+   * the coefficients are set through the setAttenuation method, they are 
+   * a=1, b=0, c=0. This causes the light to be the same intensity at all 
+   * distances.
+   * @return {array: [constant: number, linear: number, quadratic: number]}
+   */
+  getAttenuation: function() {
+    var result = [];
+    result[0] = this._attenuation[0];
+    result[1] = this._attenuation[1];
+    result[2] = this._attenuation[2];
+    return result;
+  },
+  
+  /** 
+   * Sets the attenuation coefficients for the light. These
+   * define how the intensity of the light degrades relative to distance.
+   * @param {number} a    The constant coefficient. 
+   * @param {number} b    The linear coefficient.
+   * @param {number} c    The quadratic coefficient.
+   */
+  setAttenuation: function(a, b, c) {
+    
   }
   
 };

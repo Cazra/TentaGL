@@ -105,7 +105,12 @@ TentaGL.ShaderProgram.prototype = {
     gl.linkProgram(program);
     
     if(!gl.getProgramParameter(program, GL_LINK_STATUS)) {
-      throw new Error("Failed to link shader program.");
+      var msg = gl.getProgramInfoLog(program);
+      
+      var maxVaryings = gl.getParameter(gl.MAX_VARYING_VECTORS);
+      console.log("max varyings: " + maxVaryings);
+      
+      throw new Error("Failed to link shader program:\n" + msg);
     }
     
     return program;

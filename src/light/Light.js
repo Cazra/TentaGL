@@ -62,6 +62,16 @@ TentaGL.Light.prototype = {
     return this._diffuse;
   },
   
+  
+  /** 
+   * Sets the light's diffuse color.
+   * @param {TentaGL.Color} diffuse
+   */
+  setDiffuse: function(diffuse) {
+    this._diffuse = diffuse;
+  },
+  
+  
   /** 
    * Returns the light's specular color.
    * @return {TentaGL.Color}
@@ -70,11 +80,29 @@ TentaGL.Light.prototype = {
     return this._specular;
   },
   
+  
+  /** 
+   * Sets the light's specular color.
+   * @param {TentaGL.Color} specular
+   */
+  setSpecular: function(specular) {
+    this._specular = specular;
+  },
+  
+  
   /** 
    * Return's the light's ambient color.
    */
   getAmbient: function() {
     return this._ambient;
+  },
+  
+  
+  /** 
+   * Sets the light's ambient color.
+   */
+  setAmbient: function(ambient) {
+    this._ambient = ambient;
   }
 };
 

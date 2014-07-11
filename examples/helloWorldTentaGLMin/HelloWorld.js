@@ -91,57 +91,6 @@ HelloWorldApp.prototype = {
   },
   
   
-  
-  /** 
-   * Produces a rectangular sprite with a gradient texture. 
-   * @param {vec4} xyz  The sprite's position in local space.
-   * @return {TentaGL.Sprite}
-   */
-  createGradientSprite: function(xyz) {
-    var gl = this.getGL();
-    
-    var sprite = new TentaGL.Sprite(xyz);
-    sprite.draw = function(gl) {
-      
-      var oldShader = TentaGL.ShaderLib.currentName(gl);
-      
-      TentaGL.ShaderLib.use(gl, "gradientShader");
-      TentaGL.MaterialLib.use(gl, "grad1");
-      TentaGL.ModelLib.render(gl, "unitPlane");
-      
-      TentaGL.ShaderLib.use(gl, oldShader);
-    };
-    sprite.setScaleXYZ([4,3,1]);
-    
-    return sprite;
-  },
-  
-  
-  /** 
-   * Produces a rectangular sprite with a gradient texture. 
-   * @param {vec4} xyz  The sprite's position in local space.
-   * @return {TentaGL.Sprite}
-   */
-  createRadialGradientSprite: function(xyz) {
-    var gl = this.getGL();
-    
-    var sprite = new TentaGL.Sprite(xyz);
-    sprite.draw = function(gl) {
-      
-      var oldShader = TentaGL.ShaderLib.currentName(gl);
-      
-      TentaGL.ShaderLib.use(gl, "gradientShader2");
-      TentaGL.MaterialLib.use(gl, "grad2");
-      TentaGL.ModelLib.render(gl, "unitPlane");
-      
-      TentaGL.ShaderLib.use(gl, oldShader);
-    };
-    sprite.setScaleXYZ([4,3,1]);
-    
-    return sprite;
-  },
-  
-  
   /** Creates a sprite using the specified model, material, and shader. */
   createSprite: function(xyz, modelName, materialName, shaderName) {
     var gl = this.getGL();
@@ -192,6 +141,7 @@ HelloWorldApp.prototype = {
       TentaGL.NormalShader.load(gl, "normalShader");
       TentaGL.LinearGradientShader.load(gl, "gradientShader");
       TentaGL.RadialGradientShader.load(gl, "gradientShader2");
+      TentaGL.PhongShader.load(gl, "phong");
     }
     catch(e) {
       console.log(e.message);
@@ -358,8 +308,11 @@ HelloWorldApp.prototype = {
     this.line1 = new TentaGL.Math.Line2D([2,5], [10,0]);
     this.line2 = new TentaGL.Math.Line2D([5,2], [10,10]);
     
-    this.gradSprite = this.createGradientSprite([0, 0, -1]);
-    this.gradSprite2 = this.createRadialGradientSprite([4, 0, -1]);
+    this.gradSprite = this.createSprite([0, 0, -1], "unitPlane", "grad1", "gradientShader");
+    this.gradSprite.setScaleXYZ([4,3,1]);
+    
+    this.gradSprite2 = this.createSprite([4, 0, -1], "unitPlane", "grad2", "gradientShader2");
+    this.gradSprite2.setScaleXYZ([4,3,1]);
     
     this.teapotSprite = this.createSprite([0, 20, 0], "teapot", "green", "normalShader");
   },

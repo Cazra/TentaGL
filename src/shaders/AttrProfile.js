@@ -164,6 +164,9 @@ TentaGL.TEX_2F = 3;
 /** ID constant for surface tangental vectors. */
 TentaGL.TANG_3F = 4;
 
+/** ID constant for animation bone index. */
+TentaGL.BONE_I = 5;
+
 
 // The master list of available AttrProfiles, keyed by their enumeration constants.
 // The default set of AttrProfiles provides these. If you would like to 
