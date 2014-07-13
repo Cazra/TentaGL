@@ -264,9 +264,12 @@ TentaGL.ViewTrans = {
       program.setMVPTrans(gl, gl._mvpTrans);
     }
     
-    if(program.setVPTrans) {
-      mat4.mul(gl._vTrans, gl._projTrans, gl._viewTrans);
-      program.setVPTrans(gl, gl._vTrans);
+    if(program.setMVTrans) {
+      program.setMVTrans(gl, gl._modelViewTrans);
+    }
+    
+    if(program.setVTrans) {
+      program.setVTrans(gl, gl._viewTrans);
     }
   },
   

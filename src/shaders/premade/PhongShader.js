@@ -41,19 +41,40 @@ TentaGL.PhongShader = function(gl) {
   this.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
   this.setAttrGetter("vertexTang", TentaGL.Vertex.prototype.getTangental);
   
-  /*
   this._mvpUni = this.getUniform("mvpTrans");
-  this._vpUni = this.getUniform("vpTrans");
+  this._mvUni = this.getUniform("mvTrans");
+  this._vUni = this.getUniform("vTrans");
   this._normalUni = this.getUniform("normalTrans");
-  this._texUni = this.getUniform("tex");
   
+  this._texUni = this.getUniform("tex");
   this._bumpTexUni = this.getUniform("bumpTex");
   this._useBumpUni = this.getUniform("useBumpTex");
   
+  // Actually the start address of our material struct.
+  this._materialUni = this.getUniform("m.diff");
+  
+  // Actually the start address of our Light struct array.
+  this._lightsUni = []; //this.getUniform("lights[0].type");
+  for(var i=0; i < TentaGL.PhongShader.MAX_LIGHTS; i++) {
+    var light = this._lightsUni[i] = {};
+    var prefix = "lights[" + i + "]";
+    
+    light.type = this.getUniform(prefix + ".type");
+    light.pos = this.getUniform(prefix + ".pos");
+    light.dir = this.getUniform(prefix + ".dir");
+    light.diff = this.getUniform(prefix + ".diff");
+    light.spec = this.getUniform(prefix + ".spec");
+    light.amb = this.getUniform(prefix + ".amb");
+    light.attenA = this.getUniform(prefix + ".attenA");
+    light.attenB = this.getUniform(prefix + ".attenB");
+    light.attenC = this.getUniform(prefix + ".attenC");
+    light.cutOffAngle = this.getUniform(prefix + ".cutOffAngle");
+  }
+  
   this._numLightsUni = this.getUniform("numLights");
-  this._lightsUni = this.getUniform("lights");
-  */
 };
+
+TentaGL.PhongShader.MAX_LIGHTS = 16;
 
 TentaGL.PhongShader.prototype = {
   
@@ -66,15 +87,31 @@ TentaGL.PhongShader.prototype = {
    * Sets the value of the uniform variable for the model-view-projection 
    * transform matrix.
    * @param {WebGLRenderingContext} gl
-   * @param {mat4} value
+   * @param {mat4} m
    */
   setMVPTrans: function(gl, m) {
     this._mvpUni.set(gl, m);
   },
   
   
-  setVPTrans: function(gl, m) {
-    this._vpUni.set(gl, m);
+  /** 
+   * Sets the uniform for the model-view transform matrix.
+   * @param {WebGLRenderingContext} gl
+   * @param {mat4} m
+   */
+  setMVTrans: function(gl, m) {
+    this._mvUni.set(gl, m);
+  },
+  
+  
+  /** 
+   * Sets the uniform for the view transform matrix. This is used to 
+   * get the light vectors in view-space in the shader.
+   * @param {WebGLRenderingContext} gl
+   * @param {mat4} m
+   */
+  setVTrans: function(gl, m) {
+    this.vUni.set(gl, m);
   },
   
   
@@ -89,12 +126,15 @@ TentaGL.PhongShader.prototype = {
   
   
   /** 
-   * Sets the value of the uniform variable for the primary texture offset. 
+   * Sets the value of the uniform variable for the primary texture offset 
+   * and unsets the bump texture offset. If you want to use bump mapping, 
+   * call setTex first, followed by setBump.
    * @param {WebGLRenderingContext} gl
    * @param {int} value
    */
   setTex: function(gl, value) {
     this._texUni.set(gl, [value]);
+    this._useBumpUni.set(gl, [0]);
   },
   
   
@@ -105,13 +145,25 @@ TentaGL.PhongShader.prototype = {
    *      Else, turn bump mapping off.
    */
   setBump: function(gl, value) {
-    if(value >= 0) {
-      this._bumpTexUni.set(gl, [value]);
-      this._useBumpUni.set(gl, [1]);
-    }
-    else {
-      this._useBumpUni.set(gl, [0]);
-    }
+    this._bumpTexUni.set(gl, [value]);
+    this._useBumpUni.set(gl, [1]);
+  },
+  
+  /** 
+   * Sets the material light properties struct.
+   * @param {WebGLRenderingContext} gl
+   * @param {TentaGL.Material.LightProps} matProps
+   */
+  setMaterialProps: function(gl, matProps) {
+    var result = [];
+    
+    result.concat(matProps.getDiffuse().getRGBA());
+    result.concat(matProps.getSpecular().getRGBA());
+    result.concat(matProps.getAmbient().getRGBA());
+    result.concat(matProps.getEmission().getRGBA());
+    result.concat(matProps.getShininess());
+    
+    this._materialUni.set(gl, result);
   },
   
   
@@ -119,8 +171,87 @@ TentaGL.PhongShader.prototype = {
    * Sets the lights uniform variable array. 
    */
   setLights: function(gl, lights) {
+    var numLights = max(lights.length, 16); // See MAX_LIGHTS constant in shader.
+    this._numLightsUni.set(gl, lights.length);
     
-  },
+    for(var i=0; i < numLights; i++) {
+      var light = lights[i];
+      var lightUni = this._lightsUni[i];
+      
+      // type (int)
+      if(light.isaAmbientLight) {
+        lightUni.type.set(gl, [1]);
+      }
+      if(light.isaPointLight) {
+        lightUni.type.set(gl, [2]);
+      }
+      if(light.isaDirectionalLight) {
+        lightUni.type.set(gl, [3]);
+      }
+      if(light.isaSpotLight) {
+        lightUni.type.set(gl, [4]);
+      }
+      
+      // pos (vec4)
+      if(light.isaPointLight) {
+        lightUni.pos.set(gl, light.getXYZ());
+      }
+      else {
+        lightUni.pos.set(gl, [0, 0, 0, 0]);
+      }
+      
+      // dir (vec3)
+      if(light.isaDirectionalLight) {
+        lightUni.dir.set(gl, light.getDirection());
+      }
+      else {
+        lightUni.dir.set(gl, [0,0,0]);
+      }
+      
+      // diff, spec, amb (vec4 x3) 
+      lightUni.diff.set(gl, light.getDiffuse().getRGBA());
+      lightUni.spec.set(gl, light.getSpecular().getRGBA());
+      lightUni.amb.set(gl, light.getAmbient().getRGBA());
+      
+      // attenA, attenB, atten C (float x3)
+      if(light.isaPointLight) {
+        var atten = light.getAttenuation();
+        lightUni.attenA.set(gl, [atten[0]]);
+        lightUni.attenB.set(gl, [atten[1]]);
+        lightUni.attenC.set(gl, [atten[2]]);
+      }
+      else {
+        lightUni.attenA.set(gl, [0]);
+        lightUni.attenB.set(gl, [0]);
+        lightUni.attenC.set(gl, [0]);
+      }
+      
+      // cutOffAngle (float)
+      if(light.isaSpotLight) {
+        lightUni.cutOffAngle.set(gl, [light.getCutOffAngle()]);
+      }
+      else {
+        lightUni.cutOffAngle.set(gl, [0]);
+      }
+    }
+    
+    // 0-out unused lights.
+    for(var i=numLights; i< TentaGL.PhongShader.MAX_LIGHTS; i++) {
+      lightUni.type.set(gl, [0]);
+      lightUni.pos.set(gl, [0, 0, 0, 0]);
+      lightUni.dir.set(gl, [0,0,0]);
+      
+      lightUni.diff.set(gl, [0, 0, 0, 0]);
+      lightUni.spec.set(gl, [0, 0, 0, 0]);
+      lightUni.amb.set(gl, [0, 0, 0, 0]);
+      
+      lightUni.attenA.set(gl, [0]);
+      lightUni.attenB.set(gl, [0]);
+      lightUni.attenC.set(gl, [0]);
+      
+      lightUni.cutOffAngle.set(gl, [0]);
+    }
+  }
 };
 
 

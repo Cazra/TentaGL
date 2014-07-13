@@ -179,10 +179,6 @@ TentaGL.ShaderProgram.prototype = {
     for(var i = 0; i < numVars; i++) {
       var info = gl.getActiveUniform(this._glProg, i);
       var name = info.name;
-      if(name.indexOf("[") >= 0) {
-        name = name.substring(0, name.indexOf("["));
-      }
-      
       var location = gl.getUniformLocation(this._glProg, name);
       var uni = new TentaGL.Uniform(info, this._glProg, location);
       

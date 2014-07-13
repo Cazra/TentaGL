@@ -31,11 +31,7 @@
  * @param {WebGLProgram} glProg   The program containing the variable.
  */
 TentaGL.ShaderVar = function(info, glProg) {
-  this._name = info.name;
-  if(this._name.indexOf("[") >= 0) {
-    this._name = this._name.substring(0, this._name.indexOf("["));
-  }
-  
+  this._name = info.name;  
   this._size = info.size;
   this._type = info.type;
   this._sizeBytes = info.size*TentaGL.glSizeBytes(info.type);

@@ -47,8 +47,8 @@ TentaGL.RadialGradientShader = function(gl) {
   
   this._startPtUni = this.getUniform("p");
   this._gradVectorUni = this.getUniform("u");
-  this._colorsUni = this.getUniform("colors");
-  this._breakPtsUni = this.getUniform("breakPts");
+  this._colorsUni = this.getUniform("colors[0]");
+  this._breakPtsUni = this.getUniform("breakPts[0]");
   this._breakPtCountUni = this.getUniform("breakPtCount");
 };
 
