@@ -72,14 +72,16 @@ src/light/Light.js
   src/light/DirectionalLight.js
   src/light/PointLight.js
   src/light/SpotLight.js
+src/light/LightManager.js
 
 src/material/Material.js
   src/material/BufferTexture.js
+  src/material/BumpMappedTexture.js
   src/material/Color.js
   src/material/Gradient.js
   src/material/Texture.js
-src/material/LightProps.js
 src/material/MaterialLib.js
+src/material/MaterialProps.js
 
 src/renderer/RenderMode.js
 src/renderer/VBOData.js

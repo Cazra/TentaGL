@@ -87,9 +87,18 @@ TentaGL.PointLight.prototype = {
    * @param {number} c    The quadratic coefficient.
    */
   setAttenuation: function(a, b, c) {
-    
-  }
+    this._attenuation[0] = a;
+    this._attenuation[1] = b;
+    this._attenuation[2] = c;
+  },
   
+  /** 
+   * Renders an object to represent the light, for debugging. 
+   * @param {WebGLRenderingContext} gl
+   */
+  render: function(gl) {
+    (new TentaGL.Math.Sphere(1, this._xyz)).render(gl);
+  }
 };
 
 Util.Inheritance.inherit(TentaGL.PointLight, TentaGL.Light);

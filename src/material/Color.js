@@ -552,5 +552,16 @@ TentaGL.Color.HSBAtoRGBA = function(h, s, b, a) {
 };
 
 
+//////// Some commonly used colors
+
+TentaGL.Color.BLACK = TentaGL.Color.Hex(0xFF000000);
+TentaGL.Color.BLUE = TentaGL.Color.Hex(0xFF0000FF);
+TentaGL.Color.CYAN = TentaGL.Color.Hex(0xFF00FFFF);
+TentaGL.Color.GREEN = TentaGL.Color.Hex(0xFF00FF00);
+TentaGL.Color.GREY = TentaGL.Color.Hex(0xFF888888);
+TentaGL.Color.MAGENTA = TentaGL.Color.Hex(0xFFFF00FF);
+TentaGL.Color.RED = TentaGL.Color.Hex(0xFFFF0000);
+TentaGL.Color.WHITE = TentaGL.Color.Hex(0xFFFFFFFF);
+TentaGL.Color.YELLOW = TentaGL.Color.Hex(0xFFFFFF00);
 
 

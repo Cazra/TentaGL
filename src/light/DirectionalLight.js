@@ -60,6 +60,15 @@ TentaGL.DirectionalLight.prototype = {
     this._direction[0] = direction[0];
     this._direction[1] = direction[1];
     this._direction[2] = direction[2];
+  },
+  
+  
+  /** 
+   * Renders an object to represent the light, for debugging. 
+   * @param {WebGLRenderingContext} gl
+   */
+  render: function(gl) {
+    (new TentaGL.Math.Sphere(1, this._direction)).render(gl, "white");
   }
 };
 

@@ -15,7 +15,7 @@ uniform mat3 normalTrans;
 varying vec2 texCoords;
 varying vec3 vNormal;
 varying vec3 vTang;
-varying vec4 vWorld;
+varying vec4 vView;
 
 
 /** 
@@ -26,7 +26,7 @@ varying vec4 vWorld;
 void main(void) {
   texCoords = vertexTexCoords;
   gl_Position = mvpTrans * vertexPos;
-  vWorld = mvTrans * vertexPos; // For doing the lighting math, we need to interpolate the position in View-space.
+  vView = mvTrans * vertexPos; // For doing the lighting math, we need to interpolate the position in View-space.
   
   vNormal = normalize(normalTrans*vertexNormal);
   vTang = normalize(normalTrans*vertexTang);

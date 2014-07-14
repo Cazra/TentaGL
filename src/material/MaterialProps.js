@@ -23,8 +23,7 @@
 */
 
 /** 
- * An encapsulation of lighting properties that can be used with a material
- * in a shader that supports lighting for the material. 
+ * An encapsulation of material lighting properties. 
  * This doesn't really define the color for the material so much as it defines
  * how the material will react with the different components of lights in the 
  * scene.
@@ -39,7 +38,7 @@
  *      glowing effect for the object.
  *      Default: RGBA(0,0,0,1).
  */
-TentaGL.Material.LightProps = function(diffuse, specular, shininess, ambient, emission) {
+TentaGL.MaterialProps = function(diffuse, specular, shininess, ambient, emission) {
   if(!diffuse) {
     diffuse = TentaGL.Color.RGBA(1, 1, 1, 1); // all diffuse
   }
@@ -63,11 +62,11 @@ TentaGL.Material.LightProps = function(diffuse, specular, shininess, ambient, em
   this._emission = emission;
 };
 
-TentaGL.Material.LightProps.prototype = {
+TentaGL.MaterialProps.prototype = {
   
-  constructor: TentaGL.Material.LightProps,
+  constructor: TentaGL.MaterialProps,
   
-  isaLightProps: true,
+  isaMaterialProps: true,
   
   
   /** 
@@ -79,12 +78,31 @@ TentaGL.Material.LightProps.prototype = {
   },
   
   /** 
+   * Sets the diffuse property. 
+   * @param {TentaGL.Color} color
+   */
+  setDiffuse: function(color) {
+    this._diffuse = color;
+  },
+  
+  
+  /** 
    * Returns the specular material property.
    * @return {TentaGL.Color}
    */
   getSpecular: function() {
     return this._specular;
   },
+  
+  
+  /** 
+   * Sets the diffuse property. 
+   * @param {TentaGL.Color} color
+   */
+  setSpecular: function(color) {
+    this._specular = color;
+  },
+  
   
   /** 
    * Returns the shininess material property.
@@ -95,12 +113,30 @@ TentaGL.Material.LightProps.prototype = {
   },
   
   /** 
+   * Sets the shininess property.
+   * @param {number} shininess
+   */
+  setShininess: function(shininess) {
+    this._shininess = shininess;
+  },
+  
+  
+  /** 
    * Returns the ambient material property.
    * @return {TentaGL.Color}
    */
   getAmbient: function() {
     return this._ambient;
   },
+  
+  /** 
+   * Sets the ambient property. 
+   * @param {TentaGL.Color} color
+   */
+  setAmbient: function(color) {
+    this._ambient = color;
+  },
+  
   
   /** 
    * Returns the emission material property.
@@ -112,17 +148,24 @@ TentaGL.Material.LightProps.prototype = {
   
   
   /** 
+   * Sets the emission property. 
+   * @param {TentaGL.Color} color
+   */
+  setEmission: function(color) {
+    this._emission = color;
+  },
+  
+  
+  /** 
    * Uses the material properties in the shader. 
    * @param {WebGLRenderingContext} gl
    */
   useMe: function(gl) {
     var program = TentaGL.ShaderLib.current(gl);
     
-    program.setMatDiffuse(gl, this._diffuse);
-    program.setMatSpecular(gl, this._specular);
-    program.setMatShininess(gl, this._shininess);
-    program.setMatAmbient(gl, this._ambient);
-    program.setMatEmission(gl, this._emission);
+    if(program.setMaterialProps) {
+      program.setMaterialProps(gl, this);
+    }
   }
   
 };

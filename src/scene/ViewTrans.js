@@ -301,6 +301,7 @@ TentaGL.ViewTrans = {
     gl._camera = camera;
     
     this.set(gl, camera.getViewTransform());
+    this.setView(gl, camera.getViewTransform());
     this.setProjection(gl, camera.getProjectionTransform(aspect));
   }
   

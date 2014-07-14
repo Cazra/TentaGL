@@ -27,15 +27,18 @@
  * @param {vec3} xyz
  * @param {vec3} direction
  * @param {number} cutOffAngle    The cut-off angle, in radians.
+ * @param {number} spotExponent   The exponent defining the rate of decay for 
+ *      light intensity towards the edge of the splotlight cone.
  * @param {TentaGL.Color} diffuse   Optional.
  * @param {TentaGL.Color} specular  Optional.
  * @param {TentaGL.Color} ambient   Optional.
  */
-TentaGL.SpotLight = function(xyz, direction, cutOffAngle,  diffuse, specular, ambient) {
+TentaGL.SpotLight = function(xyz, direction, cutOffAngle, spotExponenet, diffuse, specular, ambient) {
   TentaGL.PointLight.call(this, xyz, diffuse, specular, ambient);
   TentaGL.DirectionalLight.call(this, xyz, diffuse, specular, ambient);
   
   this._angle = cutOffAngle;
+  this._spotExp = spotExponent;
 };
 
 
@@ -61,6 +64,24 @@ TentaGL.SpotLight.prototype = {
    */
   setCutOffAngle: function(angle) {
     this._angle = angle;
+  },
+  
+  
+  /** 
+   * Returns the spotlight's decay exponent.
+   * @return {number}
+   */
+  getSpotExponent: function() {
+    return this._spotExp;
+  },
+  
+  
+  /** 
+   * Sets the spotlight's decay exponent.
+   * @param {number} exp
+   */
+  setSpotExponent: function(exp) {
+    this._spotExp = exp;
   }
   
 };

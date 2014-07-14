@@ -103,7 +103,14 @@ TentaGL.Light.prototype = {
    */
   setAmbient: function(ambient) {
     this._ambient = ambient;
-  }
+  },
+  
+  
+  /** 
+   * Renders an object to represent the light, for debugging. 
+   * @param {WebGLRenderingContext} gl
+   */
+  render: function(gl) {}
 };
 
 

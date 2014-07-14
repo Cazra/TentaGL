@@ -91,6 +91,27 @@ HelloWorldApp.prototype = {
   },
   
   
+  /** 
+   * Produces a sphere sprite for testing shaders with lighting effects. 
+   * The shader to be used must be set manually before rendering the sprite. 
+   */
+  createShadedSprite:function(xyz, materialName, matProps) {
+    var gl = this.getGL();
+    
+    var sprite = new TentaGL.Sprite(xyz); 
+    sprite.draw = function(gl) {
+    
+      matProps.useMe(gl);
+      TentaGL.MaterialLib.use(gl, materialName);
+      TentaGL.ModelLib.render(gl, "unitSphere");
+    };
+    sprite.setScaleUni(0.5);
+    
+    return sprite;
+  },
+  
+  
+  
   /** Creates a sprite using the specified model, material, and shader. */
   createSprite: function(xyz, modelName, materialName, shaderName) {
     var gl = this.getGL();
@@ -223,6 +244,11 @@ HelloWorldApp.prototype = {
       pixels = pixels.filter(TentaGL.RGBAFilter.OutlineColor.RGBBytes(150,150,200));
       return pixels;
     });
+    
+    
+    // bump map and bump-mapped texture.
+    TentaGL.MaterialLib.add(gl, "brickBumpMap", TentaGL.Texture.fromURL(gl, "../../images/sampleTexBump.png"));
+    TentaGL.MaterialLib.add(gl, "bumpedRed", new TentaGL.BumpMappedTexture("red", "brickBumpMap"));
   },
   
   
@@ -314,7 +340,19 @@ HelloWorldApp.prototype = {
     this.gradSprite2 = this.createSprite([4, 0, -1], "unitPlane", "grad2", "gradientShader2");
     this.gradSprite2.setScaleXYZ([4,3,1]);
     
-    this.teapotSprite = this.createSprite([0, 20, 0], "teapot", "green", "normalShader");
+    this.teapotSprite = this.createSprite([0, 0, 0], "teapot", "green", "normalShader");
+    
+    
+    // Lighting test objects
+    this.lights = new TentaGL.LightManager(TentaGL.PhongShader.MAX_LIGHTS);
+    var ptLight1 = new TentaGL.PointLight([0,5,5]);
+    ptLight1.setAmbient(TentaGL.Color.RGBA(0.1, 0.1, 0.1, 1));
+    this.lights.add(ptLight1);
+    
+    var matProps = new TentaGL.MaterialProps();
+    matProps.setShininess(10);
+    this.shadedSprite1 = this.createShadedSprite([5, 0, 0], "bumpedRed", matProps);
+    this.shadedSprite2 = this.createShadedSprite([5, -5, 0], "white", matProps);
   },
   
   
@@ -408,6 +446,9 @@ HelloWorldApp.prototype = {
       sprite.rotate([0, 1, 0], 0.01);
       //sprite.billboardWorldAxis(camEye);
     }
+    
+    
+    this.shadedSprite1.rotate([0, 1, 0], 0.01);
   },
   
   
@@ -454,6 +495,15 @@ HelloWorldApp.prototype = {
     this.gradSprite2.render(gl);
     
     this.teapotSprite.render(gl);
+    
+    TentaGL.ShaderLib.use(gl, "phong");
+    this.lights.useMe(gl);
+    this.shadedSprite1.render(gl);
+    this.shadedSprite2.render(gl);
+    
+    TentaGL.ShaderLib.use(gl, "simpleShader");
+    TentaGL.MaterialLib.use(gl, "white");
+    this.lights.render(gl);
   },
   
   
