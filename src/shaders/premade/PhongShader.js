@@ -73,7 +73,7 @@ TentaGL.PhongShader = function(gl) {
     light.attenA = this.getUniform(prefix + ".attenA");
     light.attenB = this.getUniform(prefix + ".attenB");
     light.attenC = this.getUniform(prefix + ".attenC");
-    light.cutOffAngle = this.getUniform(prefix + ".cutOffAngle");
+    light.cutOffAngleCos = this.getUniform(prefix + ".cutOffAngleCos");
     light.spotExp = this.getUniform(prefix + ".spotExp");
   }
   
@@ -232,13 +232,13 @@ TentaGL.PhongShader.prototype = {
         lightUni.attenC.set(gl, [0]);
       }
       
-      // cutOffAngle, spotExp (float x2)
+      // cutOffAngleCos, spotExp (float x2)
       if(light.isaSpotLight) {
-        lightUni.cutOffAngle.set(gl, [light.getCutOffAngle()]);
+        lightUni.cutOffAngleCos.set(gl, [Math.cos(light.getCutOffAngle())]);
         lightUni.spotExp.set(gl, [light.getSpotExponent()]);
       }
       else {
-        lightUni.cutOffAngle.set(gl, [0]);
+        lightUni.cutOffAngleCos.set(gl, [0]);
         lightUni.spotExp.set(gl, [0]);
       }
     }
@@ -259,7 +259,7 @@ TentaGL.PhongShader.prototype = {
       lightUni.attenB.set(gl, [0]);
       lightUni.attenC.set(gl, [0]);
       
-      lightUni.cutOffAngle.set(gl, [0]);
+      lightUni.cutOffAngleCos.set(gl, [0]);
       lightUni.spotExp.set(gl, [0]);
     }
   }

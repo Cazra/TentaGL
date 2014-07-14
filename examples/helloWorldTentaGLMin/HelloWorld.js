@@ -345,14 +345,17 @@ HelloWorldApp.prototype = {
     
     // Lighting test objects
     this.lights = new TentaGL.LightManager(TentaGL.PhongShader.MAX_LIGHTS);
-    var ptLight1 = new TentaGL.PointLight([0,5,5]);
-    ptLight1.setAmbient(TentaGL.Color.RGBA(0.1, 0.1, 0.1, 1));
-    this.lights.add(ptLight1);
+    this.ptLight1 = new TentaGL.PointLight([0,0,0]);
+    this.ptLight1.setAmbient(TentaGL.Color.RGBA(0.1, 0.1, 0.1, 1));
+    this.lights.add(this.ptLight1);
     
     var matProps = new TentaGL.MaterialProps();
     matProps.setShininess(10);
+    matProps.setSpecular(TentaGL.Color.YELLOW);
     this.shadedSprite1 = this.createShadedSprite([5, 0, 0], "bumpedRed", matProps);
     this.shadedSprite2 = this.createShadedSprite([5, -5, 0], "white", matProps);
+    this.shadedSprite3 = this.createShadedSprite([5, 20, 0], "bumpedRed", matProps);
+    this.shadedSprite3.setScaleXYZ([10,10,10]);
   },
   
   
@@ -436,6 +439,7 @@ HelloWorldApp.prototype = {
     this.camera.controlWithMouse(this._mouse, this.getWidth(), this.getHeight());
     
     this.axesGroup.get(3).setXYZ(this.camera.getCenter());
+    this.ptLight1.setXYZ(this.camera.getCenter());
     this.camGroup.setQuat(this.camera._orientation);
     
     var sprites = this.spriteGroup.getChildren();
@@ -449,6 +453,7 @@ HelloWorldApp.prototype = {
     
     
     this.shadedSprite1.rotate([0, 1, 0], 0.01);
+    this.shadedSprite3.rotate([0, 1, 0], 0.01);
   },
   
   
@@ -500,6 +505,7 @@ HelloWorldApp.prototype = {
     this.lights.useMe(gl);
     this.shadedSprite1.render(gl);
     this.shadedSprite2.render(gl);
+    this.shadedSprite3.render(gl);
     
     TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.MaterialLib.use(gl, "white");

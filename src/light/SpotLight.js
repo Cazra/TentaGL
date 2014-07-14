@@ -33,9 +33,9 @@
  * @param {TentaGL.Color} specular  Optional.
  * @param {TentaGL.Color} ambient   Optional.
  */
-TentaGL.SpotLight = function(xyz, direction, cutOffAngle, spotExponenet, diffuse, specular, ambient) {
+TentaGL.SpotLight = function(xyz, direction, cutOffAngle, spotExponent, diffuse, specular, ambient) {
   TentaGL.PointLight.call(this, xyz, diffuse, specular, ambient);
-  TentaGL.DirectionalLight.call(this, xyz, diffuse, specular, ambient);
+  TentaGL.DirectionalLight.call(this, direction, diffuse, specular, ambient);
   
   this._angle = cutOffAngle;
   this._spotExp = spotExponent;

@@ -42,7 +42,7 @@ struct Light {
   float attenA;
   float attenB;
   float attenC;
-  float cutOffAngle;
+  float cutOffAngleCos;
   float spotExp;
 };
 
@@ -62,6 +62,27 @@ vec4 vecToColor(in vec3 v) {
 }
 
 
+float getDiffuseAmt(in vec3 lightVecHat, in vec3 nHat, in Light light) {
+  return max(dot(lightVecHat, nHat), 0.0) * light.diff.a * m.diff.a;
+}
+
+
+float getSpecularAmt(in vec3 lightVecHat, in vec3 nHat, in vec3 eyeVecHat, in Light light) {
+  vec3 halfVec = normalize(eyeVecHat + lightVecHat);
+  return pow(max(dot(halfVec, nHat), 0.0), m.shininess) * light.spec.a * m.spec.a;
+}
+
+
+float getAmbientAmt(in Light light) {
+  return m.amb.a * light.amb.a;
+}
+
+
+float getAttenuation(in float dist, in Light light) {
+  return 1.0/(light.attenA + light.attenB*dist + light.attenC*dist*dist);
+}
+
+
 void main(void) {
   // Get base color from texture.
   vec4 texColor = texture2D(tex, texCoords); 
@@ -71,89 +92,97 @@ void main(void) {
   }
   
   // Compute fragment normal vector.
-  vec3 n = vNormal;
+  vec3 nHat = normalize(vNormal);
   if(useBumpTex) {
     vec3 binormal = cross(vNormal, vTang);
     mat3 bumpMat = mat3(vTang, binormal, vNormal);
     
     vec3 bumpColor = texture2D(bumpTex, texCoords).rgb;
-    n = bumpMat * normalize(2.0 * bumpColor - 1.0);
+    nHat = bumpMat * normalize(2.0 * bumpColor - 1.0);
   }
   
   // Computing the eye vector is easy, because in view space the eye is at (0,0,0).
   vec3 eyeVecHat = normalize(-vView.xyz);
   
   // Compute illumination.
-  vec3 iDiff = vec3(0,0,0);
-  vec3 iSpec = vec3(0,0,0);
-  vec3 iAmb = vec3(0,0,0);
+  vec4 iDiff = vec4(0,0,0,0);
+  vec4 iSpec = vec4(0,0,0,0);
+  vec4 iAmb = vec4(0,0,0,0);
   for(int i=0; i < MAX_LIGHTS; i++) {
     if(i == numLights) {
       break;
     }
     
-    vec4 lDiff = lights[i].diff;
-    vec4 lSpec = lights[i].spec;
-    vec4 lAmb = lights[i].amb;
-    
-    // Get the light's vector in View-space.
-    vec3 lightVec;
-    if(lights[i].type == LIGHT_PT || lights[i].type == LIGHT_SPOT) {
-      lightVec = vec3((vTrans * lights[i].pos) - vView);
+    float diffAmt, specAmt, ambAmt;
+    if(lights[i].type == LIGHT_AMB) {
+      float ambAmt = m.amb.a * lights[i].amb.a;
+      iAmb += ambAmt*(m.amb*lights[i].amb);
+    }
+    else if(lights[i].type == LIGHT_PT) {
+      // Get the light's vector in View-space.
+      vec3 lightVec = ((vTrans * lights[i].pos) - vView).xyz;
+      vec3 lightVecHat = normalize(lightVec);
+      float dist = length(lightVec);
+      
+      // Compute the illumination for each light component.
+      diffAmt = getDiffuseAmt(lightVecHat, nHat, lights[i]);
+      specAmt = getSpecularAmt(lightVecHat, nHat, eyeVecHat, lights[i]);
+      ambAmt = getAmbientAmt(lights[i]);
+      
+      // Attenuate with distance.
+      float atten = getAttenuation(dist, lights[i]);
+      diffAmt *= atten;
+      specAmt *= atten;
+      ambAmt *= atten;
     }
     else if(lights[i].type == LIGHT_DIR) {
-      lightVec = vec3(vTrans * vec4(lights[i].dir, 0)) ;
+      // Get the light's vector in View-space.
+      vec3 lightVec = (vTrans * vec4(lights[i].dir, 0)).xyz;
+      vec3 lightVecHat = normalize(lightVec);
+      
+      // Compute the illumination for each light component.
+      diffAmt = getDiffuseAmt(lightVecHat, nHat, lights[i]);
+      specAmt = getSpecularAmt(lightVecHat, nHat, eyeVecHat, lights[i]);
+      ambAmt = getAmbientAmt(lights[i]);
     }
-    else {
-      lightVec = vec3(0,0,0);
+    else if(lights[i].type == LIGHT_SPOT) {
+      // Get the light's vector in View-space.
+      vec3 lightVec = ((vTrans * lights[i].pos) - vView).xyz;
+      vec3 lightVecHat = normalize(lightVec);
+      float dist = length(lightVec);
+      
+      // Compute the illumination for each light component.
+      diffAmt = getDiffuseAmt(lightVecHat, nHat, lights[i]);
+      specAmt = getSpecularAmt(lightVecHat, nHat, eyeVecHat, lights[i]);
+      ambAmt = getAmbientAmt(lights[i]);
+      
+      // Attenuate with distance and by proximity to the spotlight cone's edge.
+      float atten = getAttenuation(dist, lights[i]);
+      float spotEffect = 0.0;
+      if(diffAmt > 0.0) {
+        vec3 spotDirHat = normalize((vTrans * vec4(lights[i].dir, 0)).xyz);
+        spotEffect = dot(lightVecHat, -spotDirHat);
+        if(spotEffect >= lights[i].cutOffAngleCos) {
+          spotEffect = pow(spotEffect, lights[i].spotExp);
+        }
+        else {
+          spotEffect = 0.0;
+        }
+      }
+      
+      
+      diffAmt *= atten*spotEffect;
+      specAmt *= atten*spotEffect;
+      ambAmt *= atten;
     }
-    vec3 lightVecHat = normalize(lightVec);
-    float dist = length(lightVec);
     
-    // The half-way vector used for specular lighting computation.
-    vec3 halfVec = normalize(eyeVecHat + lightVecHat); 
-    
-    // Compute the illumination for each light component.
-    float diffAmt = max(dot(lightVecHat, n), 0.0) * lights[i].diff.a * m.diff.a;
-    diffAmt = clamp(diffAmt, 0.0, 1.0);
-    
-    float specAmt = pow( max(dot(halfVec, n), 0.0), m.shininess) * lights[i].spec.a * m.spec.a;
-    specAmt = clamp(specAmt, 0.0, 1.0);
-    
-    float ambAmt = m.amb.a * lights[i].amb.a;
-    
-    // Compute attenuation and spot-light effect
-    float atten = 1.0;
-    if(lights[i].type == LIGHT_PT || lights[i].type == LIGHT_SPOT) {
-      atten = lights[i].attenA + lights[i].attenB*dist + lights[i].attenC*dist*dist;
-    }
-    if(lights[i].type == LIGHT_SPOT) {
-      vec3 spotDirHat = normalize(vec3(vTrans * vec4(lights[i].dir, 0)));
-      float spotEffect = pow(dot(lightVecHat, spotDirHat), lights[i].spotExp);
-      atten *= spotEffect;
-    }
-    
-    //illumination += vec3((diffAmt*(m.diff*lDiff) + specAmt*(m.spec*lSpec))/atten + ambAmt * (m.amb*lAmb));
-    iDiff += diffAmt*(m.diff.rgb*lDiff.rgb)/atten;
-    iSpec += specAmt*(m.spec.rgb*lSpec.rgb)/atten;
-    iAmb += ambAmt*(m.amb.rgb*lAmb.rgb);
+    iDiff += diffAmt*(m.diff*lights[i].diff);
+    iSpec += specAmt*(m.spec*lights[i].spec);
+    iAmb += ambAmt*(m.amb*lights[i].amb);
   }
   
-  // Add emission lighting.
-  vec3 iEmis = m.emis.a*m.emis.rgb;
-  
-  //vec3 color = texColor.rgb*illumination + m.emis.a*m.emis.rgb;
-  vec3 color = texColor.rgb*iDiff + iSpec + iAmb + iEmis;
-  float r = clamp(color.r, 0.0, 1.0);
-  float g = clamp(color.g, 0.0, 1.0);
-  float b = clamp(color.b, 0.0, 1.0);
-  gl_FragColor = vec4(r, g, b, texAlpha);
-  
-  
-  
-  
-  // DEBUG
-  
+  vec4 color = texColor*iDiff + iSpec + iAmb + m.emis.a*m.emis;
+  gl_FragColor = vec4(color.rgb, texAlpha);
 }
 
 

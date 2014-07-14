@@ -72,3 +72,4 @@ TentaGL.DirectionalLight.prototype = {
   }
 };
 
+Util.Inheritance.inherit(TentaGL.DirectionalLight, TentaGL.Light);
