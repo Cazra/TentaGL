@@ -189,5 +189,42 @@ TentaGL.Sprite.prototype = {
   draw:function(gl) {}
 };
 
+
 Util.Inheritance.inherit(TentaGL.Sprite, TentaGL.SceneNode);
+
+
+
+
+/** 
+ * Creates a simple, generic sprite which renders using a specified model, 
+ * material, material lighting properties, and shader.
+ * @param {vec3} xyz
+ * @param {string} modelName
+ * @param {string} materialName
+ * @param {string} shaderName
+ * @param {TentaGL.MaterialProps} matProps    Optional. If not provided, a default MaterialProps is created.
+ * @return {TentaGL.Sprite}
+ */
+TentaGL.Sprite.create = function(xyz, modelName, materialName, shaderName, matProps) {
+  var sprite = new TentaGL.Sprite(xyz);
+  
+  if(!matProps) {
+    matProps = new TentaGL.MaterialProps();
+  }
+  
+  sprite.draw = function(gl) {
+    try {
+      TentaGL.ShaderLib.use(gl, shaderName);
+      TentaGL.MaterialLib.use(gl, materialName);
+      matProps.useMe(gl);
+      TentaGL.ModelLib.render(gl, modelName);
+    }
+    catch (e) {
+      // console.log("sprite resource not ready: " + e.message);
+    }
+  };
+  
+  return sprite;
+};
+
 

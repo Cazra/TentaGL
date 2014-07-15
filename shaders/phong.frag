@@ -181,7 +181,7 @@ void main(void) {
     iAmb += ambAmt*(m.amb*lights[i].amb);
   }
   
-  vec4 color = texColor*iDiff + iSpec + iAmb + m.emis.a*m.emis;
+  vec4 color = texColor*(iDiff+iAmb) + iSpec + m.emis.a*m.emis;
   gl_FragColor = vec4(color.rgb, texAlpha);
 }
 

@@ -19,54 +19,8 @@ HelloWorldApp.prototype = {
    * @return {TentaGL.Sprite}
    */
   createTestSprite:function(xyz) {
-    var gl = this.getGL();
-
-    var sprite = new TentaGL.Sprite(xyz); 
-    
-    sprite.draw = function(gl) {
-      TentaGL.MaterialLib.use(gl, "testCircle");
-      TentaGL.ModelLib.render(gl, "cylinder");
-    };
+    var sprite = TentaGL.Sprite.create(xyz, "cylinder", "testCircle", "phong");
     sprite.setScaleUni(0.25);
-    
-    return sprite;
-  },
-  
-  
-  /** Produces a test ImageIconSprite. */
-  createIconSprite: function(xyz) {
-    var gl = this.getGL();
-
-    var sprite = new TentaGL.ImageIconSprite(xyz, "iconNew");
-    sprite.setAnchorXYZ([1,1,1]);
-    sprite.setScaleUni(0.25);
-    
-    return sprite;
-  },
-  
-  
-  /** 
-   * Creates a TextSprite using our blittered font.
-   */
-  createTextSprite: function(xyz, str) {
-    return new TentaGL.TextSprite(xyz, str, this.blitFont, false, 0.5);
-  },
-  
-  
-  /** 
-   * Creates a TextIconSprite using our blittered font
-   */
-  createTextIconSprite: function(xyz, str) {
-    var sprite = new TentaGL.TextIconSprite(xyz, str, this.blitFont);
-    return sprite;
-  },
-  
-  
-  /** 
-   * Produces a sprite of a labelled icon.
-   */
-  createLabelledIconSprite: function(xyz, str) {
-    var sprite = new TentaGL.LabelledIconSprite(xyz, "iconNew" ,str, "labelBG", this.blitFont2);
     return sprite;
   },
   
@@ -77,79 +31,13 @@ HelloWorldApp.prototype = {
    * @param {string} materialName   The name of the material.
    * @return {TentaGL.Sprite}
    */
-  createSphereSprite:function(xyz, materialName) {
-    var gl = this.getGL();
-    
-    var sprite = new TentaGL.Sprite(xyz); 
-    sprite.draw = function(gl) {
-      TentaGL.MaterialLib.use(gl, materialName);
-      TentaGL.ModelLib.render(gl, "unitSphere");
-    };
+  createSphereSprite:function(xyz, materialName, shaderName) {
+    var sprite = TentaGL.Sprite.create(xyz, "unitSphere", materialName, shaderName);
     sprite.setScaleUni(0.5);
-    
     return sprite;
   },
   
-  
-  /** 
-   * Produces a sphere sprite for testing shaders with lighting effects. 
-   * The shader to be used must be set manually before rendering the sprite. 
-   */
-  createShadedSprite:function(xyz, materialName, matProps) {
-    var gl = this.getGL();
-    
-    var sprite = new TentaGL.Sprite(xyz); 
-    sprite.draw = function(gl) {
-    
-      matProps.useMe(gl);
-      TentaGL.MaterialLib.use(gl, materialName);
-      TentaGL.ModelLib.render(gl, "unitSphere");
-    };
-    sprite.setScaleUni(0.5);
-    
-    return sprite;
-  },
-  
-  
-  
-  /** Creates a sprite using the specified model, material, and shader. */
-  createSprite: function(xyz, modelName, materialName, shaderName) {
-    var gl = this.getGL();
-    
-    if(!modelName) {
-      modelName = "unitSphere";
-    }
-    
-    if(!materialName) {
-      materialName = "green";
-    }
-    
-    if(!shaderName) {
-      shaderName = "simpleShader";
-    }
-    
-    var sprite = new TentaGL.Sprite(xyz);
-    sprite.draw = function(gl) {
-      
-      var oldShader = TentaGL.ShaderLib.currentName(gl);
-      
-      try {
-        TentaGL.ShaderLib.use(gl, shaderName);
-        TentaGL.MaterialLib.use(gl, materialName);
-        TentaGL.ModelLib.render(gl, modelName);
-      }
-      catch (e) {
-        // console.log("sprite resource not ready: " + e.message);
-      }
-      
-      TentaGL.ShaderLib.use(gl, oldShader);
-    };
-    
-    return sprite;
-  },
-  
-  
-  
+
   //////// Required Application interface implementations
   
   
@@ -296,6 +184,10 @@ HelloWorldApp.prototype = {
     this.rZ = 0;
     this.drZ = 0;
     
+    var matProps1 = new TentaGL.MaterialProps();
+    matProps1.setShininess(10);
+    matProps1.setSpecular(TentaGL.Color.YELLOW);
+    
     this.spriteGroup = new TentaGL.SceneGroup([0,0,0]);
     /*
     for(var i = -5; i < 5; i++) {
@@ -320,47 +212,46 @@ HelloWorldApp.prototype = {
       
       prevGroup.add(group);
     }
+
     
     this.axesGroup = new TentaGL.SceneGroup();
-    this.axesGroup.add(this.createSphereSprite([10,0,0], "red"));
-    this.axesGroup.add(this.createSphereSprite([0,10,0], "green"));
-    this.axesGroup.add(this.createSphereSprite([0,0,10], "blue"));
-    this.axesGroup.add(this.createSphereSprite([0,0,0], "white"));
-    this.axesGroup.add(this.createSphereSprite([0,0,0], "black"));
+    this.axesGroup.add(this.createSphereSprite([10,0,0], "red", "phong"));
+    this.axesGroup.add(this.createSphereSprite([0,10,0], "green", "phong"));
+    this.axesGroup.add(this.createSphereSprite([0,0,10], "blue", "phong"));
+    this.axesGroup.add(this.createSphereSprite([0,0,0], "white", "phong"));
+    this.axesGroup.add(this.createSphereSprite([0,0,0], "black", "phong"));
     
     this.camGroup = new TentaGL.SceneGroup();
-    this.camGroup.add(this.createSphereSprite([15,0,0], "black"));
+    this.camGroup.add(this.createSphereSprite([15,0,0], "black", "phong"));
     
-    this.textSprite = this.createTextIconSprite([1,1,1], "Hello, \nWorld!");
+    this.textSprite = new TentaGL.TextIconSprite([1, 1, 1], "Hello, \nWorld!", this.blitFont); //this.createTextIconSprite([1,1,1], "Hello, \nWorld!");
     
-    this.labelledIconSprite = this.createLabelledIconSprite([3,3,3], "New sprite\nWith 2 lines!");
+    this.labelledIconSprite = new TentaGL.LabelledIconSprite([3,3,3], "iconNew" ,"New sprite\nWith 2 lines!", "labelBG", this.blitFont2);
     
     this.line1 = new TentaGL.Math.Line2D([2,5], [10,0]);
     this.line2 = new TentaGL.Math.Line2D([5,2], [10,10]);
     
-    this.gradSprite = this.createSprite([0, 0, -1], "unitPlane", "grad1", "gradientShader");
+    this.gradSprite = TentaGL.Sprite.create([0, 0, -1], "unitPlane", "grad1", "gradientShader");
     this.gradSprite.setScaleXYZ([4,3,1]);
     
-    this.gradSprite2 = this.createSprite([4, 0, -1], "unitPlane", "grad2", "gradientShader2");
+    this.gradSprite2 = TentaGL.Sprite.create([4, 0, -1], "unitPlane", "grad2", "gradientShader2"); 
     this.gradSprite2.setScaleXYZ([4,3,1]);
     
-    this.teapotSprite = this.createSprite([0, 0, 0], "teapot", "green", "normalShader");
+    this.teapotSprite = TentaGL.Sprite.create([0, 0, 0], "teapot", "green", "normalShader");
     
-    this.coneSprite = this.createSprite([12, 0, 0], "unitCone", "blue", "phong");
+    this.coneSprite = TentaGL.Sprite.create([12, 0, 0], "unitCone", "blue", "phong", matProps1);
     
     // Lighting test objects
     this.lights = new TentaGL.LightManager(TentaGL.PhongShader.MAX_LIGHTS);
     this.ptLight1 = new TentaGL.PointLight([0,0,0]);
-    this.ptLight1.setAmbient(TentaGL.Color.RGBA(0.1, 0.1, 0.1, 1));
+    this.ptLight1.setAmbient(TentaGL.Color.RGBA(0.2, 0.2, 0.2, 1));
     this.lights.add(this.ptLight1);
     
-    var matProps = new TentaGL.MaterialProps();
-    matProps.setShininess(10);
-    matProps.setSpecular(TentaGL.Color.YELLOW);
-    this.shadedSprite1 = this.createShadedSprite([5, 0, 0], "bumpedRed", matProps);
-    this.shadedSprite2 = this.createShadedSprite([5, -5, 0], "white", matProps);
-    this.shadedSprite3 = this.createShadedSprite([5, 20, 0], "bumpedRed", matProps);
-    this.shadedSprite3.setScaleXYZ([10,10,10]);
+    
+    this.shadedSprite1 = TentaGL.Sprite.create([5, 0, 0], "unitSphere", "bumpedRed", "phong", matProps1); 
+    this.shadedSprite2 = TentaGL.Sprite.create([5, -5, 0], "unitSphere", "white", "phong", matProps1); 
+    this.shadedSprite3 = TentaGL.Sprite.create([5, 20, 0], "unitSphere", "bumpedRed", "phong", matProps1); 
+    this.shadedSprite3.setScaleXYZ([4, 4, 4]);
   },
   
   
@@ -369,6 +260,10 @@ HelloWorldApp.prototype = {
   update:function() {
     if(TentaGL.ImageLoader.isLoading()) {
       console.log("Loading image data...");
+      return;
+    }
+    if(TentaGL.Model.ObjReader.isLoading()) {
+      console.log("Loading models..." + TentaGL.Model.ObjReader.getNumLoading());
       return;
     }
     if(TentaGL.AudioLoader.isLoading()) {
@@ -409,14 +304,6 @@ HelloWorldApp.prototype = {
   
   /** Runs the scene application logic. */
   updateScene:function(gl) {
-    if(TentaGL.ImageLoader.isLoading()) {
-      console.log("Loading images...");
-      return;
-    }
-    if(TentaGL.Model.ObjReader.isLoading()) {
-      console.log("Loading models..." + TentaGL.Model.ObjReader.getNumLoading());
-      return;
-    }
     
     // Group rotation
     if(this._keyboard.isPressed(KeyCode.W)) {
@@ -474,6 +361,9 @@ HelloWorldApp.prototype = {
   
   /** Draws the scene. */
   drawScene:function(gl) {
+    TentaGL.ShaderLib.use(gl, "phong");
+    this.lights.useMe(gl);
+    
     TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.RenderMode.set3DOpaque(gl);
     
@@ -503,7 +393,7 @@ HelloWorldApp.prototype = {
     
     // Render a sphere, using the normal vector shader.
     TentaGL.ShaderLib.use(gl, "normalShader");
-    (new TentaGL.Math.Sphere(2, [5,0,5])).render(gl, "white");
+    (new TentaGL.Math.Sphere(1, [5,0,5])).render(gl, "white");
     TentaGL.ShaderLib.use(gl, "simpleShader");
     
     this.gradSprite.render(gl);
@@ -512,7 +402,6 @@ HelloWorldApp.prototype = {
     this.teapotSprite.render(gl);
     
     TentaGL.ShaderLib.use(gl, "phong");
-    this.lights.useMe(gl);
     this.shadedSprite1.render(gl);
     this.shadedSprite2.render(gl);
     this.shadedSprite3.render(gl);
@@ -560,14 +449,4 @@ HelloWorldApp.getInstance = function() {
  */
 function webGLStart() {
   HelloWorldApp.getInstance().start();
-  
-  /*
-  var req = new XMLHttpRequest();
-  req.onload = function() { // for async
-    console.log("\"\"\"\n" + this.responseText + "\n\"\"\"");
-  };
-  req.open("get", "../../shaders/picker.frag", false);
-  req.send(); 
-  console.log(req.responseText); // for sync
-  */
 }

@@ -41,6 +41,8 @@ TentaGL.Level.prototype = {
   
   constructor:TentaGL.Level, 
   
+  isaLevel: true,
+  
   //////// Application state access
   
   /** 
