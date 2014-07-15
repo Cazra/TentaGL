@@ -25,6 +25,9 @@
 
 /** 
  * An API for fetching and loading audios. 
+ * TODO: There are sometimes issues with loading the audio due to browser 
+ * compatibility. I'm still looking for some way to universally call the 
+ * success callback once its loaded.
  */
 TentaGL.AudioLoader = {
   

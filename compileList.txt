@@ -38,6 +38,7 @@ src/event/Event.js
 src/event/PickEventListener.js
 
 src/geom/Model.js
+  src/geom/shapes/Cone.js
   src/geom/shapes/Cube.js
   src/geom/shapes/Cylinder.js
   src/geom/shapes/Line.js

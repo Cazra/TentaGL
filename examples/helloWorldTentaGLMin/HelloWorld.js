@@ -251,10 +251,10 @@ HelloWorldApp.prototype = {
     TentaGL.MaterialLib.add(gl, "bumpedRed", new TentaGL.BumpMappedTexture("red", "brickBumpMap"));
     
     
-    // Audio
-    TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
-      self.horseAudio = audio;
-    });
+    // Audio // May hang in some browsers due to compatibility.
+  //  TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
+  //    self.horseAudio = audio;
+  //  });
   },
   
   
@@ -321,8 +321,6 @@ HelloWorldApp.prototype = {
       prevGroup.add(group);
     }
     
-    
-    
     this.axesGroup = new TentaGL.SceneGroup();
     this.axesGroup.add(this.createSphereSprite([10,0,0], "red"));
     this.axesGroup.add(this.createSphereSprite([0,10,0], "green"));
@@ -348,6 +346,7 @@ HelloWorldApp.prototype = {
     
     this.teapotSprite = this.createSprite([0, 0, 0], "teapot", "green", "normalShader");
     
+    this.coneSprite = this.createSprite([12, 0, 0], "unitCone", "blue", "phong");
     
     // Lighting test objects
     this.lights = new TentaGL.LightManager(TentaGL.PhongShader.MAX_LIGHTS);
@@ -495,15 +494,12 @@ HelloWorldApp.prototype = {
     
     this.labelledIconSprite.render(gl);
     
-    
     var linesMat = "green";
     if(this.line1.intersects(this.line2)) {
       linesMat = "white";
     }
     this.line1.render(gl, linesMat);
     this.line2.render(gl, linesMat);
-    
-    
     
     // Render a sphere, using the normal vector shader.
     TentaGL.ShaderLib.use(gl, "normalShader");
@@ -520,6 +516,8 @@ HelloWorldApp.prototype = {
     this.shadedSprite1.render(gl);
     this.shadedSprite2.render(gl);
     this.shadedSprite3.render(gl);
+    
+    this.coneSprite.render(gl);
     
     TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.MaterialLib.use(gl, "white");

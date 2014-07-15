@@ -50,6 +50,7 @@ TentaGL.ModelLib = {
    * "unitSphere" - an approximated sphere with a radius of 1.
    * "unitSprite" - a unitPlane whose T texture axis is inverted. Intended for
    *                drawing images in 2D mode so that they won't appear upside-down.
+   * "unitCone" - an approximated cone with a base radius of 1 and a height of 1.
    */
   reset:function(gl) {
     this.clean(gl);
@@ -58,6 +59,7 @@ TentaGL.ModelLib = {
     this.add(gl, "unitCube", new TentaGL.Model.Cube(1,1,1));
     this.add(gl, "unitSphere", new TentaGL.Model.Sphere(1));
     this.add(gl, "unitSprite", (new TentaGL.Model.Plane(1,1)).flipTexT());
+    this.add(gl, "unitCone", new TentaGL.Model.Cone(1,1));
   },
   
   
