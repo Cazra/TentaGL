@@ -22,6 +22,8 @@ src/math/Math.js
 src/app/Application.js
 src/app/Level.js
 
+src/audio/AudioLoader.js
+
 src/camera/Camera.js
   src/camera/Camera2D.js
   src/camera/Camera3D.js

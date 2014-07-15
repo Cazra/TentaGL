@@ -249,6 +249,12 @@ HelloWorldApp.prototype = {
     // bump map and bump-mapped texture.
     TentaGL.MaterialLib.add(gl, "brickBumpMap", TentaGL.Texture.fromURL(gl, "../../images/sampleTexBump.png"));
     TentaGL.MaterialLib.add(gl, "bumpedRed", new TentaGL.BumpMappedTexture("red", "brickBumpMap"));
+    
+    
+    // Audio
+    TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
+      self.horseAudio = audio;
+    });
   },
   
   
@@ -366,6 +372,10 @@ HelloWorldApp.prototype = {
       console.log("Loading image data...");
       return;
     }
+    if(TentaGL.AudioLoader.isLoading()) {
+      console.log("Loading audio data...");
+      return;
+    }
     
     var gl = this.getGL();
     
@@ -422,6 +432,10 @@ HelloWorldApp.prototype = {
     }
     if(this._keyboard.isPressed(KeyCode.A)) {
       this.spriteGroup.rotate([0,1,0], -0.1);
+    }
+    
+    if(this._keyboard.justPressed(KeyCode.SPACE)) {
+      this.horseAudio.play();
     }
     
     

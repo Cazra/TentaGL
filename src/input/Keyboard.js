@@ -44,11 +44,13 @@ TentaGL.Keyboard = function(container) {
   var keyDownHandler = function(evt) {
   //  console.log("key down: " + evt.keyCode);
     self._pressedSinceLast[evt.keyCode] = true;
+    evt.preventDefault();
   };
   
   var keyUpHandler = function(evt) {
   // console.log("key up: " + evt.keyCode);
     self._releasedSinceLast[evt.keyCode] = true;
+    evt.preventDefault();
   };
   
   container.addEventListener("keydown", keyDownHandler, false);
@@ -121,6 +123,7 @@ var KeyCode = {
   PAUSE: 19,
   CAPS_LOCK : 20,
   ESCAPE : 27,
+  SPACE : 32,
   PAGE_UP : 33,
   PAGE_DOWN : 34,
   END : 35,
