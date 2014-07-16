@@ -323,7 +323,10 @@ TentaGL.Color.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   useMe:function(gl) {
-    TentaGL.ShaderLib.current(gl).setColorUniValue(gl, this._rgba);
+    var program = TentaGL.ShaderLib.current(gl);
+    if(program.setColor) {
+      program.setColor(gl, this._rgba);
+    }
   },
   
   
@@ -355,7 +358,6 @@ TentaGL.Color.prototype = {
 
 
 Util.Inheritance.inherit(TentaGL.Color, TentaGL.Material);
-
 
 
 //////// Convenience constructors
@@ -424,6 +426,8 @@ TentaGL.Color.clone = function(color) {
   return (new TentaGL.Color()).setRGBA(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 };
 
+
+//////// Color format conversions
 
 /** 
  * Returns the ARGB hex representation of the color defined by the given 
@@ -550,6 +554,26 @@ TentaGL.Color.HSBAtoRGBA = function(h, s, b, a) {
     return [m, m, m, a];
   }
 };
+
+
+/** 
+ * Converts an ARGB hex value for a color to a vec4 containing the equivalent 
+ * normalized RGBA components.
+ * @param {uint32} hex    Bits 31-24 contain the color's alpha component. 
+ *      Bits 23-16 contain the color's red component. Bits 15-8 contain
+ *      the color's green component. Bits 7-0 contain the color's blue
+ *      component. The alpha bits are NOT optional. Alpha will be 0 (transparent).
+ * @return {vec4}
+ */
+TentaGL.Color.hexToRGBA = function(hex) {
+  var a = ((hex >>> 24) & 0x000000FF)/255;
+  var r = ((hex >>> 16) & 0x000000FF)/255;
+  var g = ((hex >>> 8) & 0x000000FF)/255;
+  var b = (hex & 0x000000FF)/255;
+  
+  return vec4.fromValues(r, g, b, a);
+};
+
 
 
 //////// Some commonly used colors

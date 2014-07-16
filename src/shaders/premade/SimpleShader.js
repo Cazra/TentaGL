@@ -44,7 +44,10 @@ TentaGL.SimpleShader = function(gl) {
   
   this._mvpUni = this.getUniform("mvpTrans");
   this._normalUni = this.getUniform("normalTrans");
+  
+  this._colorUni = this.getUniform("solidColor");
   this._texUni = this.getUniform("tex");
+  this._useTexUni = this.getUniform("useTex");
 };
 
 TentaGL.SimpleShader.prototype = {
@@ -76,12 +79,25 @@ TentaGL.SimpleShader.prototype = {
   
   
   /** 
+   * Sets the uniform variables for using a solid color instead of using a 
+   * texture for color. Solid colors are compatible with bump maps! Just call 
+   * setBump after setColor, since setColor unsets the useBumpTex uniform.
+   * @param {WebGLRenderingContext} gl
+   * @param {vec4} rgba
+   */
+  setColor: function(gl, rgba) {
+    this._colorUni.set(gl, rgba);
+    this._useTexUni.set(gl, [0]);
+  },
+  
+  /** 
    * Sets the value of the uniform variable for the primary texture offset. 
    * @param {WebGLRenderingContext} gl
-   * @param {int}
+   * @param {int} value
    */
   setTex: function(gl, value) {
     this._texUni.set(gl, [value]);
+    this._useTexUni.set(gl, [1]);
   }
 };
 

@@ -47,7 +47,9 @@ TentaGL.NormalShader = function(gl) {
   
   this._mvpUni = this.getUniform("mvpTrans");
   this._normalUni = this.getUniform("normalTrans");
+  
   this._texUni = this.getUniform("tex");
+  this._useTexUni = this.getUniform("useTex");
 };
 
 TentaGL.NormalShader.prototype = {
@@ -79,12 +81,22 @@ TentaGL.NormalShader.prototype = {
   
   
   /** 
+   * Sets the uniforms to not use the alpha values of a texture. 
+   * All color alpha values will be assumed to be 1.
+   */
+  setColor: function(gl, rgba) {
+    this._useTexUni.set(gl, [0]);
+  },
+  
+  
+  /** 
    * Sets the value of the uniform variable for the primary texture offset. 
    * @param {WebGLRenderingContext} gl
    * @param {int}
    */
   setTex: function(gl, value) {
     this._texUni.set(gl, [value]);
+    this._useTexUni.set(gl, [1]);
   }
 };
 

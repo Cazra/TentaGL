@@ -89,11 +89,11 @@ HelloWorldApp.prototype = {
     
     
     // solid colors
-    TentaGL.MaterialLib.add(gl, "green", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 1, 0, 1)));
-    TentaGL.MaterialLib.add(gl, "blue", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 0, 1, 1)));
-    TentaGL.MaterialLib.add(gl, "red", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(1, 0, 0, 1)));
-    TentaGL.MaterialLib.add(gl, "white", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(1, 1, 1, 1)));
-    TentaGL.MaterialLib.add(gl, "black", TentaGL.Texture.fromColor(gl, TentaGL.Color.RGBA(0, 0, 0, 1)));
+    TentaGL.MaterialLib.add(gl, "green", TentaGL.Color.RGBA(0, 1, 0, 1));
+    TentaGL.MaterialLib.add(gl, "blue", TentaGL.Color.RGBA(0, 0, 1, 1)); 
+    TentaGL.MaterialLib.add(gl, "red", TentaGL.Color.RGBA(1, 0, 0, 1));
+    TentaGL.MaterialLib.add(gl, "white", TentaGL.Color.RGBA(1, 1, 1, 1)); 
+    TentaGL.MaterialLib.add(gl, "black", TentaGL.Color.RGBA(0, 0, 0, 1));
     
     // Gradients
     var grad1 = new TentaGL.Gradient([0,0], [1,0]);

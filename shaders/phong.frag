@@ -20,8 +20,10 @@ struct Material {
 };
 uniform Material m;
 
-// Texture and bump map
+// Color, texture, and bump map
+uniform vec4 solidColor;
 uniform sampler2D tex;
+uniform bool useTex;
 uniform sampler2D bumpTex;
 uniform bool useBumpTex;
 
@@ -85,7 +87,13 @@ float getAttenuation(in float dist, in Light light) {
 
 void main(void) {
   // Get base color from texture.
-  vec4 texColor = texture2D(tex, texCoords); 
+  vec4 texColor;
+  if(useTex) {
+    texColor = texture2D(tex, texCoords);
+  }
+  else {
+    texColor = solidColor;
+  }
   float texAlpha = texColor.a;
   if(texAlpha == 0.0) {
     discard;
