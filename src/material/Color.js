@@ -229,7 +229,7 @@ TentaGL.Color.prototype = {
   
   /** Returns the ARGB hex representation of this color. */
   getHex:function() {
-    return TentaGL.Color.rgba2Hex(this.getRed(), this.getGreen(), this.getBlue(), this.getAlpha());
+    return TentaGL.Color.nrgba2Hex(this.getRed(), this.getGreen(), this.getBlue(), this.getAlpha());
   },
   
   
@@ -439,11 +439,11 @@ TentaGL.Color.clone = function(color) {
  * @return {uint32}
  */
 TentaGL.Color.nrgba2Hex = function(r, g, b, a) {
-    var hex = (a*255)<<24;
-    hex += (r*255)<<16;
-    hex += (g*255)<<8;
-    hex += b*255;
-    return hex;
+    var hex = Math.floor(a*255)<<24;
+    hex += Math.floor(r*255)<<16;
+    hex += Math.floor(g*255)<<8;
+    hex += Math.floor(b*255);
+    return hex>>>0;
 };
 
 /** 
@@ -460,7 +460,7 @@ TentaGL.Color.rgba2Hex = function(r, g, b, a) {
     hex += (r)<<16;
     hex += (g)<<8;
     hex += b;
-    return hex;
+    return hex>>>0;
 };
 
 

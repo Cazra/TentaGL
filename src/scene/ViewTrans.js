@@ -101,7 +101,7 @@ TentaGL.ViewTrans = {
    * @param {vec3} xyz  The amount to scale along each axis.
    */
   scale: function(gl, xyz) {
-    if(!xyz[2]) {
+    if(xyz[2] === undefined) {
       xyz[2] = 1;
     }
     var trans = mat4.create();

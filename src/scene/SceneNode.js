@@ -34,6 +34,10 @@ TentaGL.SceneNode = function(xyz) {
   if(xyz === undefined) {
     xyz = [0, 0, 0];
   }
+  if(!xyz[2]) {
+    xyz[2] = 0;
+  }
+  
   this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
   
   this._scaleXYZ = [1, 1, 1];
