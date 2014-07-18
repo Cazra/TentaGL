@@ -128,6 +128,82 @@ TentaGL.Math.Line3D.prototype = {
       
       return vec3.len(v)*vec3.len(cross);
     }
+  },
+  
+  
+  /** 
+   * Returns the distance between this line and another line. 
+   * // TODO: account for segment distance. Currently, it assumes each line is infinite in length.
+   * @param {TentaGL.Math.Line3D} line
+   * @return {number}
+   */
+  distToLine: function(line) {
+    var p = vec4.clone(this._p1); // p' = p + r*u
+    var u = this.getVec3();
+    
+    var q = vec4.clone(line._p1); // q' = q + s*v
+    q[3] = 1;
+    var v = line.getVec3();
+    
+    // To make this problem easier to solve, we will transform our system such 
+    // that p is at the origin and u = [1, 0, 0].
+    var rotateQ = TentaGL.Math.getQuatFromTo(u, [1,0,0]);
+    var rotate = mat4.fromQuat(mat4.create(), rotateQ);
+    
+    var trans = mat4.create();
+    mat4.translate(trans, trans, [-p[0], -p[1], -p[2]]);
+    
+    var scale = mat4.create();
+    mat4.scale(scale, scale, 1/vec3.length(u));
+    
+    var m = mat4.mul(mat4.create(), rotate, trans);
+    mat4.mul(m, scale, m);
+    
+    var qq = vec4.transformMat4(vec4.create(), q, m); // qq' = qq + s*vv
+    var vv = vec3.transformMat4(vec3.create(), v, m);
+    
+    // Next, we apply some calculus and linear algebra to solve a system of 
+    // differential equations...
+    // We'll figure out the parametric values for the two closest points in the 
+    // transformed system. Which we can then use to calculate the distance back
+    // in our original system.
+    // How I figured this out is left as an excercise for other math nerds.
+    var m = mat2.create();
+    m[0] = vv[0]*vv[0] + vv[1]*vv[1] + vv[2]*vv[2];
+    m[1] = vv[0];
+    m[2] = vv[0];
+    m[3] = 1;
+    
+    var t = vec2.fromValues(-vec3.dot(qq, vv), -qq[0]);
+    var sr = vec2.transformMat2(vec2.create(), mat2.invert(m,m), t);
+    
+    var ppp = vec3.add(vec3.create(), p, vec3.scale(vec3.create(), u, sr[1]));
+    var qqq = vec3.add(vec3.create(), q, vec3.scale(vec3.create(), v, sr[0]));
+    
+    return vec3.dist(ppp, qqq);
+  },
+  
+  
+  // Rendering
+  
+  render: function(gl, materialName) {
+    var p1 = vec3.clone(this._p1);
+    var p2 = vec3.clone(this._p2);
+    var v = this.getVec3();
+    
+    TentaGL.ViewTrans.push(gl);
+    
+    TentaGL.ViewTrans.translate(gl, p1);
+    TentaGL.ViewTrans.scale(gl, v);
+    
+    TentaGL.ViewTrans.updateMVPUniforms(gl);
+    
+    if(materialName) {
+      TentaGL.MaterialLib.use(gl, materialName);
+    }
+    TentaGL.ModelLib.render(gl, "unitLine");
+    
+    TentaGL.ViewTrans.pop(gl);
   }
   
 };

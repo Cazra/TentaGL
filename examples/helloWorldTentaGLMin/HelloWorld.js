@@ -396,6 +396,9 @@ HelloWorldApp.prototype = {
     (new TentaGL.Math.Sphere(1, [5,0,5])).render(gl, "white");
     TentaGL.ShaderLib.use(gl, "simpleShader");
     
+    
+    (new TentaGL.Math.Line3D([5,5,5], [10, 0, 0])).render(gl, "white");
+    
     this.gradSprite.render(gl);
     this.gradSprite2.render(gl);
     
