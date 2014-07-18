@@ -454,6 +454,46 @@ TentaGL.Camera3D.prototype = {
     
     var planeCoords = vec3.fromValues(tx, ty, tz);
     return planeCoords;
+  },
+  
+  
+  /** 
+   * Projects some point in viewport coordinates (Y axis is down) to a point on
+   * some plane. 
+   * @param {vec2} pt   The point in viewport coordinates.
+   * @param {TentaGL.Math.Plane} plane    The plane we are projecting pt onto, 
+   *      in world coordinates.
+   * @param {uint} viewWidth    The width of the viewport.
+   * @param {uint} viewHeight   The height of the viewport.
+   * @return {vec3}
+   */
+  projectToPlane: function(pt, plane, viewWidth, viewHeight) {
+    // First we need to convert pt to device projection coordinates.
+    var aspect = viewWidth/viewHeight;
+    var x = (pt[0] - viewWidth/2)/aspect;
+    var y = -1*(pt[1] - viewHeight/2);
+    var xy = vec3.fromValues(x,y,0);
+    vec3.scale(xy, xy, 2/viewHeight);
+    
+    var pt = vec4.fromValues(xy[0], xy[1], -1, 1);
+    
+    // Convert our near and far points to world coordinates.
+    var m = this.getTransform(aspect);
+    mat4.invert(m, m);
+    
+    vec4.transformMat4(pt, pt, m);
+
+    // Create a line between our transformed near and far points, then
+    // find the intersection between the line and the plane.
+    var line = new TentaGL.Math.Line3D(this._eye, pt);
+    var intersection = plane.lineIntersection(line);
+    
+    if(intersection && !intersection.isaLine3D) {
+      return intersection;
+    }
+    else {
+      return undefined;
+    }
   }
   
 };

@@ -28,7 +28,7 @@
  * @param {vec3} pt      Optional. The anchor point the plane passes through. 
  *      Default: [0,0,0]
  */
-TentaGL.Math.InfinitePlane = function(normal, pt) {
+TentaGL.Math.Plane = function(normal, pt) {
   if(!pt) {
     pt = [0,0,0];
   }
@@ -39,8 +39,8 @@ TentaGL.Math.InfinitePlane = function(normal, pt) {
 };
 
 
-TentaGL.Math.InfinitePlane.prototype = {
-  constructor: TentaGL.Math.InfinitePlane,
+TentaGL.Math.Plane.prototype = {
+  constructor: TentaGL.Math.Plane,
   
   isaInfinitePlane: true,
   
@@ -118,13 +118,13 @@ TentaGL.Math.InfinitePlane.prototype = {
     var p1 = this._pt;
     var p2;
     if(this._normal[0] == 0) {
-      p2 = [p1[0] + 1, p[1], p[2]];
+      p2 = [p1[0] + 1, p1[1], p1[2]];
     }
     else if(this._normal[1] == 0) {
-      p2 = [p1[0], p[1] + 1, p[2]];
+      p2 = [p1[0], p1[1] + 1, p1[2]];
     }
     else if(this._normal[2] == 0) {
-      p2 = [p1[0], p[1], p[2] + 1];
+      p2 = [p1[0], p1[1], p1[2] + 1];
     }
     else {
       var coeffs = this.getCoefficients();
@@ -205,6 +205,45 @@ TentaGL.Math.InfinitePlane.prototype = {
    */
   ptIsBelow: function(pt) {
     return (ptRelative(pt) == -1);
+  },
+  
+  
+  /** 
+   * Determines the intersection of a line with this plane. There are 3 possible
+   * returned values: A point (vec3} if the line intersects the plane at a
+   * single point (the most common case), the line if the line lies in the
+   * plane, or undefined if the line is parallel to the plane but not in it.
+   * See http://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+   * @param {TentaGL.Math.Line3D} line
+   * @return {vec3, TentaGL.Math.Line3D, or undefined}
+   */
+  lineIntersection: function(line) {
+    var q = this.getPoint();
+    var p = line.getPt1();
+    
+    var n = this.getNormal();
+    var u = line.getVec3();
+    
+    var numer = vec3.dot(n, vec3.sub(vec3.create(), q, p));
+    var denom = vec3.dot(n, u);
+    
+    if(denom == 0) {
+      if(numer == 0) {
+        return line;
+      }
+      else {
+        return undefined;
+      }
+    }
+    else {
+      var s = numer/denom;
+      
+      var x = p[0] + s*u[0];
+      var y = p[1] + s*u[1];
+      var z = p[2] + s*u[2];
+      
+      return vec4.fromValues(x, y, z, 1);
+    }
   }
   
 };

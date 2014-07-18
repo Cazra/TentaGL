@@ -134,7 +134,7 @@ TentaGL.Math.Sphere.prototype = {
   /** 
    * Determines whether the volume of this sphere intersects with an infinite 
    * plane. 
-   * @param {TentaGL.Math.InfinitePlane} plane
+   * @param {TentaGL.Math.Plane} plane
    * @return {boolean}
    */
   intersectsPlane: function(plane) {

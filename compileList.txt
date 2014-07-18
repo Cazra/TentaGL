@@ -14,9 +14,9 @@ src/state/Stencil.js
 src/state/Viewport.js
 
 src/math/Math.js
-  src/math/geom/InfinitePlane.js
   src/math/geom/Line2D.js
   src/math/geom/Line3D.js
+  src/math/geom/Plane.js
   src/math/geom/Sphere.js
   
 src/app/Application.js
