@@ -19,7 +19,7 @@ HelloWorldApp.prototype = {
    * @return {TentaGL.Sprite}
    */
   createTestSprite:function(xyz) {
-    var sprite = TentaGL.Sprite.create(xyz, "cylinder", "testCircle", "phong");
+    var sprite = TentaGL.Sprite.create(xyz, "cylinder", "testCircle", "phongPerVertex");
     sprite.setScaleUni(0.25);
     return sprite;
   },
@@ -51,6 +51,7 @@ HelloWorldApp.prototype = {
       TentaGL.LinearGradientShader.load(gl, "gradientShader");
       TentaGL.RadialGradientShader.load(gl, "gradientShader2");
       TentaGL.PhongShader.load(gl, "phong");
+      TentaGL.PerVertexPhongShader.load(gl, "phongPerVertex");
     }
     catch(e) {
       console.log(e.message);
@@ -215,14 +216,14 @@ HelloWorldApp.prototype = {
 
     
     this.axesGroup = new TentaGL.SceneGroup();
-    this.axesGroup.add(this.createSphereSprite([10,0,0], "red", "phong"));
-    this.axesGroup.add(this.createSphereSprite([0,10,0], "green", "phong"));
-    this.axesGroup.add(this.createSphereSprite([0,0,10], "blue", "phong"));
-    this.axesGroup.add(this.createSphereSprite([0,0,0], "white", "phong"));
-    this.axesGroup.add(this.createSphereSprite([0,0,0], "black", "phong"));
+    this.axesGroup.add(this.createSphereSprite([10,0,0], "red", "phongPerVertex"));
+    this.axesGroup.add(this.createSphereSprite([0,10,0], "green", "phongPerVertex"));
+    this.axesGroup.add(this.createSphereSprite([0,0,10], "blue", "phongPerVertex"));
+    this.axesGroup.add(this.createSphereSprite([0,0,0], "white", "phongPerVertex"));
+    this.axesGroup.add(this.createSphereSprite([0,0,0], "black", "phongPerVertex"));
     
     this.camGroup = new TentaGL.SceneGroup();
-    this.camGroup.add(this.createSphereSprite([15,0,0], "black", "phong"));
+    this.camGroup.add(this.createSphereSprite([15,0,0], "black", "phongPerVertex"));
     
     this.textSprite = new TentaGL.TextIconSprite([1, 1, 1], "Hello, \nWorld!", this.blitFont); //this.createTextIconSprite([1,1,1], "Hello, \nWorld!");
     
@@ -239,7 +240,7 @@ HelloWorldApp.prototype = {
     
     this.teapotSprite = TentaGL.Sprite.create([0, 0, 0], "teapot", "green", "normalShader");
     
-    this.coneSprite = TentaGL.Sprite.create([12, 0, 0], "unitCone", "bumpedRed", "phong", matProps1);
+    this.coneSprite = TentaGL.Sprite.create([12, 0, 0], "unitCone", "blue", "phongPerVertex", matProps1);
     
     // Lighting test objects
     this.lights = new TentaGL.LightManager(TentaGL.PhongShader.MAX_LIGHTS);
@@ -249,7 +250,7 @@ HelloWorldApp.prototype = {
     
     
     this.shadedSprite1 = TentaGL.Sprite.create([5, 0, 0], "unitSphere", "bumpedRed", "phong", matProps1); 
-    this.shadedSprite2 = TentaGL.Sprite.create([5, -5, 0], "unitSphere", "white", "phong", matProps1); 
+    this.shadedSprite2 = TentaGL.Sprite.create([5, -5, 0], "unitSphere", "white", "phongPerVertex", matProps1); 
     this.shadedSprite3 = TentaGL.Sprite.create([5, 20, 0], "unitSphere", "bumpedRed", "phong", matProps1); 
     this.shadedSprite3.setScaleXYZ([4, 4, 4]);
   },
@@ -363,6 +364,9 @@ HelloWorldApp.prototype = {
   /** Draws the scene. */
   drawScene:function(gl) {
     TentaGL.ShaderLib.use(gl, "phong");
+    this.lights.useMe(gl);
+    
+    TentaGL.ShaderLib.use(gl, "phongPerVertex");
     this.lights.useMe(gl);
     
     TentaGL.ShaderLib.use(gl, "simpleShader");

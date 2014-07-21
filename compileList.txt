@@ -114,6 +114,7 @@ src/shaders/ShaderLib.js
 src/shaders/ShaderProgram.js
   src/shaders/premade/LinearGradientShader.js
   src/shaders/premade/NormalShader.js
+  src/shaders/premade/PerVertexPhongShader.js
   src/shaders/premade/PhongShader.js
   src/shaders/premade/PickShader.js
   src/shaders/premade/RadialGradientShader.js
