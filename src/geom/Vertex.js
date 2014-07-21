@@ -223,6 +223,16 @@ TentaGL.Vertex.prototype = {
     }
   },
   
+  
+  /** 
+   * Returns true iff this vertex's tangental vector is undefined. 
+   * @return {boolean}
+   */
+  hasTangental: function() {
+    return (this._tangental !== undefined);
+  },
+  
+  
   /** 
    * Computes (but doesn't set) the surface tangental vertex of this vertex, using the texture 
    * coordinates of this vertex and two vertices it shares a polygon with.
@@ -231,12 +241,8 @@ TentaGL.Vertex.prototype = {
    * @return {vec3}
    */
   computeTangental:function(v2, v3) {
-    var u = vec3.fromValues(v2.getX() - this.getX(), 
-                            v2.getY() - this.getY(), 
-                            v2.getZ() - this.getZ());
-    var v = vec3.fromValues(v3.getX() - this.getX(), 
-                            v3.getY() - this.getY(), 
-                            v3.getZ() - this.getZ());
+    var u = vec3.sub(vec3.create(), v2.getXYZ(), this.getXYZ());
+    var v = vec3.sub(vec3.create(), v3.getXYZ(), this.getXYZ());
     
     var su = v2.getTexS() - this.getTexS();
     var sv = v3.getTexS() - this.getTexS();
@@ -251,6 +257,12 @@ TentaGL.Vertex.prototype = {
       vec3.scale(tang, u, tv);
       vec3.sub(tang, tang, vec3.scale(vec3.create(), v, tu));
       vec3.scale(tang, tang, 1/dst);
+      
+      var t = tang;
+      if(vec3.length(tang) == 0) {
+        return vec3.fromValues(1, 0, 0);
+      }
+      
       return tang;
     }
   },

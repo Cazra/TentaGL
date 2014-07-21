@@ -239,7 +239,7 @@ HelloWorldApp.prototype = {
     
     this.teapotSprite = TentaGL.Sprite.create([0, 0, 0], "teapot", "green", "normalShader");
     
-    this.coneSprite = TentaGL.Sprite.create([12, 0, 0], "unitCone", "blue", "phong", matProps1);
+    this.coneSprite = TentaGL.Sprite.create([12, 0, 0], "unitCone", "bumpedRed", "phong", matProps1);
     
     // Lighting test objects
     this.lights = new TentaGL.LightManager(TentaGL.PhongShader.MAX_LIGHTS);
@@ -280,9 +280,10 @@ HelloWorldApp.prototype = {
     if(this._mouse.isLeftPressed()) {
       this.getPicker().update(gl, this.drawScene.bind(this), false);
       
-      var mx = this._mouse.getX();
-      var my = this.getHeight() - this._mouse.getY()
-      var sprite = this.getPicker().getSpriteAt(mx, my);
+    //  var mx = this._mouse.getX();
+    //  var my = this.getHeight() - this._mouse.getY()
+    //  var sprite = this.getPicker().getSpriteAt(mx, my);
+      var sprite = this.getPicker().getSpriteAtMouse(this.mouse());
       console.log(sprite);
       
       if(sprite && sprite.isaTextSprite) {

@@ -322,9 +322,9 @@ TentaGL.Model.prototype = {
     var vert3 = this._vertices[v3];
     
     if(vert1.hasTexST() && vert2.hasTexST() && vert3.hasTexST()) {
-      vert1.setTangental(vert1.computeTangental(vert2, vert3));
-      vert2.setTangental(vert2.computeTangental(vert3, vert1));
-      vert3.setTangental(vert3.computeTangental(vert1, vert2));
+        vert1.setTangental(vert1.computeTangental(vert2, vert3));
+        vert2.setTangental(vert2.computeTangental(vert3, vert1));
+        vert3.setTangental(vert3.computeTangental(vert1, vert2));
     }
   },
   

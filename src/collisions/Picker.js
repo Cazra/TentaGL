@@ -176,6 +176,21 @@ TentaGL.Picker.prototype = {
     else {
       return undefined;
     }
+  },
+  
+  
+  /** 
+   * Returns the sprite whose picking ID is stored at the mouse's location.
+   * @param {TentaGL.Mouse} mouse
+   * @param {boolean} ignoreComposite   Optional. Whether to ignore composited sprites.
+   *      Default to true, meaning that for composited sprites, this will return the top level
+   *      sprite the composite hierarchy for the sprite that was clicked.
+   * @return {TentaGL.Sprite}
+   */
+  getSpriteAtMouse: function(mouse, ignoreComposite) {
+    var mx = mouse.getX();
+    var my = this._app.getHeight() - mouse.getY();
+    return this.getSpriteAt(mx, my, ignoreComposite);
   }
   
 };

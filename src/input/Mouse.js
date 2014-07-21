@@ -33,6 +33,8 @@
  */
 TentaGL.Mouse = function(canvas) {
   
+  this._canvas = canvas;
+  
   this._xy = [0, 0];
   this._xyPage = [0, 0];
   this._mouseMovedSinceLast = false;
@@ -338,6 +340,25 @@ TentaGL.Mouse.prototype = {
    */
   scrollRightAmount:function() {
     return Math.abs(Math.max(this._wheelTicksX, 0));
+  },
+  
+  
+  
+  /** 
+   * Returns the width of the canvas the mouse is bound to.
+   * @return {number}
+   */
+  getCanvasWidth: function() {
+    return canvas.width;
+  },
+  
+  
+  /** 
+   * Returns the height of the canvas the mouse is bound to.
+   * @return {number}
+   */
+  getCanvasHeight: function() {
+    return canvas.height;
   }
 };
 
