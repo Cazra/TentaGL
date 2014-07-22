@@ -49,9 +49,12 @@ TentaGL.ShaderLib = {
   reset:function(gl) {
     this.clean(gl);
     //TentaGL.Picker.loadShaderProgram(gl);
+    TentaGL.DefaultShader.load(gl, TentaGL.DefaultShader.SHADER_ID);
     TentaGL.PickShader.load(gl, TentaGL.Picker.SHADER_ID);
     
     gl._shaderLibLocked = false;
+    
+    this.use(gl, TentaGL.DefaultShader.SHADER_ID);
   },
   
   
