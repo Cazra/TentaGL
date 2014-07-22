@@ -95,6 +95,7 @@ src/scene/Renderable.js
     src/scene/SceneGroup.js
     src/sprite/Sprite.js
       src/sprite/BillboardSprite.js
+      src/sprite/ButtonSprite.js
       src/sprite/CompositeSprite.js
         src/sprite/LabelledIconSprite.js
       src/sprite/IconSprite.js
@@ -116,6 +117,7 @@ src/shaders/ShaderProgram.js
   src/shaders/premade/LinearGradientShader.js
   src/shaders/premade/NormalShader.js
   src/shaders/premade/PerVertexPhongShader.js
+  src/shaders/premade/PerVertexPhongShaderMac.js
   src/shaders/premade/PhongShader.js
   src/shaders/premade/PickShader.js
   src/shaders/premade/RadialGradientShader.js

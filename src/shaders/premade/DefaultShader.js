@@ -31,8 +31,8 @@
 TentaGL.DefaultShader = function(gl) {
   var shaderRoot = TentaGL.ShaderLib.getDefaultShaderPath(gl);
   
-  var vertURL = shaderRoot + "simple.vert";
-  var fragURL = shaderRoot + "simple.frag";
+  var vertURL = shaderRoot + "default.vert";
+  var fragURL = shaderRoot + "default.frag";
   var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
   
   console.log("\nCreating DefaultShader");

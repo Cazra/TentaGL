@@ -21,6 +21,7 @@ HelloWorldApp.prototype = {
   createTestSprite:function(xyz) {
     var sprite = TentaGL.Sprite.create(xyz, "cylinder", "testCircle", "phongPerVertex");
     sprite.setScaleUni(0.25);
+    
     return sprite;
   },
   
@@ -34,6 +35,7 @@ HelloWorldApp.prototype = {
   createSphereSprite:function(xyz, materialName, shaderName) {
     var sprite = TentaGL.Sprite.create(xyz, "unitSphere", materialName, shaderName);
     sprite.setScaleUni(0.5);
+    
     return sprite;
   },
   
@@ -51,7 +53,8 @@ HelloWorldApp.prototype = {
       TentaGL.LinearGradientShader.load(gl, "gradientShader");
       TentaGL.RadialGradientShader.load(gl, "gradientShader2");
       TentaGL.PhongShader.load(gl, "phong");
-      TentaGL.PerVertexPhongShader.load(gl, "phongPerVertex");
+    //  TentaGL.PerVertexPhongShader.load(gl, "phongPerVertex");
+      TentaGL.PerVertexPhongShaderMac.load(gl, "phongPerVertex");
     }
     catch(e) {
       console.log(e.message);
@@ -235,8 +238,12 @@ HelloWorldApp.prototype = {
     this.gradSprite = TentaGL.Sprite.create([0, 0, -1], "unitPlane", "grad1", "gradientShader");
     this.gradSprite.setScaleXYZ([4,3,1]);
     
-    this.gradSprite2 = TentaGL.Sprite.create([4, 0, -1], "unitPlane", "grad2", "gradientShader2"); 
+    this.gradSprite2 = TentaGL.ButtonSprite.create([4, 0, -1], "unitPlane", "grad2", "gradientShader2"); 
     this.gradSprite2.setScaleXYZ([4,3,1]);
+    this.gradSprite2.onRightClick = function(mouse) {
+      this.setVisible(false);
+      console.log("gradSprite 2 was clicked");
+    };
     
     this.teapotSprite = TentaGL.Sprite.create([0, 0, 0], "teapot", "green", "normalShader");
     
@@ -278,13 +285,16 @@ HelloWorldApp.prototype = {
     this.updateScene(gl);
     
     // Picker test
-    if(this._mouse.isLeftPressed()) {
-      this.getPicker().update(gl, this.drawScene.bind(this), false);
+    if(this._mouse.isLeftPressed() || this._mouse.justLeftReleased()) {
+      var picker = this.getPicker();
+      picker.update(gl, this.drawScene.bind(this), false);
+      
+      this.gradSprite2.updateMouseState(picker, this._mouse);
       
     //  var mx = this._mouse.getX();
     //  var my = this.getHeight() - this._mouse.getY()
     //  var sprite = this.getPicker().getSpriteAt(mx, my);
-      var sprite = this.getPicker().getSpriteAtMouse(this.mouse());
+      var sprite = picker.getSpriteAtMouse(this.mouse());
       console.log(sprite);
       
       if(sprite && sprite.isaTextSprite) {
