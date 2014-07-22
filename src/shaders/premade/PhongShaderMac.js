@@ -23,19 +23,17 @@
 */
 
 /** 
- * It turns out that some Mac systems have problems with the array of structs
- * used in the other shader. See http://www.khronos.org/registry/webgl/sdk/tests/conformance/glsl/bugs/array-of-struct-with-int-first-position.html.
- * In this shader, there is only one defined light struct uniform in the shader.
+ * A phong lighting shader that also supports bump mapping.
  * @param {WebGLRenderingContext} gl
  */
-TentaGL.PerVertexPhongShaderMac = function(gl) {
+TentaGL.PhongShaderMac = function(gl) {
   var shaderRoot = TentaGL.ShaderLib.getDefaultShaderPath(gl);
   
-  var vertURL = shaderRoot + "phongPerVertexMac.vert";
-  var fragURL = shaderRoot + "phongPerVertexMac.frag";
+  var vertURL = shaderRoot + "phongMac.vert";
+  var fragURL = shaderRoot + "phongMac.frag";
   var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
   
-  console.log("\nCreating PerVertexPhongShaderMac");
+  console.log("\nCreating PhongShaderMac");
   TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
   
   this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
@@ -51,6 +49,8 @@ TentaGL.PerVertexPhongShaderMac = function(gl) {
   this._colorUni = this.getUniform("solidColor");
   this._texUni = this.getUniform("tex");
   this._useTexUni = this.getUniform("useTex");
+  this._bumpTexUni = this.getUniform("bumpTex");
+  this._useBumpUni = this.getUniform("useBumpTex");
   
   // Material struct
   this._materialUni = {};
@@ -75,16 +75,16 @@ TentaGL.PerVertexPhongShaderMac = function(gl) {
   this._lightUni.spotExp = this.getUniform("light.spotExp");
 };
 
-TentaGL.PerVertexPhongShaderMac.LIGHT_AMB = 1;
-TentaGL.PerVertexPhongShaderMac.LIGHT_PT = 2;
-TentaGL.PerVertexPhongShaderMac.LIGHT_DIR = 3;
-TentaGL.PerVertexPhongShaderMac.LIGHT_SPOT = 4;
+TentaGL.PhongShaderMac.LIGHT_AMB = 1;
+TentaGL.PhongShaderMac.LIGHT_PT = 2;
+TentaGL.PhongShaderMac.LIGHT_DIR = 3;
+TentaGL.PhongShaderMac.LIGHT_SPOT = 4;
 
-TentaGL.PerVertexPhongShaderMac.prototype = {
+TentaGL.PhongShaderMac.prototype = {
   
-  constructor: TentaGL.PerVertexPhongShader,
+  constructor: TentaGL.PhongShaderMac,
   
-  isaPerVertexPhongShaderMac: true,
+  isaPhongShaderMac: true,
   
   
   /** 
@@ -139,6 +139,7 @@ TentaGL.PerVertexPhongShaderMac.prototype = {
   setColor: function(gl, rgba) {
     this._colorUni.set(gl, rgba);
     this._useTexUni.set(gl, [0]);
+    this._useBumpUni.set(gl, [0]);
   },
   
   
@@ -152,6 +153,19 @@ TentaGL.PerVertexPhongShaderMac.prototype = {
   setTex: function(gl, value) {
     this._texUni.set(gl, [value]);
     this._useTexUni.set(gl, [1]);
+    this._useBumpUni.set(gl, [0]);
+  },
+  
+  
+  /** 
+   * Sets the uniform variable for the bump texture offset. 
+   * @param {WebGLRenderingContext} gl
+   * @param {int} value   If >= 0, set as the offset and turn bump mapping on. 
+   *      Else, turn bump mapping off.
+   */
+  setBump: function(gl, value) {
+    this._bumpTexUni.set(gl, [value]);
+    this._useBumpUni.set(gl, [1]);
   },
   
   /** 
@@ -176,16 +190,16 @@ TentaGL.PerVertexPhongShaderMac.prototype = {
     
     // type (int)
     if(light.isaAmbientLight) {
-      this._lightUni.type.set(gl, [TentaGL.PerVertexPhongShader.LIGHT_AMB]);
+      this._lightUni.type.set(gl, [TentaGL.PhongShaderMac.LIGHT_AMB]);
     }
     if(light.isaPointLight) {
-      this._lightUni.type.set(gl, [TentaGL.PerVertexPhongShader.LIGHT_PT]);
+      this._lightUni.type.set(gl, [TentaGL.PhongShaderMac.LIGHT_PT]);
     }
     if(light.isaDirectionalLight) {
-      this._lightUni.type.set(gl, [TentaGL.PerVertexPhongShader.LIGHT_DIR]);
+      this._lightUni.type.set(gl, [TentaGL.PhongShaderMac.LIGHT_DIR]);
     }
     if(light.isaSpotLight) {
-      this._lightUni.type.set(gl, [TentaGL.PerVertexPhongShader.LIGHT_SPOT]);
+      this._lightUni.type.set(gl, [TentaGL.PhongShaderMac.LIGHT_SPOT]);
     }
     
     // pos (vec4)
@@ -236,18 +250,18 @@ TentaGL.PerVertexPhongShaderMac.prototype = {
 
 
 /** 
- * Loads PerVertexPhongShaderMac into the ShaderLib, with the specified name. 
+ * Loads PhongShaderMac into the ShaderLib, with the specified name. 
  * @param {WebGLRenderingContext} gl
  * @param {name}  The name used to reference the shader program from the ShaderLib.
  * @return {TentaGL.ShaderProgram}
  */
-TentaGL.PerVertexPhongShaderMac.load = function(gl, name) {
-  var program = new TentaGL.PerVertexPhongShaderMac(gl);
+TentaGL.PhongShaderMac.load = function(gl, name) {
+  var program = new TentaGL.PhongShaderMac(gl);
   TentaGL.ShaderLib.add(gl, name, program);
   
   return program;
 };
 
 
-Util.Inheritance.inherit(TentaGL.PerVertexPhongShaderMac, TentaGL.ShaderProgram);
+Util.Inheritance.inherit(TentaGL.PhongShaderMac, TentaGL.ShaderProgram);
 

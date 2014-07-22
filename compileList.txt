@@ -119,6 +119,7 @@ src/shaders/ShaderProgram.js
   src/shaders/premade/PerVertexPhongShader.js
   src/shaders/premade/PerVertexPhongShaderMac.js
   src/shaders/premade/PhongShader.js
+  src/shaders/premade/PhongShaderMac.js
   src/shaders/premade/PickShader.js
   src/shaders/premade/RadialGradientShader.js
   src/shaders/premade/SimpleShader.js
