@@ -52,7 +52,7 @@ TentaGL.AudioLoader = {
     }
     
     var audio = new Audio();
-    audio.oncanplaythrough = function() {
+    audio.onloadeddata = function() {
       successCB(audio);
       self._numLoading--;
     };

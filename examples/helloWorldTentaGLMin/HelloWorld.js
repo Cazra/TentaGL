@@ -145,9 +145,9 @@ HelloWorldApp.prototype = {
     
     
     // Audio // May hang in some browsers due to compatibility.
-  //  TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
-  //    self.horseAudio = audio;
-  //  });
+    TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
+      self.horseAudio = audio;
+    });
   },
   
   
