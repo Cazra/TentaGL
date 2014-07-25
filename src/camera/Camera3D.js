@@ -459,7 +459,7 @@ TentaGL.Camera3D.prototype = {
   
   /** 
    * Projects some point in viewport coordinates (Y axis is down) to a point on
-   * some plane. 
+   * some plane. If the mouse cannot be projected onto the plane, undefined is returned.
    * @param {vec2} pt   The point in viewport coordinates.
    * @param {TentaGL.Math.Plane} plane    The plane we are projecting pt onto, 
    *      in world coordinates.

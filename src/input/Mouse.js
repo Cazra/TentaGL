@@ -123,6 +123,14 @@ TentaGL.Mouse = function(canvas) {
     
     evt.preventDefault();
   };
+  
+  
+  canvas.onclick = function(evt) {
+    if(self._fileOpenDialogCB) {
+      self._fileOpenDialogCB();
+      self._fileOpenDialogCB = undefined;
+    }
+  };
 };
 
 
@@ -349,7 +357,7 @@ TentaGL.Mouse.prototype = {
    * @return {number}
    */
   getCanvasWidth: function() {
-    return canvas.width;
+    return this._canvas.width;
   },
   
   
@@ -358,7 +366,27 @@ TentaGL.Mouse.prototype = {
    * @return {number}
    */
   getCanvasHeight: function() {
-    return canvas.height;
+    return this._canvas.height;
+  },
+  
+  /** 
+   * Returns the canvas the mouse is bound to. 
+   * @return {Canvas element}
+   */
+  getCanvas: function() {
+    return this._canvas;
+  },
+  
+  
+  /** 
+   * Sets a callback for next time the user clicks the canvas. 
+   * This can be useful for doing things that require direct user interaction,
+   * due to security reasons. E.G. Programmatically displaying a file open 
+   * dialog.
+   * @param {function() : void} callback
+   */
+  setClickCallback: function(callback) {
+    this._fileOpenDialogCB = callback;
   }
 };
 

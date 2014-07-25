@@ -3,6 +3,7 @@ src/TentaGL.js
 
 src/util/Debug.js
 src/util/DOM.js
+src/util/Downloader.js
 src/util/Inheritance.js
 
 src/state/Blend.js

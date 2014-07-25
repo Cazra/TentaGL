@@ -57,7 +57,7 @@ var TentaGL = {
    * @return {WebGLRenderingContext }  The WebGL rendering context.
    */
   createGL: function(canvas, attrs) {
-    attrs = attrs || {};
+    attrs = attrs || {alpha: false};
     
     // An Error will be thrown if the user's browser doesn't support WebGL.
     try {
