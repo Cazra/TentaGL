@@ -410,8 +410,8 @@ TentaGL.BlitteredFont.fromURL = function(url, monospaced, charW, charH, hPad, vP
 TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
   var monospaced = (font.getType() == "monospace");
   var dimsEm = font.getStringDimensions("W");
-  var charW = dimsEm[0];
-  var charH = dimsEm[1];
+  var charW = Math.floor(dimsEm[0]);
+  var charH = Math.floor(dimsEm[1]);
   
   var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charW, charH, hPad, vPad);
   

@@ -31,11 +31,7 @@ void main(void) {
   // Compute the projected parametric value for our gradient line.
   float s = (length(v)*dot(uHat, vHat))/length(u);
   
-  int j = 0;
-  
   for(int i=0; i < 15; i++) {
-    j++;
-    
     if(i == 0 && s < breakPts[0]) {
       gl_FragColor = colors[0];
       return;

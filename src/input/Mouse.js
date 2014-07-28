@@ -58,8 +58,10 @@ TentaGL.Mouse = function(canvas) {
   
   this._wheelTicksXSinceLast = 0;
   this._wheelTicksYSinceLast = 0;
+  this._wheelTicksZSinceLast = 0;
   this._wheelTicksX = 0;
   this._wheelTicksY = 0;
+  this._wheelTicksZ = 0;
   
   var self = this; // closure magic!
   
@@ -105,20 +107,40 @@ TentaGL.Mouse = function(canvas) {
     self._releasedSinceLast[evt.which] = true;
   };
   
-  canvas.onmousewheel = function(evt) {
-  //  console.log(evt);
-    if(evt.wheelDeltaY < 0) {
+  
+  canvas.onwheel = canvas.onmousewheel = function(evt) {
+    var deltaY = evt.wheelDeltaY;
+    if(deltaY === undefined) {
+      deltaY = evt.deltaY;
+    }
+    
+    var deltaX = evt.wheelDeltaX;
+    if(deltaX === undefined) {
+      deltaX = evt.deltaX;
+    }
+    
+    var deltaZ = evt.deltaZ;
+    
+    console.log(evt);
+    if(deltaY < 0) {
       self._wheelTicksYSinceLast--;
     }
-    else if(evt.wheelDeltaY > 0) {
+    else if(deltaY > 0) {
       self._wheelTicksYSinceLast++;
     }
     
-    if(evt.wheelDeltaX < 0) {
+    if(deltaX < 0) {
       self._wheelTicksXSinceLast--;
     }
-    else if(evt.wheelDeltaX > 0) {
+    else if(deltaX > 0) {
       self._wheelTicksXSinceLast++;
+    }
+    
+    if(deltaZ < 0) {
+      self._wheelTicksZSinceLast--;
+    }
+    else if(deltaZ > 0) {
+      self._wheelTicksZSinceLast++;
     }
     
     evt.preventDefault();
@@ -153,8 +175,10 @@ TentaGL.Mouse.prototype = {
     
     this._wheelTicksX = this._wheelTicksXSinceLast;
     this._wheelTicksY = this._wheelTicksYSinceLast;
+    this._wheelTicksY = this._wheelTicksZSinceLast;
     this._wheelTicksXSinceLast = 0;
     this._wheelTicksYSinceLast = 0;
+    this._wheelTicksZSinceLast = 0;
     
     this._mouseMoved = this._mouseMovedSinceLast;
     this._mouseMovedSinceLast = false;
