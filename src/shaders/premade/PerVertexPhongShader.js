@@ -33,6 +33,57 @@ TentaGL.PerVertexPhongShader = function(gl) {
   
   var vertURL = shaderRoot + "phongPerVertex.vert";
   var fragURL = shaderRoot + "phongPerVertex.frag";
+  
+  var self = this;
+  TentaGL.ShaderLoader.load(vertURL, fragURL, function(vertSrc, fragSrc) {
+    console.log("\nCreating PerVertexPhongShader");
+    TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
+    
+    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
+    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+    self.setAttrGetter("vertexTang", TentaGL.Vertex.prototype.getTangental);
+    
+    self._mvpUni = self.getUniform("mvpTrans");
+    self._mvUni = self.getUniform("mvTrans");
+    self._vUni = self.getUniform("vTrans");
+    self._normalUni = self.getUniform("normalTrans");
+    
+    self._colorUni = self.getUniform("solidColor");
+    self._texUni = self.getUniform("tex");
+    self._useTexUni = self.getUniform("useTex");
+    
+    // Material struct
+    self._materialUni = {};
+    self._materialUni.diff = self.getUniform("m.diff");
+    self._materialUni.spec = self.getUniform("m.spec");
+    self._materialUni.amb = self.getUniform("m.amb");
+    self._materialUni.emis = self.getUniform("m.emis");
+    self._materialUni.shininess = self.getUniform("m.shininess");
+    
+    // Lights struct array
+    self._lightsUni = []; 
+    for(var i=0; i < TentaGL.PerVertexPhongShader.MAX_LIGHTS; i++) {
+      var light = self._lightsUni[i] = {};
+      var prefix = "lights[" + i + "]";
+      
+      light.type = self.getUniform(prefix + ".type");
+      light.pos = self.getUniform(prefix + ".pos");
+      light.dir = self.getUniform(prefix + ".dir");
+      light.diff = self.getUniform(prefix + ".diff");
+      light.spec = self.getUniform(prefix + ".spec");
+      light.amb = self.getUniform(prefix + ".amb");
+      light.attenA = self.getUniform(prefix + ".attenA");
+      light.attenB = self.getUniform(prefix + ".attenB");
+      light.attenC = self.getUniform(prefix + ".attenC");
+      light.cutOffAngleCos = self.getUniform(prefix + ".cutOffAngleCos");
+      light.spotExp = self.getUniform(prefix + ".spotExp");
+    }
+    
+    self._numLightsUni = self.getUniform("numLights");
+  });
+  
+  /*
   var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
   
   console.log("\nCreating PerVertexPhongShader");
@@ -80,6 +131,7 @@ TentaGL.PerVertexPhongShader = function(gl) {
   }
   
   this._numLightsUni = this.getUniform("numLights");
+  */
 };
 
 TentaGL.PerVertexPhongShader.MAX_LIGHTS = 16;

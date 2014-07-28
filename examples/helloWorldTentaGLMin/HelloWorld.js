@@ -267,6 +267,10 @@ HelloWorldApp.prototype = {
   
   /** We are required to override TentaGL.Application.update */
   update:function() {
+    if(TentaGL.ShaderLoader.isLoading()) {
+      console.log("Loading shaders..." + TentaGL.ShaderLoader.getNumLoading());
+      return;
+    }
     if(TentaGL.ImageLoader.isLoading()) {
       console.log("Loading image data...");
       return;

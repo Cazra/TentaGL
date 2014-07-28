@@ -33,6 +33,25 @@ TentaGL.SimpleShader = function(gl) {
   
   var vertURL = shaderRoot + "simple.vert";
   var fragURL = shaderRoot + "simple.frag";
+  
+  var self = this;
+  TentaGL.ShaderLoader.load(vertURL, fragURL, function(vertSrc, fragSrc) {
+    console.log("\nCreating SimpleShader");
+    TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
+    
+    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
+    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+    
+    self._mvpUni = self.getUniform("mvpTrans");
+    self._normalUni = self.getUniform("normalTrans");
+    
+    self._colorUni = self.getUniform("solidColor");
+    self._texUni = self.getUniform("tex");
+    self._useTexUni = self.getUniform("useTex");
+  });
+  
+  /*
   var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
   
   console.log("\nCreating SimpleShader");
@@ -48,6 +67,7 @@ TentaGL.SimpleShader = function(gl) {
   this._colorUni = this.getUniform("solidColor");
   this._texUni = this.getUniform("tex");
   this._useTexUni = this.getUniform("useTex");
+  */
 };
 
 TentaGL.SimpleShader.prototype = {

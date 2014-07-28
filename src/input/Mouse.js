@@ -111,17 +111,16 @@ TentaGL.Mouse = function(canvas) {
   canvas.onwheel = canvas.onmousewheel = function(evt) {
     var deltaY = evt.wheelDeltaY;
     if(deltaY === undefined) {
-      deltaY = evt.deltaY;
+      deltaY = -evt.deltaY;
     }
     
     var deltaX = evt.wheelDeltaX;
     if(deltaX === undefined) {
-      deltaX = evt.deltaX;
+      deltaX = -evt.deltaX;
     }
     
     var deltaZ = evt.deltaZ;
     
-    console.log(evt);
     if(deltaY < 0) {
       self._wheelTicksYSinceLast--;
     }
@@ -175,7 +174,7 @@ TentaGL.Mouse.prototype = {
     
     this._wheelTicksX = this._wheelTicksXSinceLast;
     this._wheelTicksY = this._wheelTicksYSinceLast;
-    this._wheelTicksY = this._wheelTicksZSinceLast;
+    this._wheelTicksZ = this._wheelTicksZSinceLast;
     this._wheelTicksXSinceLast = 0;
     this._wheelTicksYSinceLast = 0;
     this._wheelTicksZSinceLast = 0;

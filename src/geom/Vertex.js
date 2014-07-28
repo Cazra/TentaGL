@@ -39,6 +39,9 @@
  */
 TentaGL.Vertex = function(x, y, z) {
   this._xyz = vec4.fromValues(x, y, z, 1);
+  this._texST = vec2.fromValues(0, 0);
+  this._normal = vec3.fromValues(0, 0, 0);
+  this._tangental = vec3.fromValues(0, 0, 0);
 }
 
 TentaGL.Vertex.prototype = {

@@ -31,6 +31,54 @@ TentaGL.PhongShaderMac = function(gl) {
   
   var vertURL = shaderRoot + "phongMac.vert";
   var fragURL = shaderRoot + "phongMac.frag";
+  
+  var self = this;
+  
+  TentaGL.ShaderLoader.load(vertURL, fragURL, function(vertSrc, fragSrc) {
+    console.log("\nCreating PhongShaderMac");
+    TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
+    
+    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
+    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+    self.setAttrGetter("vertexTang", TentaGL.Vertex.prototype.getTangental);
+    
+    self._mvpUni = self.getUniform("mvpTrans");
+    self._mvUni = self.getUniform("mvTrans");
+    self._vUni = self.getUniform("vTrans");
+    self._normalUni = self.getUniform("normalTrans");
+    
+    self._colorUni = self.getUniform("solidColor");
+    self._texUni = self.getUniform("tex");
+    self._useTexUni = self.getUniform("useTex");
+    self._bumpTexUni = self.getUniform("bumpTex");
+    self._useBumpUni = self.getUniform("useBumpTex");
+    
+    // Material struct
+    self._materialUni = {};
+    self._materialUni.diff = self.getUniform("m.diff");
+    self._materialUni.spec = self.getUniform("m.spec");
+    self._materialUni.amb = self.getUniform("m.amb");
+    self._materialUni.emis = self.getUniform("m.emis");
+    self._materialUni.shininess = self.getUniform("m.shininess");
+    
+    // Light struct
+    self._lightUni = {}; 
+    self._lightUni.type = self.getUniform("light.type");
+    self._lightUni.pos = self.getUniform("light.pos");
+    self._lightUni.dir = self.getUniform("light.dir");
+    self._lightUni.diff = self.getUniform("light.diff");
+    self._lightUni.spec = self.getUniform("light.spec");
+    self._lightUni.amb = self.getUniform("light.amb");
+    self._lightUni.attenA = self.getUniform("light.attenA");
+    self._lightUni.attenB = self.getUniform("light.attenB");
+    self._lightUni.attenC = self.getUniform("light.attenC");
+    self._lightUni.cutOffAngleCos = self.getUniform("light.cutOffAngleCos");
+    self._lightUni.spotExp = self.getUniform("light.spotExp");
+  });
+  
+  
+  /*
   var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
   
   console.log("\nCreating PhongShaderMac");
@@ -73,6 +121,7 @@ TentaGL.PhongShaderMac = function(gl) {
   this._lightUni.attenC = this.getUniform("light.attenC");
   this._lightUni.cutOffAngleCos = this.getUniform("light.cutOffAngleCos");
   this._lightUni.spotExp = this.getUniform("light.spotExp");
+  */
 };
 
 TentaGL.PhongShaderMac.LIGHT_AMB = 1;

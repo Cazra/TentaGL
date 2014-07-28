@@ -31,6 +31,21 @@ TentaGL.PickShader = function(gl) {
   
   var vertURL = shaderRoot + "picker.vert";
   var fragURL = shaderRoot + "picker.frag";
+  
+  var self = this;
+  TentaGL.ShaderLoader.load(vertURL, fragURL, function(vertSrc, fragSrc) {
+    console.log("\nCreating PickShader...");
+    TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
+  
+    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+    
+    self._mvpUni = self.getUniform("mvpTrans");
+    self._texUni = self.getUniform("tex");
+    self._pickIDUni = self.getUniform("pickID");
+  });
+  
+  /*
   var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
   
   TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
@@ -41,6 +56,7 @@ TentaGL.PickShader = function(gl) {
   this._mvpUni = this.getUniform("mvpTrans");
   this._texUni = this.getUniform("tex");
   this._pickIDUni = this.getUniform("pickID");
+  */
 };
 
 TentaGL.PickShader.prototype = {

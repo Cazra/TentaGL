@@ -33,12 +33,23 @@ TentaGL.DefaultShader = function(gl) {
   
   var vertURL = shaderRoot + "default.vert";
   var fragURL = shaderRoot + "default.frag";
+  
+  var self = this;
+  TentaGL.ShaderLoader.load(vertURL, fragURL, function(vertSrc, fragSrc) {
+    console.log("\nCreating DefaultShader");
+    TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
+    
+    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+  });
+  
+  /*
   var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
   
   console.log("\nCreating DefaultShader");
   TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
   
   this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
+  */
 };
 
 TentaGL.DefaultShader.SHADER_ID = "_default";

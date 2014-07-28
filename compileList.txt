@@ -113,6 +113,7 @@ src/shaders/ShaderVar.js
   src/shaders/Uniform.js
 src/shaders/AttrProfile.js
 src/shaders/ShaderLib.js
+src/shaders/ShaderLoader.js
 src/shaders/ShaderProgram.js
   src/shaders/premade/DefaultShader.js
   src/shaders/premade/LinearGradientShader.js
