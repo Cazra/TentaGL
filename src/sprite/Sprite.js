@@ -98,6 +98,21 @@ TentaGL.Sprite.prototype = {
   },
   
   
+  /** 
+   * Shortcut for getAnchorXYZ and setAnchorXYZ. 
+   * If the argument is provided, this behaves as setAnchorXYZ. 
+   * Otherwise, this behaves as getAnchorXYZ.
+   */
+  anchor: function(xyz) {
+    if(xyz) {
+      this.setAnchorXYZ(xyz);
+    }
+    else {
+      return this.getAnchorXYZ();
+    }
+  },
+  
+  
   //////// Events
   
   /** 

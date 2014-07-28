@@ -37,6 +37,7 @@ TentaGL.ShaderLib = {
       gl._shaderLib[i].clean(gl);
     }
     gl._shaderLib = {};
+    gl._shaderStack = [];
   },
   
   
@@ -156,6 +157,25 @@ TentaGL.ShaderLib = {
    */
   unlock:function(gl) {
     gl._shaderLibLocked = false;
+  },
+  
+  
+  /** 
+   * Pushes the current shader program onto the top of the shader stack. 
+   * @param {WebGLRenderingContext} gl
+   */
+  push: function(gl) {
+    gl._shaderStack.push(gl._shaderLibCurrentName);
+  },
+  
+  /** 
+   * Pops the top shader program from the shader stack and uses it as the
+   * current shader program.
+   * @param {WebGLRenderingContext} gl
+   */
+  pop: function(gl) {
+    var name = gl._shaderStack.pop();
+    this.use(gl, name);
   }
 };
 

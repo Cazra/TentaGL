@@ -232,92 +232,61 @@ TentaGL.SceneNode.prototype = {
   },
   
   
-  //////// Euclid angles
-  
-  
   /** 
-   * Sets the orientation to be equivalent to the following matrix product: 
-   * rotateX*rotateY*rotateZ
-   * @param {length-3 array} xyz
+   * Shortcut for setXYZ and getXYZ. 
+   * If the argument is provided, this behaves as setXYZ. 
+   * Otherwise, it behaves as getXYZ.
    */
-  setEuclidXYZ:function(xyz) {
-    var q = quat.create();
-    quat.rotateX(q, q, xyz[0]);
-    quat.rotateY(q, q, xyz[1]);
-    quat.rotateZ(q, q, xyz[2]);
-    
-    this.setQuat(q);
+  xyz: function(xyz) {
+    if(xyz) {
+      this.setXYZ(xyz);
+    }
+    else {
+      return this.getXYZ();
+    }
   },
   
   /** 
-   * Sets the orientation to be equivalent to the following matrix product: 
-   * rotateX*rotateZ*rotateY
-   * @param {length-3 array} xyz
+   * Shorthand getter/setter for the node's x position.
    */
-  setEuclicXZY:function(xyz) {
-    var q = quat.create();
-    quat.rotateX(q, q, xyz[0]);
-    quat.rotateZ(q, q, xyz[2]);
-    quat.rotateY(q, q, xyz[1]);
-    
-    this.setQuat(q);
+  x: function(x) {
+    if(x) {
+      this._xyz[0] = x;
+      this._tranDirty = true;
+    }
+    else {
+      return this._xyz[0];
+    }
   },
   
   /** 
-   * Sets the orientation to be equivalent to the following matrix product: 
-   * rotateY*rotateX*rotateZ
-   * @param {length-3 array} xyz
+   * Shorthand getter/setter for the node's y position.
    */
-  setEuclicYXZ:function(xyz) {
-    var q = quat.create();
-    quat.rotateY(q, q, xyz[1]);
-    quat.rotateX(q, q, xyz[0]);
-    quat.rotateZ(q, q, xyz[2]);
-    
-    this.setQuat(q);
+  y: function(y) {
+    if(y) {
+      this._xyz[1] = y;
+      this._tranDirty = true;
+    }
+    else {
+      return this._xyz[1];
+    }
   },
   
   /** 
-   * Sets the orientation to be equivalent to the following matrix product: 
-   * rotateY*rotateZ*rotateX
-   * @param {length-3 array} xyz
+   * Shorthand getter/setter for the node's z position.
    */
-  setEuclidYZX:function(xyz) {
-    var q = quat.create();
-    quat.rotateY(q, q, xyz[1]);
-    quat.rotateZ(q, q, xyz[2]);
-    quat.rotateX(q, q, xyz[0]);
-    
-    this.setQuat(q);
+  z: function(z) {
+    if(z) {
+      this._xyz[2] = z;
+      this._tranDirty = true;
+    }
+    else {
+      return this._xyz[2];
+    }
   },
   
-  /** 
-   * Sets the orientation to be equivalent to the following matrix product: 
-   * rotateZ*rotateX*rotateY
-   * @param {length-3 array} xyz
-   */
-  setEuclidZXY:function(xyz) {
-    var q = quat.create();
-    quat.rotateZ(q, q, xyz[2]);
-    quat.rotateX(q, q, xyz[0]);
-    quat.rotateY(q, q, xyz[1]);
-    
-    this.setQuat(q);
-  },
   
-  /** 
-   * Sets the orientation to be equivalent to the following matrix product: 
-   * rotateZ*rotateY*rotateX
-   * @param {length-3 array} xyz
-   */
-  setEuclidZYX:function(xyz) {
-    var q = quat.create();
-    quat.rotateZ(q, q, xyz[2]);
-    quat.rotateY(q, q, xyz[1]);
-    quat.rotateX(q, q, xyz[0]);
-    
-    this.setQuat(q);
-  },
+  
   
   
   //////// Quaterion/Orientation
@@ -602,17 +571,6 @@ TentaGL.SceneNode.prototype = {
    * @param {vec3} up
    */
   orient:function(look, up) {
-    /*
-    var q = TentaGL.Math.getQuatFromTo(this.getBaseLook(), look);
-    this.setQuat(q);
-    
-    if(up) {
-      var curUp = this.getUp();
-      var q2 = TentaGL.Math.getQuatFromTo(curUp, up);
-      this.mulQuat(q2);
-    }
-    */
-    
     this.setQuat(TentaGL.Math.getOrientation(this.getBaseLook(), this.getBaseUp(), look, up));
   },
   
@@ -881,6 +839,67 @@ TentaGL.SceneNode.prototype = {
     }
     return scale;
   },
+  
+  
+  /** 
+   * Shortcut for getScaleXYZ and setScaleXYZ.
+   * If xyz is provided, this behaves as setScaleXYZ. 
+   * Otherwise, this behaves as getScaleXYZ.
+   */
+  scale: function(xyz) {
+    if(xyz) {
+      this.setScaleXYZ(xyz);
+    }
+    else {
+      return this.getScaleXYZ();
+    }
+  },
+  
+  
+  /** Shorthand getter/setter for the scale's X component. */
+  scaleX: function(x) {
+    if(x) {
+      this._scaleXYZ[0] = x;
+      this._tranDirty = true;
+    }
+    else {
+      return this._scaleXYZ[0];
+    }
+  },
+  
+  /** Shorthand getter/setter for the scale's Y component. */
+  scaleY: function(y) {
+    if(y) {
+      this._scaleXYZ[1] = y;
+      this._tranDirty = true;
+    }
+    else {
+      return this._scaleXYZ[1];
+    }
+  },
+  
+  /** Shorthand getter/setter for the scale's Z component. */
+  scaleZ: function(z) {
+    if(z) {
+      this._scaleXYZ[2] = z;
+      this._tranDirty = true;
+    }
+    else {
+      return this._scaleXYZ[2];
+    }
+  },
+  
+  /** Shorthand getter/setter for the scale's uniform component. */
+  scaleU: function(u) {
+    if(u) {
+      this._scaleUni = u;
+      this._tranDirty = true;
+    }
+    else {
+      return this._scaleUni;
+    }
+  },
+  
   
   //////// Model transform
   

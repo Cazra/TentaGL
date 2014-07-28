@@ -93,6 +93,29 @@ TentaGL.Viewport = {
     gl._viewWidth = xywh[2];
     gl._viewHeight = xywh[3];
     gl.viewport(xywh[0], xywh[1], xywh[2], xywh[3]);
+  },
+  
+  
+  /** 
+   * Saves the current viewport settings to the top of the viewport stack. 
+   * @param {WebGLRenderingContext} gl
+   */
+  push: function(gl) {
+    if(!gl._viewportStack) {
+      gl._viewportStack = [];
+    }
+    
+    gl._viewportStack.push(this.get(gl));
+  },
+  
+  
+  /** 
+   * Restores the previously pushed viewport settings from the top of the 
+   * viewport stack. 
+   * @param {WebGLRenderingContext} gl
+   */
+  pop: function(gl) {
+    this.set(gl, gl._viewportStack.pop());
   }
 };
  

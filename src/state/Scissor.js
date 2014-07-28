@@ -128,6 +128,27 @@ TentaGL.Scissor = {
    */
   isEnabled:function(gl) {
     return gl._scissorEnabled;
+  },
+  
+  
+  /** 
+   * Saves the current scissor area state to the stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  push: function(gl) {
+    if(!gl._scissorStack) {
+      gl._scissorStack = [];
+    }
+    
+    gl._scissorStack.push(this.get(gl));
+  },
+  
+  /** 
+   * Restores the previously saved scissor area state from the stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  pop: function(gl) {
+    this.set(gl, gl._scissorStack.pop());
   }
 };
  
