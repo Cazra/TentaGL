@@ -31,6 +31,8 @@
 TentaGL.ButtonSprite = function(xyz) {
   TentaGL.Sprite.call(this, xyz);
   this.resetMouseState();
+  
+  this.setEnabled(true);
 };
 
 TentaGL.ButtonSprite.prototype = {
@@ -58,7 +60,7 @@ TentaGL.ButtonSprite.prototype = {
    * @param {TentaGL.Mouse} mouse
    */
   updateMouseState: function(picker, mouse) {
-    if(picker.getSpriteAtMouse(mouse) == this) {
+    if(picker.getSpriteAtMouse(mouse) == this && this._enabled) {
       if(this._mouseOverStart == -1) {
         this._mouseOverStart = Date.now();
         this.onMouseOver(mouse);
@@ -125,6 +127,25 @@ TentaGL.ButtonSprite.prototype = {
    */
   isMouseOvered: function() {
     return (this._mouseOverStart >= 0);
+  },
+  
+  
+  /** 
+   * Returns whether this button is enabled.
+   * Disabled buttons cannot be interacted with through events.
+   * @return {boolean}
+   */
+  isEnabled: function() {
+    return this._enabled;
+  },
+  
+  /** 
+   * Sets whether this button is enabled.
+   * Disabled buttons cannot be interacted with through events.
+   * @param {boolean} enabled
+   */
+  setEnabled: function(enabled) {
+    this._enabled = enabled;
   },
   
   

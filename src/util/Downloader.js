@@ -22,22 +22,25 @@ Util.Downloader = {
    * Displays an open dialog for asynchronously reading the contents of a file 
    * as a string.
    * @param {function(content: string) : void}
+   * @param {string} mimeFilter   Optional. A set of comma-separated strings, 
+   *      each of which is a valid MIME type with no parameters.
    */
-  openDialog: function(successCB) {
+  openDialog: function(successCB, mimeFilter) {
     var fOpen = document.createElement("INPUT");
     fOpen.setAttribute("type", "file");
+    
+    if(mimeFilter) {
+      fOpen.setAttribute("accept", mimeFilter);
+    }
     
     fOpen.style.display = "none";
     var body = document.getElementsByTagName("body")[0];
     body.appendChild(fOpen);
     
     fOpen.onchange = function(changeEvent) {
-      console.log("derp");
       var fr = new FileReader();
       
       fr.onload = function(loadEvent) {
-        
-        console.log("derp");
         successCB(loadEvent.target.result);
         
         body.removeChild(fOpen);
