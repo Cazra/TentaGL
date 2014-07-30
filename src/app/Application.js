@@ -42,6 +42,7 @@ TentaGL.Application = function(container, attrs) {
   this._keyboard = new TentaGL.Keyboard(container);
   this._mouse = new TentaGL.Mouse(canvas);
   this._picker = new TentaGL.Picker(this);
+  this._levelManager = new TentaGL.LevelManager();
   
   container.onresize = function() {
     console.log(container.offsetWidth, container.offsetHeight);
@@ -210,6 +211,36 @@ TentaGL.Application.prototype = {
       }
     }
   },
+  
+  
+  //////// Level manager
+  
+  /** 
+   * Schedules a new level to begin running next frame. 
+   * @param {TentaGL.Level} level
+   */
+  setLevel: function(level) {
+    this._levelManager.set(level);
+  },
+  
+  
+  /** 
+   * Returns the level currently running in this application.
+   * @return {TentaGL.Level} level
+   */
+  getLevel: function() {
+    return this._levelManager.get();
+  },
+  
+  
+  /** 
+   * Returns the application's LevelManager. 
+   * @return {TentaGL.LevelManager}
+   */
+  getLevelManager: function() {
+    return this._levelManager;
+  },
+  
   
   //////// DOM and context
   

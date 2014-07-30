@@ -22,6 +22,7 @@ src/math/Math.js
   
 src/app/Application.js
 src/app/Level.js
+src/app/LevelManager.js
 
 src/audio/AudioLoader.js
 
@@ -125,6 +126,8 @@ src/shaders/ShaderProgram.js
   src/shaders/premade/PickShader.js
   src/shaders/premade/RadialGradientShader.js
   src/shaders/premade/SimpleShader.js
+  
+src/time/Timer.js
 
 src/util/Align.js
 src/util/Canvas2D.js

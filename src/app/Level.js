@@ -70,6 +70,14 @@ TentaGL.Level.prototype = {
   },
   
   
+  /** 
+   * Returns the app's Picker object for mouse-over data.
+   * @return {TentaGL.Picker}
+   */
+  picker:function() {
+    return this._app.getPicker();
+  },
+  
   //////// Abstract level methods
   
   /** 
