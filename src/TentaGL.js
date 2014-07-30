@@ -40,7 +40,7 @@ var TentaGL = {
   versionMajor:0, 
   
   /** The minor version number of this framework. */
-  versionMinor:17,
+  versionMinor:18,
   
   
   //////// Canvas/Context creation
