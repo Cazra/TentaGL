@@ -52,6 +52,8 @@ TentaGL.SceneNode = function(xyz) {
   this._tranDirty = true;
   this._isVisible = true;
   
+  this._opacity = 1.0;
+  
   this._parent = undefined;
 };
 
@@ -174,6 +176,35 @@ TentaGL.SceneNode.prototype = {
   setVisible:function(visible) {
     this._isVisible = visible;
   },
+  
+  
+  //////// Opacity
+  
+  /** 
+   * Setter/getter for the sprite's opacity. This should always be some value 
+   * in the range [0, 1].
+   * @param {float} o   Optional. The new opacity level.
+   * @return {float}
+   */
+  opacity: function(o) {
+    if(o) {
+      this._opacity = Math.max(0, Math.min(o, 1));
+    }
+    return this._opacity;
+  },
+  
+  
+  /** 
+   * Sets the uniform variable in the current shader for the sprite's opacity.
+   * @param {WebGLRenderingContext} gl
+   */
+  useOpacity: function(gl) {
+    var program = TentaGL.ShaderLib.current(gl);
+    if(program.setOpacity) {
+      program.setOpacity(gl, this._opacity);
+    }
+  },
+  
   
   
   //////// Position
@@ -985,8 +1016,9 @@ TentaGL.SceneNode.prototype = {
       return;
     }
     TentaGL.ViewTrans.push(gl);
-
+    
     TentaGL.ViewTrans.mul(gl, this.getModelTransform());
+    this.useOpacity(gl);
     this.draw(gl);
     
     TentaGL.ViewTrans.pop(gl);

@@ -45,6 +45,36 @@ TentaGL.Timer.STOPPED = 1;
 TentaGL.Timer.RUNNING = 2;
 TentaGL.Timer.PAUSED = 3;
 
+TentaGL.Timer.millisToHHmmssS = function(millis) {
+  var tenths = Math.floor(millis/100);
+  var seconds = Math.floor(millis/1000);
+  var minutes = Math.floor(seconds/60);
+  var hours = Math.floor(minutes/60);
+  
+  var tenthsStr = "" + (tenths % 10);
+  
+  var secondsStr = "" + (seconds % 60);
+  if(secondsStr.length < 2) {
+    secondsStr = "0" + secondsStr;
+  }
+  
+  var minutesStr = "" + (minutes % 60);
+  if(minutesStr.length < 2) {
+    minutesStr = "0" + minutesStr;
+  }
+  
+  
+  var result = "";
+  if(hours >= 1) {
+    result += hours + ":";
+  }
+  if(minutes >= 1) {
+    result += minutesStr + ":";
+  }
+  result += secondsStr + "." + tenthsStr;
+  
+  return result;
+};
 
 TentaGL.Timer.prototype = {
   
@@ -153,6 +183,15 @@ TentaGL.Timer.prototype = {
   },
   
   
+  /** 
+   * Returns the current time elapsed in the format "HH:mm:ss.S".
+   * @return {string}
+   */
+  timeElapsedHHmmssS: function() {
+    return TentaGL.Timer.millisToHHmmssS(this.timeElapsed());
+  },
+  
+  
   ////// Countdown
   
   
@@ -173,6 +212,11 @@ TentaGL.Timer.prototype = {
     var result = this._countdown - this.timeElapsed();
     result = Math.max(0, result);
     return result;
+  },
+  
+  
+  timeLeftHHmmssS: function() {
+    return TentaGL.Timer.millisToHHmmssS(this.timeLeft());
   }
   
 };

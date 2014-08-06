@@ -1,6 +1,8 @@
 precision mediump float;
 precision highp int;
 
+uniform float opacity;
+
 // Color, texture
 uniform vec4 solidColor;
 uniform sampler2D tex;
@@ -20,7 +22,7 @@ void main(void) {
   else {
     texColor = solidColor;
   }
-  float texAlpha = texColor.a;
+  float texAlpha = texColor.a * opacity;
   if(texAlpha == 0.0) {
     discard;
   }

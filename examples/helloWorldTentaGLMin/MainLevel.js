@@ -13,7 +13,7 @@ HelloWorldApp.MainLevel.prototype = {
   createTestSprite:function(xyz) {
     var sprite = TentaGL.Sprite.create(xyz, "cylinder", "testCircle", "phongPerVertex");
     sprite.setScaleUni(0.25);
-    
+    sprite.opacity(0.5);
     return sprite;
   },
   
@@ -213,7 +213,7 @@ HelloWorldApp.MainLevel.prototype = {
     // Draw the objects in the scene.
     this.getApp().blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [10,10,0], false, 1);
     
-    this.spriteGroup.render(gl, this.camera);
+    
     this.axesGroup.render(gl);
     this.camGroup.render(gl);
     
@@ -248,9 +248,14 @@ HelloWorldApp.MainLevel.prototype = {
     
     this.coneSprite.render(gl);
     
+    
     TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.MaterialLib.use(gl, "white");
     this.lights.render(gl);
+    
+    TentaGL.ShaderLib.use(gl, "phongPerVertex");
+    TentaGL.RenderMode.set3DTrans(gl);
+    this.spriteGroup.render(gl, this.camera);
   }
 };
 

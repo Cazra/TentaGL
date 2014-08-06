@@ -167,6 +167,7 @@ TentaGL.IconSprite.prototype = {
     this.billboardWorldPlane(vec3.negate(vec3.create(), camera.getLook()), camera.getUp())
     
     TentaGL.ViewTrans.mul(gl, this.getModelTransform());
+    this.useOpacity(gl);
     this.draw(gl);
     
     TentaGL.ViewTrans.pop(gl);

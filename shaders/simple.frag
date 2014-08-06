@@ -1,5 +1,7 @@
 precision mediump float;
 
+uniform float opacity;
+
 uniform vec4 solidColor;
 uniform sampler2D tex;
 uniform bool useTex;
@@ -16,8 +18,10 @@ void main(void) {
     color = solidColor;
   }
   
-  if(color.a == 0.0) {
+  float alpha = color.a * opacity;
+  
+  if(alpha == 0.0) {
     discard;
   }
-  gl_FragColor = color;
+  gl_FragColor = vec4(color.rgb, alpha);
 }

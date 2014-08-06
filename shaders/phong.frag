@@ -7,6 +7,8 @@ const int LIGHT_PT = 2;
 const int LIGHT_DIR = 3;
 const int LIGHT_SPOT = 4;
 
+uniform float opacity;
+
 // View transform (for lights)
 uniform mat4 vTrans;
 
@@ -94,7 +96,7 @@ void main(void) {
   else {
     texColor = solidColor;
   }
-  float texAlpha = texColor.a;
+  float texAlpha = texColor.a * opacity;
   if(texAlpha == 0.0) {
     discard;
   }

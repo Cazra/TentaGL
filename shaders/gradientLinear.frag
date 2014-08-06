@@ -12,8 +12,6 @@ uniform vec4 colors[16];
 uniform int breakPtCount;
 uniform float breakPts[16]; 
 
-
-
 varying vec2 texCoords;
 varying vec3 vNormal;
 

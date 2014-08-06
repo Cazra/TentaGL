@@ -43,6 +43,8 @@ TentaGL.PhongShader = function(gl) {
     self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
     self.setAttrGetter("vertexTang", TentaGL.Vertex.prototype.getTangental);
     
+    self._opacityUni = self.getUniform("opacity");
+    
     self._mvpUni = self.getUniform("mvpTrans");
     self._mvUni = self.getUniform("mvTrans");
     self._vUni = self.getUniform("vTrans");
@@ -84,58 +86,6 @@ TentaGL.PhongShader = function(gl) {
     self._numLightsUni = self.getUniform("numLights");
     
   });
-  
-  /*
-  var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
-  
-  console.log("\nCreating PhongShader");
-  TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
-  
-  this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-  this.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-  this.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
-  this.setAttrGetter("vertexTang", TentaGL.Vertex.prototype.getTangental);
-  
-  this._mvpUni = this.getUniform("mvpTrans");
-  this._mvUni = this.getUniform("mvTrans");
-  this._vUni = this.getUniform("vTrans");
-  this._normalUni = this.getUniform("normalTrans");
-  
-  this._colorUni = this.getUniform("solidColor");
-  this._texUni = this.getUniform("tex");
-  this._useTexUni = this.getUniform("useTex");
-  this._bumpTexUni = this.getUniform("bumpTex");
-  this._useBumpUni = this.getUniform("useBumpTex");
-  
-  // Material struct
-  this._materialUni = {};
-  this._materialUni.diff = this.getUniform("m.diff");
-  this._materialUni.spec = this.getUniform("m.spec");
-  this._materialUni.amb = this.getUniform("m.amb");
-  this._materialUni.emis = this.getUniform("m.emis");
-  this._materialUni.shininess = this.getUniform("m.shininess");
-  
-  // Lights struct array
-  this._lightsUni = []; 
-  for(var i=0; i < TentaGL.PhongShader.MAX_LIGHTS; i++) {
-    var light = this._lightsUni[i] = {};
-    var prefix = "lights[" + i + "]";
-    
-    light.type = this.getUniform(prefix + ".type");
-    light.pos = this.getUniform(prefix + ".pos");
-    light.dir = this.getUniform(prefix + ".dir");
-    light.diff = this.getUniform(prefix + ".diff");
-    light.spec = this.getUniform(prefix + ".spec");
-    light.amb = this.getUniform(prefix + ".amb");
-    light.attenA = this.getUniform(prefix + ".attenA");
-    light.attenB = this.getUniform(prefix + ".attenB");
-    light.attenC = this.getUniform(prefix + ".attenC");
-    light.cutOffAngleCos = this.getUniform(prefix + ".cutOffAngleCos");
-    light.spotExp = this.getUniform(prefix + ".spotExp");
-  }
-  
-  this._numLightsUni = this.getUniform("numLights");
-  */
 };
 
 TentaGL.PhongShader.MAX_LIGHTS = 16;
@@ -149,6 +99,16 @@ TentaGL.PhongShader.prototype = {
   constructor: TentaGL.PhongShader,
   
   isaPhongShader: true,
+  
+  /** 
+   * Sets the value of the opacity variable. This controls the uniform alpha
+   * level for rendered objects.
+   * @param {WebGLRenderingContext} gl
+   * @param {float} o
+   */
+  setOpacity: function(gl, o) {
+    this._opacityUni.set(gl, [o]);
+  },
   
   
   /** 

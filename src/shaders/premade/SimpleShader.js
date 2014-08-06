@@ -43,6 +43,8 @@ TentaGL.SimpleShader = function(gl) {
     self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
     self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
     
+    self._opacityUni = self.getUniform("opacity");
+    
     self._mvpUni = self.getUniform("mvpTrans");
     self._normalUni = self.getUniform("normalTrans");
     
@@ -50,24 +52,6 @@ TentaGL.SimpleShader = function(gl) {
     self._texUni = self.getUniform("tex");
     self._useTexUni = self.getUniform("useTex");
   });
-  
-  /*
-  var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
-  
-  console.log("\nCreating SimpleShader");
-  TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
-  
-  this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-  this.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-  this.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
-  
-  this._mvpUni = this.getUniform("mvpTrans");
-  this._normalUni = this.getUniform("normalTrans");
-  
-  this._colorUni = this.getUniform("solidColor");
-  this._texUni = this.getUniform("tex");
-  this._useTexUni = this.getUniform("useTex");
-  */
 };
 
 TentaGL.SimpleShader.prototype = {
@@ -76,6 +60,15 @@ TentaGL.SimpleShader.prototype = {
   
   isaSimpleShader: true,
   
+  /** 
+   * Sets the value of the opacity variable. This controls the uniform alpha
+   * level for rendered objects.
+   * @param {WebGLRenderingContext} gl
+   * @param {float} o
+   */
+  setOpacity: function(gl, o) {
+    this._opacityUni.set(gl, [o]);
+  },
   
   /** 
    * Sets the value of the uniform variable for the model-view-projection 

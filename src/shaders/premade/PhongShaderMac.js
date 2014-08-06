@@ -43,6 +43,8 @@ TentaGL.PhongShaderMac = function(gl) {
     self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
     self.setAttrGetter("vertexTang", TentaGL.Vertex.prototype.getTangental);
     
+    self._opacityUni = self.getUniform("opacity");
+    
     self._mvpUni = self.getUniform("mvpTrans");
     self._mvUni = self.getUniform("mvTrans");
     self._vUni = self.getUniform("vTrans");
@@ -76,52 +78,6 @@ TentaGL.PhongShaderMac = function(gl) {
     self._lightUni.cutOffAngleCos = self.getUniform("light.cutOffAngleCos");
     self._lightUni.spotExp = self.getUniform("light.spotExp");
   });
-  
-  
-  /*
-  var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
-  
-  console.log("\nCreating PhongShaderMac");
-  TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
-  
-  this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-  this.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-  this.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
-  this.setAttrGetter("vertexTang", TentaGL.Vertex.prototype.getTangental);
-  
-  this._mvpUni = this.getUniform("mvpTrans");
-  this._mvUni = this.getUniform("mvTrans");
-  this._vUni = this.getUniform("vTrans");
-  this._normalUni = this.getUniform("normalTrans");
-  
-  this._colorUni = this.getUniform("solidColor");
-  this._texUni = this.getUniform("tex");
-  this._useTexUni = this.getUniform("useTex");
-  this._bumpTexUni = this.getUniform("bumpTex");
-  this._useBumpUni = this.getUniform("useBumpTex");
-  
-  // Material struct
-  this._materialUni = {};
-  this._materialUni.diff = this.getUniform("m.diff");
-  this._materialUni.spec = this.getUniform("m.spec");
-  this._materialUni.amb = this.getUniform("m.amb");
-  this._materialUni.emis = this.getUniform("m.emis");
-  this._materialUni.shininess = this.getUniform("m.shininess");
-  
-  // Light struct
-  this._lightUni = {}; 
-  this._lightUni.type = this.getUniform("light.type");
-  this._lightUni.pos = this.getUniform("light.pos");
-  this._lightUni.dir = this.getUniform("light.dir");
-  this._lightUni.diff = this.getUniform("light.diff");
-  this._lightUni.spec = this.getUniform("light.spec");
-  this._lightUni.amb = this.getUniform("light.amb");
-  this._lightUni.attenA = this.getUniform("light.attenA");
-  this._lightUni.attenB = this.getUniform("light.attenB");
-  this._lightUni.attenC = this.getUniform("light.attenC");
-  this._lightUni.cutOffAngleCos = this.getUniform("light.cutOffAngleCos");
-  this._lightUni.spotExp = this.getUniform("light.spotExp");
-  */
 };
 
 TentaGL.PhongShaderMac.LIGHT_AMB = 1;
@@ -135,6 +91,16 @@ TentaGL.PhongShaderMac.prototype = {
   
   isaPhongShaderMac: true,
   
+  
+  /** 
+   * Sets the value of the opacity variable. This controls the uniform alpha
+   * level for rendered objects.
+   * @param {WebGLRenderingContext} gl
+   * @param {float} o
+   */
+  setOpacity: function(gl, o) {
+    this._opacityUni.set(gl, [o]);
+  },
   
   /** 
    * Sets the value of the uniform variable for the model-view-projection 
