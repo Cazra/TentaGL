@@ -187,7 +187,7 @@ TentaGL.SceneNode.prototype = {
    * @return {float}
    */
   opacity: function(o) {
-    if(o) {
+    if(o !== undefined) {
       this._opacity = Math.max(0, Math.min(o, 1));
     }
     return this._opacity;
