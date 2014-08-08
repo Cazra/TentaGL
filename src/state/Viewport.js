@@ -96,6 +96,21 @@ TentaGL.Viewport = {
   },
   
   
+  
+  /** 
+   * Setter/getter for the viewport area. 
+   * @param {WebGLRenderingContext} gl
+   * @param {array: int*4} xywh
+   * @return {array: int*4}
+   */
+  xywh: function(gl, xywh) {
+    if(xywh !== undefined) {
+      this.set(gl, xywh);
+    }
+    return [gl._viewX, gl._viewY, gl._viewWidth, gl._viewHeight];
+  },
+  
+  
   /** 
    * Saves the current viewport settings to the top of the viewport stack. 
    * @param {WebGLRenderingContext} gl

@@ -33,8 +33,6 @@ TentaGL.ColorBuffer = {
    * @param {WebGLRenderingContext} gl
    */
   reset: function(gl) {
-    gl._cbLock = false;
-    
     gl._cbRed = 0;
     gl._cbGreen = 0;
     gl._cbBlue = 0;
@@ -44,21 +42,8 @@ TentaGL.ColorBuffer = {
     gl._cbWriteGreen = true;
     gl._cbWriteBlue = true;
     gl._cbWriteAlpha = true;
-  },
-  
-  
-  /** 
-   * Locks the clear color so that it cannot be changed through this API 
-   * until unlock is called. 
-   */
-  lock:function(gl) {
-    gl._cbLock = true;
-  },
-  
-  
-  /** Unlocks the clear color. */
-  unlock:function(gl) {
-    gl._cbLock = false;
+    
+    gl._stateStack = [];
   },
   
   
@@ -69,7 +54,7 @@ TentaGL.ColorBuffer = {
    * @param {TentaGL.Color} color
    */
   setClearColor:function(gl, color) {
-    if(!gl._cbLock) {
+    if(!TentaGL.Picker.isPicking(gl)) {
       gl._cbRed = color.getRed();
       gl._cbGreen = color.getGreen();
       gl._cbBlue = color.getBlue();
@@ -110,11 +95,47 @@ TentaGL.ColorBuffer = {
       this.setClearColor(gl, color);
     }
     gl.clear(GL_COLOR_BUFFER_BIT);
+  },
+  
+  
+  
+  /** 
+   * Saves the color buffer state to our stack. 
+   * @param {WebGLRenderingContext} gl
+   */
+  push: function(gl) {
+    var state = {
+      red:    gl._cbRed,
+      green:  gl._cbGreen,
+      blue:   gl._cbBlue,
+      alpha:  gl._cbAlpha,
+      writeRed:   gl._cbWriteRed,
+      writeGreen: gl._cbWriteGreen,
+      writeBlue:  gl._cbWriteBlue,
+      writeAlpha: gl._cbWriteAlpha
+    };
+    
+    gl._stateStack.push(state);
+  },
+  
+  
+  /** 
+   * Restores the color buffer state from our stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  pop: function(gl) {
+    var state = gl._stateStack.pop();
+    
+    gl._cbRed = state.red;
+    gl._cbGreen = state.green;
+    gl._cbBlue = state.blue;
+    gl._cbAlpha = state.alpha;
+    
+    gl._cbWriteRed = state.writeRed;
+    gl._cbWriteGreen = state.writeGreen;
+    gl._cbWriteBlue = state.writeBlue;
+    gl._cbWriteAlpha = state.writeAlpha;
   }
-  
-  
-  
-  
   
 };
 

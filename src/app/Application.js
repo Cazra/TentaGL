@@ -328,7 +328,7 @@ TentaGL.Application.prototype = {
     
     canvas.width = w;
     canvas.height = h;
-    TentaGL.Viewport.set(this.getGL(), [0,0,w,h]);
+    TentaGL.Viewport.xywh(this.getGL(), [0,0,w,h]);
     
     container.style.width = w;
     container.style.height = h;

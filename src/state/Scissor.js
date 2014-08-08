@@ -41,94 +41,45 @@ TentaGL.Scissor = {
   },
   
   
+  /** 
+   * Setter/getter for whether the scissor test is enabled. 
+   * @param {WebGLRenderingContext} gl
+   * @param {boolean} enabled   Optional.
+   * @return {boolean}
+   */
+  enabled: function(gl, enabled) {
+    if(enabled !== undefined && gl._scissorEnabled != enabled) {
+      gl._scissorEnabled = enabled;
+      
+      if(enabled) {
+        gl.enable(GL_SCISSOR_TEST);
+      }
+      else {
+        gl.disable(GL_SCISSOR_TEST);
+      }
+    }
+    return gl._scissorEnabled;
+  },
+  
   
   /** 
-   * Specifies the scissor rectangle for the gl context. 
-   * @param {WebGLRenderingContext}
-   * @param {array: uint || undefined} xywh  4 integers defining the x scissor box.
-   *      If undefined, scissoring will be disabled. 
-   *      Otherwise, scissoring will be enabled and the scissor box will be set.
+   * Setter/getter for the scissor area.
+   * @param {WebGLRenderingContext} gl
+   * @param {array: int*4} xywh   Optional.
+   * @return {array: int*4}
    */
-  set:function(gl, xywh) {
-    if(xywh) {
+  xywh: function(gl, xywh) {
+    if(xywh !== undefined) {
       gl._scissorX = xywh[0];
       gl._scissorY = xywh[1];
       gl._scissorWidth = xywh[2];
       gl._scissorHeight = xywh[3];
-      gl._scissorEnabled = true;
       
-      gl.enable(GL_SCISSOR_TEST);
       gl.scissor(xywh[0], xywh[1], xywh[2], xywh[3]);
     }
-    else {
-      gl._scissorEnabled = false;
-      
-      gl.disable(GL_SCISSOR_TEST);
-    }
+    return [gl._scissorX, gl._scissorY, gl._scissorWidth, gl._scissorHeight]
   },
   
-  
-  /** 
-   * Returns the metrics defining the scissor test box for the gl context.
-   * The metrics are an array with 4 values:
-   *  The x coordinate of the left edge of the scissor box in canvas space.
-   *  The y coordinate of the bottom edge of the scissor box in canvas space. (0 is at the bottom of the canvas, y increases upwards)
-   *  The width of the scissor box.
-   *  The height of the scissor box.
-   * @return {array: uint}   
-   */
-  get:function(gl) {
-    return [gl._scissorX, gl._scissorY, gl._scissorWidth, gl._scissorHeight];
-  },
-  
-  
-  /** 
-   * Returns the x coordinate of the left edge of the scissor test box. 
-   * @param {WebGLRenderingContext} gl
-   * @return {uint}
-   */
-  getX:function(gl) {
-    return gl._scissorX;
-  },
-  
-  /** 
-   * Returns the y coordinate of the bottom edge of the scissor test box. 
-   * @param {WebGLRenderingContext} gl
-   * @return {uint}
-   */
-  getY:function(gl) {
-    return gl._scissorY;
-  },
-  
-  
-  /** 
-   * Returns the width of the scissor test box. 
-   * @param {WebGLRenderingContext} gl
-   * @return {uint}
-   */
-  getWidth:function(gl) {
-    return gl._scissorWidth;
-  },
-  
-  
-  /** 
-   * Returns the height of the scissor test box. 
-   * @param {WebGLRenderingContext} gl
-   * @return {uint}
-   */
-  getHeight:function(gl) {
-    return gl._scissorHeight;
-  },
-  
-  
-  /** 
-   * Returns whether the scissor test is enabled for the gl context. 
-   * @param {WebGLRenderingContext} gl
-   * @return {boolean}
-   */
-  isEnabled:function(gl) {
-    return gl._scissorEnabled;
-  },
   
   
   /** 
@@ -140,7 +91,7 @@ TentaGL.Scissor = {
       gl._scissorStack = [];
     }
     
-    gl._scissorStack.push(this.get(gl));
+    gl._scissorStack.push(this.xywh(gl));
   },
   
   /** 
@@ -148,7 +99,7 @@ TentaGL.Scissor = {
    * @param {WebGLRenderingContext} gl
    */
   pop: function(gl) {
-    this.set(gl, gl._scissorStack.pop());
+    this.xywh(gl, gl._scissorStack.pop());
   }
 };
  

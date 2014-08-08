@@ -202,6 +202,9 @@ HelloWorldApp.MainLevel.prototype = {
   
   
   render: function(gl) {
+  //  TentaGL.Scissor.enabled(gl, true);
+  //  TentaGL.Scissor.xywh(gl, [100, 100, 640, 480]);
+    
     TentaGL.ShaderLib.use(gl, "phong");
     this.lights.useMe(gl);
     

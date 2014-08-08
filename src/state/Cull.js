@@ -56,6 +56,22 @@ TentaGL.Cull = {
   },
   
   
+  
+  /** 
+   * Setter/getter for the face-culling mode. 
+   * @param {WebGLRenderingContext} gl
+   * @param {glEnum} mode   Optional.
+   * @return {glEnum}
+   */
+  mode: function(gl, mode) {
+    if(mode !== undefined) {
+      this.setMode(gl, mode);
+    }
+    return gl._cullMode; 
+  },
+  
+  
+  
   /** 
    * Resets the metadata about the face-culling state for a gl context. 
    * @param {WebGLRenderingContext} gl

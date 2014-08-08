@@ -49,11 +49,8 @@ TentaGL.ShaderLib = {
    */
   reset:function(gl) {
     this.clean(gl);
-    //TentaGL.Picker.loadShaderProgram(gl);
     TentaGL.DefaultShader.load(gl, TentaGL.DefaultShader.SHADER_ID);
     TentaGL.PickShader.load(gl, TentaGL.Picker.SHADER_ID);
-    
-    gl._shaderLibLocked = false;
     
     this.use(gl, TentaGL.DefaultShader.SHADER_ID);
   },
@@ -114,7 +111,7 @@ TentaGL.ShaderLib = {
    * @return {TentaGL.ShaderProgram} The shader program now being used.
    */
   use:function(gl, name) {
-    if(gl._shaderLibLocked || gl._shaderLibCurrentName === name) {
+    if(TentaGL.Picker.isPicking(gl) || gl._shaderLibCurrentName === name) {
       return;
     }
     
@@ -140,23 +137,6 @@ TentaGL.ShaderLib = {
   /** Returns the ID of the ShaderProgram currently being used. */
   currentName: function(gl) {
     return gl._shaderLibCurrentName;
-  },
-  
-  
-  /** 
-   * Locks the ShaderLib so that it can't change which shader program is being 
-   * used by the GL context. 
-   */
-  lock:function(gl) {
-    gl._shaderLibLocked = true;
-  },
-  
-  /** 
-   * Unlocks the ShaderLib so that it can once again be able to change
-   * which shader program is being used by the GL context.
-   */
-  unlock:function(gl) {
-    gl._shaderLibLocked = false;
   },
   
   

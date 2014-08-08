@@ -38,6 +38,18 @@ TentaGL.Picker = function(app) {
 TentaGL.Picker.SHADER_ID = "pickShader";
 
 
+/** 
+ * Returns whether the gl context is currently being used for picking. 
+ * Some gl state cannot be altered while picking. Most importantly, 
+ * We cannot switch shaders while picking. 
+ * @return {boolean}
+ */
+TentaGL.Picker.isPicking = function(gl) {
+  return gl._isPicking;
+};
+
+
+
 TentaGL.Picker.prototype = {
   
   constructor:TentaGL.Picker,
@@ -58,19 +70,15 @@ TentaGL.Picker.prototype = {
     
     this._pixels = undefined;
     this._origFilter = TentaGL.SceneNode.getRenderFilter();
-    var origShader = TentaGL.ShaderLib.currentName(gl);
+    TentaGL.ShaderLib.push(gl);
     
     // Set up the GL state for picker rendering. 
     TentaGL.Blend.setEnabled(gl, false);
-    TentaGL.Blend.lock(gl);
-    
     TentaGL.ColorBuffer.setClearColor(gl, TentaGL.Color.RGBA(0, 0, 0, 0));
-    TentaGL.ColorBuffer.lock(gl);
-    
     TentaGL.MaterialLib.useNone(gl);
-    
     TentaGL.ShaderLib.use(gl, TentaGL.Picker.SHADER_ID);
-    TentaGL.ShaderLib.lock(gl);
+    
+    gl._isPicking = true;
     
     this._nextID = 1;
     this._sprites = [];
@@ -101,10 +109,9 @@ TentaGL.Picker.prototype = {
     
     
     // Restore the previous state.
-    TentaGL.ShaderLib.unlock(gl);
-    TentaGL.Blend.unlock(gl);
-    TentaGL.ColorBuffer.unlock(gl);
-    TentaGL.ShaderLib.use(gl, origShader);
+    gl._isPicking = false;
+    
+    TentaGL.ShaderLib.pop(gl);
     TentaGL.SceneNode.setRenderFilter(this._origFilter);
   },
   
