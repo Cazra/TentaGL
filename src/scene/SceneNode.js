@@ -269,7 +269,7 @@ TentaGL.SceneNode.prototype = {
    * Otherwise, it behaves as getXYZ.
    */
   xyz: function(xyz) {
-    if(xyz) {
+    if(xyz !== undefined) {
       this.setXYZ(xyz);
     }
     else {
@@ -281,7 +281,7 @@ TentaGL.SceneNode.prototype = {
    * Shorthand getter/setter for the node's x position.
    */
   x: function(x) {
-    if(x) {
+    if(x !== undefined) {
       this._xyz[0] = x;
       this._tranDirty = true;
     }
@@ -294,7 +294,7 @@ TentaGL.SceneNode.prototype = {
    * Shorthand getter/setter for the node's y position.
    */
   y: function(y) {
-    if(y) {
+    if(y !== undefined) {
       this._xyz[1] = y;
       this._tranDirty = true;
     }
@@ -307,7 +307,7 @@ TentaGL.SceneNode.prototype = {
    * Shorthand getter/setter for the node's z position.
    */
   z: function(z) {
-    if(z) {
+    if(z !== undefined) {
       this._xyz[2] = z;
       this._tranDirty = true;
     }
@@ -878,7 +878,7 @@ TentaGL.SceneNode.prototype = {
    * Otherwise, this behaves as getScaleXYZ.
    */
   scale: function(xyz) {
-    if(xyz) {
+    if(xyz !== undefined) {
       this.setScaleXYZ(xyz);
     }
     else {
@@ -889,7 +889,7 @@ TentaGL.SceneNode.prototype = {
   
   /** Shorthand getter/setter for the scale's X component. */
   scaleX: function(x) {
-    if(x) {
+    if(x !== undefined) {
       this._scaleXYZ[0] = x;
       this._tranDirty = true;
     }
@@ -900,7 +900,7 @@ TentaGL.SceneNode.prototype = {
   
   /** Shorthand getter/setter for the scale's Y component. */
   scaleY: function(y) {
-    if(y) {
+    if(y !== undefined) {
       this._scaleXYZ[1] = y;
       this._tranDirty = true;
     }
@@ -911,7 +911,7 @@ TentaGL.SceneNode.prototype = {
   
   /** Shorthand getter/setter for the scale's Z component. */
   scaleZ: function(z) {
-    if(z) {
+    if(z !== undefined) {
       this._scaleXYZ[2] = z;
       this._tranDirty = true;
     }
@@ -922,7 +922,7 @@ TentaGL.SceneNode.prototype = {
   
   /** Shorthand getter/setter for the scale's uniform component. */
   scaleU: function(u) {
-    if(u) {
+    if(u !== undefined) {
       this._scaleUni = u;
       this._tranDirty = true;
     }

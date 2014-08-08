@@ -103,7 +103,7 @@ TentaGL.Sprite.prototype = {
    * Otherwise, this behaves as getAnchorXYZ.
    */
   anchor: function(xyz) {
-    if(xyz) {
+    if(xyz !== undefined) {
       this.setAnchorXYZ(xyz);
     }
     else {
