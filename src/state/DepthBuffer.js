@@ -73,6 +73,20 @@ TentaGL.DepthBuffer = {
   },
   
   
+  /** 
+   * Setter/getter for whether the depth test is enabled.
+   * @param {WebGLRenderingContext} gl
+   * @param {boolean} enabled
+   * @return {boolean}
+   */
+  enabled: function(gl, enabled) {
+    if(enabled !== undefined) {
+      this.setEnabled(gl, enabled);
+    }
+    return gl._depthEnabled;
+  },
+  
+  
   
   /** 
    * Sets the depth comparison function. 
@@ -99,6 +113,21 @@ TentaGL.DepthBuffer = {
   
   
   /** 
+   * Setter/getter for the comparison function used for the depth test.
+   * @param {WebGLRenderingContext} gl
+   * @param {glEnum} f
+   * @return {glEnum}
+   */
+  func: function(gl, f) {
+    if(f !== undefined) {
+      this.setFunc(gl, f);
+    }
+    return gl._depthFunc;
+  },
+  
+  
+  
+  /** 
    * Sets whether the depth buffer is enabled for writing. 
    * @param {WebGLRenderingContext} gl
    * @param {boolean} enabled
@@ -118,6 +147,21 @@ TentaGL.DepthBuffer = {
    * @return {boolean}
    */
   isMaskEnabled:function(gl) {
+    return gl._depthWrite;
+  },
+  
+  
+  /** 
+   * Setter/getter for whether masking is enabled for the depth buffer, so that
+   * it can be written to.
+   * @param {webGLRenderingContext} gl
+   * @param {boolean} enabled
+   * @return {boolean}
+   */
+  mask: function(gl, enabled) {
+    if(enabled !== undefined) {
+      this.setMaskEnabled(gl, enabled);
+    }
     return gl._depthWrite;
   },
   
@@ -185,6 +229,20 @@ TentaGL.DepthBuffer = {
    * @return {float}
    */
   getClearValue:function() {
+    return gl._depthClearVal;
+  },
+  
+  
+  /** 
+   * Setter/getter for the clear value of the depth buffer.
+   * @param {WebGLRenderingContext} gl
+   * @param {float} value
+   * @return {float}
+   */
+  clearValue: function(gl, value) {
+    if(value !== undefined) {
+      this.setClearValue(gl, value);
+    }
     return gl._depthClearVal;
   },
   
