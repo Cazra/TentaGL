@@ -27,9 +27,9 @@ README
 
 TentaGL is a Javascript framework for creating games and interactive data
 visualizations with WebGL. TentaGL is developed and tested using the Chrome
-web browser on a 64-bit Windows 7 computer. I plan to extend support
-for the framework in Firefox by major version 1. I do not plan to extend
-support to Microsoft Internet Explorer. 
+web browser on a 64-bit Windows 7 computer. I also make an effort to maintain 
+support for TentaGL in Firefox and on Mac computers. 
+I do not plan to extend support to Microsoft Internet Explorer.
 
 
 Requirements:

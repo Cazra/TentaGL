@@ -73,11 +73,55 @@ TentaGL.Cull = {
   
   
   /** 
+   * Setter/getter for the how front-facing polygons are defined.
+   * @param {WebGLRenderingContext} gl
+   * @param {glEnum} dir    Optional. Either GL_CW or GL_CCW.
+   * @return {glEnum}
+   */
+  frontFace: function(gl, dir) {
+    if(dir !== undefined && dir != gl._frontFace) {
+      gl._frontFace = dir;
+      gl.frontFace(dir);
+    }
+    return gl._frontFace;
+  },
+  
+  
+  
+  /** 
    * Resets the metadata about the face-culling state for a gl context. 
    * @param {WebGLRenderingContext} gl
    */
   reset: function(gl) {
     gl._cullMode = GL_NONE;
+    gl._frontFace = GL_CCW;
+    
+    gl._cullStack = [];
+  },
+  
+  
+  /** 
+   * Saves the face-culling state to the stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  push: function(gl) {
+    var state = {
+      _cullMode:    gl._cullMode,
+      _frontFace:   gl._frontFace
+    };
+    
+    gl._cullStack.push(state);
+  },
+  
+  /** 
+   * Restores the face-culling state from the stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  pop: function(gl) {
+    var state = gl._cullStack.pop();
+    
+    this.mode(gl, state._cullMode);
+    this.frontFace(gl, state._frontFace);
   }
   
   

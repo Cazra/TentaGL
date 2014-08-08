@@ -27,20 +27,20 @@
  */
 TentaGL.Viewport = {
   
-  /** 
-   * Returns the metrics of the gl context's viewport. 
-   * The metrics are returned as a list containing, in order: 
-   *  The x coordinate of the left edge in canvas coordinates.
-   *  The y coordinate of the bottom edge in canvas coordinates. (0 corresponds to the bottom edge of the canvas. y increases upwards)
-   *  The width.
-   *  The height.
-   * @param {WebGLRenderingContext} gl
-   * @return {array: [uint, uint, uint, uint]}
-   */
-  get:function(gl) {
-    return [gl._viewX, gl._viewY, gl._viewWidth, gl._viewHeight];
-  },
   
+  /** 
+   * Setter/getter for the viewport area. 
+   * @param {WebGLRenderingContext} gl
+   * @param {array: uint*4} xywh
+   * @return {array: uint*4}
+   */
+  xywh: function(gl, xywh) {
+    if(xywh !== undefined) {
+      gl._viewportXYWH = xywh.slice(0);
+      gl.viewport(xywh[0], xywh[1], xywh[2], xywh[3]);
+    }
+    return gl._viewportXYWH.slice(0);
+  },
   
   /** 
    * Returns the x coordinate of the viewport's left edge. 
@@ -83,32 +83,15 @@ TentaGL.Viewport = {
   
   
   /** 
-   * Sets the rectangle defining the gl context's viewport on the canvas.
+   * Resets the viewport state metadata. 
    * @param {WebGLRenderingContext} gl
-   * @param {array:[uint, uint, uint, uint]
    */
-  set:function (gl, xywh) {
-    gl._viewX = xywh[0];
-    gl._viewY = xywh[1];
-    gl._viewWidth = xywh[2];
-    gl._viewHeight = xywh[3];
-    gl.viewport(xywh[0], xywh[1], xywh[2], xywh[3]);
+  reset: function(gl) {
+    gl._viewportXYWH = [0, 0, gl.canvas.width, gl.canvas.height];
+    
+    gl._viewportStack = [];
   },
   
-  
-  
-  /** 
-   * Setter/getter for the viewport area. 
-   * @param {WebGLRenderingContext} gl
-   * @param {array: int*4} xywh
-   * @return {array: int*4}
-   */
-  xywh: function(gl, xywh) {
-    if(xywh !== undefined) {
-      this.set(gl, xywh);
-    }
-    return [gl._viewX, gl._viewY, gl._viewWidth, gl._viewHeight];
-  },
   
   
   /** 
@@ -116,11 +99,11 @@ TentaGL.Viewport = {
    * @param {WebGLRenderingContext} gl
    */
   push: function(gl) {
-    if(!gl._viewportStack) {
-      gl._viewportStack = [];
-    }
+    var state = {
+      _viewportXYWH:  gl._viewportXYWH.slice(0)
+    };
     
-    gl._viewportStack.push(this.get(gl));
+    gl._viewportStack.push(state);
   },
   
   
@@ -130,7 +113,9 @@ TentaGL.Viewport = {
    * @param {WebGLRenderingContext} gl
    */
   pop: function(gl) {
-    this.set(gl, gl._viewportStack.pop());
+    var state = gl._viewportStack.pop();
+    
+    this.xywh(gl, state._viewportXYWH);
   }
 };
  

@@ -36,10 +36,11 @@ TentaGL.DepthBuffer = {
     gl._depthFunc = GL_LESS;
     gl._depthWrite = true;
     
-    gl._depthWinNear = 0;
-    gl._depthWinFar = 1;
+    gl._depthRange = [0, 1];
     
     gl._depthClearVal = 1;
+    
+    gl._depthStack = [];
   },
   
   
@@ -172,19 +173,32 @@ TentaGL.DepthBuffer = {
    * It is not necessary that near be less than far. Reverse mappings such as
    * near = 1 and far = 0 are acceptable.
    * @param {WebGLRenderingContext} gl
-   * @param {float} near    The mapping of the near clipping plane to window coordinates.
-   * @param {float} far     The mapping of the far clipping plane to window coordinates.
+   * @param {array: [near, far]}  nearFar
    */
-  setRange:function(gl, near, far) {
-    near = TentaGL.Math.clamp(near, 0, 1);
-    far = TentaGL.Math.clamp(far, 0, 1);
+  setRange: function(gl, nearFar) {
+    var near = TentaGL.Math.clamp(nearFar[0], 0, 1);
+    var far = TentaGL.Math.clamp(nearFar[1], 0, 1);
     
-    if(gl._depthWinNear != near || gl._depthWinFar != far) {
-      gl._depthWinNear = near;
-      gl._depthWinFar = far;
+    if(near != gl._depthRange[0] || far != gl._depthRange[1]) {
+      gl._depthRange[0] = near;
+      gl._depthRange[1] = far;
       
       gl.depthRange(near, far);
     }
+  },
+  
+  
+  /** 
+   * Setter/getter for the near/far planes range.
+   * @param {WebGLRenderingContext} gl
+   * @param {array: [near, far]} nearFar
+   * @return {array: [near, far]}
+   */
+  range: function(gl, nearFar) {
+    if(nearFar !== undefined) {
+      this.setRange(gl, nearFar);
+    }
+    return gl._depthRange;
   },
   
   
@@ -194,7 +208,7 @@ TentaGL.DepthBuffer = {
    * @return {float}
    */
   getRangeNear:function(gl) {
-    return gl._depthWinNear;
+    return gl._depthRange[0];
   },
   
   
@@ -204,7 +218,7 @@ TentaGL.DepthBuffer = {
    * @return {float}
    */
   getRangeFar:function(gl) {
-    return gl._depthWinFar;
+    return gl._depthRange[1];
   },
   
   
@@ -269,5 +283,37 @@ TentaGL.DepthBuffer = {
     gl.renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
     gl.bindRenderbuffer(GL_RENDERBUFFER, null);
     return buffer;
+  },
+  
+  
+  /** 
+   * Saves the depth buffer state to the stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  push: function(gl) {
+    var state = {
+      _depthEnabled:    gl._depthEnabled,
+      _depthFunc:       gl._depthFunc,
+      _depthWrite:      gl._depthWrite,
+      _depthRange:      gl._depthRange.slice(0),
+      _depthClearVal:   gl._depthClearVal
+    };
+    
+    gl._depthStack.push(state);
+  },
+  
+  
+  /** 
+   * Restores the depth buffer state from the stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  pop: function(gl) {
+    var state = gl._depthStack.pop();
+    
+    this.enabled(gl, state._depthEnabled);
+    this.func(gl, state._depthFunc);
+    this.mask(gl, state._depthWrite);
+    this.range(gl, state._depthRange);
+    this.clearValue(gl, state._depthClearVal);
   }
 };

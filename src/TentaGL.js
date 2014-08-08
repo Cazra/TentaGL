@@ -40,7 +40,7 @@ var TentaGL = {
   versionMajor:0, 
   
   /** The minor version number of this framework. */
-  versionMinor:18,
+  versionMinor:19,
   
   
   //////// Canvas/Context creation
@@ -71,8 +71,7 @@ var TentaGL = {
       TentaGL.DepthBuffer.reset(gl);
       TentaGL.Scissor.reset(gl);
       TentaGL.Stencil.reset(gl);
-      
-      TentaGL.Viewport.set(gl, [0, 0, canvas.width, canvas.height]);
+      TentaGL.Viewport.reset(gl);
       TentaGL.ViewTrans.reset(gl);
       this._normalTrans = mat3.create();
       this._mvpTrans = mat4.create();

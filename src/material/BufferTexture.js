@@ -86,15 +86,16 @@ TentaGL.BufferTexture.prototype = {
    *      - a WebGLRenderingContext - which renders a scene.
    */
   renderToMe:function(gl, renderFunc) {
-    var oldViewport = TentaGL.Viewport.get(gl);
+    TentaGL.Viewport.push(gl);
     
     gl.bindFramebuffer(GL_FRAMEBUFFER, this._frameBuffer);
-    TentaGL.Viewport.set(gl, [0, 0, this._width, this._height]);
+    TentaGL.Viewport.xywh(gl, [0, 0, this._width, this._height]);
     TentaGL.clear(gl, this._clearColor);
     renderFunc(gl);
     
     gl.bindFramebuffer(GL_FRAMEBUFFER, null);
-    TentaGL.Viewport.set(gl, oldViewport);
+    
+    TentaGL.Viewport.pop(gl);
   },
   
   

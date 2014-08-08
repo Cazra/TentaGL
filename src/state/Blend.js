@@ -151,22 +151,12 @@ TentaGL.Blend = {
    * @return {TentaGL.Color}
    */
   color: function(gl, color) {
-    if(color !== undefined) {
-      var r = color.getRed();
-      var g = color.getGreen();
-      var b = color.getBlue();
-      var a = color.getAlpha();
-      
-      if(gl._blendRed != r || gl._blendGreen != g || gl._blendBlue != b || gl._blendAlpha != a) {
-        gl._blendRed = r;
-        gl._blendGreen = g;
-        gl._blendBlue = b;
-        gl._blendAlpha = a;
-        
-        gl.blendColor(r, g, b, a);
-      }
+    if(color !== undefined && !color.equals(gl._blendColor)) {
+      gl._blendColor = color.clone();
+      gl.blendColor(color.r(), color.g(), color.b(), color.a());
+
     }
-    return TentaGL.Color.RGBA(gl._blendRed, gl._blendGreen, gl._blendBlue, gl._blendAlpha);
+    return gl._blendColor.clone();
   },
   
   
@@ -181,10 +171,38 @@ TentaGL.Blend = {
     gl._blendSrcFunc = GL_ONE;
     gl._blendDstFunc = GL_ZERO;
     
-    gl._blendRed = 0;
-    gl._blendGreen = 0;
-    gl._blendBlue = 0;
-    gl._blendAlpha = 0;
+    gl._blendColor = TentaGL.Color.RGBA(0,0,0,0);
+    
+    gl._blendStack = [];
+  },
+  
+  
+  /** 
+   * Saves the blending state to the stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  push: function(gl) {
+    var state = {
+      _blendEnabled:    gl._blendEnabled,
+      _blendEquation:   gl._blendEquation,
+      _blendSrcFunc:    gl._blendSrcFunc,
+      _blendDstFunc:    gl._blendDstFunc,
+      _blendColor:      gl._blendColor
+    };
+    
+    gl._blendStack.push(state);
+  },
+  
+  /** 
+   * Restores the blending state from the stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  pop: function(gl) {
+    var state = gl._blendStack.pop();
+    
+    this.enabled(gl, state._blendEnabled);
+    this.equation(gl, state._blendEquation, state._blendSrcFunc, state._blendDstFunc);
+    this.color(gl, state._blendColor);
   }
   
 };

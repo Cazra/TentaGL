@@ -33,17 +33,14 @@ TentaGL.ColorBuffer = {
    * @param {WebGLRenderingContext} gl
    */
   reset: function(gl) {
-    gl._cbRed = 0;
-    gl._cbGreen = 0;
-    gl._cbBlue = 0;
-    gl._cbAlpha = 0;
+    gl._cbClear = TentaGL.Color.RGBA(0,0,0,0);
     
     gl._cbWriteRed = true;
     gl._cbWriteGreen = true;
     gl._cbWriteBlue = true;
     gl._cbWriteAlpha = true;
     
-    gl._stateStack = [];
+    gl._cbStack = [];
   },
   
   
@@ -55,26 +52,44 @@ TentaGL.ColorBuffer = {
    */
   setClearColor:function(gl, color) {
     if(!TentaGL.Picker.isPicking(gl)) {
-      gl._cbRed = color.getRed();
-      gl._cbGreen = color.getGreen();
-      gl._cbBlue = color.getBlue();
-      gl._cbAlpha = color.getAlpha();
-      
-      gl.clearColor(gl._cbRed, gl._cbGreen, gl._cbBlue, gl._cbAlpha);
+      gl._cbClear = color.clone();
+      gl.clearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
   },
   
   
   /** 
    * Returns the clear color for a gl context. 
-   * @return {vec4}
+   * @param {WebGLRenderingContext} gl
+   * @return {TentaGL.Color}
    */
   getClearColor:function(gl) {
-    return vec4.fromValues(gl._cbRed, gl._cbGreen, gl._cbBlue, gl._cbAlpha);
+    return gl._cbClear.clone();
   },
   
   
-  /** Sets which color components are writable in the buffer. */
+  /** 
+   * Setter/getter for the clear color. 
+   * @param {WebGLRenderingContext} gl
+   * @param {TentaGL.Color} color   Optional.
+   * @return {TentaGL.Color}
+   */
+  clearColor: function(gl, color) {
+    if(color) {
+      this.setClearColor(gl, color);
+    }
+    return gl._cbClear.clone();
+  },
+  
+  
+  /** 
+   * Sets which color components are writable in the buffer. 
+   * @param {WebGLRenderingContext} gl
+   * @param {boolean} red
+   * @param {boolean} green
+   * @param {boolean} blue
+   * @param {boolean} alpha
+   */
   setWriteable:function(gl, red, green, blue, alpha) {
     gl._cbWriteRed = red;
     gl._cbWriteGreen = green;
@@ -105,17 +120,14 @@ TentaGL.ColorBuffer = {
    */
   push: function(gl) {
     var state = {
-      red:    gl._cbRed,
-      green:  gl._cbGreen,
-      blue:   gl._cbBlue,
-      alpha:  gl._cbAlpha,
-      writeRed:   gl._cbWriteRed,
-      writeGreen: gl._cbWriteGreen,
-      writeBlue:  gl._cbWriteBlue,
-      writeAlpha: gl._cbWriteAlpha
+      _cbClear:      gl._cbClear,
+      _cbWriteRed:   gl._cbWriteRed,
+      _cbWriteGreen: gl._cbWriteGreen,
+      _cbWriteBlue:  gl._cbWriteBlue,
+      _cbWriteAlpha: gl._cbWriteAlpha
     };
     
-    gl._stateStack.push(state);
+    gl._cbStack.push(state);
   },
   
   
@@ -124,17 +136,10 @@ TentaGL.ColorBuffer = {
    * @param {WebGLRenderingContext} gl
    */
   pop: function(gl) {
-    var state = gl._stateStack.pop();
+    var state = gl._cbStack.pop();
     
-    gl._cbRed = state.red;
-    gl._cbGreen = state.green;
-    gl._cbBlue = state.blue;
-    gl._cbAlpha = state.alpha;
-    
-    gl._cbWriteRed = state.writeRed;
-    gl._cbWriteGreen = state.writeGreen;
-    gl._cbWriteBlue = state.writeBlue;
-    gl._cbWriteAlpha = state.writeAlpha;
+    this.clearColor(gl, state._cbClear);
+    this.setWriteable(gl, state._cbWriteRed, state._cbWriteGreen, state._cbWriteBlue, state._cbWriteAlpha);
   }
   
 };

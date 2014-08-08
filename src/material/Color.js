@@ -60,8 +60,68 @@ TentaGL.Color.prototype = {
   },
   
   
+  /** 
+   * Returns a cloned copy of this color.
+   * @return {TentaGL.Color}
+   */
+  clone: function() {
+    return TentaGL.Color.RGBA(this.getRed(), this.getGreen(), this.getBlue(), this.getAlpha());
+  },
+  
   
   //////// RGBA color space
+  
+  /** 
+   * Setter/getter for the normalized red component.
+   * @param {float} r   Optional.
+   * @return {float}
+   */
+  r: function(r) {
+    if(r !== undefined) {
+      this._rgba[0] = r;
+    }
+    return this._rgba[0];
+  },
+  
+  
+  /** 
+   * Setter/getter for the normalized green component.
+   * @param {float} g   Optional.
+   * @return {float}
+   */
+  g: function(g) {
+    if(g !== undefined) {
+      this._rgba[1] = g;
+    }
+    return this._rgba[1];
+  },
+  
+  
+  /** 
+   * Setter/getter for the normalized blue component.
+   * @param {float} b   Optional.
+   * @return {float}
+   */
+  b: function(b) {
+    if(b !== undefined) {
+      this._rgba[2] = b;
+    }
+    return this._rgba[2];
+  },
+  
+  
+  /** 
+   * Setter/getter for the normalized alpha component.
+   * @param {float} a   Optional.
+   * @return {float}
+   */
+  a: function(a) {
+    if(a !== undefined) {
+      this._rgba[3] = a;
+    }
+    return this._rgba[3];
+  },
+  
   
   /** 
    * Returns a copy of the color's normalized RGBA components. 
@@ -415,15 +475,6 @@ TentaGL.Color.Hex = function(argb) {
  */
 TentaGL.Color.HSBA = function(h, s, b, a) {
   return (new TentaGL.Color()).setHSBA(h, s, b, a);
-};
-
-
-/** 
- * Returns a copy of an existing Color.
- * @param {TentaGL.Color} color
- */
-TentaGL.Color.clone = function(color) {
-  return (new TentaGL.Color()).setRGBA(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 };
 
 

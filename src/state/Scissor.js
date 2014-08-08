@@ -30,14 +30,15 @@
 TentaGL.Scissor = {
   
   
-  /** Resets the meta-data about the scissor test state for a gl context. */
+  /** 
+   * Resets the meta-data about the scissor test state for a gl context. 
+   * @param {WebGLRenderingContext} gl
+   */
   reset: function(gl) {
-    gl._scissorX = 0;
-    gl._scissorY = 0;
-    gl._scissorWidth = 1;
-    gl._scissorHeight = 1;
-    
     gl._scissorEnabled = false;
+    gl._scissorXYWH = [0, 0, gl.canvas.width, gl.canvas.height];
+    
+    gl._scissorStack = [];
   },
   
   
@@ -70,14 +71,10 @@ TentaGL.Scissor = {
    */
   xywh: function(gl, xywh) {
     if(xywh !== undefined) {
-      gl._scissorX = xywh[0];
-      gl._scissorY = xywh[1];
-      gl._scissorWidth = xywh[2];
-      gl._scissorHeight = xywh[3];
-      
+      gl._scissorXYWH = xywh.slice(0);
       gl.scissor(xywh[0], xywh[1], xywh[2], xywh[3]);
     }
-    return [gl._scissorX, gl._scissorY, gl._scissorWidth, gl._scissorHeight]
+    return gl._scissorXYWH.slice(0);
   },
   
   
@@ -87,11 +84,12 @@ TentaGL.Scissor = {
    * @param {WebGLRenderingContext} gl
    */
   push: function(gl) {
-    if(!gl._scissorStack) {
-      gl._scissorStack = [];
-    }
+    var state = {
+      _scissorEnabled:  gl._scissorEnabled,
+      _scissorXYWH:     gl._scissorXYWH.slice(0)
+    };
     
-    gl._scissorStack.push(this.xywh(gl));
+    gl._scissorStack.push(state);
   },
   
   /** 

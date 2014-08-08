@@ -24,28 +24,21 @@
 
 /**
  * A simple API for setting the stencil-testing state of the gl context.
+ * NOTE: The stencil buffer is not defined in WebGL by default. 
+ * To use the stencil buffer, you'll need to provide the attribute stencil=true
+ * to the Application's context attributes upon creation.
  */
 TentaGL.Stencil = {
   
   /** 
-   * Resets the metadata about the stencil-testing state of a gl context.
-   * @param {WebGLRenderingContext} gl
-   */
-  reset: function(gl) {
-    gl._stencilEnabled = false;
-    gl._stencilClearVal = 0;
-  },
-  
-  
-  /**
-   * Enables or disables stencil testing. 
+   * Setter/getter for whether the stencil test is enabled.
    * @param {WebGLRenderingContext} gl
    * @param {boolean} enabled
+   * @return {boolean}
    */
-  setTestEnabled:function(gl, enabled) {
-    if(gl._stencilEnabled != enabled) {
+  enabled: function(gl, enabled) {
+    if(enabled !== undefined && enabled != gl._stencilEnabled) {
       gl._stencilEnabled = enabled;
-      
       if(enabled) {
         gl.enable(GL_STENCIL_TEST);
       }
@@ -53,38 +46,88 @@ TentaGL.Stencil = {
         gl.disable(GL_STENCIL_TEST);
       }
     }
-  },
-  
-  
-  /**
-   * Returns whether stencil testing is enabled.
-   * @return {boolean}
-   */
-  isStencilEnabled:function() {
     return gl._stencilEnabled;
   },
   
   
   /** 
-   * Sets the clear value for the stencil buffer.
+   * Setter/getter for the clear value of the stencil buffer.
    * @param {WebGLRenderingContext} gl
-   * @param {uint} value
+   * @param {int} s
+   * @return {int}
    */
-  setClearValue:function(gl, value) {
-    if(gl._stencilClearVal != value) {
-      gl._stencilClearVal = value;
-      
-      gl.clearStencil(value);
+  clearValue: function(gl, s) {
+    if(s !== undefined && s != gl._stencilClearVal) {
+      gl._stencilClearVal = s;
+      gl.clearStencil(s);
     }
+    return gl._stencilClearVal;
   },
   
   
   /** 
-   * Returns the clear value for the stencil buffer. 
+   * Setter/getter for the front and back stencil test function.
+   * As a setter, this also sets the reference value and the mask.
+   * @param {WebGLRenderingContext} gl
+   * @param {glEnum} func
+   * @param {int} ref
+   * @param {uint} mask
+   * @return {glEnum}
+   */
+  func: function(gl, func, ref, mask) {
+    if(func !== undefined) {
+      gl._stencilFunc = func;
+      gl._stencilRef = ref;
+      gl._stencilMask = mask;
+      gl.stencilFunc(func, ref, mask);
+    }
+    return gl._stencilFunc;
+  },
+  
+  
+  /** 
+   * Returns the reference value for the current stencil function.
+   * @param {WebGLRenderingContext} gl
+   * @return {int}
+   */
+  getRef: function(gl) {
+    return gl._stencilRef;
+  },
+  
+  
+  /** 
+   * Setter/getter for the mask value for the front and back 
+   * stencil test function.
+   * @param {WebGLRenderingContext} gl
+   * @param {uint} mask
    * @return {uint}
    */
-  getClearValue:function() {
-    return gl._stencilClearVal;
+  mask: function(gl, mask) {
+    if(mask !== undefined) {
+      gl._stencilWriteMask = mask;
+      gl.stencilMask(mask);
+    }
+    return gl._stencilWriteMask;
+  },
+  
+  
+  /** 
+   * Setter/getter for the front and back stencil test actions.
+   * @param {WebGLRenderingContext} gl
+   * @param {glEnum} sFail
+   * @param {glEnum} dpFail
+   * @param {glEnum} dpPass
+   * @return {array: [sFail, dpFail, dpPass]}
+   */
+  op: function(gl, sFail, dpFail, dpPass) {
+    if(sFail !== undefined) {
+      gl._stencilFailS = sFail;
+      gl._stencilFailDP = dpFail;
+      gl._stencilPassDP = dpPass;
+      
+      gl.stencilOp(sFail, dpFail, dpPass);
+    }
+    return [gl._stencilFailS, gl._stencilFailDP, gl._stencilPassDP];
   },
   
   
@@ -102,5 +145,63 @@ TentaGL.Stencil = {
     gl.renderbufferStorage(gl.RENDERBUFFER, gl.STENCIL_INDEX8, width, height);
     gl.bindRenderbuffer(gl.RENDERBUFFER, null);
     return buffer;
+  },
+  
+  
+  /** 
+   * Resets the metadata about the stencil-testing state of a gl context.
+   * @param {WebGLRenderingContext} gl
+   */
+  reset: function(gl) {
+    gl._stencilEnabled = false;
+    
+    gl._stencilClearVal = 0;
+    
+    gl._stencilFunc = GL_ALWAYS;
+    gl._stencilRef = 0;
+    gl._stencilMask = 0xFF;
+    
+    gl._stencilWriteMask = 0xFF;
+    
+    gl._stencilFailS = GL_KEEP;
+    gl._stencilFailDP = GL_KEEP;
+    gl._stencilPassDP = GL_KEEP;
+    
+    gl._stencilStack = [];
+  },
+  
+  
+  /** 
+   * Saves the stencil test state to the stack.
+   * @param {WebGLRenderingContext} gl 
+   */
+  push: function(gl) {
+    var state = {
+      _stencilEnabled:    gl._stencilEnabled,
+      _stencilClearVal:   gl._stencilClearVal,
+      _stencilFunc:       gl._stencilFunc,
+      _stencilRef:        gl._stencilRef,
+      _stencilMask:       gl._stencilMask,
+      _stencilWriteMask:  gl._stencilWriteMask,
+      _stencilFailS:      gl._stencilFailS,
+      _stencilFailDP:     gl._stencilFailDP,
+      _stencilPassDP:     gl._stencilPassDP
+    };
+    
+    gl._stencilStack.push(state);
+  },
+  
+  /** 
+   * Restores the stencil test state from the stack.
+   * @param {WebGLRenderingContext} gl
+   */
+  pop: function(gl) {
+    var state = gl._stencilStack.pop();
+    
+    this.enabled(gl, state._stencilEnabled);
+    this.clearValue(gl, state._stencilClearVal);
+    this.func(gl, state._stencilFunc, state._stencilRef, state._stencilMask);
+    this.mask(gl, state._stencilWriteMask);
+    this.op(gl, state._stencilFailS, state._stencilFailDP, state._stencilPassDP);
   }
 };
