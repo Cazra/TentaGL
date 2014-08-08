@@ -10,6 +10,7 @@ src/state/Blend.js
 src/state/ColorBuffer.js
 src/state/Cull.js
 src/state/DepthBuffer.js
+src/state/RenderMode.js
 src/state/Scissor.js
 src/state/Stencil.js
 src/state/Viewport.js
@@ -50,6 +51,8 @@ src/geom/Model.js
   src/geom/shapes/Triangle.js
 src/geom/ModelLib.js
 src/geom/ObjReader.js
+src/geom/VBOData.js
+src/geom/VBORenderer.js
 src/geom/Vertex.js
 
 src/image/ImageLoader.js
@@ -87,10 +90,6 @@ src/material/Material.js
   src/material/Texture.js
 src/material/MaterialLib.js
 src/material/MaterialProps.js
-
-src/renderer/RenderMode.js
-src/renderer/VBOData.js
-src/renderer/VBORenderer.js
 
 src/scene/Renderable.js
   src/scene/SceneNode.js

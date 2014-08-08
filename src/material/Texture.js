@@ -235,6 +235,47 @@ TentaGL.Texture.prototype = {
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
     TentaGL.ShaderLib.current(gl).setTex(gl, 0);
+  },
+  
+  
+  //////// Renderable
+  
+  
+  /** 
+   * Renders the texture's image using the current scene transform
+   * and the texture's pixel dimensions. (This may cause it to be huge in 3D 
+   * rendering)
+   * @param {WebGLRenderingContext} gl
+   * @param {boolean} yFlipped    Optional. Default false. Whether the Y axis 
+   *      is flipped (true for traditional 2D rendering).
+   * @param {boolean height       Optional. If provided, the image will be 
+   *      rendered using the specified height, and its width will be scaled
+   *      proportionately.
+   */
+  render: function(gl, yFlipped, height) {
+    TentaGL.ViewTrans.push(gl);
+    
+    this.useMe(gl);
+    
+    var w, h;
+    if(height) {
+      w = height/this.getHeight() * this.getWidth();
+      h = height;
+    }
+    else {
+      w = this.getWidth();
+      h = this.getHeight();
+    }
+    TentaGL.ViewTrans.scale(gl, [w, h]);
+    
+    if(yFlipped) {
+      TentaGL.ModelLib.render(gl, "unitSprite");
+    }
+    else {
+      TentaGL.ModelLib.render(gl, "unitPlane");
+    }
+    
+    TentaGL.ViewTrans.pop(gl);
   }
 };
 

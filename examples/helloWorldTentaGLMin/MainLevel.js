@@ -113,6 +113,13 @@ HelloWorldApp.MainLevel.prototype = {
     this.shadedSprite2 = TentaGL.Sprite.create([5, -5, 0], "unitSphere", "white", "phongPerVertex", matProps1); 
     this.shadedSprite3 = TentaGL.Sprite.create([5, 20, 0], "unitSphere", "bumpedRed", "phong", matProps1); 
     this.shadedSprite3.setScaleXYZ([4, 4, 4]);
+    
+    
+    this.imageSprite = new TentaGL.Sprite([0,0,1]);
+    this.imageSprite.draw = function(gl) {
+      var tex = TentaGL.MaterialLib.get(gl, "coinBlock");
+      tex.render(gl, false, 1);
+    };
   },
   
   
@@ -248,11 +255,13 @@ HelloWorldApp.MainLevel.prototype = {
     
     this.coneSprite.render(gl);
     
+    this.imageSprite.render(gl);
     
     TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.MaterialLib.use(gl, "white");
     this.lights.render(gl);
     
+    // Transparent objects rendered last.
     TentaGL.ShaderLib.use(gl, "phongPerVertex");
     TentaGL.RenderMode.set3DTrans(gl);
     this.spriteGroup.render(gl, this.camera);
