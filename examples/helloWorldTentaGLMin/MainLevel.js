@@ -275,7 +275,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.spriteGroup.render(gl, this.camera);
     
     // ClippingArea test
-    TentaGL.ShaderLib.use(gl, "simpleShader");
+    TentaGL.ShaderLib.use(gl, "circle");
     TentaGL.ViewTrans.setCamera(gl, this.cam2D, aspect);
     
     TentaGL.ClippingArea.setClip(gl, function(gl) {

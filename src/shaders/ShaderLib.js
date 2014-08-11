@@ -118,6 +118,10 @@ TentaGL.ShaderLib = {
     var program = gl._shaderLib[name];
     program.useMe(gl);
     
+    if(program.setOpacity) {
+      program.setOpacity(gl, 1);
+    }
+    
     gl._shaderLibCurrentProgram = program;
     gl._shaderLibCurrentName = name;
     TentaGL.MaterialLib.useNone(gl);

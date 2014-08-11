@@ -129,6 +129,7 @@ src/shaders/ShaderProgram.js
   src/shaders/premade/PickShader.js
   src/shaders/premade/RadialGradientShader.js
   src/shaders/premade/SimpleShader.js
+    src/shaders/premade/CircleShader.js
   
 src/time/Timer.js
 

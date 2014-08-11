@@ -29,6 +29,7 @@ HelloWorldApp.prototype = {
       TentaGL.PhongShaderMac.load(gl, "phong");
     //  TentaGL.PerVertexPhongShader.load(gl, "phongPerVertex");
       TentaGL.PerVertexPhongShaderMac.load(gl, "phongPerVertex");
+      TentaGL.CircleShader.load(gl, "circle");
     }
     catch(e) {
       console.log(e.message);
