@@ -6,6 +6,8 @@ src/util/DOM.js
 src/util/Downloader.js
 src/util/Inheritance.js
 
+src/scene/Renderable.js
+
 src/state/Blend.js
 src/state/ColorBuffer.js
 src/state/Cull.js
@@ -19,6 +21,8 @@ src/math/Math.js
   src/math/geom/Line2D.js
   src/math/geom/Line3D.js
   src/math/geom/Plane.js
+  src/math/geom/Quad.js
+  src/math/geom/Rect2D.js
   src/math/geom/Sphere.js
   
 src/app/Application.js
@@ -91,18 +95,18 @@ src/material/Material.js
 src/material/MaterialLib.js
 src/material/MaterialProps.js
 
-src/scene/Renderable.js
-  src/scene/SceneNode.js
-    src/scene/SceneGroup.js
-    src/sprite/Sprite.js
-      src/sprite/BillboardSprite.js
-      src/sprite/ButtonSprite.js
-      src/sprite/CompositeSprite.js
-        src/sprite/LabelledIconSprite.js
-      src/sprite/IconSprite.js
-        src/sprite/ImageIconSprite.js
-      src/sprite/TextSprite.js
-        src/sprite/TextIconSprite.js
+src/scene/ClippingArea.js
+src/scene/SceneNode.js
+  src/scene/SceneGroup.js
+  src/sprite/Sprite.js
+    src/sprite/BillboardSprite.js
+    src/sprite/ButtonSprite.js
+    src/sprite/CompositeSprite.js
+      src/sprite/LabelledIconSprite.js
+    src/sprite/IconSprite.js
+      src/sprite/ImageIconSprite.js
+    src/sprite/TextSprite.js
+      src/sprite/TextIconSprite.js
 src/scene/ViewTrans.js
 
 src/text/BlitteredFont.js

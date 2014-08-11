@@ -35,6 +35,9 @@ HelloWorldApp.MainLevel.prototype = {
   //////// Level abstract implementations
   
   reset: function(gl) {
+    this.cam2D = new TentaGL.Camera2D([0,0], gl.canvas.width, gl.canvas.height);
+    this.cam2D.setAnchor([0,0]);
+    
     this.camera = new TentaGL.ArcballCamera([10, 10, 10], [0, 0, 0]);
     this.rX = 0;
     this.drX = 0;
@@ -202,6 +205,9 @@ HelloWorldApp.MainLevel.prototype = {
   
   
   render: function(gl) {
+    var self = this;
+    var aspect = gl.canvas.width/gl.canvas.height;
+    
   //  TentaGL.Scissor.enabled(gl, true);
   //  TentaGL.Scissor.xywh(gl, [100, 100, 640, 480]);
     
@@ -214,7 +220,6 @@ HelloWorldApp.MainLevel.prototype = {
     TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.RenderMode.set3DOpaque(gl);
     
-    var aspect = gl.canvas.width/gl.canvas.height;
     TentaGL.ViewTrans.setCamera(gl, this.camera, aspect);
     
     // Clear the scene. 
@@ -268,6 +273,26 @@ HelloWorldApp.MainLevel.prototype = {
     TentaGL.ShaderLib.use(gl, "phongPerVertex");
     TentaGL.RenderMode.set3DTrans(gl);
     this.spriteGroup.render(gl, this.camera);
+    
+    // ClippingArea test
+    TentaGL.ShaderLib.use(gl, "simpleShader");
+    TentaGL.ViewTrans.setCamera(gl, this.cam2D, aspect);
+    
+    TentaGL.ClippingArea.setClip(gl, function(gl) {
+      self.drawRect(gl, [32,32], 640, 480);
+    });
+    TentaGL.ClippingArea.clip(gl, function(gl) {
+      self.drawRect(gl, [320, 200], 640, 480);
+    });
+    
+    this.drawRect(gl, [0,0], gl.canvas.width, gl.canvas.height);
+    TentaGL.Stencil.enabled(gl, false);
+  },
+  
+  
+  drawRect: function(gl, xy, w, h) {
+    var rect = new TentaGL.Math.Rect2D(xy, w, h);
+    rect.render(gl, "white");
   }
 };
 

@@ -5,7 +5,7 @@
  * @param {DOM div element} container
  */
 var HelloWorldApp = function(container) {
-  TentaGL.Application.call(this, container);
+  TentaGL.Application.call(this, container, {stencil:true});
 };
 
 HelloWorldApp.prototype = {
@@ -118,9 +118,9 @@ HelloWorldApp.prototype = {
     
     
     // Audio // May hang in some browsers due to compatibility.
-    TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
-      self.horseAudio = audio;
-    });
+  //  TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
+  //    self.horseAudio = audio;
+  //  });
   },
   
   

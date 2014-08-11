@@ -67,6 +67,7 @@ var TentaGL = {
       
       // Initialize its state data.
       TentaGL.Blend.reset(gl);
+      TentaGL.ColorBuffer.reset(gl);
       TentaGL.Cull.reset(gl);
       TentaGL.DepthBuffer.reset(gl);
       TentaGL.Scissor.reset(gl);

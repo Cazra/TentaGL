@@ -66,16 +66,32 @@ TentaGL.Stencil = {
   
   
   /** 
+   * Clears the stencil buffer. 
+   * @param {WebGLRenderingContext} gl
+   */
+  clear: function(gl, value) {
+    if(value !== undefined) {
+      this.clearValue(gl, value);
+    }
+    gl.clear(GL_STENCIL_BUFFER_BIT);
+  },
+  
+  
+  /** 
    * Setter/getter for the front and back stencil test function.
    * As a setter, this also sets the reference value and the mask.
    * @param {WebGLRenderingContext} gl
    * @param {glEnum} func
    * @param {int} ref
-   * @param {uint} mask
+   * @param {uint} mask   Optional. Default 0xFF.
    * @return {glEnum}
    */
   func: function(gl, func, ref, mask) {
     if(func !== undefined) {
+      if(mask === undefined) {
+        mask = 0xFF;
+      }
+      
       gl._stencilFunc = func;
       gl._stencilRef = ref;
       gl._stencilMask = mask;

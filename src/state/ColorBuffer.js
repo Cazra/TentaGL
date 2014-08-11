@@ -101,6 +101,28 @@ TentaGL.ColorBuffer = {
   
   
   /** 
+   * Setter/getter for whether each color component can be written.
+   * @param {WebGLRenderingContext} gl
+   * @param {boolean} red
+   * @param {boolean} green
+   * @param {boolean} blue
+   * @param {boolean} alpha
+   * @return {array: boolean*4}
+   */
+  mask: function(gl, red, green, blue, alpha) {
+    if(red !== undefined) {
+      gl._cbWriteRed = red;
+      gl._cbWriteGreen = green;
+      gl._cbWriteBlue = blue;
+      gl._cbWriteAlpha = alpha;
+      
+      gl.colorMask(red, green, blue, alpha);
+    }
+    return [gl._cbWriteRed, gl._cbWriteGreen, gl._cbWriteBlue, gl._cbWriteAlpha];
+  },  
+  
+  
+  /** 
    * Clears the color buffer.
    * @param {WebGLRenderingContext} gl
    * @param {TentaGL.Color} color   Optional. Specify the clear color.
