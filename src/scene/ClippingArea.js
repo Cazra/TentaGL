@@ -16,6 +16,8 @@ TentaGL.ClippingArea = {
    * Sets the clipping rendering function as the intersection of the current 
    * area and the argument area. After the intersection is created, the 
    * stencil buffer is enabled for clipping in the intersection.
+   * @param {WebGLRenderingContext} gl
+   * @param {function(gl: WebGLRenderingContext)} renderFunc
    */
   clip: function(gl, renderFunc) {
     TentaGL.ColorBuffer.push(gl);
@@ -58,6 +60,8 @@ TentaGL.ClippingArea = {
   
   /** 
    * Sets the current clipping render function, or clipping render function set. 
+   * @param {WebGLRenderingContext} gl
+   * @param {function(gl: WebGLRenderingContext)} renderFunc
    */
   setClip: function(gl, renderFunc) {
     this.clear(gl);

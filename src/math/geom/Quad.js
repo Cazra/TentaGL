@@ -116,6 +116,95 @@ TentaGL.Math.Quad.prototype = {
   },
   
   
+  //////// Collisions
+  
+  
+  /** 
+   * Returns true iff the specified point is contained by this shape. 
+   * @param {vec3} pt
+   * @return {boolean}
+   */
+  containsPt: function(pt, tolerance) {
+    if(!tolerance) {
+      tolerance = 0;
+    }
+    
+    var m = mat3.create();
+    var p = this._pts[0];
+    
+    m[0] = this._u[0];
+    m[1] = this._u[1];
+    m[2] = this._u[2];
+    m[3] = this._v[0];
+    m[4] = this._v[1];
+    m[5] = this._v[2];
+    m[6] = p[0];
+    m[7] = p[1];
+    m[8] = p[2];
+    
+    var mInv = mat3.invert(mat3.create(), m);
+    
+    
+    var coeffs = vec3.create();
+    vec3.transformMat3(coeffs, pt, mInv);
+    var a = coeffs[0];
+    var b = coeffs[1];
+    
+    return (a >= 0 && a <= 1 && b >= 0 && b <= 1 && Math.abs(coeffs[2] - 1) <= tolerance);
+  },
+  
+  
+  /** 
+   * Returns the smallest 3D box completely containing this shape.
+   * @return {TentaGL.Math.Rect3D}
+   */
+  getBoundingBox: function() {
+    var left = this._pts[0][0];
+    var right = this._pts[0][0];
+    
+    var top = this._pts[0][1];
+    var bottom = this._pts[0][1];
+    
+    var front = this._pts[0][2];
+    var back = this._pts[0][2];
+    
+    
+    for(var i=1; i <= 3; i++) {
+      var pt = this._pts[i];
+      if(pt[0] < left) {
+        left = pt[0];
+      }
+      if(pt[0] > right) {
+        right = pt[0];
+      }
+      
+      if(pt[1] < bottom) {
+        bottom = pt[1];
+      }
+      if(pt[1] > top) {
+        top = pt[1];
+      }
+      
+      if(pt[2] < back) {
+        back = pt[2];
+      }
+      if(pt[2] > front) {
+        front = pt[2];
+      }
+    }
+    
+    
+    var width = right - left;
+    var height = top - bottom;
+    var depth = front - back;
+    
+    return new TentaGL.Math.Rect3D();
+  },
+  
+  
+  
+  //////// Rendering
+  
   /** 
    * Renders the quad. 
    * @param {WebGLRenderingContext} gl
@@ -134,5 +223,5 @@ TentaGL.Math.Quad.prototype = {
 };
 
 
-Util.Inheritance.inherit(TentaGL.Math.Quad, TentaGL.Renderable);
+Util.Inheritance.inherit(TentaGL.Math.Quad, TentaGL.Math.Shape3D);
 

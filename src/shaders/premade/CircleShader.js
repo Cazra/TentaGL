@@ -125,6 +125,8 @@ TentaGL.CircleShader.load = function(gl, name) {
   var program = new TentaGL.CircleShader(gl);
   TentaGL.ShaderLib.add(gl, name, program);
   
+  gl._circleShaderProgramName = name;
+  
   return program;
 };
 

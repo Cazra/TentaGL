@@ -5,7 +5,7 @@
  * @param {DOM div element} container
  */
 var HelloWorldApp = function(container) {
-  TentaGL.Application.call(this, container, {stencil:true});
+  TentaGL.Application.call(this, container, {stencil:true, alpha: false});
 };
 
 HelloWorldApp.prototype = {
@@ -84,7 +84,7 @@ HelloWorldApp.prototype = {
     var grad2 = new TentaGL.Gradient([0.3,0.3], [0.5,0]);
     grad2.addBreakPt(0, TentaGL.Color.RGBA(0,0,1,1))
     grad2.addBreakPt(0.6, TentaGL.Color.RGBA(0,1,1,1))
-    grad2.addBreakPt(1, TentaGL.Color.RGBA(1,1,1,1));
+    grad2.addBreakPt(1, TentaGL.Color.RGBA(0.5,0.5,1,1));
     TentaGL.MaterialLib.add(gl, "grad2", grad2);
     
     // Label BG icon

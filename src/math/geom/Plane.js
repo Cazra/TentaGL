@@ -244,7 +244,40 @@ TentaGL.Math.Plane.prototype = {
       
       return vec4.fromValues(x, y, z, 1);
     }
+  },
+  
+  
+  /**  
+   * A plane is infinite, and therefore unbounded. So this returns undefined.
+   */
+  getBoundingBox: function() {
+    return undefined;
+  },
+  
+  
+  
+  /** 
+   * TODO: Renders the plane (only the region bounded by the viewing volume).
+   * @param {WebGLRenderingContext} gl
+   * @param {string} materialName
+   */
+  render: function(gl, materialName) {
+    TentaGL.ViewTrans.push(gl);
+    
+    if(materialName) {
+      TentaGL.MaterialLib.use(gl, materialName);
+    }
+    // TODO: Create the a custom model for the plane bounded by the viewing volume.
+    // 1) Transform plane to projection coordinates. 
+    // 2) Create quad from points where the plane intersects the cube.
+    // 3) Transform the quad back to world coordinates.
+    // 4) Render the quad.
+    
+    TentaGL.ViewTrans.pop(gl);
   }
   
 };
+
+
+Util.Inheritance.inherit(TentaGL.Math.Plane, TentaGL.Math.Shape3D);
 

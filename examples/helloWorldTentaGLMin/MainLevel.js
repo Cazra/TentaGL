@@ -123,6 +123,12 @@ HelloWorldApp.MainLevel.prototype = {
       var tex = TentaGL.MaterialLib.get(gl, "coinBlock");
       tex.render(gl, false, 1);
     };
+    
+    
+    this.rect3DSprite = new TentaGL.Sprite([0,0,0]);
+    this.rect3DSprite.draw = function(gl) {
+      (new TentaGL.Math.Rect3D([0,0,2], 2, 1, 0.5)).render(gl, "red");
+    };
   },
   
   
@@ -262,8 +268,8 @@ HelloWorldApp.MainLevel.prototype = {
     this.shadedSprite3.render(gl);
     
     this.coneSprite.render(gl);
-    
     this.imageSprite.render(gl);
+    this.rect3DSprite.render(gl);
     
     TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.MaterialLib.use(gl, "white");
@@ -275,17 +281,17 @@ HelloWorldApp.MainLevel.prototype = {
     this.spriteGroup.render(gl, this.camera);
     
     // ClippingArea test
-    TentaGL.ShaderLib.use(gl, "circle");
+    TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.ViewTrans.setCamera(gl, this.cam2D, aspect);
-    
     TentaGL.ClippingArea.setClip(gl, function(gl) {
-      self.drawRect(gl, [32,32], 640, 480);
+      self.drawEllipse(gl, [32,32], 640, 480);
     });
     TentaGL.ClippingArea.clip(gl, function(gl) {
-      self.drawRect(gl, [320, 200], 640, 480);
+      self.drawEllipse(gl, [320, 200], 640, 480);
     });
     
-    this.drawRect(gl, [0,0], gl.canvas.width, gl.canvas.height);
+    
+    this.drawEllipse(gl, [0,0], gl.canvas.width, gl.canvas.height);
     TentaGL.Stencil.enabled(gl, false);
   },
   
@@ -293,6 +299,10 @@ HelloWorldApp.MainLevel.prototype = {
   drawRect: function(gl, xy, w, h) {
     var rect = new TentaGL.Math.Rect2D(xy, w, h);
     rect.render(gl, "white");
+  },
+  
+  drawEllipse: function(gl, xy, w, h) {
+    TentaGL.Math.Ellipse2D.fromRect(new TentaGL.Math.Rect2D(xy, w, h)).render(gl, "white");
   }
 };
 

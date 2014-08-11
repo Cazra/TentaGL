@@ -46,6 +46,7 @@ TentaGL.MaterialLib = {
   
   reset:function(gl) {
     this.clean(gl);
+    this.add(gl, "default", TentaGL.Color.WHITE);
   },
   
   

@@ -100,6 +100,20 @@ TentaGL.Math.Sphere.prototype = {
   
   
   /** 
+   * Returns the sphere's bounding box. 
+   * @return {TentaGL.Math.Rect3D}
+   */
+  getBoundingBox: function() {
+    var x = this._pt[0] - this._radius;
+    var y = this._pt[1] - this._radius;
+    var z = this._pt[2] - this._radius;
+    
+    var sideLen = this._radius*2;
+    return new TentaGL.Math.Rect3D([x,y,z], sideLen, sideLen, sideLen);
+  },
+  
+  
+  /** 
    * Determines if the surface area of the sphere contains a point within some 
    * tolerance for distance, close to 0.
    * @param {vec3} pt
@@ -174,3 +188,7 @@ TentaGL.Math.Sphere.prototype = {
   
   
 };
+
+
+
+Util.Inheritance.inherit(TentaGL.Math.Sphere, TentaGL.Math.Shape3D);

@@ -22,6 +22,16 @@ TentaGL.Math.Rect2D.prototype = {
   
   isaRect2D: true,
   
+  
+  /** 
+   * Creates a cloned copy of this shape. 
+   * @return {TentaGL.Math.Rect2D}
+   */
+  clone: function() {
+    return new TentaGL.Math.Rect2D(this._xy.slice(0), this._w, this._h);
+  },
+  
+  
   //////// Metrics
   
   
@@ -115,11 +125,17 @@ TentaGL.Math.Rect2D.prototype = {
    * @return {boolean}
    */
   containsPt: function(pt) {
-    if(pt[0] < this._xy[0] || pt[1] < this._xy[1] || pt[0] > this._xy[0] + this._w || pt[1] > this._xy[1] + this._h) {
-      return false;
-    }
-    
-    return true;
+    return !(pt[0] < this._xy[0] || pt[1] < this._xy[1] || pt[0] > this._xy[0] + this._w || pt[1] > this._xy[1] + this._h)
+  },
+  
+  
+  /** 
+   * Returns the shape's bounding box. Since this shape is a rectangle, this 
+   * returns a clone of this rectangle.
+   * @return {TentaGL.Math.Rect2D}
+   */
+  getBoundingBox: function() {
+    return this.clone();
   },
   
   
@@ -210,4 +226,4 @@ TentaGL.Math.Rect2D.prototype = {
   
 };
 
-Util.Inheritance.inherit(TentaGL.Math.Rect2D, TentaGL.Renderable);
+Util.Inheritance.inherit(TentaGL.Math.Rect2D, TentaGL.Math.Shape2D);

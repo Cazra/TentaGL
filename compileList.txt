@@ -18,12 +18,16 @@ src/state/Stencil.js
 src/state/Viewport.js
 
 src/math/Math.js
-  src/math/geom/Line2D.js
-  src/math/geom/Line3D.js
-  src/math/geom/Plane.js
-  src/math/geom/Quad.js
-  src/math/geom/Rect2D.js
-  src/math/geom/Sphere.js
+  src/math/geom/Shape2D.js
+    src/math/geom/Ellipse2D.js
+    src/math/geom/Line2D.js
+    src/math/geom/Rect2D.js
+  src/math/geom/Shape3D.js
+    src/math/geom/Line3D.js
+    src/math/geom/Plane.js
+    src/math/geom/Quad.js
+    src/math/geom/Rect3D.js
+    src/math/geom/Sphere.js
   
 src/app/Application.js
 src/app/Level.js
