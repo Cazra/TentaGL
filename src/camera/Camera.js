@@ -25,6 +25,7 @@
 
 /** 
  * A camera for providing a view and perspective transform to a scene.
+ * The default implementation here applies an identity transform to the scene.
  * @constructor
  */
 TentaGL.Camera = function() {};

@@ -111,10 +111,10 @@ TentaGL.Math.Plane.prototype = {
   
   
   /** 
-   * Returns a vector that is parallel to the plane. 
-   * @return {vec3}
+   * Returns a pair of vectors that are parallel to the plane. 
+   * @return {array: vec3*2}
    */
-  getParallelVector: function() {
+  getParallelVectors: function() {
     var p1 = this._pt;
     var p2;
     if(this._normal[0] == 0) {
@@ -136,7 +136,10 @@ TentaGL.Math.Plane.prototype = {
       p2 = [x, y, z];
     }
     
-    return vec3.sub(vec3.create(), p2, p1);
+    var u = vec3.sub(vec3.create(), p2, p1);
+    var v = vec3.cross(vec3.create(), u, this._normal);
+    
+    return [u, v];
   },
   
   
@@ -247,11 +250,80 @@ TentaGL.Math.Plane.prototype = {
   },
   
   
+  /** 
+   * Determines the intersection of a line segment with this plane. 
+   * There are 3 possible values returned:
+   * If the segment intersects the plane at exactly one point, that point is returned.
+   * If the segment lies on the plane, the segment is returned.
+   * If the segment doesn't intersect the plane anywhere, undefined is returned.
+   * See http://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+   * @param {TentaGL.Math.Line3D} line
+   * @return {vec3, TentaGL.Math.Line3D, or undefined}
+   */
+  segmentIntersection: function(line) {
+    var q = this.getPoint();
+    var p = line.getPt1();
+    
+    var n = this.getNormal();
+    var u = line.getVec3();
+    
+    var numer = vec3.dot(n, vec3.sub(vec3.create(), q, p));
+    var denom = vec3.dot(n, u);
+    
+    if(denom == 0) {
+      if(numer == 0) {
+        return line;
+      }
+      else {
+        return undefined;
+      }
+    }
+    else {
+      var s = numer/denom;
+      
+      var x = p[0] + s*u[0];
+      var y = p[1] + s*u[1];
+      var z = p[2] + s*u[2];
+      
+      var pt = vec4.fromValues(x, y, z, 1);
+      var a;
+      
+      if(u[0] != 0) {
+        a = (pt[0] - p[0])/u[0];
+      }
+      else if(u[1] != 0) {
+        a = (pt[1] - p[1])/u[1];
+      }
+      else {
+        a = (pt[2] - p[2])/u[2];
+      }
+      
+      if(a >= 0 && a <= 1) {
+        return pt;
+      }
+      else {
+        return undefined;
+      }
+    }
+  },
+  
+  
+  
   /**  
    * A plane is infinite, and therefore unbounded. So this returns undefined.
    */
   getBoundingBox: function() {
     return undefined;
+  },
+  
+  
+  /** 
+   * Returns a quad lying on the plane. 
+   */
+  getQuad: function() {
+    var uv = this.getParallelVectors();
+    
+    return new TentaGL.Math.Quad(this._pt, uv[0], uv[1]);
   },
   
   
@@ -263,17 +335,83 @@ TentaGL.Math.Plane.prototype = {
    */
   render: function(gl, materialName) {
     TentaGL.ViewTrans.push(gl);
-    
     if(materialName) {
       TentaGL.MaterialLib.use(gl, materialName);
     }
+    
     // TODO: Create the a custom model for the plane bounded by the viewing volume.
     // 1) Transform plane to projection coordinates. 
-    // 2) Create quad from points where the plane intersects the cube.
-    // 3) Transform the quad back to world coordinates.
-    // 4) Render the quad.
+    var m = TentaGL.ViewTrans.getMVP(gl);
+    
+    var pt = vec3.copy([], this._pt);
+    pt[3] = 1;
+    var nPt = vec3.add([], this._pt, this._normal);
+    nPt[3] = 1;
+    
+    vec4.transformMat4(pt, pt, m);
+    vec4.transformMat4(nPt, nPt, m);
+    
+    vec4.scale(pt, pt, 1/pt[3]);
+    vec4.scale(nPt, nPt, 1/nPt[3]);
+    
+    var n = vec3.sub([], nPt, pt);
+    var projPlane = new TentaGL.Math.Plane(n, pt);
+    var projVolume = new TentaGL.Math.Rect3D([-1,-1,-1], 2,2,2);
+    
+    
+    // 2) Find the points where the plane intersects the cube.
+    var projEdges = projVolume.getEdges();
+    
+    var intPts = [];
+    for(var i=0; i<projEdges.length; i++) {
+      var intPt = projPlane.segmentIntersection(projEdges[i]);
+      if(intPt !== undefined && !intPt.isaLine3D) {
+        var p = vec3.copy([], intPt);
+        p[3] = 1;
+        intPts.push(p);
+      }
+    }
+    
+    if(intPts.length > 0) {
+    
+      // 3) Transform the points back to world coordinates and construct a poly from them.
+      var model = new TentaGL.Model(GL_TRIANGLES, GL_NONE);
+      mat4.invert(m, m);
+      
+      for(var i=0; i<intPts.length; i++) {
+        vec4.transformMat4(intPts[i], intPts[i], m);
+        vec4.scale(intPts[i], intPts[i], 1/intPts[i][3]);
+        
+        var vertex = new TentaGL.Vertex(intPts[i]);
+        vertex.normal(this._normal);
+        vertex.st([0,0]);
+        
+        model.addVertex(vertex);
+      }
+      
+      
+      console.log(intPts.slice(0));
+      
+      for(var i=0; i < intPts.length - 2; i++) {
+        for(var j=i+1; j < intPts.length - 1; j++) {
+          for(var k=j+1; k < intPts.length; k++) {
+            model.addFace(i,j,k);
+          }
+        }
+      }
+      
+      // 4) Render the poly.
+      
+      var vbo = new TentaGL.VBOData(gl, model, TentaGL.getDefaultAttrProfileSet());
+      TentaGL.ViewTrans.updateMVPUniforms(gl);
+      TentaGL.VBORenderer.render(gl, vbo);
+      
+      vbo.clean(gl);
+    }
     
     TentaGL.ViewTrans.pop(gl);
+    
+    this.getQuad().render(gl, "blue");
   }
   
 };

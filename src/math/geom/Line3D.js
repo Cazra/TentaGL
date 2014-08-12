@@ -86,7 +86,7 @@ TentaGL.Math.Line3D.prototype = {
    * @return {vec4}
    */
   getVec3: function() {
-    return vec3.sub(vec3.create(), this._p2, this._p1);
+    return vec3.sub([], this._p2, this._p1);
   },
   
   

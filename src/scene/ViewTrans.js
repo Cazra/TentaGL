@@ -242,6 +242,39 @@ TentaGL.ViewTrans = {
   },
   
   
+  //////// Normal transform
+  
+  /** 
+   * Returns the normal vector transform for the current model-view transform.
+   * @return {mat3}
+   */
+  getNormal: function(gl) {
+    return mat3.normalFromMat4(mat3.create(), gl._modelViewTrans);
+  },
+  
+  
+  /** 
+   * Returns the normal vector transform for the current model-view-projection transform.
+   * @return {mat3}
+   */
+  getProjectionNormal: function(gl) {
+    return mat3.normalFromMat4(mat3.create(), this.getMVP(gl));
+  },
+  
+  
+  
+  //////// MVP
+  
+  /** 
+   * Returns the current model-view-projection transform. 
+   * @return {mat4}
+   */
+  getMVP: function(gl) {
+    return mat4.mul(mat4.create(), gl._projTrans, gl._modelViewTrans);
+  },
+  
+  
+  
   //////// Shader vars
   
   

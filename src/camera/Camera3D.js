@@ -494,6 +494,47 @@ TentaGL.Camera3D.prototype = {
     else {
       return undefined;
     }
+  },
+  
+  
+  
+  /** 
+   * Projects a point in viewport coordinates (Y is down) to the corresponding
+   * pair of points on the near and far clipping planes.
+   * @param {vec2} pt
+   * @param {uint} viewWidth
+   * @param {uint} viewHeight
+   * @return {array: [near: vec2, far: vec2]}
+   */
+  projectToClip: function(pt, viewWidth, viewHeight) {
+    var aspect = viewWidth/viewHeight;
+    var x = (pt[0] - viewWidth/2)/aspect;
+    var y = -1*(pt[1] - viewHeight/2);
+    var xy = vec3.fromValues(x,y,0);
+    vec3.scale(xy, xy, 2/viewHeight);
+    
+    var near = vec4.fromValues(xy[0], xy[1], -1, 1);
+    var far = vec4.fromValues(xy[0], xy[1], 1, 1);
+    
+    // Convert our near and far points to world coordinates.
+    var m = this.getTransform(aspect);
+    mat4.invert(m, m);
+    
+    vec4.transformMat4(near, near, m);
+    vec4.transformMat4(far, far, m);
+    
+    // normalize pointsvalues using the w coordinate. 
+    near[3] = 1/near[3];
+    near[0] = near[0]*near[3];
+    near[1] = near[1]*near[3];
+    near[2] = near[2]*near[3];
+    
+    far[3] = 1/far[3];
+    far[0] = far[0]*far[3];
+    far[1] = far[1]*far[3];
+    far[2] = far[2]*far[3];
+    
+    return [near, far];
   }
   
 };

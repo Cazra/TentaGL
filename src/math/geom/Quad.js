@@ -26,7 +26,7 @@ TentaGL.Math.Quad.prototype = {
     this._pts[2] = vec3.add(vec3.create(), this._pts[1], this._v);
     this._pts[3] = vec3.add(vec3.create(), this._pts[0], this._v);
     
-    this._n = vec3.cross(vec3.create(), u, v);
+    this._n = vec3.cross(vec3.create(), this._u, this._v);
     vec3.normalize(this._n, this._n);
     
     this._initModel();
@@ -37,23 +37,23 @@ TentaGL.Math.Quad.prototype = {
     this._model = new TentaGL.Model(GL_TRIANGLES, GL_NONE);
     
     var v0 = new TentaGL.Vertex(this._pts[0]);
-    v0.setNormal(this._n[0], this._n[1], this._n[2]);
-    v0.setTexST(0,0);
+    v0.normal(this._n);
+    v0.st([0,0]);
     this._model.addVertex(v0);
     
     var v1 = new TentaGL.Vertex(this._pts[1]);
-    v1.setNormal(this._n[0], this._n[1], this._n[2]);
-    v1.setTexST(1, 0);
+    v1.normal(this._n);
+    v1.st(1, 0);
     this._model.addVertex(v1);
     
     var v2 = new TentaGL.Vertex(this._pts[2]);
-    v2.setNormal(this._n[0], this._n[1], this._n[2]);
-    v2.setTexST(1,1);
+    v2.normal(this._n);
+    v2.st(1,1);
     this._model.addVertex(v2);
     
     var v3 = new TentaGL.Vertex(this._pts[3]);
-    v3.setNormal(this._n[0], this._n[1], this._n[2]);
-    v3.setTexST(0, 1);
+    v3.normal(this._n);
+    v3.st(0, 1);
     this._model.addVertex(v3);
     
     this._model.addFaceQuad(0, 1, 2, 3);
@@ -198,7 +198,7 @@ TentaGL.Math.Quad.prototype = {
     var height = top - bottom;
     var depth = front - back;
     
-    return new TentaGL.Math.Rect3D();
+    return new TentaGL.Math.Rect3D([left, bottom, back], width, height, depth);
   },
   
   
@@ -211,14 +211,17 @@ TentaGL.Math.Quad.prototype = {
    * @param {string} materialName
    */
   render: function(gl, materialName) {
+    TentaGL.ViewTrans.push(gl);
     var vbo = new TentaGL.VBOData(gl, this._model, TentaGL.getDefaultAttrProfileSet());
     
     if(materialName) {
       TentaGL.MaterialLib.use(gl, materialName);
     }
+    TentaGL.ViewTrans.updateMVPUniforms(gl);
+    TentaGL.VBORenderer.render(gl, vbo);
     
-    TentaGL.VBORenderer(gl, vbo);
-    vbo.clean();
+    vbo.clean(gl);
+    TentaGL.ViewTrans.pop(gl);
   }
 };
 

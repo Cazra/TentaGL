@@ -118,6 +118,40 @@ TentaGL.Math.Rect3D.prototype = {
   },
   
   
+  //////// Edges
+  
+  /** 
+   * Returns the 12 edges of the shape. 
+   * @return {array: TentaGL.Math.Line3D*10}
+   */
+  getEdges: function() {
+    var edges = [];
+    
+    var left = this._pt[0];
+    var bottom = this._pt[1];
+    var back = this._pt[2];
+    
+    var right = left + this._w;
+    var top = bottom + this._h;
+    var front = back + this._d;
+    
+    edges.push(new TentaGL.Math.Line3D([left, bottom, back], [right, bottom, back]));
+    edges.push(new TentaGL.Math.Line3D([left, bottom, back], [left, top, back]));
+    edges.push(new TentaGL.Math.Line3D([left, bottom, back], [left, bottom, front]));
+    edges.push(new TentaGL.Math.Line3D([left, top, back], [right, top, back]));
+    edges.push(new TentaGL.Math.Line3D([left, top, back], [left, top, front]));
+    edges.push(new TentaGL.Math.Line3D([right, bottom, back], [right, top, back]));
+    edges.push(new TentaGL.Math.Line3D([left, bottom, front], [left, top, front]));
+    edges.push(new TentaGL.Math.Line3D([left, bottom, front], [right, bottom, front]));
+    edges.push(new TentaGL.Math.Line3D([right, bottom, back], [right, bottom, front]));
+    edges.push(new TentaGL.Math.Line3D([right, top, front], [left, top, front]));
+    edges.push(new TentaGL.Math.Line3D([right, top, front], [right, bottom, front]));
+    edges.push(new TentaGL.Math.Line3D([right, top, front], [right, top, back]));
+    
+    return edges;
+  },
+  
+  
   //////// Collisions
   
   /** 
@@ -139,7 +173,6 @@ TentaGL.Math.Rect3D.prototype = {
   getBoundingBox: function() {
     return this.clone();
   },
-  
   
   //////// Rendering
   

@@ -32,12 +32,20 @@
  * When first constructed, the vertex only has a field for its xyz coordinates.
  * Other fields such as its normal vector and color get added on as they 
  * become used.
+ * To construct the vertex, each of the coordinates can be provided separately, 
+ * or in a 3-element array.
  * @constructor
- * @param {Number} x
+ * @param {Number || vec3} x
  * @param {Number} y
  * @param {Number} z
  */
 TentaGL.Vertex = function(x, y, z) {
+  if(x.length) {
+    z = x[2];
+    y = x[1];
+    x = x[0];
+  }
+  
   this._xyz = vec4.fromValues(x, y, z, 1);
   this._texST = vec2.fromValues(0, 0);
   this._normal = vec3.fromValues(0, 0, 0);
@@ -121,18 +129,26 @@ TentaGL.Vertex.prototype = {
   
   
   /** 
+   * Setter/getter for the vertex's xyzw position. 
+   * @param {vec3} xyz  Optional.
+   * @return {vec4}
+   */
+  xyz: function(xyz) {
+    if(xyz !== undefined) {
+      this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
+    }
+    return vec4.clone(this._xyz);
+  },
+  
+  
+  
+  /** 
    * Returns a copy of this vertex's 2D texture coordinates array.
    * If this vertex's 2D texture coordinates are undefined, an Error is thrown.
    * @return {vec2}
    */
   getTexST:function() {
-    if(this._texST === undefined) {
-      var msg = "Vertex 2D texture coordinates have not been defined.";
-      throw new Error(msg);
-    }
-    else {
-      return vec2.clone(this._texST);
-    }
+    return vec2.clone(this._texST);
   },
   
   
@@ -172,18 +188,24 @@ TentaGL.Vertex.prototype = {
   
   
   /** 
+   * Setter/getter for the texture coordinates. 
+   */
+  st: function(st) {
+    if(st !== undefined) {
+      this._texST = vec2.fromValues(st[0], st[1]);
+    }
+    return vec2.clone(this._texST);
+  },
+  
+  
+  
+  /** 
    * Returns a copy of this vertex's surface normal vector. If this vertex's 
    * surface normal vector has not yet been defined, an Error is thrown.
    * @return {vec3}
    */
   getNormal:function() {
-    if(this._normal === undefined) {
-      var msg = "Vertex surface normal has not been defined.";
-      throw new Error(msg);
-    }
-    else {
-      return vec3.clone(this._normal);
-    }
+    return vec3.clone(this._normal);
   },
   
   
@@ -209,6 +231,18 @@ TentaGL.Vertex.prototype = {
   },
   
   
+  /** 
+   * Setter/getter for the normal vector. 
+   * @param {vec3} xyz
+   * @return {vec3}
+   */
+  normal: function(xyz) {
+    if(xyz !== undefined) {
+      this._normal = vec3.fromValues(xyz[0], xyz[1], xyz[2]);
+    }
+    return vec3.clone(this._normal);
+  },
+  
   
   
   /** 
@@ -217,13 +251,7 @@ TentaGL.Vertex.prototype = {
    * @return {vec3}
    */
   getTangental:function() {
-    if(this._tangental === undefined) {
-      var msg = "Vertex surface tangental has not been defined.";
-      throw new Error(msg);
-    }
-    else {
-      return vec3.clone(this._tangental);
-    }
+    return vec3.clone(this._tangental);
   },
   
   
@@ -281,6 +309,20 @@ TentaGL.Vertex.prototype = {
     this._tangental = vec3.fromValues(xyz[0], xyz[1], xyz[2]);
     this._tangental = vec3.normalize(this._tangental, this._tangental);
   },
+  
+  
+  /** 
+   * Setter/getter for the tangental vector. 
+   * @param {vec3} xyz    Optional.
+   * @return {vec3}
+   */
+  tangental: function(xyz) {
+    if(xyz !== undefined) {
+      this._tangental = vec3.fromValues(xyz[0], xyz[1], xyz[2]);
+    }
+    return vec3.clone(this._tangental);
+  },
+  
   
   
   /** 

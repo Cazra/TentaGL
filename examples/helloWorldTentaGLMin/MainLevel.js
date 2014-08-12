@@ -271,6 +271,23 @@ HelloWorldApp.MainLevel.prototype = {
     this.imageSprite.render(gl);
     this.rect3DSprite.render(gl);
     
+    this.drawClipPts(gl);
+    
+    var testPlane = new TentaGL.Math.Plane([0,1,0], [0, -4, 0]);
+    testPlane.render(gl, "blue");
+    
+    
+    var line = new TentaGL.Math.Line3D([4, 10, 3], [20, -20, 10]);
+    line.render(gl, "green");
+    var pt = testPlane.segmentIntersection(line);
+    if(pt) {
+      (new TentaGL.Math.Sphere(1, pt)).render(gl, "blue");
+    }
+    else {
+      (new TentaGL.Math.Sphere(2, pt)).render(gl, "red");
+    }
+    
+    
     TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.MaterialLib.use(gl, "white");
     this.lights.render(gl);
@@ -281,6 +298,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.spriteGroup.render(gl, this.camera);
     
     // ClippingArea test
+    /*
     TentaGL.ShaderLib.use(gl, "simpleShader");
     TentaGL.ViewTrans.setCamera(gl, this.cam2D, aspect);
     TentaGL.ClippingArea.setClip(gl, function(gl) {
@@ -293,6 +311,7 @@ HelloWorldApp.MainLevel.prototype = {
     
     this.drawEllipse(gl, [0,0], gl.canvas.width, gl.canvas.height);
     TentaGL.Stencil.enabled(gl, false);
+    */
   },
   
   
@@ -303,7 +322,24 @@ HelloWorldApp.MainLevel.prototype = {
   
   drawEllipse: function(gl, xy, w, h) {
     TentaGL.Math.Ellipse2D.fromRect(new TentaGL.Math.Rect2D(xy, w, h)).render(gl, "white");
+  },
+  
+  
+  drawClipPts: function(gl) {
+    var camera = TentaGL.ViewTrans.getCamera(gl);
+    var far = camera.getZFar();
+    var dist = camera.getDist();
+    
+    var viewWidth = gl.canvas.width;
+    var viewHeight = gl.canvas.height;
+    var pt = this.mouse().getXY();
+    
+    var nf = camera.projectToClip(pt, viewWidth, viewHeight);
+    
+    (new TentaGL.Math.Sphere(0.05, nf[0])).render(gl, "green");
+    (new TentaGL.Math.Sphere(100, nf[1])).render(gl, "red");
   }
+  
 };
 
 
