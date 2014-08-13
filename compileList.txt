@@ -22,6 +22,7 @@ src/math/Math.js
     src/math/geom/Ellipse2D.js
     src/math/geom/Line2D.js
     src/math/geom/Rect2D.js
+    src/math/geom/Triangle2D.js
   src/math/geom/Shape3D.js
     src/math/geom/Line3D.js
     src/math/geom/Plane.js

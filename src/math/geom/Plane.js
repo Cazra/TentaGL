@@ -374,7 +374,7 @@ TentaGL.Math.Plane.prototype = {
       for(var i=0; i < iPts.length; i++) {
         var vertex = new TentaGL.Vertex(iPts[i]);
         vertex.normal(this._normal);
-        vertex.st(0, 0);
+        vertex.st([0, 0]);
         
         model.addVertex(vertex);
       }
@@ -429,8 +429,6 @@ TentaGL.Math.Plane.prototype = {
         return angleV - angleU;
       });
       
-      console.log(iPtsTran);
-      
       // Create a fan from point 0, using the untransformed points.
       for(var i=2; i < iPtsTran.length; i++) {
         var i0 = iPtsTran[0][3];
@@ -448,10 +446,7 @@ TentaGL.Math.Plane.prototype = {
       }
       
       // Render the model.
-      var vbo = new TentaGL.VBOData(gl, model);
-      TentaGL.ViewTrans.updateMVPUniforms(gl);
-      TentaGL.VBORenderer.render(gl, vbo);
-      vbo.clean(gl);
+      model.render(gl);
     }
     TentaGL.ViewTrans.pop(gl);
   }

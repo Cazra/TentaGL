@@ -211,17 +211,10 @@ TentaGL.Math.Quad.prototype = {
    * @param {string} materialName
    */
   render: function(gl, materialName) {
-    TentaGL.ViewTrans.push(gl);
-    var vbo = new TentaGL.VBOData(gl, this._model, TentaGL.getDefaultAttrProfileSet());
-    
     if(materialName) {
       TentaGL.MaterialLib.use(gl, materialName);
     }
-    TentaGL.ViewTrans.updateMVPUniforms(gl);
-    TentaGL.VBORenderer.render(gl, vbo);
-    
-    vbo.clean(gl);
-    TentaGL.ViewTrans.pop(gl);
+    this._model.render(gl);
   }
 };
 

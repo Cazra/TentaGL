@@ -250,18 +250,6 @@ TentaGL.Math = {
   },
   
   
-  ptsEqual: function(p1, p2, tolerance) {
-    if(!tolerance) {
-      tolerance = 0;
-    }
-    
-    var dx = Math.abs(p1[0] - p2[0]);
-    var dy = Math.abs(p1[1] - p2[1]);
-    
-    return (dx <= tolerance && dy <= tolerance);
-  },
-  
-  
   //////// Vectors
   
   
@@ -308,8 +296,27 @@ TentaGL.Math = {
   },
   
   
-  
-  
+  /** 
+   * Returns true iff the two vectors are parallel. 
+   * @param {vec2 || vec3} u
+   * @param {vec2 || vec3} v
+   */
+  vectorsParallel: function(u, v) {
+    if(!u[2]) {
+      u = vec2.copy([], u);
+      u[2] = 0;
+    }
+    if(!v[2]) {
+      v = vec2.copy([], v);
+      v[2] = 0;
+    }
+    
+    var uHat = vec3.normalize([], u);
+    var vHat = vec3.normalize([], v);
+    var dot = vec3.dot(uHat, vHat);
+    
+    return (dot == 1 || dot == -1);
+  },
   
   
   

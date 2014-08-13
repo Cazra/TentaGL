@@ -41,15 +41,6 @@ TentaGL.DefaultShader = function(gl) {
     
     self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
   });
-  
-  /*
-  var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
-  
-  console.log("\nCreating DefaultShader");
-  TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
-  
-  this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-  */
 };
 
 TentaGL.DefaultShader.SHADER_ID = "_default";

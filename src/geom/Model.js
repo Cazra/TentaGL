@@ -771,7 +771,28 @@ TentaGL.Model.prototype = {
     }
     
     return result;
+  },
+  
+  
+  //////// Rendering
+  
+  /** 
+   * Renders the model, creating and cleaning up the necessary VBO data in the
+   * process.
+   * @param {WebGLRenderingContext} gl
+   * @param {string} materialName   Optional.
+   */
+  render: function(gl, materialName) {
+    if(materialName) {
+      TentaGL.MaterialLib.use(gl, materialName);
+    }
+    
+    var vbo = new TentaGL.VBOData(gl, this);
+    TentaGL.ViewTrans.updateMVPUniforms(gl);
+    TentaGL.VBORenderer.render(gl, vbo);
+    vbo.clean(gl);
   }
+  
 };
 
 TentaGL.Model._nextID = 0;

@@ -31,7 +31,7 @@
 TentaGL.LinearGradientShader = function(gl) {
   var shaderRoot = TentaGL.ShaderLib.getDefaultShaderPath(gl);
   
-  var vertURL = shaderRoot + "gradientLinear.vert";
+  var vertURL = shaderRoot + "simple.vert";
   var fragURL = shaderRoot + "gradientLinear.frag";
   
   var self = this;
@@ -52,26 +52,6 @@ TentaGL.LinearGradientShader = function(gl) {
     self._breakPtsUni = self.getUniform("breakPts[0]");
     self._breakPtCountUni = self.getUniform("breakPtCount");
   });
-  
-  /*
-  var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
-  
-  console.log("\nCreating linear gradient shader");
-  TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
-  
-  this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-  this.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-  this.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
-  
-  this._mvpUni = this.getUniform("mvpTrans");
-  this._normalUni = this.getUniform("normalTrans");
-  
-  this._startPtUni = this.getUniform("p");
-  this._gradVectorUni = this.getUniform("u");
-  this._colorsUni = this.getUniform("colors[0]");
-  this._breakPtsUni = this.getUniform("breakPts[0]");
-  this._breakPtCountUni = this.getUniform("breakPtCount");
-  */
 };
 
 TentaGL.LinearGradientShader.prototype = {

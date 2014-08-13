@@ -79,7 +79,7 @@ TentaGL.SceneGroup.prototype = {
    * @return {Array}
    */
   getChildren:function() {
-    return this._children.concat([]);
+    return this._children.slice(0);
   },
   
   

@@ -131,6 +131,12 @@ HelloWorldApp.MainLevel.prototype = {
     this.rect3DSprite.draw = function(gl) {
       (new TentaGL.Math.Rect3D([0,0,2], 2, 1, 0.5)).render(gl, "red");
     };
+    
+    
+    this.tri2DSprite = new TentaGL.Sprite([0,0,3]);
+    this.tri2DSprite.draw = function(gl) {
+      (new TentaGL.Math.Triangle2D([0,0], [2,1], [1,2])).render(gl, "green");
+    };
   },
   
   
@@ -246,12 +252,14 @@ HelloWorldApp.MainLevel.prototype = {
     
     this.labelledIconSprite.render(gl);
     
+    
     var linesMat = "green";
     if(this.line1.intersects(this.line2)) {
       linesMat = "white";
     }
     this.line1.render(gl, linesMat);
     this.line2.render(gl, linesMat);
+    
     
     // Render a sphere, using the normal vector shader.
     TentaGL.ShaderLib.use(gl, "normalShader");
@@ -274,6 +282,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.coneSprite.render(gl);
     this.imageSprite.render(gl);
     this.rect3DSprite.render(gl);
+    this.tri2DSprite.render(gl);
     
     this.drawClipPts(gl);
     

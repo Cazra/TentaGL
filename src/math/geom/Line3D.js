@@ -24,14 +24,14 @@
 
 /**
  * A finite line in 3D space.
- * @param {vec4} p1
- * @param {vec4} p2
+ * @param {vec3} p1
+ * @param {vec3} p2
  */
 TentaGL.Math.Line3D = function(p1, p2) {
-  this._p1 = vec4.clone(p1);
+  this._p1 = vec3.clone(p1);
   this._p1[3] = 1;
   
-  this._p2 = vec4.clone(p2);
+  this._p2 = vec3.clone(p2);
   this._p2[3] = 1;
   
   this._length = vec3.dist(p1, p2);
@@ -56,7 +56,7 @@ TentaGL.Math.Line3D.prototype = {
   
   /** 
    * Returns the first point of the line.
-   * @return {vec4}
+   * @return {vec3}
    */
   getPt1: function() {
     return this._p1;
@@ -65,7 +65,7 @@ TentaGL.Math.Line3D.prototype = {
   
   /** 
    * Returns the second point of the line. 
-   * @return {vec4}
+   * @return {vec3}
    */
   getPt2: function() {
     return this._p2;
@@ -83,7 +83,7 @@ TentaGL.Math.Line3D.prototype = {
   
   /** 
    * Returns the vector component of the line defined by v = p2 - p1.
-   * @return {vec4}
+   * @return {vec3}
    */
   getVec3: function() {
     return vec3.sub([], this._p2, this._p1);
@@ -107,7 +107,7 @@ TentaGL.Math.Line3D.prototype = {
   
   /** 
    * Returns the distance of a point to this line.
-   * @param {vec4} pt
+   * @param {vec3} pt
    * @return {number}
    */
   distToPt: function(pt) {
@@ -151,16 +151,19 @@ TentaGL.Math.Line3D.prototype = {
     var rotate = mat4.fromQuat(mat4.create(), rotateQ);
     
     var trans = mat4.create();
-    mat4.translate(trans, trans, [-p[0], -p[1], -p[2]]);
+    mat4.translate(trans, trans, vec3.negate([], p));
     
     var scale = mat4.create();
-    mat4.scale(scale, scale, 1/vec3.length(u));
+    var scaleAmt = 1/vec3.length(u);
+    mat4.scale(scale, scale, [scaleAmt, scaleAmt, scaleAmt]);
     
     var m = mat4.mul(mat4.create(), rotate, trans);
     mat4.mul(m, scale, m);
     
     var qq = vec4.transformMat4(vec4.create(), q, m); // qq' = qq + s*vv
     var vv = vec3.transformMat4(vec3.create(), v, m);
+    
+    console.log(u, v, q, m, trans, scale, rotate, vec3.length(u));
     
     // Next, we apply some calculus and linear algebra to solve a system of 
     // differential equations...
@@ -173,19 +176,83 @@ TentaGL.Math.Line3D.prototype = {
     m[1] = vv[0];
     m[2] = vv[0];
     m[3] = 1;
+    mat2.invert(m,m);
     
     var t = vec2.fromValues(-vec3.dot(qq, vv), -qq[0]);
-    var sr = vec2.transformMat2(vec2.create(), mat2.invert(m,m), t);
+  //  console.log(t, m);
+    
+    var sr = vec2.transformMat2(vec2.create(), t, m);
     
     var ppp = vec3.add(vec3.create(), p, vec3.scale(vec3.create(), u, sr[1]));
     var qqq = vec3.add(vec3.create(), q, vec3.scale(vec3.create(), v, sr[0]));
     
     return vec3.dist(ppp, qqq);
   },
+
+  
+  //////// Collisions
+  
+  /** 
+   * Returns true iff the specified point lies on this line, 
+   * within some tolerance. 
+   * @param {vec3} pt
+   * @param {float} tolerance
+   * @return {boolean}
+   */
+  containsPt: function(pt, tolerance) {
+    if(!tolerance) {
+      tolerance = 0;
+    }
+    return (this.distToPt(pt) <= tolerance);
+  },
   
   
-  // Rendering
+  /** 
+   * Returns the bounding box of the line.
+   * @return {TentaGL.Math.Rect3D}
+   */
+  getBoundingBox: function() {
+    var left, right;
+    if(this._p1[0] <= this._p2[0]) {
+      left = this._p1[0];
+      right = this._p2[0];
+    }
+    else {
+      left = this._p2[0];
+      right = this._p1[0];
+    }
+    var width = right - left;
+    
+    var bottom, top;
+    if(this._p1[1] <= this._p2[1]) {
+      bottom = this._p1[1];
+      top = this._p2[1];
+    }
+    else {
+      bottom = this._p2[1];
+      top = this._p1[1];
+    }
+    var height = top - bottom;
+    
+    var back, front;
+    if(this._p1[2] <= this._p2[2]) {
+      back = this._p1[2];
+      front = this._p2[2];
+    }
+    var depth = front - back;
+    
+    return new TentaGL.Math.Rect3D([left, bottom, back], width, height, depth);
+  },
   
+  
+  //////// Rendering
+  
+  
+  /** 
+   * Renders the line. 
+   * @param {WebGLRenderingContext} gl
+   * @param {string} materialName
+   */
   render: function(gl, materialName) {
     var p1 = vec3.clone(this._p1);
     var p2 = vec3.clone(this._p2);
@@ -207,4 +274,8 @@ TentaGL.Math.Line3D.prototype = {
   }
   
 };
+
+
+Util.Inheritance.inherit(TentaGL.Math.Line3D, TentaGL.Math.Shape3D);
+
 
