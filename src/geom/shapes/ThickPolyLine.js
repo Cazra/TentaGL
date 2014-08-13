@@ -31,6 +31,7 @@
  * @param {number} width  The width of the line segments forming the polyline.
  * @param {Boolean} closed  Whether the polyline forms a closed polygon.
  * @return {TentaGL.Model}
+ * @deprecated
  */
 TentaGL.Model.ThickPolyLine = function(xyzv, width, closed) {
   var model = new TentaGL.Model(GL_TRIANGLES);

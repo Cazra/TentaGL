@@ -269,21 +269,13 @@ TentaGL.Math = {
    * Returns the angle from u to v, rotated around their cross product. 
    * @param {vec3} u
    * @param {vec3} v
-   * @return {number}
+   * @return {number}   Range [0, PI].
    */
   vectorAngle: function(u, v) {
     var uHat = vec3.normalize(vec3.create(), u);
     var vHat = vec3.normalize(vec3.create(), v);
     
-    var n = vec3.cross(vec3.create(), u, v);
-    nMag = vec3.length(n);
-    
-    var theta = Math.acos(vec3.dot(uHat, vHat));
-    if(nMag < 0) {
-      theta = TentaGL.TAU - theta;
-    }
-    
-    return theta;
+    return Math.acos(vec3.dot(uHat, vHat));
   },
   
   

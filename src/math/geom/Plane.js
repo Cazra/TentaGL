@@ -366,7 +366,7 @@ TentaGL.Math.Plane.prototype = {
     }
     
     // Construct a model from the intersection points.
-    if(iPts.length > 0) {
+    if(iPts.length > 2) {
       var model = new TentaGL.Model(GL_TRIANGLES, GL_NONE);
       
       var uv = this.getParallelVectors();
@@ -379,6 +379,7 @@ TentaGL.Math.Plane.prototype = {
         model.addVertex(vertex);
       }
       
+      /*
       for(var i=0; i < iPts.length-2; i++) {
         for(var j=i+1; j < iPts.length-1; j++) {
           for(var k=j+1; k < iPts.length; k++) {
@@ -386,6 +387,59 @@ TentaGL.Math.Plane.prototype = {
           }
         }
       }
+      */
+      
+      // Create a set of faces for the plane that are non-overlapping.
+      var iPtsTran = [];
+      var m = mat4.create();
+      mat4.translate(m, m, vec3.negate([], this._pt));
+      var q = TentaGL.Math.getQuatFromTo(this._normal, [0,0,1]);
+      mat4.mul(m, mat4.fromQuat([], q), m);
+      
+      for(var i=0; i < iPts.length; i++) {
+        // Transform the points so that they all lie on the XY plane.
+        iPtsTran.push(vec3.transformMat4([], iPts[i], m));
+        iPtsTran[i][2] = 0;
+        iPtsTran[i][3] = i;
+      }
+      
+      // Sort the points based on the angle of their vector from the center 
+      // of area, in the range [0, TAU).
+      var cPt = [0,0,0];
+      for(var i=0; i <iPtsTran.length; i++) {
+        vec3.add(cPt, cPt, vec3.scale([], iPtsTran[i], 1/iPtsTran.length));
+      }
+      
+      iPtsTran.sort(function(a, b) {
+        
+        var u = vec3.sub([], a, cPt);
+        var dirU = vec3.cross([], [1,0,0], u)[2];
+        var angleU = TentaGL.Math.vectorAngle([1,0,0], u);
+        if(dirU < 0) {
+          angleU = TentaGL.TAU - angleU;
+        }
+        
+        var v = vec3.sub([], b, cPt);
+        var dirV = vec3.cross([], [1,0,0], v)[2];
+        var angleV = TentaGL.Math.vectorAngle([1,0,0], v);
+        if(dirV < 0) {
+          angleV = TentaGL.TAU - angleV;
+        }
+        
+        return angleV - angleU;
+      });
+      
+      console.log(iPtsTran);
+      
+      // Create a fan from point 0, using the untransformed points.
+      for(var i=2; i < iPtsTran.length; i++) {
+        var i0 = iPtsTran[0][3];
+        var i1 = iPtsTran[i-1][3];
+        var i2 = iPtsTran[i][3];
+        
+        model.addFace(i0, i1, i2);
+      }
+      
       
       // tangental cannot be autocomputed since texture coordinates are all 0,0.
       for(var i=0; i < iPts.length; i++) {
