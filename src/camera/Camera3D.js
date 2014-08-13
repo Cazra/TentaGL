@@ -535,6 +535,23 @@ TentaGL.Camera3D.prototype = {
     far[2] = far[2]*far[3];
     
     return [near, far];
+  },
+  
+  
+  /** 
+   * Returns the eight corners of the camera's view volume in world coordinates. 
+   * @param {uint} viewWidth
+   * @param {uint} viewHeight
+   * @return {array: vec3*8}
+   */
+  getViewVolumeCorners: function(viewWidth, viewHeight) {
+    var lowerLeft = this.projectToClip([0, viewHeight], viewWidth, viewHeight);
+    var lowerRight = this.projectToClip([viewWidth, viewHeight], viewWidth, viewHeight);
+    var upperRight = this.projectToClip([viewWidth, 0], viewWidth, viewHeight);
+    var upperLeft = this.projectToClip([0, 0], viewWidth, viewHeight);
+    
+    return [  lowerLeft[0], lowerRight[0], upperRight[0], upperLeft[0],
+              lowerLeft[1], lowerRight[1], upperRight[1], upperLeft[1]  ];
   }
   
 };

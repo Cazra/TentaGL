@@ -46,6 +46,8 @@ HelloWorldApp.MainLevel.prototype = {
     this.rZ = 0;
     this.drZ = 0;
     
+    this._frames = 0;
+    
     var matProps1 = new TentaGL.MaterialProps();
     matProps1.setShininess(10);
     matProps1.setSpecular(TentaGL.Color.YELLOW);
@@ -134,6 +136,8 @@ HelloWorldApp.MainLevel.prototype = {
   
   
   update: function(gl) {
+    this._frames++;
+    
     // Group rotation
     if(this.keyboard().isPressed(KeyCode.W)) {
       this.spriteGroup.rotate([1,0,0], -0.1);
@@ -274,9 +278,6 @@ HelloWorldApp.MainLevel.prototype = {
     this.drawClipPts(gl);
     
     var testPlane = new TentaGL.Math.Plane([0,1,0], [0, -4, 0]);
-    testPlane.render(gl, "blue");
-    
-    
     var line = new TentaGL.Math.Line3D([4, 10, 3], [20, -20, 10]);
     line.render(gl, "green");
     var pt = testPlane.segmentIntersection(line);
@@ -295,6 +296,21 @@ HelloWorldApp.MainLevel.prototype = {
     // Transparent objects rendered last.
     TentaGL.ShaderLib.use(gl, "phongPerVertex");
     TentaGL.RenderMode.set3DTrans(gl);
+    
+    
+    TentaGL.ShaderLib.push(gl);
+    TentaGL.ShaderLib.use(gl, "plane");
+    var planeShader = TentaGL.ShaderLib.current(gl);
+    if(planeShader.isaPlaneShader) {
+      planeShader.setSFunc(gl, [1/10, 0, 0, this._frames/200]);
+      planeShader.setTFunc(gl, [0, 0, 1/10, this._frames/400]);
+      planeShader.setOpacity(gl, 0.25);
+    }
+    
+    testPlane.render(gl, "blueTile");
+    TentaGL.ShaderLib.pop(gl);
+    
+    
     this.spriteGroup.render(gl, this.camera);
     
     // ClippingArea test

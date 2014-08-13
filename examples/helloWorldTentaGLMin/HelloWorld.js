@@ -30,6 +30,7 @@ HelloWorldApp.prototype = {
     //  TentaGL.PerVertexPhongShader.load(gl, "phongPerVertex");
       TentaGL.PerVertexPhongShaderMac.load(gl, "phongPerVertex");
       TentaGL.CircleShader.load(gl, "circle");
+      TentaGL.PlaneSimpleShader.load(gl, "plane");
     }
     catch(e) {
       console.log(e.message);
@@ -47,6 +48,8 @@ HelloWorldApp.prototype = {
     
     var coinBlock = TentaGL.Texture.fromURL(gl, "../../images/sampleTex.png");
     TentaGL.MaterialLib.add(gl, "coinBlock", coinBlock);
+    
+    TentaGL.MaterialLib.add(gl, "blueTile", TentaGL.Texture.fromURL(gl, "../../images/blueTile.png"));
     
     
     var icon = TentaGL.Texture.fromURL(gl, "../../images/iconNew.png", 

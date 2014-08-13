@@ -29,9 +29,14 @@
  * @constructor
  * @param {WebGLContextRenderer} gl
  * @param {TentaGL.Model} model  The model we're creating the data for.
- * @param {associative arry: {int} -> {TentaGL.AttrProfile}} attrProfileSet
+ * @param {associative arry: {int} -> {TentaGL.AttrProfile}} attrProfileSet   
+ *      Optional. If not provided, TentaGL.getDefaultAttrProfileSet() is used.
  */
 TentaGL.VBOData = function(gl, model, attrProfileSet) {
+  
+  if(!attrProfileSet) {
+    attrProfileSet = TentaGL.getDefaultAttrProfileSet();
+  }
   
 //  console.log("Creating VBO data");
   

@@ -329,7 +329,7 @@ TentaGL.Math.Plane.prototype = {
   
   
   /** 
-   * TODO: Renders the plane (only the region bounded by the viewing volume).
+   * Renders the plane (only the region bounded by the viewing volume).
    * @param {WebGLRenderingContext} gl
    * @param {string} materialName
    */
@@ -339,79 +339,67 @@ TentaGL.Math.Plane.prototype = {
       TentaGL.MaterialLib.use(gl, materialName);
     }
     
-    // TODO: Create the a custom model for the plane bounded by the viewing volume.
-    // 1) Transform plane to projection coordinates. 
-    var m = TentaGL.ViewTrans.getMVP(gl);
+    // Determine the points where the plane intersects the view volume.
+    var vvPts = TentaGL.ViewTrans.getCamera(gl).getViewVolumeCorners(gl.canvas.width, gl.canvas.height);
+    var vvEdges = [];
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[0], vvPts[1]));
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[1], vvPts[2]));
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[2], vvPts[3]));
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[3], vvPts[0]));
     
-    var pt = vec3.copy([], this._pt);
-    pt[3] = 1;
-    var nPt = vec3.add([], this._pt, this._normal);
-    nPt[3] = 1;
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[4], vvPts[5]));
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[5], vvPts[6]));
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[6], vvPts[7]));
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[7], vvPts[4]));
     
-    vec4.transformMat4(pt, pt, m);
-    vec4.transformMat4(nPt, nPt, m);
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[0], vvPts[4]));
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[1], vvPts[5]));
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[2], vvPts[6]));
+    vvEdges.push(new TentaGL.Math.Line3D(vvPts[3], vvPts[7]));
     
-    vec4.scale(pt, pt, 1/pt[3]);
-    vec4.scale(nPt, nPt, 1/nPt[3]);
-    
-    var n = vec3.sub([], nPt, pt);
-    var projPlane = new TentaGL.Math.Plane(n, pt);
-    var projVolume = new TentaGL.Math.Rect3D([-1,-1,-1], 2,2,2);
-    
-    
-    // 2) Find the points where the plane intersects the cube.
-    var projEdges = projVolume.getEdges();
-    
-    var intPts = [];
-    for(var i=0; i<projEdges.length; i++) {
-      var intPt = projPlane.segmentIntersection(projEdges[i]);
-      if(intPt !== undefined && !intPt.isaLine3D) {
-        var p = vec3.copy([], intPt);
-        p[3] = 1;
-        intPts.push(p);
+    var iPts = [];
+    for(var i=0; i < vvEdges.length; i++) {
+      var pt = this.segmentIntersection(vvEdges[i]);
+      if(pt !== undefined && !pt.isaLine3D) {
+        iPts.push(pt);
       }
     }
     
-    if(intPts.length > 0) {
-    
-      // 3) Transform the points back to world coordinates and construct a poly from them.
+    // Construct a model from the intersection points.
+    if(iPts.length > 0) {
       var model = new TentaGL.Model(GL_TRIANGLES, GL_NONE);
-      mat4.invert(m, m);
       
-      for(var i=0; i<intPts.length; i++) {
-        vec4.transformMat4(intPts[i], intPts[i], m);
-        vec4.scale(intPts[i], intPts[i], 1/intPts[i][3]);
-        
-        var vertex = new TentaGL.Vertex(intPts[i]);
+      var uv = this.getParallelVectors();
+      
+      for(var i=0; i < iPts.length; i++) {
+        var vertex = new TentaGL.Vertex(iPts[i]);
         vertex.normal(this._normal);
-        vertex.st([0,0]);
+        vertex.st(0, 0);
         
         model.addVertex(vertex);
       }
       
-      
-      console.log(intPts.slice(0));
-      
-      for(var i=0; i < intPts.length - 2; i++) {
-        for(var j=i+1; j < intPts.length - 1; j++) {
-          for(var k=j+1; k < intPts.length; k++) {
+      for(var i=0; i < iPts.length-2; i++) {
+        for(var j=i+1; j < iPts.length-1; j++) {
+          for(var k=j+1; k < iPts.length; k++) {
             model.addFace(i,j,k);
           }
         }
       }
       
-      // 4) Render the poly.
+      // tangental cannot be autocomputed since texture coordinates are all 0,0.
+      for(var i=0; i < iPts.length; i++) {
+        var vertex = model.getVertex(i);
+        vertex.tangental([uv[0]]);
+      }
       
-      var vbo = new TentaGL.VBOData(gl, model, TentaGL.getDefaultAttrProfileSet());
+      // Render the model.
+      var vbo = new TentaGL.VBOData(gl, model);
       TentaGL.ViewTrans.updateMVPUniforms(gl);
       TentaGL.VBORenderer.render(gl, vbo);
-      
       vbo.clean(gl);
     }
-    
     TentaGL.ViewTrans.pop(gl);
-    
-    this.getQuad().render(gl, "blue");
   }
   
 };

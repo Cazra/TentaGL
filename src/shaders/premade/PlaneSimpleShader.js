@@ -23,20 +23,22 @@
 */
 
 /** 
- * A pre-fabricated shader program that applies a model-view-projection 
- * transform to vertices in the scene and colors texels using a texture.
- * Lighting/Shading is not provided in this program.
+ * A simple shader for rendering infinite planes.
+ * Because texture coordinates cannot be computed for the geometry defining the
+ * plane, we instead define the texture coordinates in the shader as a 
+ * linear function of the world coordinates.
+ * The user provides the coefficients for the functions.
  * @param {WebGLRenderingContext} gl
  */
-TentaGL.CircleShader = function(gl) {
+TentaGL.PlaneSimpleShader = function(gl) {
   var shaderRoot = TentaGL.ShaderLib.getDefaultShaderPath(gl);
   
-  var vertURL = shaderRoot + "simple.vert";
-  var fragURL = shaderRoot + "circle.frag";
+  var vertURL = shaderRoot + "planeSimple.vert";
+  var fragURL = shaderRoot + "planeSimple.frag";
   
   var self = this;
   TentaGL.ShaderLoader.load(vertURL, fragURL, function(vertSrc, fragSrc) {
-    console.log("\nCreating CircleShader");
+    console.log("\nCreating PlaneSimpleShader");
     TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
     
     self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
@@ -51,32 +53,34 @@ TentaGL.CircleShader = function(gl) {
     self._colorUni = self.getUniform("solidColor");
     self._texUni = self.getUniform("tex");
     self._useTexUni = self.getUniform("useTex");
+    
+    self._sFuncUni = self.getUniform("sFunc");
+    self._tFuncUni = self.getUniform("tFunc");
   });
 };
 
-TentaGL.CircleShader.prototype = {
+TentaGL.PlaneSimpleShader.prototype = {
   
-  constructor: TentaGL.CircleShader,
+  constructor: TentaGL.PlaneSimpleShader,
   
-  isaCircleShader: true
+  isaPlaneSimpleShader: true
 };
 
 
 /** 
- * Loads SimpleShader into the ShaderLib, with the specified name. 
+ * Loads PlaneSimpleShader into the ShaderLib, with the specified name. 
  * @param {WebGLRenderingContext} gl
  * @param {name}  The name used to reference the shader program from the ShaderLib.
  * @return {TentaGL.ShaderProgram}
  */
-TentaGL.CircleShader.load = function(gl, name) {
-  var program = new TentaGL.CircleShader(gl);
+TentaGL.PlaneSimpleShader.load = function(gl, name) {
+  var program = new TentaGL.PlaneSimpleShader(gl);
   TentaGL.ShaderLib.add(gl, name, program);
-  
-  gl._circleShaderProgramName = name;
   
   return program;
 };
 
 
-Util.Inheritance.inherit(TentaGL.CircleShader, TentaGL.SimpleShader);
+Util.Inheritance.inherit(TentaGL.PlaneSimpleShader, TentaGL.SimpleShader);
+Util.Inheritance.inherit(TentaGL.PlaneSimpleShader, TentaGL.PlaneShader);
 
