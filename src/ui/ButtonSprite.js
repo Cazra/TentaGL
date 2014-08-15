@@ -49,6 +49,7 @@ TentaGL.ButtonSprite.prototype = {
     this._isLeftPressed = false;
     this._isRightPressed = false;
     this._mouseOverStart = -1;
+    this._tooltipPosition = undefined;
   },
   
   
@@ -60,31 +61,36 @@ TentaGL.ButtonSprite.prototype = {
    * @param {TentaGL.Mouse} mouse
    */
   updateMouseState: function(picker, mouse) {
-    if(picker.getSpriteAtMouse(mouse) == this && this._enabled) {
-      if(this._mouseOverStart == -1) {
-        this._mouseOverStart = Date.now();
-        this.onMouseOver(mouse);
+    if(picker.getSpriteAtMouse(mouse) == this) {
+      if(this._enabled) {
+        if(this._mouseOverStart == -1) {
+          this._mouseOverStart = Date.now();
+          this.onMouseOver(mouse);
+        }
+        
+        if(mouse.isLeftPressed()) {
+          this._isLeftPressed = true;
+        }
+        else {
+          if(this._isLeftPressed) {
+            this.onClick(mouse);
+          }
+          this._isLeftPressed = false;
+        }
+        
+        if(mouse.isRightPressed()) {
+          this._isRightPressed = true;
+        }
+        else {
+          if(this._isRightPressed) {
+            this.onRightClick(mouse);
+          }
+          this._isRightPressed = false;
+        }
       }
       
-      if(mouse.isLeftPressed()) {
-        this._isLeftPressed = true;
-      }
-      else {
-        if(this._isLeftPressed) {
-          this.onClick(mouse);
-        }
-        this._isLeftPressed = false;
-      }
-      
-      if(mouse.isRightPressed()) {
-        this._isRightPressed = true;
-      }
-      else {
-        if(this._isRightPressed) {
-          this.onRightClick(mouse);
-        }
-        this._isRightPressed = false;
-      }
+      this._tooltipPosition = mouse.getXY();
+      vec2.add(this._tooltipPosition, this._tooltipPosition, [0, 16]);
     }
     else {
       if(this._mouseOverStart >= 0) {
@@ -149,6 +155,35 @@ TentaGL.ButtonSprite.prototype = {
   },
   
   
+  /**  
+   * Registers text to be displayed for this component as a tooltip.
+   * @param {string} text
+   * @param {TentaGL.Tooltip} tooltip   Optional. If not provided, TentaGL's default Tooltip will be used.
+   */
+  setTooltip: function(text, tooltip) {
+    this._tooltip = tooltip;
+    this._tooltipText = text;
+  },
+  
+  
+  /** 
+   * The base implementation only renders the tooltip. 
+   * Override this (but call this base method after rendering the button).
+   */
+  draw: function(gl) {
+    // Draw the tooltip if we've mouse-overed long enough.
+    if(this._tooltipText) { 
+      if(!this._tooltip) {
+        this._tooltip = TentaGL.Tooltip.getDefault(gl);
+      }
+      
+      if(this.timeMouseOvered() >= this._tooltip.delay()) {
+        this._tooltip.render(gl, this._tooltipText, this._tooltipPosition);
+      }
+    }
+  },
+  
+  
   ////// abstract methods
   
   
@@ -210,6 +245,8 @@ TentaGL.ButtonSprite.create = function(xyz, modelName, materialName, shaderName,
     catch (e) {
       // console.log("sprite resource not ready: " + e.message);
     }
+    
+    TentaGL.ButtonSprite.prototype.draw.call(this, gl);
   };
   
   return sprite;

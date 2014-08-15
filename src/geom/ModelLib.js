@@ -57,6 +57,7 @@ TentaGL.ModelLib = {
     this.add(gl, "unitPlane", new TentaGL.Model.Plane(1,1));
     this.add(gl, "unitLine", new TentaGL.Model.Line([0,0,0], [1,1,1]));
     this.add(gl, "unitCube", new TentaGL.Model.Cube(1,1,1));
+    this.add(gl, "unitCylinder", new TentaGL.Model.Cylinder(1,1));
     this.add(gl, "unitSphere", new TentaGL.Model.Sphere(1));
     this.add(gl, "unitSprite", (new TentaGL.Model.Plane(1,1)).flipTexT());
     this.add(gl, "unitCone", new TentaGL.Model.Cone(1,1));

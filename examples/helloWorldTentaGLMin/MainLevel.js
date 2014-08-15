@@ -102,6 +102,7 @@ HelloWorldApp.MainLevel.prototype = {
       this.setVisible(false);
       console.log("gradSprite 2 was clicked");
     };
+    this.gradSprite2.setTooltip("I will disappear if you right-click me.");
     
     this.teapotSprite = TentaGL.Sprite.create([0, 0, 0], "teapot", "green", "normalShader");
     
@@ -284,7 +285,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.rect3DSprite.render(gl);
     this.tri2DSprite.render(gl);
     
-    this.drawClipPts(gl);
+    // this.drawClipPts(gl);
     
     var testPlane = new TentaGL.Math.Plane([0,1,0], [0, -4, 0]);
     var line = new TentaGL.Math.Line3D([4, 10, 3], [20, -20, 10]);

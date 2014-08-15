@@ -47,6 +47,7 @@ TentaGL.MaterialLib = {
   reset:function(gl) {
     this.clean(gl);
     this.add(gl, "default", TentaGL.Color.WHITE);
+    this.add(gl, "_defaultTooltipBGColor", TentaGL.Color.Hex(0xffeeeebb));
   },
   
   

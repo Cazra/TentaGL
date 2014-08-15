@@ -232,9 +232,12 @@ TentaGL.Texture.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   useMe:function(gl) {
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, this._tex);
-    TentaGL.ShaderLib.current(gl).setTex(gl, 0);
+    var program = TentaGL.ShaderLib.current(gl);
+    if(program.setTex) {
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, this._tex);
+      TentaGL.ShaderLib.current(gl).setTex(gl, 0);
+    }
   },
   
   

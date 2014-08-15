@@ -105,7 +105,6 @@ src/scene/SceneNode.js
   src/scene/SceneGroup.js
   src/sprite/Sprite.js
     src/sprite/BillboardSprite.js
-    src/sprite/ButtonSprite.js
     src/sprite/CompositeSprite.js
       src/sprite/LabelledIconSprite.js
     src/sprite/IconSprite.js
@@ -142,3 +141,6 @@ src/time/Timer.js
 
 src/util/Align.js
 src/util/Canvas2D.js
+
+src/ui/ButtonSprite.js
+src/ui/Tooltip.js
