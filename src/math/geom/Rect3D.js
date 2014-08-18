@@ -170,7 +170,7 @@ TentaGL.Math.Rect3D.prototype = {
    * Returns the bounding box of this shape. Since this shape is a Rect3D, 
    * a clone of this shape is returned. 
    */
-  getBoundingBox: function() {
+  getBounds3D: function() {
     return this.clone();
   },
   

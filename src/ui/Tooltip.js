@@ -47,6 +47,11 @@ TentaGL.Tooltip.prototype = {
   },
   
   
+  component: function(component) {
+    
+  },
+  
+  
   /** 
    * Returns the dimensions of the tooltips with its current text.
    * @return {[width: number, height: number]}

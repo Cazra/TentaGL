@@ -142,7 +142,7 @@ TentaGL.IconSpriteOld.prototype = {
     else if(vertical == TentaGL.Align.TOP) {
       y = 1;
     }
-    this.setAnchorXYZ([x,y,0]);
+    this.anchor([x,y,0]);
   },
   
   
@@ -153,7 +153,7 @@ TentaGL.IconSpriteOld.prototype = {
    * width and height, respectively.
    */
   scaleIconDims:function() {
-    this.setScaleXYZ(this.getIconWidth(), this.getIconHeight(), 1);
+    this.scale(this.getIconWidth(), this.getIconHeight(), 1);
   },
   
   
@@ -164,7 +164,7 @@ TentaGL.IconSpriteOld.prototype = {
    */
   scaleToWidth:function(width) {
     var aspect = this.getIconWidth()/this.getIconHeight();
-    this.setScaleXYZ([width, width/aspect, 1]);
+    this.scale([width, width/aspect, 1]);
   },
   
   
@@ -175,7 +175,7 @@ TentaGL.IconSpriteOld.prototype = {
    */
   scaleToHeight:function(height) {
     var aspect = this.getIconWidth()/this.getIconHeight();
-    this.setScaleXYZ([height*aspect, height, 1]);
+    this.scale([height*aspect, height, 1]);
   },
   
   

@@ -64,18 +64,6 @@ TentaGL.Vertex.prototype = {
     return vec4.clone(this._xyz);
   },
   
-  /** 
-   * Sets the vertex's XYZ coordinates.
-   * @param {Number} x
-   * @param {Number} y
-   * @param {Number} z
-   */
-  setXYZ:function(x, y, z) {
-    this._xyz[0] = x;
-    this._xyz[1] = y;
-    this._xyz[2] = z;
-  },
-  
   
   /**
    * Returns the vertex's X coordinate.
@@ -272,8 +260,8 @@ TentaGL.Vertex.prototype = {
    * @return {vec3}
    */
   computeTangental:function(v2, v3) {
-    var u = vec3.sub(vec3.create(), v2.getXYZ(), this.getXYZ());
-    var v = vec3.sub(vec3.create(), v3.getXYZ(), this.getXYZ());
+    var u = vec3.sub(vec3.create(), v2.xyz(), this.xyz());
+    var v = vec3.sub(vec3.create(), v3.xyz(), this.xyz());
     
     var su = v2.getTexS() - this.getTexS();
     var sv = v3.getTexS() - this.getTexS();
@@ -347,7 +335,7 @@ TentaGL.Vertex.prototype = {
   //  console.log("  transform: " + Util.Debug.arrayString(transform));
   //  console.log("  old XYZ: " + this.getX() + ", " + this.getY() + ", " + this.getZ());
     
-    var xyz = vec4.transformMat4(vec4.create(), this.getXYZ(), transform);
+    var xyz = vec4.transformMat4(vec4.create(), this.xyz(), transform);
     var result = new TentaGL.Vertex(xyz[0], xyz[1], xyz[2]);
     
   //  console.log("  new XYZ: " + xyz[0] + ", " + xyz[1] + ", " + xyz[2]);

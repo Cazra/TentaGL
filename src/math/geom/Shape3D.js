@@ -21,7 +21,7 @@ TentaGL.Math.Shape3D.prototype = {
    * Returns the smallest 3D box completely containing this shape.
    * @return {TentaGL.Math.Rect3D}
    */
-  getBoundingBox: function() {},
+  getBounds3D: function() {},
   
   
   /** 

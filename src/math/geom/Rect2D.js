@@ -32,6 +32,15 @@ TentaGL.Math.Rect2D.prototype = {
   },
   
   
+  /** 
+   * Converts the shape to a Rect3D with z = 0 and depth = 0. 
+   * @return {
+   */
+  toRect3D: function() {
+    return new TentaGL.Math.Rect3D([this._xy[0], this._xy[1], 0], this._w, this._h, 0);
+  },
+  
+  
   //////// Metrics
   
   
@@ -134,7 +143,7 @@ TentaGL.Math.Rect2D.prototype = {
    * returns a clone of this rectangle.
    * @return {TentaGL.Math.Rect2D}
    */
-  getBoundingBox: function() {
+  getBounds2D: function() {
     return this.clone();
   },
   

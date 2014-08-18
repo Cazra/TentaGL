@@ -162,23 +162,13 @@ TentaGL.Picker.prototype = {
    * the picker raster.
    * @param {int} x
    * @param {int} y
-   * @param {boolean} ignoreComposite   Optional. Whether to ignore composited sprites.
-   *      Default to true, meaning that for composited sprites, this will return the top level
-   *      sprite the composite hierarchy for the sprite that was clicked.
    * @return {TentaGL.Sprite}
    */
-  getSpriteAt:function(x, y, ignoreComposite) {
+  getSpriteAt:function(x, y) {
     if(this._pixels) {
       var pixel = this._getPixelAt(x, y);
       var id = TentaGL.Color.rgba2Hex(pixel[0], pixel[1], pixel[2], pixel[3]);
-      var sprite = this._sprites[id];
-      if(ignoreComposite || !sprite) {
-        return sprite;
-      }
-      else {
-        var path = sprite.getCompositePath();
-        return path[path.length-1];
-      }
+      return this._sprites[id];
     }
     else {
       return undefined;
@@ -189,15 +179,12 @@ TentaGL.Picker.prototype = {
   /** 
    * Returns the sprite whose picking ID is stored at the mouse's location.
    * @param {TentaGL.Mouse} mouse
-   * @param {boolean} ignoreComposite   Optional. Whether to ignore composited sprites.
-   *      Default to true, meaning that for composited sprites, this will return the top level
-   *      sprite the composite hierarchy for the sprite that was clicked.
    * @return {TentaGL.Sprite}
    */
-  getSpriteAtMouse: function(mouse, ignoreComposite) {
+  getSpriteAtMouse: function(mouse) {
     var mx = mouse.getX();
     var my = this._app.getHeight() - mouse.getY();
-    return this.getSpriteAt(mx, my, ignoreComposite);
+    return this.getSpriteAt(mx, my);
   }
   
 };

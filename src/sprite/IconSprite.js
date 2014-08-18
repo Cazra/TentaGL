@@ -110,7 +110,7 @@ TentaGL.IconSprite.prototype = {
       y = this.getIconHeight();
     }
     
-    this.setAnchorXYZ([x,y,0]);
+    this.anchor([x,y,0]);
   },
   
   
@@ -121,7 +121,7 @@ TentaGL.IconSprite.prototype = {
    * width and height, respectively.
    */
   scaleIconDims:function() {
-    this.setScaleXYZ([this.getIconWidth(), this.getIconHeight(), 1]);
+    this.scale([this.getIconWidth(), this.getIconHeight(), 1]);
   },
   
   
@@ -132,7 +132,7 @@ TentaGL.IconSprite.prototype = {
    */
   scaleToWidth:function(width) {
     var aspect = this.getIconWidth()/this.getIconHeight();
-    this.setScaleXYZ([width, width/aspect, 1]);
+    this.scale([width, width/aspect, 1]);
   },
   
   
@@ -143,7 +143,7 @@ TentaGL.IconSprite.prototype = {
    */
   scaleToHeight:function(height) {
     var aspect = this.getIconWidth()/this.getIconHeight();
-    this.setScaleXYZ([height*aspect, height, 1]);
+    this.scale([height*aspect, height, 1]);
   },
   
   
@@ -172,6 +172,27 @@ TentaGL.IconSprite.prototype = {
     
     TentaGL.ViewTrans.pop(gl);
   },
+  
+  
+  renderComposite: function(gl) {
+    if(!this.isVisible()) {
+      return;
+    }
+    TentaGL.ViewTrans.push(gl);
+    
+    this._updateAlignment();
+    
+    var camera = TentaGL.ViewTrans.getCamera(gl);
+    var camEye = camera.getEye();
+    this.billboardWorldPlane(vec3.negate(vec3.create(), camera.getLook()), camera.getUp())
+    
+    TentaGL.ViewTrans.mul(gl, this.getModelTransform());
+    this.useOpacity(gl);
+    this.draw(gl);
+    
+    TentaGL.ViewTrans.pop(gl);
+  },
+  
   
   
   /** 

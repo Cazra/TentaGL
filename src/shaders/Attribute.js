@@ -68,7 +68,7 @@ TentaGL.Attribute.prototype = {
   /** 
    * Assigns which Vertex prototype function for returns the typed data array   
    * for this Attribute. E.G.: If this is an attribute for the vertex's position,
-   * the user should call thisAttribute.setGetter(TentaGL.Vertex.prototype.getXYZ).
+   * the user should call thisAttribute.setGetter(TentaGL.Vertex.prototype.xyz).
    * For each Attribute in a ShaderProgram, this method should be used to 
    * specify the corresponding Vertex getter function for the Attribute after the
    * ShaderProgram is loaded, but before it is used to render anything.

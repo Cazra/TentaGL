@@ -53,26 +53,6 @@ TentaGL.Sprite.prototype = {
   //////// Anchor point
   
   /** 
-   * Returns the homogeneous xyz coordinates of the sprite's anchor point. 
-   * The anchor point is the position of the sprite's origin point in relation
-   * to its model's origin point.
-   * @return {vec4}
-   */
-  getAnchorXYZ:function() {
-    return this._anchorXYZ;
-  },
-  
-  /** 
-   * Sets the anchor point for the sprite.
-   * The anchor point is the position of the sprite's origin point in relation
-   * to its model's origin point.
-   * @param {vec3} xyz
-   */
-  setAnchorXYZ:function(xyz) {
-    this._anchorXYZ = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
-  },
-  
-  /** 
    * Returns the x coordinate of the sprite's anchor point. 
    * @return {Number}
    */
@@ -98,17 +78,83 @@ TentaGL.Sprite.prototype = {
   
   
   /** 
-   * Shortcut for getAnchorXYZ and setAnchorXYZ. 
-   * If the argument is provided, this behaves as setAnchorXYZ. 
-   * Otherwise, this behaves as getAnchorXYZ.
+   * Setter/getter for the sprite's anchor point. This is the offset of the sprite's 
+   * rendered image/model relative to its actual position. When used as a setter,
+   * the z component of xyz may be omitted for 2D sprites.
+   * @param {vec3} xyz    Optional.
+   * @return {vec3}
    */
   anchor: function(xyz) {
     if(xyz !== undefined) {
-      this.setAnchorXYZ(xyz);
+      if(!xyz[2]) {
+        // The Z component can be left out for 2D sprites.
+        xyz[2] = 0;
+      }
+      this._anchorXYZ = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
     }
-    else {
-      return this.getAnchorXYZ();
-    }
+    return this._anchorXYZ;
+  },
+  
+  
+  //////// Metrics
+  
+  
+  /** 
+   * Returns the unscaled width of the sprite (its size in the direction of its X axis). 
+   * The default implementation returns 0. 
+   * This should be overridden if dimensions matter for this sprite 
+   * (such as for computing collisions).
+   */
+  getWidth: function() {
+    return 0;
+  },
+  
+  
+  /** 
+   * Returns the unscaled height of the sprite (its size in the direction of its Y axis). 
+   * The default implementation returns 0. 
+   * This should be overridden if dimensions matter for this sprite 
+   * (such as for computing collisions).
+   */
+  getHeight: function() {
+    return 0;
+  },
+  
+  /** 
+   * Returns the unscaled depth of the sprite (its size in the direction of its Z axis). 
+   * The default implementation returns 0. 
+   * This should be overridden if dimensions matter for this sprite 
+   * (such as for computing collisions).
+   */
+  getDepth: function() {
+    return 0;
+  },
+  
+  
+  /** 
+   * Returns the dimensions of this sprite. 
+   * @return {[width: number, height: number, depth: number]}
+   */
+  getDimensions: function() {
+    return [this.getWidth(), this.getHeight(), this.getDepth()];
+  },
+  
+  
+  /** 
+   * Returns the 2D bounding box of this sprite. 
+   * @return {TentaGL.Math.Rect2D}
+   */
+  getBounds2D: function() {
+    return new TentaGL.Math.Rect2D([this._xyz[0], this._xyz[1]], this.getWidth(), this.getHeight());
+  },
+  
+  
+  /** 
+   * Returns the 3D bounding box of this sprite.
+   * @return {TentaGL.Math.Rect3D}
+   */
+  getBounds3D: function() {
+    return new TentaGL.Math.Rect3D(this._xyz, this.getWidth(), this.getHeight(), this.getDepth());
   },
   
   
@@ -117,18 +163,18 @@ TentaGL.Sprite.prototype = {
   
   /** The model transform for sprites also needs to take into account anchor points. */
   getTRSTransform:function() {
-    var tx = this.getX();
-    var ty = this.getY();
-    var tz = this.getZ();
+    var tx = this.x();
+    var ty = this.y();
+    var tz = this.z();
     
     var ax = 0-this.getAnchorX();
     var ay = 0-this.getAnchorY();
     var az = 0-this.getAnchorZ();
     
-    var sUni = this.getScaleUni();
-    var scaleX = this.getScaleX()*sUni;
-    var scaleY = this.getScaleY()*sUni;
-    var scaleZ = this.getScaleZ()*sUni;
+    var sUni = this.scaleU();
+    var scaleX = this.scaleX()*sUni;
+    var scaleY = this.scaleY()*sUni;
+    var scaleZ = this.scaleZ()*sUni;
     
     var m = this._transform; 
     mat4.fromQuat(m, this.getQuat());

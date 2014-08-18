@@ -219,7 +219,7 @@ TentaGL.PhongShaderMac.prototype = {
     
     // pos (vec4)
     if(light.isaPointLight) {
-      this._lightUni.pos.set(gl, light.getXYZ());
+      this._lightUni.pos.set(gl, light.xyz());
     }
     else {
       this._lightUni.pos.set(gl, [0, 0, 0, 0]);
@@ -240,7 +240,7 @@ TentaGL.PhongShaderMac.prototype = {
     
     // attenA, attenB, atten C (float x3)
     if(light.isaPointLight) {
-      var atten = light.getAttenuation();
+      var atten = light.attenuation();
       this._lightUni.attenA.set(gl, [atten[0]]);
       this._lightUni.attenB.set(gl, [atten[1]]);
       this._lightUni.attenC.set(gl, [atten[2]]);

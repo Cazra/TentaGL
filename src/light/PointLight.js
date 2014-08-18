@@ -44,53 +44,34 @@ TentaGL.PointLight.prototype = {
   
   isaPointLight: true,
   
+  
   /** 
-   * Returns the position of the light.
+   * Setter/getter for the position of the light.
+   * @param {vec3} xyz    Optional.
    * @return {vec4}
    */
-  getXYZ: function() {
+  xyz: function(xyz) {
+    if(xyz !== undefined) {
+      this._xyz = vec3.copy([], xyz);
+      this._xyz[3] = 1;
+    }
     return this._xyz;
   },
   
   
   /** 
-   * Sets the position of the light. 
-   * @param {vec3} xyz
-   */
-  setXYZ: function(xyz) {
-    this._xyz[0] = xyz[0];
-    this._xyz[1] = xyz[1];
-    this._xyz[2] = xyz[2];
-  },
-  
-  
-  /** 
-   * Returns the attenuation coefficients for the light. Unless
-   * the coefficients are set through the setAttenuation method, they are 
-   * a=1, b=0, c=0. This causes the light to be the same intensity at all 
-   * distances.
-   * @return {array: [constant: number, linear: number, quadratic: number]}
-   */
-  getAttenuation: function() {
-    var result = [];
-    result[0] = this._attenuation[0];
-    result[1] = this._attenuation[1];
-    result[2] = this._attenuation[2];
-    return result;
-  },
-  
-  /** 
-   * Sets the attenuation coefficients for the light. These
+   * Setter/getter for the attenuation coefficents for the light. These
    * define how the intensity of the light degrades relative to distance.
-   * @param {number} a    The constant coefficient. 
-   * @param {number} b    The linear coefficient.
-   * @param {number} c    The quadratic coefficient.
+   * @param {[a: number, b: number, c:number]} coeffs
+   * @return {[a: number, b: number, c:number]}
    */
-  setAttenuation: function(a, b, c) {
-    this._attenuation[0] = a;
-    this._attenuation[1] = b;
-    this._attenuation[2] = c;
+  attenuation: function(coeffs) {
+    if(coeffs !== undefined) {
+      this._attenuation = coeffs.slice(0);
+    }
+    return this._attenuation;
   },
+  
   
   /** 
    * Renders an object to represent the light, for debugging. 

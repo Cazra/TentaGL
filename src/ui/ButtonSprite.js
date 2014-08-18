@@ -27,193 +27,28 @@
  * to function like buttons or other typical mouse-responsive UI components.
  * @constructor
  * @param {vec3} xyz
+ * @param {function(): undefined} action    Optional. A callback that is 
+ *      executed when the button is clicked. 
  */
-TentaGL.ButtonSprite = function(xyz) {
-  TentaGL.Sprite.call(this, xyz);
-  this.resetMouseState();
+TentaGL.ButtonSprite = function(xyz, action) {
+  TentaGL.UIComponent.call(this, xyz);
   
-  this.setEnabled(true);
+  if(!action) {
+    action = function() {};
+  }
+  this.onClick = function(mouse) {
+    action();
+  };
 };
 
 TentaGL.ButtonSprite.prototype = {
   
   constructor: TentaGL.ButtonSprite,
   
-  isaButtonSprite: true, 
-  
-  
-  /** 
-   * Resets the mouse state data for this button.
-   */
-  resetMouseState: function() {
-    this._isLeftPressed = false;
-    this._isRightPressed = false;
-    this._mouseOverStart = -1;
-    this._tooltipPosition = undefined;
-  },
-  
-  
-  /** 
-   * Updates the mouse interaction state for the button. 
-   * Before this method is called, it is assumed that the picker has 
-   * been updated for the current frame.
-   * @param {TentaGL.Picker} picker   
-   * @param {TentaGL.Mouse} mouse
-   */
-  updateMouseState: function(picker, mouse) {
-    if(picker.getSpriteAtMouse(mouse) == this) {
-      if(this._enabled) {
-        if(this._mouseOverStart == -1) {
-          this._mouseOverStart = Date.now();
-          this.onMouseOver(mouse);
-        }
-        
-        if(mouse.isLeftPressed()) {
-          this._isLeftPressed = true;
-        }
-        else {
-          if(this._isLeftPressed) {
-            this.onClick(mouse);
-          }
-          this._isLeftPressed = false;
-        }
-        
-        if(mouse.isRightPressed()) {
-          this._isRightPressed = true;
-        }
-        else {
-          if(this._isRightPressed) {
-            this.onRightClick(mouse);
-          }
-          this._isRightPressed = false;
-        }
-      }
-      
-      this._tooltipPosition = mouse.getXY();
-      vec2.add(this._tooltipPosition, this._tooltipPosition, [0, 16]);
-    }
-    else {
-      if(this._mouseOverStart >= 0) {
-        this.onMouseExit(mouse);
-      }
-      this.resetMouseState();
-    }
-  },
-  
-  
-  /** 
-   * Returns whether this button is currently being pressed. 
-   * When implementing draw, you may want to draw the sprite differently 
-   * depending on whether it is pressed.
-   * @return {boolean}
-   */
-  isPressed: function() {
-    return this._isLeftPressed;
-  },  
-  
-  
-  /** 
-   * Returns the amount of time in milliseconds that the button has been mouse-overed. 
-   * If the button isn't currently mouse-overed, -1 is returned.
-   * @return {int}
-   */
-  timeMouseOvered: function() {
-    if(this._mouseOverStart == -1) {
-      return -1;
-    }
-    else {
-      return Date.now() - this._mouseOverStart;
-    }
-  },
-  
-  
-  /** 
-   * Returns whether the button is currently mouse-overed. 
-   * @return {boolean}
-   */
-  isMouseOvered: function() {
-    return (this._mouseOverStart >= 0);
-  },
-  
-  
-  /** 
-   * Returns whether this button is enabled.
-   * Disabled buttons cannot be interacted with through events.
-   * @return {boolean}
-   */
-  isEnabled: function() {
-    return this._enabled;
-  },
-  
-  /** 
-   * Sets whether this button is enabled.
-   * Disabled buttons cannot be interacted with through events.
-   * @param {boolean} enabled
-   */
-  setEnabled: function(enabled) {
-    this._enabled = enabled;
-  },
-  
-  
-  /**  
-   * Registers text to be displayed for this component as a tooltip.
-   * @param {string} text
-   * @param {TentaGL.Tooltip} tooltip   Optional. If not provided, TentaGL's default Tooltip will be used.
-   */
-  setTooltip: function(text, tooltip) {
-    this._tooltip = tooltip;
-    this._tooltipText = text;
-  },
-  
-  
-  /** 
-   * The base implementation only renders the tooltip. 
-   * Override this (but call this base method after rendering the button).
-   */
-  draw: function(gl) {
-    // Draw the tooltip if we've mouse-overed long enough.
-    if(this._tooltipText) { 
-      if(!this._tooltip) {
-        this._tooltip = TentaGL.Tooltip.getDefault(gl);
-      }
-      
-      if(this.timeMouseOvered() >= this._tooltip.delay()) {
-        this._tooltip.render(gl, this._tooltipText, this._tooltipPosition);
-      }
-    }
-  },
-  
-  
-  ////// abstract methods
-  
-  
-  /** 
-   * Handler for when the button is left-clicked.
-   * @param {TentaGL.Mouse} mouse   The mouse that triggered the click.
-   */
-  onClick: function(mouse) {},
-  
-  /** 
-   * Handler for when the button is right-clicked.
-   * @param {TentaGL.Mouse} mouse   The mouse that triggered the click.
-   */
-  onRightClick: function(mouse) {},
-  
-  /** 
-   * Handler for when the mouse enters the sprite's area.
-   * @param {TentaGL.Mouse} mouse   The mouse that triggered the click.
-   */
-  onMouseOver: function(mouse) {},
-  
-  /** 
-   * Handler for when the mouse exits the sprite's area.
-   * @param {TentaGL.Mouse} mouse   The mouse that triggered the click.
-   */
-  onMouseExit: function(mouse) {}
-  
+  isaButtonSprite: true
 };
 
-Util.Inheritance.inherit(TentaGL.ButtonSprite, TentaGL.Sprite);
+Util.Inheritance.inherit(TentaGL.ButtonSprite, TentaGL.UIComponent);
 
 
 

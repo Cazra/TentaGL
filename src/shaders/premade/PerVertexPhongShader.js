@@ -216,7 +216,7 @@ TentaGL.PerVertexPhongShader.prototype = {
       
       // pos (vec4)
       if(light.isaPointLight) {
-        lightUni.pos.set(gl, light.getXYZ());
+        lightUni.pos.set(gl, light.xyz());
       }
       else {
         lightUni.pos.set(gl, [0, 0, 0, 0]);
@@ -237,7 +237,7 @@ TentaGL.PerVertexPhongShader.prototype = {
       
       // attenA, attenB, atten C (float x3)
       if(light.isaPointLight) {
-        var atten = light.getAttenuation();
+        var atten = light.attenuation();
         lightUni.attenA.set(gl, [atten[0]]);
         lightUni.attenB.set(gl, [atten[1]]);
         lightUni.attenC.set(gl, [atten[2]]);

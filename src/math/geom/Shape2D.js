@@ -20,7 +20,7 @@ TentaGL.Math.Shape2D.prototype = {
    * Returns the smallest rectangle containing the shape. 
    * @return {TentaGL.Math.Rect2D}
    */
-  getBoundingBox: function() {},
+  getBounds2D: function() {},
   
   
   /** 

@@ -142,7 +142,7 @@ TentaGL.Math.Ellipse2D.prototype = {
    * Returns the bounding box of this shape.
    * @return {TentaGL.Math.Rect2D}
    */
-  getBoundingBox: function() {
+  getBounds2D: function() {
     var left = this._pt[0] - this._rx;
     var bottom = this._pt[1] - this._ry;
     

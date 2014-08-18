@@ -33,7 +33,7 @@
  * @param {TentaGL.BlitteredFont} blitFont  The blittered font used to render the text.
  */
 TentaGL.LabelledIconSprite = function(xyz, iconTexName, labelText, labelBGTexName, blitFont) {
-  TentaGL.CompositeSprite.call(this, xyz);
+  TentaGL.Sprite.call(this, xyz);
   
   this._createIcon(iconTexName);
   this._createLabel(labelText, labelBGTexName, blitFont);
@@ -51,10 +51,9 @@ TentaGL.LabelledIconSprite.prototype = {
    * @private 
    */
   _createIcon:function(iconTexName) {
-    this._icon = new TentaGL.ImageIconSprite([0, 0, 0], iconTexName);
-    this._icon.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.CENTER);
-    
-    this.addComponent(this._icon);
+    var icon = this._icon = new TentaGL.ImageIconSprite([0, 0, 0], iconTexName);
+    icon.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.CENTER);
+    icon.setParent(this);
   },
   
   
@@ -66,20 +65,20 @@ TentaGL.LabelledIconSprite.prototype = {
    */
   _createLabel:function(labelText, labelBGTexName, blitFont) {
     // Create the label sprite.
-    this._label = new TentaGL.TextIconSprite([0, 0.3, 0.001], labelText, blitFont, 0.5);
-    this._label.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.BOTTOM);
-    this.addComponent(this._label);
+    var label = this._label = new TentaGL.TextIconSprite([0, 0.3, 0.001], labelText, blitFont, 0.5);
+    label.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.BOTTOM);
+    label.setParent(this);
     
     // Create the label background.
-    this._labelBG = new TentaGL.ImageIconSprite([0, 0.3, 0.0005], labelBGTexName);
-    this._labelBG.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.BOTTOM);
+    var bg = this._labelBG = new TentaGL.ImageIconSprite([0, 0.3, 0.0005], labelBGTexName);
+    bg.setAlignment(TentaGL.Align.CENTER, TentaGL.Align.BOTTOM);
     this._fitLabelBG();
-    this.addComponent(this._labelBG);
+    bg.setParent(this);
   },
   
   
   _fitLabelBG: function() {
-    this._labelBG.setScaleXYZ([
+    this._labelBG.scale([
       this._label.getIconWidth()/this._labelBG.getIconWidth()+0.1, 
       this._label.getIconHeight()/this._labelBG.getIconHeight(), 
       1
@@ -165,20 +164,6 @@ TentaGL.LabelledIconSprite.prototype = {
   },
   
   
-  //////// Events
-  
-  /** 
-   * The LabelledIconSprite listens for PickEvents from its components 
-   * and republishes them as its own. 
-   * @param {TentaGL.PickEvent} event
-   */
-  handlePickEvent:function(event) {
-    var src = event.getSource();
-    if(src == this._label || src == this._labelBG || src == this._icon) {
-      this.firePickEvent(event.getContext());
-    }
-  },
-  
   
   
   //////// Rendering
@@ -202,12 +187,14 @@ TentaGL.LabelledIconSprite.prototype = {
     this._fitLabelBG();
     
     TentaGL.ViewTrans.mul(gl, this.getModelTransform());
-    this.draw(gl);
+    this._icon.render(gl);
+    this._label.render(gl);
+    this._labelBG.render(gl);
+    
     
     TentaGL.ViewTrans.pop(gl);
   }
 };
 
-Util.Inheritance.inherit(TentaGL.LabelledIconSprite, TentaGL.CompositeSprite);
-Util.Inheritance.inherit(TentaGL.LabelledIconSprite, TentaGL.PickEventListener);
+Util.Inheritance.inherit(TentaGL.LabelledIconSprite, TentaGL.Sprite);
 

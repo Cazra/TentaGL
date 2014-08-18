@@ -103,7 +103,7 @@ TentaGL.Math.Sphere.prototype = {
    * Returns the sphere's bounding box. 
    * @return {TentaGL.Math.Rect3D}
    */
-  getBoundingBox: function() {
+  getBounds3D: function() {
     var x = this._pt[0] - this._radius;
     var y = this._pt[1] - this._radius;
     var z = this._pt[2] - this._radius;

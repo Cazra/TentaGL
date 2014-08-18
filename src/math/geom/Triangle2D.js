@@ -211,7 +211,7 @@ TentaGL.Math.Triangle2D.prototype = {
    * Returns the bounding box of the shape. 
    * @return {TentaGL.Math.Rect2D}
    */
-  getBoundingBox: function() {
+  getBounds2D: function() {
     var left = Math.min(this._a[0], this._b[0], this._c[0]);
     var right = Math.max(this._a[0], this._b[0], this._c[0]);
     var width = right - left;

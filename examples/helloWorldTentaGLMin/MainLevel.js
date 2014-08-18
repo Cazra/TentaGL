@@ -12,7 +12,7 @@ HelloWorldApp.MainLevel.prototype = {
    */
   createTestSprite:function(xyz) {
     var sprite = TentaGL.Sprite.create(xyz, "cylinder", "testCircle", "phongPerVertex");
-    sprite.setScaleUni(0.25);
+    sprite.scaleU(0.25);
     sprite.opacity(0.5);
     return sprite;
   },
@@ -26,7 +26,7 @@ HelloWorldApp.MainLevel.prototype = {
    */
   createSphereSprite:function(xyz, materialName, shaderName) {
     var sprite = TentaGL.Sprite.create(xyz, "unitSphere", materialName, shaderName);
-    sprite.setScaleUni(0.5);
+    sprite.scaleU(0.5);
     
     return sprite;
   },
@@ -94,10 +94,10 @@ HelloWorldApp.MainLevel.prototype = {
     this.line2 = new TentaGL.Math.Line2D([5,2], [10,10]);
     
     this.gradSprite = TentaGL.Sprite.create([0, 0, -1], "unitPlane", "grad1", "gradientShader");
-    this.gradSprite.setScaleXYZ([4,3,1]);
+    this.gradSprite.scale([4,3,1]);
     
     this.gradSprite2 = TentaGL.ButtonSprite.create([4, 0, -1], "unitPlane", "grad2", "gradientShader2"); 
-    this.gradSprite2.setScaleXYZ([4,3,1]);
+    this.gradSprite2.scale([4,3,1]);
     this.gradSprite2.onRightClick = function(mouse) {
       this.setVisible(false);
       console.log("gradSprite 2 was clicked");
@@ -118,7 +118,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.shadedSprite1 = TentaGL.Sprite.create([5, 0, 0], "unitSphere", "bumpedRed", "phong", matProps1); 
     this.shadedSprite2 = TentaGL.Sprite.create([5, -5, 0], "unitSphere", "white", "phongPerVertex", matProps1); 
     this.shadedSprite3 = TentaGL.Sprite.create([5, 20, 0], "unitSphere", "bumpedRed", "phong", matProps1); 
-    this.shadedSprite3.setScaleXYZ([4, 4, 4]);
+    this.shadedSprite3.scale([4, 4, 4]);
     
     
     this.imageSprite = new TentaGL.Sprite([0,0,1]);
@@ -178,8 +178,8 @@ HelloWorldApp.MainLevel.prototype = {
     // Camera control
     this.camera.controlWithMouse(this.mouse(), this.getApp().getWidth(), this.getApp().getHeight());
     
-    this.axesGroup.get(3).setXYZ(this.camera.getCenter());
-    this.ptLight1.setXYZ(this.camera.getCenter());
+    this.axesGroup.get(3).xyz(this.camera.getCenter());
+    this.ptLight1.xyz(this.camera.getCenter());
     this.camGroup.setQuat(this.camera._orientation);
     
     var sprites = this.spriteGroup.getChildren();

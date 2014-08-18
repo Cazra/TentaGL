@@ -211,7 +211,7 @@ TentaGL.Math.Line3D.prototype = {
    * Returns the bounding box of the line.
    * @return {TentaGL.Math.Rect3D}
    */
-  getBoundingBox: function() {
+  getBounds3D: function() {
     var left, right;
     if(this._p1[0] <= this._p2[0]) {
       left = this._p1[0];

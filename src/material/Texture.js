@@ -33,6 +33,13 @@ TentaGL.Texture = function(gl) {
     this._tex = TentaGL.Texture.create(gl);
     this._width = 1;
     this._height = 1;
+    
+    this._magFilter = GL_NEAREST;
+    this._minFilter = GL_NEAREST;
+    
+    this._wrapS = GL_CLAMP_TO_EDGE;
+    this._wrapT = GL_CLAMP_TO_EDGE;
+    
 };
 
 
@@ -41,25 +48,6 @@ TentaGL.Texture.prototype = {
   constructor:TentaGL.Texture,
   
   isaTexture: true,
-  
-  /** 
-   * Sets the contents of the texture to the data in a PixelData object.
-   * @param {WebGLRenderingContext} gl
-   * @param {TentaGL.PixelData} pixelData
-   */
-  setPixelData:function(gl, pixelData) {
-    var data = pixelData.getData();
-    var width = pixelData.getWidth();
-    var height = pixelData.getHeight();
-    
-    gl.bindTexture(gl.TEXTURE_2D, this._tex);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
-    this._width = width;
-    this._height = height;
-    
-    TentaGL.MaterialLib.useNone(gl);
-  },
-  
   
   
   /** 
@@ -103,99 +91,70 @@ TentaGL.Texture.prototype = {
   //////// Min-mag
   
   /** 
-   * Returns the constant for the current magnification filter being used.
-   * Default gl.NEAREST
+   * Setter/getter for the texture's magnification filter.
    * @param {WebGLRenderingContext} gl
-   * @return {GLenum} Either gl.NEAREST or gl.LINEAR
+   * @param {GLenum} filter    Optional. GL_NEAREST or GL_LINEAR
+   * @return {GLenum}
    */
-  getMagFilter:function(gl) {
+  magFilter: function(gl, filter) {
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
+    if(filter !== undefined) {
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+    }
     return gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER);
   },
   
-  /**
-   * Sets the magnification filter to be used with this texture.
-   * @param {WebGLRenderingContext} gl
-   * @param {GLint} filter    Either gl.NEAREST or gl.LINEAR
-   */
-  setMagFilter:function(gl, filter) {
-    gl.bindTexture(gl.TEXTURE_2D, this._tex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
-  },
-  
+
   /** 
-   * Returns the constant for the current minification filter being used.
-   * Default gl.NEAREST
+   * Setter/getter for the texture's minification filter. 
    * @param {WebGLRenderingContext} gl
-   * @return {GLenum} Either gl.NEAREST, gl.LINEAR, gl.LINEAR_MIPMAP_LINEAR,
+   * @param {GLenum} filter    Optional. Either gl.NEAREST, gl.LINEAR, gl.LINEAR_MIPMAP_LINEAR,
    *       gl.NEAREST_MIPMAP_NEAREST, gl.NEARTEST_MIPMAP_LINEAR, or gl.LINEAR_MIPMAP_NEAREST.
+   * @return {GLenum}
    */
-  getMinFilter:function(gl) {
+  minFilter: function(gl, filter) {
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
+    if(filter !== undefined) {
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
+    }
     return gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER);
   },
-  
-  /**
-   * Sets the minification filter to be used with this texture.
-   * @param {WebGLRenderingContext} gl
-   * @param {GLint} filter    Either gl.NEAREST, gl.LINEAR, gl.LINEAR_MIPMAP_LINEAR,
-   *       gl.NEAREST_MIPMAP_NEAREST, gl.NEARTEST_MIPMAP_LINEAR, or gl.LINEAR_MIPMAP_NEAREST.
-   */
-  setMinFilter:function(gl, filter) {
-    gl.bindTexture(gl.TEXTURE_2D, this._tex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter);
-  },
-  
   
   
   //////// Wrapping
   
-  /**
-   * Gets the the wrapping method used for this texture on the S texture
-   * coordinates axis.
-   * Default gl.CLAMP_TO_EDGE
+  
+  /** 
+   * Setter/getter for the S-wrapping method for this texture. 
    * @param {WebGLRenderingContext} gl
-   * @return {GLenum} Either gl.CLAMP_TO_EDGE, gl.REPEAR, or gl.MIRRORED_REPEAT.
+   * @param {GLenum} method   Optional. Either gl.CLAMP_TO_EDGE, gl.REPEAR, or gl.MIRRORED_REPEAT.
+   * @return {GLenum}
    */
-  getWrapS:function(gl) {
+  wrapS: function(gl, method) {
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
+    if(method !== undefined) {
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, method);
+    }
     return gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S);
   },
   
-  /**
-   * Sets the wrapping method used for this texture on the 
-   * S texture coordinates axis.
-   * @param {WebGLRenderingContext} gl
-   * @param {GLint} method
-   */
-  setWrapS:function(gl, method) {
-    gl.bindTexture(gl.TEXTURE_2D, this._tex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, method);
-  },
   
   
-  /**
-   * Gets the the wrapping method used for this texture on the S texture
-   * coordinates axis.
-   * Default gl.CLAMP_TO_EDGE
+  /** 
+   * Setter/getter for the T-wrapping method for this texture. 
    * @param {WebGLRenderingContext} gl
-   * @return {GLenum} Either gl.CLAMP_TO_EDGE, gl.REPEAR, or gl.MIRRORED_REPEAT.
+   * @param {GLenum} method   Optional. Either gl.CLAMP_TO_EDGE, gl.REPEAR, or gl.MIRRORED_REPEAT.
+   * @return {GLenum}
    */
-  getWrapT:function(gl) {
+  wrapT: function(gl, method) {
     gl.bindTexture(gl.TEXTURE_2D, this._tex);
+    if(method !== undefined) {
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, method);
+    }
     return gl.getTexParameter(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T);
   },
   
-  /**
-   * Sets the wrapping method used for this texture on the 
-   * T texture coordinates axis.
-   * @param {WebGLRenderingContext} gl
-   * @param {GLint} method
-   */
-  setWrapT:function(gl, method) {
-    gl.bindTexture(gl.TEXTURE_2D, this._tex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, method);
-  },
+  
   
   
   //////// Pixel data
@@ -222,6 +181,24 @@ TentaGL.Texture.prototype = {
     return TentaGL.PixelData.fromGLTexture(gl, this._tex, x, y, w, h, bytes);
   },
   
+  
+  /** 
+   * Sets the contents of the texture to the data in a PixelData object.
+   * @param {WebGLRenderingContext} gl
+   * @param {TentaGL.PixelData} pixelData
+   */
+  setPixelData:function(gl, pixelData) {
+    var data = pixelData.getData();
+    var width = pixelData.getWidth();
+    var height = pixelData.getHeight();
+    
+    gl.bindTexture(gl.TEXTURE_2D, this._tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    this._width = width;
+    this._height = height;
+    
+    TentaGL.MaterialLib.useNone(gl);
+  },
   
   
   //////// GL state

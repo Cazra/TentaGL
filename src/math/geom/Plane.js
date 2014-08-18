@@ -312,7 +312,7 @@ TentaGL.Math.Plane.prototype = {
   /**  
    * A plane is infinite, and therefore unbounded. So this returns undefined.
    */
-  getBoundingBox: function() {
+  getBounds3D: function() {
     return undefined;
   },
   

@@ -38,15 +38,15 @@ TentaGL.SceneNode = function(xyz) {
     xyz[2] = 0;
   }
   
-  this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
+  this._xyz = vec3.copy([], xyz);
   
   this._scaleXYZ = [1, 1, 1];
   this._scaleUni = 1;
   
   this._quat = quat.create();
   
-  this._objLook = vec3.fromValues(0,0,1);
-  this._objUp = vec3.fromValues(0,1,0);
+  this._objLook = [0,0,1];
+  this._objUp = [0,1,0];
   
   this._transform = mat4.create();
   this._tranDirty = true;
@@ -121,44 +121,6 @@ TentaGL.SceneNode.prototype = {
   },
   
   
-  //////// Compositing
-  
-  /** 
-   * If this node is a composite component, this returns its composite parent.
-   * Otherwise, this returns undefined.
-   * @return {TentaGL.SceneNode}
-   */
-  getCompositeParent:function() {
-    return this._compositeParent;
-  },
-  
-  /** 
-   * Sets this node as a composite component of another node.
-   * @param {TentaGL.SceneNode} parent
-   */
-  setCompositeParent:function(parent) {
-    this._compositeParent = parent;
-  },
-  
-  
-  /**
-   * Returns a list of this node's composite hierarchy, with 
-   * this at index 0, and the top composite in the last index.
-   * @return {array:TentaGL.SceneNode}
-   */
-  getCompositePath:function() {
-    var result = [];
-    
-    var current = this;
-    while(current) {
-      result.push(current);
-      current = current.getCompositeParent();
-    }
-    
-    return result;
-  },
-  
-  
   //////// Visibility
   
   /** 
@@ -176,6 +138,8 @@ TentaGL.SceneNode.prototype = {
   setVisible:function(visible) {
     this._isVisible = visible;
   },
+  
+  
   
   
   //////// Opacity
@@ -210,71 +174,30 @@ TentaGL.SceneNode.prototype = {
   //////// Position
   
   /** 
-   * Returns the Sprite's XYZ position in local coordinates.
-   * @return {vec4}
+   * Returns the XYZ position of this node in world coordinates. 
+   * @return {vec3}
    */
-  getXYZ:function() {
-    return this._xyz;
-  },
-  
-  
   getWorldXYZ:function() {
     var wTran = this.getWorldTransform();
     var x = wTran[12];
     var y = wTran[13];
     var z = wTran[14];
-    return vec4.fromValues(x, y, z, 1);
+    return [x,y,z];
   },
+  
   
   
   /** 
-   * Sets the Sprite's XYZ in local coordinates.
-   * @param {vec3} xyz
-   */
-  setXYZ:function(xyz) {
-    this._xyz[0] = xyz[0];
-    this._xyz[1] = xyz[1];
-    this._xyz[2] = xyz[2];
-    this._tranDirty = true;
-  },
-  
-  /**
-   * Returns the Sprites X local coordinate.
-   * @return {Number}
-   */
-  getX:function() {
-    return this._xyz[0];
-  },
-  
-  /**
-   * Returns the Sprites Y local coordinate.
-   * @return {Number}
-   */
-  getY:function() {
-    return this._xyz[1];
-  },
-  
-  /**
-   * Returns the Sprites Z local coordinate.
-   * @return {Number}
-   */
-  getZ:function() {
-    return this._xyz[2];
-  },
-  
-  
-  /** 
-   * Shortcut for setXYZ and getXYZ. 
-   * If the argument is provided, this behaves as setXYZ. 
-   * Otherwise, it behaves as getXYZ.
+   * Setter/getter for the node's XYZ position.
+   * @param {vec3} xyz    Optional.
+   * @return {vec3}
    */
   xyz: function(xyz) {
     if(xyz !== undefined) {
-      this.setXYZ(xyz);
+      this._xyz = vec3.copy([], xyz);
+      this._tranDirty = true;
     }
-    else {
-      return this.getXYZ();
-    }
+    return this._xyz;
   },
   
   /** 
@@ -629,7 +552,7 @@ TentaGL.SceneNode.prototype = {
    * will be tilted from the base up vector.
    */
   lookAt:function(p) {
-    var xyz = this.getXYZ();
+    var xyz = this.xyz();
     
     var dx = p[0] - xyz[0];
     var dy = p[1] - xyz[1];
@@ -672,7 +595,7 @@ TentaGL.SceneNode.prototype = {
    * @param {vec3} up   The general direction of "up".
    */
   billboardPoint:function(p, up) {
-    var xyz = this.getXYZ();
+    var xyz = this.xyz();
     
     var dx = p[0] - xyz[0];
     var dy = p[1] - xyz[1];
@@ -713,7 +636,7 @@ TentaGL.SceneNode.prototype = {
    * but its up vector remains set as the base up vector.
    */
   billboardAxis:function(p) {
-    var xyz = this.getXYZ();
+    var xyz = this.xyz();
     var baseLook = this.getBaseLook();
     var baseUp = this.getBaseUp();
     
@@ -800,137 +723,91 @@ TentaGL.SceneNode.prototype = {
   
   //////// Scale
   
+  
   /** 
-   * Returns the sprite's scales along its X, Y, and Z axes.
+   * Setter getter for the node's scale on the X, Y, and Z axes.
+   * @param {vec3} xyz    Optional.
    * @return {vec3}
-   */
-  getScaleXYZ:function() {
-    return this._ScaleXYZ;
-  },
-  
-  /** 
-   * Sets the sprite's scales along its X, Y, and Z axes.
-   * @param {vec3} xyz
-   */
-  setScaleXYZ:function(xyz) {
-    this._scaleXYZ = vec3.fromValues(xyz[0], xyz[1], xyz[2]);
-    this._tranDirty = true;
-  },
-  
-  /** 
-   * Returns the X component of the sprite's scale.
-   * @return {Number}
-   */
-  getScaleX:function() {
-    return this._scaleXYZ[0];
-  },
-  
-  /**
-   * Returns the Y component of the sprite's scale.
-   * @return {Number}
-   */
-  getScaleY:function() {
-    return this._scaleXYZ[1];
-  },
-  
-  /** 
-   * Returns the Z component of the sprite's scale.
-   * @return {Number}
-   */
-  getScaleZ:function() {
-    return this._scaleXYZ[2];
-  },
-  
-  /** 
-   * Returns the uniform scale value of the sprite. 
-   * In the sprite's scale transform, this multiplies the axial scale values
-   * of the sprite.
-   * @return {Number}
-   */
-  getScaleUni:function() {
-    return this._scaleUni;
-  },
-  
-  /** 
-   * Sets the uniform scale value of the sprite.
-   * In the sprite's scale transform, this multiplies the axial scale values
-   * of the sprite.
-   * @param {Number} coeff
-   */
-  setScaleUni:function(coeff) {
-    this._scaleUni = coeff;
-    this._tranDirty = true;
-  },
-  
-  
-  getWorldScaleUni:function() {
-    var scale = this.getScaleUni();
-    if(this._parent) {
-      scale += this._parent.getWorldScaleUni();
-    }
-    return scale;
-  },
-  
-  
-  /** 
-   * Shortcut for getScaleXYZ and setScaleXYZ.
-   * If xyz is provided, this behaves as setScaleXYZ. 
-   * Otherwise, this behaves as getScaleXYZ.
    */
   scale: function(xyz) {
     if(xyz !== undefined) {
-      this.setScaleXYZ(xyz);
+      if(!xyz[2]) {
+        xyz[2] = 0;
+      }
+      this._scaleXYZ = vec3.copy([], xyz);
+      this._tranDirty = true;
     }
-    else {
-      return this.getScaleXYZ();
-    }
+    return this._ScaleXYZ;
   },
   
   
-  /** Shorthand getter/setter for the scale's X component. */
+  /** 
+   * Shorthand getter/setter for the scale's X component. 
+   * @param {number} x    Optional.
+   * @return {number}
+   */
   scaleX: function(x) {
     if(x !== undefined) {
       this._scaleXYZ[0] = x;
       this._tranDirty = true;
     }
-    else {
-      return this._scaleXYZ[0];
-    }
+    return this._scaleXYZ[0];
   },
   
-  /** Shorthand getter/setter for the scale's Y component. */
+  
+  /** 
+   * Shorthand getter/setter for the scale's Y component. 
+   * @param {number} y    Optional.
+   * @return {number}
+   */
   scaleY: function(y) {
     if(y !== undefined) {
       this._scaleXYZ[1] = y;
       this._tranDirty = true;
     }
-    else {
-      return this._scaleXYZ[1];
-    }
+    return this._scaleXYZ[1];
   },
   
-  /** Shorthand getter/setter for the scale's Z component. */
+  
+  /** 
+   * Shorthand getter/setter for the scale's Z component. 
+   * @param {number} z    Optional.
+   * @return {number}
+   */
   scaleZ: function(z) {
     if(z !== undefined) {
       this._scaleXYZ[2] = z;
       this._tranDirty = true;
     }
-    else {
-      return this._scaleXYZ[2];
-    }
+    return this._scaleXYZ[2];
   },
   
-  /** Shorthand getter/setter for the scale's uniform component. */
+  
+  /** 
+   * Shorthand getter/setter for the scale's uniform component. 
+   * @param {number} u    Optional.
+   * @return {number}
+   */
   scaleU: function(u) {
     if(u !== undefined) {
       this._scaleUni = u;
       this._tranDirty = true;
     }
-    else {
-      return this._scaleUni;
-    }
+    return this._scaleUni;
   },
   
+  
+  /** 
+   * Returns the scale's uniform component in world space.
+   * @return {number}
+   */
+  getWorldScaleU:function() {
+    var scale = this.scaleU();
+    if(this._parent) {
+      scale *= this._parent.getWorldScaleU();
+    }
+    return scale;
+  },
   
   //////// Model transform
   
@@ -949,14 +826,14 @@ TentaGL.SceneNode.prototype = {
   
   
   getTRSTransform:function() {
-    var tx = this.getX();
-    var ty = this.getY();
-    var tz = this.getZ();
+    var tx = this.x();
+    var ty = this.y();
+    var tz = this.z();
     
-    var sUni = this.getScaleUni();
-    var scaleX = this.getScaleX()*sUni;
-    var scaleY = this.getScaleY()*sUni;
-    var scaleZ = this.getScaleZ()*sUni;
+    var sUni = this.scaleU();
+    var scaleX = this.scaleX()*sUni;
+    var scaleY = this.scaleY()*sUni;
+    var scaleZ = this.scaleZ()*sUni;
     
     var m = this._transform; 
     mat4.fromQuat(m, this.getQuat());
@@ -1013,6 +890,28 @@ TentaGL.SceneNode.prototype = {
    */
   render:function(gl) {
     if(!this.isVisible() || !TentaGL.SceneNode.filter(this)) {
+      return;
+    }
+    TentaGL.ViewTrans.push(gl);
+    
+    TentaGL.ViewTrans.mul(gl, this.getModelTransform());
+    this.useOpacity(gl);
+    this.draw(gl);
+    
+    TentaGL.ViewTrans.pop(gl);
+  },
+  
+  
+  /** 
+   * Renders the node without filtering. Calling this allows nodes rendered 
+   * within other nodes to be registered as the root node in the picker.
+   * e.g., If node A calls renderComposite for nodes B and C in its render
+   * method and the picker is later queried at the position where B or C was
+   * rendered, the picker will return A. 
+   * @param {WebGLRenderingContext} 
+   */
+  renderComposite: function(gl) {
+    if(!this.isVisible()) {
       return;
     }
     TentaGL.ViewTrans.push(gl);

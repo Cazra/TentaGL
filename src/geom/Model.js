@@ -462,7 +462,7 @@ TentaGL.Model.prototype = {
     
     for(var i=0; i< this._vertices.length; i++) {
       var vertex = this._vertices[i];
-      var polarCoords = TentaGL.Math.toPolar(vertex.getXYZ());
+      var polarCoords = TentaGL.Math.toPolar(vertex.xyz());
       
       var thetaY = TentaGL.Math.wrap(polarCoords[1], 0, TentaGL.TAU);
       
