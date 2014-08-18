@@ -49,8 +49,8 @@ HelloWorldApp.MainLevel.prototype = {
     this._frames = 0;
     
     var matProps1 = new TentaGL.MaterialProps();
-    matProps1.setShininess(10);
-    matProps1.setSpecular(TentaGL.Color.YELLOW);
+    matProps1.shininess(10);
+    matProps1.specular(TentaGL.Color.YELLOW);
     
     this.spriteGroup = new TentaGL.SceneGroup([0,0,0]);
     /*
@@ -111,7 +111,7 @@ HelloWorldApp.MainLevel.prototype = {
     // Lighting test objects
     this.lights = new TentaGL.LightManager(TentaGL.PhongShader.MAX_LIGHTS);
     this.ptLight1 = new TentaGL.PointLight([0,0,0]);
-    this.ptLight1.setAmbient(TentaGL.Color.RGBA(0.2, 0.2, 0.2, 1));
+    this.ptLight1.ambient(TentaGL.Color.RGBA(0.2, 0.2, 0.2, 1));
     this.lights.add(this.ptLight1);
     
     
@@ -213,9 +213,6 @@ HelloWorldApp.MainLevel.prototype = {
         sprite.setText("X__X You clicked me...\nI am dead now.");
       //  sprite.scaleToHeight(1);
       }
-    }
-    else {
-    //  this.drawScene(gl);
     }
   },
   

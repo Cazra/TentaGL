@@ -189,11 +189,11 @@ TentaGL.PhongShaderMac.prototype = {
    * @param {TentaGL.Material.LightProps} matProps
    */
   setMaterialProps: function(gl, matProps) {
-    this._materialUni.diff.set(gl, matProps.getDiffuse().getRGBA());
-    this._materialUni.spec.set(gl, matProps.getSpecular().getRGBA());
-    this._materialUni.amb.set(gl, matProps.getAmbient().getRGBA());
-    this._materialUni.emis.set(gl, matProps.getEmission().getRGBA());
-    this._materialUni.shininess.set(gl, [matProps.getShininess()]);
+    this._materialUni.diff.set(gl, matProps.diffuse().getRGBA());
+    this._materialUni.spec.set(gl, matProps.specular().getRGBA());
+    this._materialUni.amb.set(gl, matProps.ambient().getRGBA());
+    this._materialUni.emis.set(gl, matProps.emission().getRGBA());
+    this._materialUni.shininess.set(gl, [matProps.shininess()]);
   },
   
   
@@ -205,16 +205,16 @@ TentaGL.PhongShaderMac.prototype = {
     
     // type (int)
     if(light.isaAmbientLight) {
-      this._lightUni.type.set(gl, [TentaGL.PhongShaderMac.LIGHT_AMB]);
+      this._lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_AMB]);
     }
     if(light.isaPointLight) {
-      this._lightUni.type.set(gl, [TentaGL.PhongShaderMac.LIGHT_PT]);
+      this._lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_PT]);
     }
     if(light.isaDirectionalLight) {
-      this._lightUni.type.set(gl, [TentaGL.PhongShaderMac.LIGHT_DIR]);
+      this._lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_DIR]);
     }
     if(light.isaSpotLight) {
-      this._lightUni.type.set(gl, [TentaGL.PhongShaderMac.LIGHT_SPOT]);
+      this._lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_SPOT]);
     }
     
     // pos (vec4)
@@ -227,16 +227,16 @@ TentaGL.PhongShaderMac.prototype = {
     
     // dir (vec3)
     if(light.isaDirectionalLight) {
-      this._lightUni.dir.set(gl, light.getDirection());
+      this._lightUni.dir.set(gl, light.direction());
     }
     else {
       this._lightUni.dir.set(gl, [0,0,0]);
     }
     
     // diff, spec, amb (vec4 x3) 
-    this._lightUni.diff.set(gl, light.getDiffuse().getRGBA());
-    this._lightUni.spec.set(gl, light.getSpecular().getRGBA());
-    this._lightUni.amb.set(gl, light.getAmbient().getRGBA());
+    this._lightUni.diff.set(gl, light.diffuse().getRGBA());
+    this._lightUni.spec.set(gl, light.specular().getRGBA());
+    this._lightUni.amb.set(gl, light.ambient().getRGBA());
     
     // attenA, attenB, atten C (float x3)
     if(light.isaPointLight) {
@@ -253,8 +253,8 @@ TentaGL.PhongShaderMac.prototype = {
     
     // cutOffAngleCos, spotExp (float x2)
     if(light.isaSpotLight) {
-      this._lightUni.cutOffAngleCos.set(gl, [Math.cos(light.getCutOffAngle())]);
-      this._lightUni.spotExp.set(gl, [light.getSpotExponent()]);
+      this._lightUni.cutOffAngleCos.set(gl, [Math.cos(light.cutOffAngle())]);
+      this._lightUni.spotExp.set(gl, [light.spotExponent()]);
     }
     else {
       this._lightUni.cutOffAngleCos.set(gl, [0]);

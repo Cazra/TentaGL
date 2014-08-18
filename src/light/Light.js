@@ -55,54 +55,41 @@ TentaGL.Light.prototype = {
   isaLight: true,
   
   /** 
-   * Returns the light's diffuse color.
+   * Setter/getter for the light's diffuse color. 
+   * @param {TentaGL.Color} diffuse   Optional.
    * @return {TentaGL.Color}
    */
-  getDiffuse: function() {
+  diffuse: function(diffuse) {
+    if(diffuse) {
+      this._diffuse = diffuse.clone();
+    }
     return this._diffuse;
   },
   
   
   /** 
-   * Sets the light's diffuse color.
-   * @param {TentaGL.Color} diffuse
-   */
-  setDiffuse: function(diffuse) {
-    this._diffuse = diffuse;
-  },
-  
-  
-  /** 
-   * Returns the light's specular color.
+   * Setter/getter for the light's specular color.
+   * @param {TentaGL.Color} specular    Optional.
    * @return {TentaGL.Color}
    */
-  getSpecular: function() {
+  specular: function(specular) {
+    if(specular) {
+      this._specular = specular.clone();
+    }
     return this._specular;
   },
   
   
   /** 
-   * Sets the light's specular color.
-   * @param {TentaGL.Color} specular
+   * Setter/getter for the light's ambient color.
+   * @param {TentaGL.Color} ambient   Optional.
+   * @return {TentaGL.Color}
    */
-  setSpecular: function(specular) {
-    this._specular = specular;
-  },
-  
-  
-  /** 
-   * Return's the light's ambient color.
-   */
-  getAmbient: function() {
+  ambient: function(ambient) {
+    if(ambient) {
+      this._ambient = ambient.clone();
+    }
     return this._ambient;
-  },
-  
-  
-  /** 
-   * Sets the light's ambient color.
-   */
-  setAmbient: function(ambient) {
-    this._ambient = ambient;
   },
   
   
@@ -114,3 +101,4 @@ TentaGL.Light.prototype = {
 };
 
 
+Util.Inheritance.inherit(TentaGL.Light, TentaGL.Renderable);

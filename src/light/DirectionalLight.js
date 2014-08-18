@@ -44,22 +44,15 @@ TentaGL.DirectionalLight.prototype = {
   
   
   /** 
-   * Returns the direction of the light.
+   * Setter/getter for the direction towards the light. 
+   * @param {vec3} dir    Optional.
    * @return {vec3}
    */
-  getDirection: function() {
+  direction: function(dir) {
+    if(dir) {
+      this._direction = vec3.copy([], dir);
+    }
     return this._direction;
-  },
-  
-  
-  /** 
-   * Sets the direction of the light.
-   * @param {vec3} direction
-   */
-  setDirection: function(direction) {
-    this._direction[0] = direction[0];
-    this._direction[1] = direction[1];
-    this._direction[2] = direction[2];
   },
   
   
@@ -68,7 +61,18 @@ TentaGL.DirectionalLight.prototype = {
    * @param {WebGLRenderingContext} gl
    */
   render: function(gl) {
-    (new TentaGL.Math.Sphere(1, this._direction)).render(gl, "white");
+  //  (new TentaGL.Math.Sphere(1, this._direction)).render(gl, "white");
+    
+    TentaGL.ViewTrans.push(gl);
+    
+    var q = TentaGL.Math.getQuatFromTo([0,1,0], this._direction);
+    TentaGL.ViewTrans.mul(gl, mat4.fromQuat([], q));
+    TentaGL.ViewTrans.scale(gl, [1, vec3.length(this._direction), 1]);
+    
+    TentaGL.MaterialLib.use(gl, "default");
+    TentaGL.ModelLib.render(gl, "unitCylinder");
+    
+    TentaGL.ViewTrans.pop(gl);
   }
 };
 

@@ -187,9 +187,9 @@ TentaGL.LabelledIconSprite.prototype = {
     this._fitLabelBG();
     
     TentaGL.ViewTrans.mul(gl, this.getModelTransform());
-    this._icon.render(gl);
-    this._label.render(gl);
-    this._labelBG.render(gl);
+    this._icon.renderComposite(gl);
+    this._label.renderComposite(gl);
+    this._labelBG.renderComposite(gl);
     
     
     TentaGL.ViewTrans.pop(gl);

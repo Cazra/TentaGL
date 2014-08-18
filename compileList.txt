@@ -123,6 +123,7 @@ src/shaders/ShaderLib.js
 src/shaders/ShaderLoader.js
 src/shaders/ShaderProgram.js
   src/shaders/premade/DefaultShader.js
+  src/shaders/premade/LightsShader.js
   src/shaders/premade/LinearGradientShader.js
   src/shaders/premade/NormalShader.js
   src/shaders/premade/PerVertexPhongShader.js

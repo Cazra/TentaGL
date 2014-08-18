@@ -70,90 +70,69 @@ TentaGL.MaterialProps.prototype = {
   
   
   /** 
-   * Returns the diffuse material property. 
+   * Setter/getter for the diffuse material property. 
+   * @param {TentaGL.Color} color   Optional.
    * @return {TentaGL.Color}
    */
-  getDiffuse: function() {
+  diffuse: function(color) {
+    if(color) {
+      this._diffuse = color.clone();
+    }
     return this._diffuse;
   },
   
-  /** 
-   * Sets the diffuse property. 
-   * @param {TentaGL.Color} color
-   */
-  setDiffuse: function(color) {
-    this._diffuse = color;
-  },
-  
   
   /** 
-   * Returns the specular material property.
+   * Setter/getter for the specular material property.
+   * @param {TentaGL.Color} color   Optional.
    * @return {TentaGL.Color}
    */
-  getSpecular: function() {
+  specular: function(color) {
+    if(color) {
+      this._specular = color.clone();
+    }
     return this._specular;
   },
   
   
   /** 
-   * Sets the diffuse property. 
-   * @param {TentaGL.Color} color
-   */
-  setSpecular: function(color) {
-    this._specular = color;
-  },
-  
-  
-  /** 
-   * Returns the shininess material property.
+   * Sets the shininess exponent for the specular component of the lighting. s^n
+   * @param {number} n    Optional.
    * @return {number}
    */
-  getShininess: function() {
+  shininess: function(n) {
+    if(n !== undefined) {
+      this._shininess = n;
+    }
     return this._shininess;
   },
   
-  /** 
-   * Sets the shininess property.
-   * @param {number} shininess
-   */
-  setShininess: function(shininess) {
-    this._shininess = shininess;
-  },
-  
   
   /** 
-   * Returns the ambient material property.
+   * Setter/getter for the ambient material property. 
+   * @param {TentaGL.Color} color   Optional.
    * @return {TentaGL.Color}
    */
-  getAmbient: function() {
+  ambient: function(color) {
+    if(color) {
+      this._ambient = color.clone();
+    }
     return this._ambient;
   },
+
   
   /** 
-   * Sets the ambient property. 
-   * @param {TentaGL.Color} color
-   */
-  setAmbient: function(color) {
-    this._ambient = color;
-  },
-  
-  
-  /** 
-   * Returns the emission material property.
+   * Setter/getter for the emission material property.
+   * @param {TentaGL.Color} color   Optional.
    * @return {TentaGL.Color}
    */
-  getEmission: function() {
+  emission: function(color) {
+    if(color) {
+      this._emission = color.clone();
+    }
     return this._emission;
   },
   
-  
-  /** 
-   * Sets the emission property. 
-   * @param {TentaGL.Color} color
-   */
-  setEmission: function(color) {
-    this._emission = color;
-  },
   
   
   /** 

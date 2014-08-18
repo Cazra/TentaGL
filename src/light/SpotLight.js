@@ -49,39 +49,28 @@ TentaGL.SpotLight.prototype = {
   isaSpotLight: true,
   
   /** 
-   * Returns the cut-off angle for the spotlight, in radians.
-   * This is the angle between the spotlight's direction vector and the edge of
-   * its cone.
+   * Setter/getter for the spotlight's cur-off angle, in radians. 
+   * @param {number} angle    Optional.
    * @return {number}
    */
-  getCutOffAngle: function() {
+  cutOffAngle: function(angle) {
+    if(angle !== undefined) {
+      this._angle = angle;
+    }
     return this._angle;
   },
   
-  /** 
-   * Sets the cut-off angle for the spotlight, in radians. 
-   * @param {number} angle
-   */
-  setCutOffAngle: function(angle) {
-    this._angle = angle;
-  },
-  
   
   /** 
-   * Returns the spotlight's decay exponent.
+   * Setter/getter for the spotlight's decay exponent. 
+   * @param {number} n    Optional.
    * @return {number}
    */
-  getSpotExponent: function() {
+  spotExponent: function(n) {
+    if(n !== undefined) {
+      this._spotExp = n;
+    }
     return this._spotExp;
-  },
-  
-  
-  /** 
-   * Sets the spotlight's decay exponent.
-   * @param {number} exp
-   */
-  setSpotExponent: function(exp) {
-    this._spotExp = exp;
   }
   
 };

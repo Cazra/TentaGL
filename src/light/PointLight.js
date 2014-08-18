@@ -60,6 +60,46 @@ TentaGL.PointLight.prototype = {
   
   
   /** 
+   * Setter/getter for the X coordinate of the light. 
+   * @param {number} x    Optional.
+   * @return {number}
+   */
+  x: function(x) {
+    if(x !== undefined) {
+      this._xyz[0] = x;
+    }
+    return this._xyz[0];
+  },
+  
+  
+  /** 
+   * Setter/getter for the Y coordinate of the light.
+   * @param {number} y    Optional.
+   * @return {number}
+   */
+  y: function(y) {
+    if(y !== undefined) {
+      this._xyz[1] = y;
+    }
+    return this._xyz[1];
+  },
+  
+  
+  /** 
+   * Setter/getter for the Z coordinate of the light.
+   * @param {number} z    Optional.
+   * @return {number}
+   */
+  z: function(z) {
+    if(z !== undefined) {
+      this._xyz[2] = z;
+    }
+    return this._xyz[2];
+  },
+  
+  
+  
+  /** 
    * Setter/getter for the attenuation coefficents for the light. These
    * define how the intensity of the light degrades relative to distance.
    * @param {[a: number, b: number, c:number]} coeffs
