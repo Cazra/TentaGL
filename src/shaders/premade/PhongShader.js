@@ -89,37 +89,12 @@ TentaGL.PhongShader = function(gl) {
 };
 
 TentaGL.PhongShader.MAX_LIGHTS = 16;
-TentaGL.PhongShader.LIGHT_AMB = 1;
-TentaGL.PhongShader.LIGHT_PT = 2;
-TentaGL.PhongShader.LIGHT_DIR = 3;
-TentaGL.PhongShader.LIGHT_SPOT = 4;
 
 TentaGL.PhongShader.prototype = {
   
   constructor: TentaGL.PhongShader,
   
   isaPhongShader: true,
-  
-  /** 
-   * Sets the value of the opacity variable. This controls the uniform alpha
-   * level for rendered objects.
-   * @param {WebGLRenderingContext} gl
-   * @param {float} o
-   */
-  setOpacity: function(gl, o) {
-    this._opacityUni.set(gl, [o]);
-  },
-  
-  
-  /** 
-   * Sets the value of the uniform variable for the model-view-projection 
-   * transform matrix.
-   * @param {WebGLRenderingContext} gl
-   * @param {mat4} m
-   */
-  setMVPTrans: function(gl, m) {
-    this._mvpUni.set(gl, m);
-  },
   
   
   /** 
@@ -140,16 +115,6 @@ TentaGL.PhongShader.prototype = {
    */
   setVTrans: function(gl, m) {
     this._vUni.set(gl, m);
-  },
-  
-  
-  /** 
-   * Sets the value of the uniform variable for the normal model-view transform matrix.
-   * @param {WebGLRenderingContext} gl
-   * @param {mat3} value
-   */
-  setNormalTrans: function(gl, value) {
-    this._normalUni.set(gl, value);
   },
   
   
@@ -192,109 +157,11 @@ TentaGL.PhongShader.prototype = {
     this._useBumpUni.set(gl, [1]);
   },
   
-  /** 
-   * Sets the material light properties struct.
-   * @param {WebGLRenderingContext} gl
-   * @param {TentaGL.Material.LightProps} matProps
-   */
-  setMaterialProps: function(gl, matProps) {
-    this._materialUni.diff.set(gl, matProps.diffuse().getRGBA());
-    this._materialUni.spec.set(gl, matProps.specular().getRGBA());
-    this._materialUni.amb.set(gl, matProps.ambient().getRGBA());
-    this._materialUni.emis.set(gl, matProps.emission().getRGBA());
-    this._materialUni.shininess.set(gl, [matProps.shininess()]);
-  },
   
+  //////// LightsShader implementations
   
-  /** 
-   * Sets the lights uniform variable array. 
-   */
-  setLights: function(gl, lights) {
-    var numLights = Math.min(lights.length, TentaGL.LightsShader.MAX_LIGHTS); // See MAX_LIGHTS constant in shader.
-    this._numLightsUni.set(gl, [lights.length]);
-    
-    for(var i=0; i < numLights; i++) {
-      var light = lights[i];
-      var lightUni = this._lightsUni[i];
-      
-      // type (int)
-      if(light.isaAmbientLight) {
-        lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_AMB]);
-      }
-      if(light.isaPointLight) {
-        lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_PT]);
-      }
-      if(light.isaDirectionalLight) {
-        lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_DIR]);
-      }
-      if(light.isaSpotLight) {
-        lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_SPOT]);
-      }
-      
-      // pos (vec4)
-      if(light.isaPointLight) {
-        lightUni.pos.set(gl, light.xyz());
-      }
-      else {
-        lightUni.pos.set(gl, [0, 0, 0, 0]);
-      }
-      
-      // dir (vec3)
-      if(light.isaDirectionalLight) {
-        lightUni.dir.set(gl, light.direction());
-      }
-      else {
-        lightUni.dir.set(gl, [0,0,0]);
-      }
-      
-      // diff, spec, amb (vec4 x3) 
-      lightUni.diff.set(gl, light.diffuse().getRGBA());
-      lightUni.spec.set(gl, light.specular().getRGBA());
-      lightUni.amb.set(gl, light.ambient().getRGBA());
-      
-      // attenA, attenB, atten C (float x3)
-      if(light.isaPointLight) {
-        var atten = light.attenuation();
-        lightUni.attenA.set(gl, [atten[0]]);
-        lightUni.attenB.set(gl, [atten[1]]);
-        lightUni.attenC.set(gl, [atten[2]]);
-      }
-      else {
-        lightUni.attenA.set(gl, [0]);
-        lightUni.attenB.set(gl, [0]);
-        lightUni.attenC.set(gl, [0]);
-      }
-      
-      // cutOffAngleCos, spotExp (float x2)
-      if(light.isaSpotLight) {
-        lightUni.cutOffAngleCos.set(gl, [Math.cos(light.cutOffAngle())]);
-        lightUni.spotExp.set(gl, [light.spotExponent()]);
-      }
-      else {
-        lightUni.cutOffAngleCos.set(gl, [0]);
-        lightUni.spotExp.set(gl, [0]);
-      }
-    }
-    
-    // 0-out unused lights.
-    for(var i=numLights; i< TentaGL.LightsShader.MAX_LIGHTS; i++) {
-      var lightUni = this._lightsUni[i];
-      
-      lightUni.type.set(gl, [0]);
-      lightUni.pos.set(gl, [0, 0, 0, 0]);
-      lightUni.dir.set(gl, [0,0,0]);
-      
-      lightUni.diff.set(gl, [0, 0, 0, 0]);
-      lightUni.spec.set(gl, [0, 0, 0, 0]);
-      lightUni.amb.set(gl, [0, 0, 0, 0]);
-      
-      lightUni.attenA.set(gl, [0]);
-      lightUni.attenB.set(gl, [0]);
-      lightUni.attenC.set(gl, [0]);
-      
-      lightUni.cutOffAngleCos.set(gl, [0]);
-      lightUni.spotExp.set(gl, [0]);
-    }
+  getMaxLights: function() {
+    return TentaGL.PhongShader.MAX_LIGHTS;
   }
 };
 
@@ -313,5 +180,5 @@ TentaGL.PhongShader.load = function(gl, name) {
 };
 
 
-Util.Inheritance.inherit(TentaGL.PhongShader, TentaGL.ShaderProgram);
+Util.Inheritance.inherit(TentaGL.PhongShader, TentaGL.LightsShader);
 

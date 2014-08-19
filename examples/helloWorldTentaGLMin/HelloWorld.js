@@ -25,10 +25,8 @@ HelloWorldApp.prototype = {
       TentaGL.NormalShader.load(gl, "normalShader");
       TentaGL.LinearGradientShader.load(gl, "gradientShader");
       TentaGL.RadialGradientShader.load(gl, "gradientShader2");
-    //  TentaGL.PhongShader.load(gl, "phong");
-      TentaGL.PhongShaderMac.load(gl, "phong");
-    //  TentaGL.PerVertexPhongShader.load(gl, "phongPerVertex");
-      TentaGL.PerVertexPhongShaderMac.load(gl, "phongPerVertex");
+      TentaGL.PhongShader.load(gl, "phong");
+      TentaGL.PerVertexPhongShader.load(gl, "phongPerVertex");
       TentaGL.CircleShader.load(gl, "circle");
       TentaGL.PlaneSimpleShader.load(gl, "plane");
     }

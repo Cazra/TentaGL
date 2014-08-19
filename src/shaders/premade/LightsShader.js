@@ -29,7 +29,6 @@
  */
 TentaGL.LightsShader = function() {};
 
-TentaGL.LightsShader.MAX_LIGHTS = 16;
 TentaGL.LightsShader.LIGHT_AMB = 1;
 TentaGL.LightsShader.LIGHT_PT = 2;
 TentaGL.LightsShader.LIGHT_DIR = 3;
@@ -61,6 +60,8 @@ TentaGL.LightsShader.prototype = {
    * @param {array: TentaGL.Light}
    */
   setLights: function(gl, lights, maxLights) {
+    var maxLights = this.getMaxLights();
+    
     var numLights = Math.min(lights.length, maxLights);
     this._numLightsUni.set(gl, [lights.length]);
     
@@ -146,8 +147,19 @@ TentaGL.LightsShader.prototype = {
       lightUni.cutOffAngleCos.set(gl, [0]);
       lightUni.spotExp.set(gl, [0]);
     }
-  }
+  },
+  
+  
+  //////// Abstract methods
+  
+  /** 
+   * Returns the maximum number of lights allowed by this particular shader. 
+   * @return {uint}
+   */
+  getMaxLights: function() {}
   
 };
 
+
+Util.Inheritance.inherit(TentaGL.LightsShader, TentaGL.SimpleShader);
 
