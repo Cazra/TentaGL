@@ -63,7 +63,9 @@ TentaGL.LightsShader.prototype = {
     var maxLights = this.getMaxLights();
     
     var numLights = Math.min(lights.length, maxLights);
-    this._numLightsUni.set(gl, [lights.length]);
+    if(this._numLightsUni) {
+      this._numLightsUni.set(gl, [lights.length]);
+    }
     
     for(var i=0; i < numLights; i++) {
       var light = lights[i];

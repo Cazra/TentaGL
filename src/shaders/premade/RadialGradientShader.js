@@ -58,89 +58,7 @@ TentaGL.RadialGradientShader.prototype = {
   
   constructor: TentaGL.RadialGradientShader,
   
-  isaRadialGradientShader: true,
-  
-  
-  /** 
-   * Sets the value of the uniform variable for the model-view-projection 
-   * transform matrix.
-   * @param {WebGLRenderingContext} gl
-   * @param {mat4} value
-   */
-  setMVPTrans: function(gl, value) {
-    this._mvpUni.set(gl, value);
-  },
-  
-  
-  /** 
-   * Sets the value of the uniform variable for the normal transform matrix.
-   * @param {WebGLRenderingContext} gl
-   * @param {mat3} value
-   */
-  setNormalTrans: function(gl, value) {
-    this._normalUni.set(gl, value);
-  },
-  
-  
-  /** 
-   * Sets the start point of the gradient from which the gradient vector 
-   * is projected.
-   * @param {vec2} pt     The point, in normalized texture coordinates.
-   */
-  setStartPoint: function(gl, pt) {
-    this._startPtUni.set(gl, pt);
-    
-   // console.log(pt);
-  },
-  
-  
-  /** 
-   * Sets the vector indicating the direction and length of the gradient. 
-   * @param {vec2} v    The vector, in normalized texture coordinates.
-   */
-  setGradVector: function(gl, v) {
-    this._gradVectorUni.set(gl, v);
-    
-  //  console.log(v);
-  },
-  
-  
-  /** 
-   * Sets the uniform variable for the array of gradient colors corresponding 
-   * to each break point. 
-   * The shader supports colors for up to 16 break points.
-   * @param {WebGLRenderingContext} gl
-   * @param {array: TentaGL.Color} colors
-   */
-  setColors: function(gl, colors) {
-    var arr = [];
-    
-    for(var i=0; i<colors.length; i++) {
-      arr.push(colors[i].getRed());
-      arr.push(colors[i].getGreen());
-      arr.push(colors[i].getBlue());
-      arr.push(colors[i].getAlpha());
-    }
-    
-    this._colorsUni.set(gl, arr);
-    
-    // console.log(arr);
-  },
-  
-  
-  /** 
-   * Sets the parametric values for the break points along the gradient vector. 
-   * The shader supports up to 16 break points.
-   * Each of these values should be in the range [0, 1].
-   * @param {WebGLRenderingContext} gl
-   * @param {array: float} pts
-   */
-  setBreakPoints: function(gl, pts) {
-    this._breakPtsUni.set(gl, pts);
-    this._breakPtCountUni.set(gl, [pts.length]);
-    
-  //  console.log(pts, pts.length);
-  }
+  isaRadialGradientShader: true
 };
 
 
@@ -158,5 +76,5 @@ TentaGL.RadialGradientShader.load = function(gl, name) {
 };
 
 
-Util.Inheritance.inherit(TentaGL.RadialGradientShader, TentaGL.ShaderProgram);
+Util.Inheritance.inherit(TentaGL.RadialGradientShader, TentaGL.GradientShader);
 

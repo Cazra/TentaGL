@@ -24,6 +24,10 @@
 
 /** 
  * A phong lighting shader that also supports bump mapping.
+ * The Mac version only supports 1 light. This was necessary 
+ * because there is a graphics driver bug present in most Mac systems
+ * that causes them to not be able to use arrays of structs in their shaders. 
+ * See: http://www.khronos.org/registry/webgl/sdk/tests/conformance/glsl/bugs/array-of-struct-with-int-first-position.html
  * @param {WebGLRenderingContext} gl
  */
 TentaGL.PhongShaderMac = function(gl) {
@@ -65,21 +69,25 @@ TentaGL.PhongShaderMac = function(gl) {
     self._materialUni.shininess = self.getUniform("m.shininess");
     
     // Light struct
-    self._lightUni = {}; 
-    self._lightUni.type = self.getUniform("light.type");
-    self._lightUni.pos = self.getUniform("light.pos");
-    self._lightUni.dir = self.getUniform("light.dir");
-    self._lightUni.diff = self.getUniform("light.diff");
-    self._lightUni.spec = self.getUniform("light.spec");
-    self._lightUni.amb = self.getUniform("light.amb");
-    self._lightUni.attenA = self.getUniform("light.attenA");
-    self._lightUni.attenB = self.getUniform("light.attenB");
-    self._lightUni.attenC = self.getUniform("light.attenC");
-    self._lightUni.cutOffAngleCos = self.getUniform("light.cutOffAngleCos");
-    self._lightUni.spotExp = self.getUniform("light.spotExp");
+   // Light struct
+    self._lightsUni = []; 
+    var light = self._lightsUni[0] = {};
+    
+    light.type = self.getUniform("light.type");
+    light.pos = self.getUniform("light.pos");
+    light.dir = self.getUniform("light.dir");
+    light.diff = self.getUniform("light.diff");
+    light.spec = self.getUniform("light.spec");
+    light.amb = self.getUniform("light.amb");
+    light.attenA = self.getUniform("light.attenA");
+    light.attenB = self.getUniform("light.attenB");
+    light.attenC = self.getUniform("light.attenC");
+    light.cutOffAngleCos = self.getUniform("light.cutOffAngleCos");
+    light.spotExp = self.getUniform("light.spotExp");
   });
 };
 
+TentaGL.PhongShaderMac.MAX_LIGHTS = 1;
 TentaGL.PhongShaderMac.LIGHT_AMB = 1;
 TentaGL.PhongShaderMac.LIGHT_PT = 2;
 TentaGL.PhongShaderMac.LIGHT_DIR = 3;
@@ -92,174 +100,10 @@ TentaGL.PhongShaderMac.prototype = {
   isaPhongShaderMac: true,
   
   
-  /** 
-   * Sets the value of the opacity variable. This controls the uniform alpha
-   * level for rendered objects.
-   * @param {WebGLRenderingContext} gl
-   * @param {float} o
-   */
-  setOpacity: function(gl, o) {
-    this._opacityUni.set(gl, [o]);
-  },
+  //////// LightsShader implementations
   
-  /** 
-   * Sets the value of the uniform variable for the model-view-projection 
-   * transform matrix.
-   * @param {WebGLRenderingContext} gl
-   * @param {mat4} m
-   */
-  setMVPTrans: function(gl, m) {
-    this._mvpUni.set(gl, m);
-  },
-  
-  
-  /** 
-   * Sets the uniform for the model-view transform matrix.
-   * @param {WebGLRenderingContext} gl
-   * @param {mat4} m
-   */
-  setMVTrans: function(gl, m) {
-    this._mvUni.set(gl, m);
-  },
-  
-  
-  /** 
-   * Sets the uniform for the view transform matrix. This is used to 
-   * get the light vectors in view-space in the shader.
-   * @param {WebGLRenderingContext} gl
-   * @param {mat4} m
-   */
-  setVTrans: function(gl, m) {
-    this._vUni.set(gl, m);
-  },
-  
-  
-  /** 
-   * Sets the value of the uniform variable for the normal model-view transform matrix.
-   * @param {WebGLRenderingContext} gl
-   * @param {mat3} value
-   */
-  setNormalTrans: function(gl, value) {
-    this._normalUni.set(gl, value);
-  },
-  
-  
-  /** 
-   * Sets the uniform variables for using a solid color instead of using a 
-   * texture for color. Solid colors are compatible with bump maps! Just call 
-   * setBump after setColor, since setColor unsets the useBumpTex uniform.
-   * @param {WebGLRenderingContext} gl
-   * @param {vec4} rgba
-   */
-  setColor: function(gl, rgba) {
-    this._colorUni.set(gl, rgba);
-    this._useTexUni.set(gl, [0]);
-    this._useBumpUni.set(gl, [0]);
-  },
-  
-  
-  /** 
-   * Sets the value of the uniform variable for the primary texture offset 
-   * and unsets the bump texture offset. If you want to use bump mapping, 
-   * call setTex first, followed by setBump.
-   * @param {WebGLRenderingContext} gl
-   * @param {int} value
-   */
-  setTex: function(gl, value) {
-    this._texUni.set(gl, [value]);
-    this._useTexUni.set(gl, [1]);
-    this._useBumpUni.set(gl, [0]);
-  },
-  
-  
-  /** 
-   * Sets the uniform variable for the bump texture offset. 
-   * @param {WebGLRenderingContext} gl
-   * @param {int} value   If >= 0, set as the offset and turn bump mapping on. 
-   *      Else, turn bump mapping off.
-   */
-  setBump: function(gl, value) {
-    this._bumpTexUni.set(gl, [value]);
-    this._useBumpUni.set(gl, [1]);
-  },
-  
-  /** 
-   * Sets the material light properties struct.
-   * @param {WebGLRenderingContext} gl
-   * @param {TentaGL.Material.LightProps} matProps
-   */
-  setMaterialProps: function(gl, matProps) {
-    this._materialUni.diff.set(gl, matProps.diffuse().getRGBA());
-    this._materialUni.spec.set(gl, matProps.specular().getRGBA());
-    this._materialUni.amb.set(gl, matProps.ambient().getRGBA());
-    this._materialUni.emis.set(gl, matProps.emission().getRGBA());
-    this._materialUni.shininess.set(gl, [matProps.shininess()]);
-  },
-  
-  
-  /** 
-   * Sets the lights uniform variable array. 
-   */
-  setLights: function(gl, lights) {
-    var light = lights[0];
-    
-    // type (int)
-    if(light.isaAmbientLight) {
-      this._lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_AMB]);
-    }
-    if(light.isaPointLight) {
-      this._lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_PT]);
-    }
-    if(light.isaDirectionalLight) {
-      this._lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_DIR]);
-    }
-    if(light.isaSpotLight) {
-      this._lightUni.type.set(gl, [TentaGL.LightsShader.LIGHT_SPOT]);
-    }
-    
-    // pos (vec4)
-    if(light.isaPointLight) {
-      this._lightUni.pos.set(gl, light.xyz());
-    }
-    else {
-      this._lightUni.pos.set(gl, [0, 0, 0, 0]);
-    }
-    
-    // dir (vec3)
-    if(light.isaDirectionalLight) {
-      this._lightUni.dir.set(gl, light.direction());
-    }
-    else {
-      this._lightUni.dir.set(gl, [0,0,0]);
-    }
-    
-    // diff, spec, amb (vec4 x3) 
-    this._lightUni.diff.set(gl, light.diffuse().getRGBA());
-    this._lightUni.spec.set(gl, light.specular().getRGBA());
-    this._lightUni.amb.set(gl, light.ambient().getRGBA());
-    
-    // attenA, attenB, atten C (float x3)
-    if(light.isaPointLight) {
-      var atten = light.attenuation();
-      this._lightUni.attenA.set(gl, [atten[0]]);
-      this._lightUni.attenB.set(gl, [atten[1]]);
-      this._lightUni.attenC.set(gl, [atten[2]]);
-    }
-    else {
-      this._lightUni.attenA.set(gl, [0]);
-      this._lightUni.attenB.set(gl, [0]);
-      this._lightUni.attenC.set(gl, [0]);
-    }
-    
-    // cutOffAngleCos, spotExp (float x2)
-    if(light.isaSpotLight) {
-      this._lightUni.cutOffAngleCos.set(gl, [Math.cos(light.cutOffAngle())]);
-      this._lightUni.spotExp.set(gl, [light.spotExponent()]);
-    }
-    else {
-      this._lightUni.cutOffAngleCos.set(gl, [0]);
-      this._lightUni.spotExp.set(gl, [0]);
-    }
+  getMaxLights: function() {
+    return TentaGL.PhongShaderMac.MAX_LIGHTS;
   }
 };
 
@@ -278,5 +122,5 @@ TentaGL.PhongShaderMac.load = function(gl, name) {
 };
 
 
-Util.Inheritance.inherit(TentaGL.PhongShaderMac, TentaGL.ShaderProgram);
+Util.Inheritance.inherit(TentaGL.PhongShaderMac, TentaGL.PhongShader);
 
