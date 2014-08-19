@@ -222,6 +222,8 @@ HelloWorldApp.MainLevel.prototype = {
     var self = this;
     var aspect = gl.canvas.width/gl.canvas.height;
     
+  //  TentaGL.DrawMode.mode(gl, GL_LINES);
+    
   //  TentaGL.Scissor.enabled(gl, true);
   //  TentaGL.Scissor.xywh(gl, [100, 100, 640, 480]);
     

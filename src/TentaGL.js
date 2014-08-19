@@ -71,6 +71,7 @@ var TentaGL = {
       TentaGL.ColorBuffer.reset(gl);
       TentaGL.Cull.reset(gl);
       TentaGL.DepthBuffer.reset(gl);
+      TentaGL.DrawMode.reset(gl);
       TentaGL.Scissor.reset(gl);
       TentaGL.Stencil.reset(gl);
       TentaGL.Viewport.reset(gl);

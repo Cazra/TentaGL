@@ -132,7 +132,7 @@ TentaGL.ModelLib = {
     TentaGL.ViewTrans.updateMVPUniforms(gl);
     
     var vboData = this.get(gl, modelID);
-    TentaGL.VBORenderer.render(gl, vboData);
+    vboData.render(gl);
   }
   
 };

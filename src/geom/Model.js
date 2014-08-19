@@ -50,37 +50,11 @@ TentaGL.Model.prototype = {
 
   constructor:TentaGL.Model,
   
-  //////// ID data
-  
-  /** 
-   * Gets the unique ID for caching this model in a map. 
-   * If the model didn't have an Id already assigned to it, a unique anonymous
-   * ID is created.
-   * @return {string}
-   */
-  getID:function() {
-    if(this._id === undefined) {
-      this._id = TentaGL.Model.createID();
-    }
-    return this._id;
-  },
-  
-  /** 
-   * Sets the unique ID for caching this model in a map. 
-   * @param {string} id
-   * @return {TentaGL.Model} this
-   */
-  setID:function(id) {
-    this._id = id;
-    return this;
-  },
-  
   
   //////// Mode
   
   /** 
-   * Returns the mode used to draw this model by the VBORenderer. If undefined,
-   * then the VBORenderer will use its default drawing mode.
+   * Returns the primitive drawing mode for this model. GL_TRIANGLES or GL_LINES.
    * @return {GLenum}
    */
   getDrawMode:function() {
@@ -89,7 +63,7 @@ TentaGL.Model.prototype = {
   
   
   /** 
-   * Sets the drawing mode for this model. 
+   * Sets the primitive drawing mode for this model. 
    * @param {GLenum} mode   Either GL_LINES or GL_TRIANGLES
    */
   setDrawMode: function(mode) {
@@ -127,7 +101,7 @@ TentaGL.Model.prototype = {
   
   /** Returns a copy of this model's element index array. */
   getIndices:function() {
-    return this._indices.slice(0, this._indices.length);
+    return this._indices.slice(0);
   },
   
   //////// Vertex operations
@@ -169,7 +143,7 @@ TentaGL.Model.prototype = {
    * @return {Array: TentaGL.Vertex}
    */
   getVertices:function() {
-    return this._vertices.slice(0, this._vertices.length);
+    return this._vertices.slice(0);
   },
   
   
@@ -781,23 +755,10 @@ TentaGL.Model.prototype = {
     
     var vbo = new TentaGL.VBOData(gl, this);
     TentaGL.ViewTrans.updateMVPUniforms(gl);
-    TentaGL.VBORenderer.render(gl, vbo);
+    vbo.render(gl);
     vbo.clean(gl);
   }
   
-};
-
-TentaGL.Model._nextID = 0;
-
-/**
- * Creates a unique string ID that can be assigned to a model 
- * via Model.setID({string}).
- * @return {string}
- */
-TentaGL.Model.createID = function() {
-  var id = "anonID" + TentaGL.Model._nextID;
-  TentaGL.Model._nextID++;
-  return id;
 };
 
 

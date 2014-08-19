@@ -12,6 +12,7 @@ src/state/Blend.js
 src/state/ColorBuffer.js
 src/state/Cull.js
 src/state/DepthBuffer.js
+src/state/DrawMode.js
 src/state/RenderMode.js
 src/state/Scissor.js
 src/state/Stencil.js
@@ -59,7 +60,6 @@ src/geom/Model.js
 src/geom/ModelLib.js
 src/geom/ObjReader.js
 src/geom/VBOData.js
-src/geom/VBORenderer.js
 src/geom/Vertex.js
 
 src/image/ImageLoader.js

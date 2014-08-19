@@ -38,13 +38,9 @@ TentaGL.VBOData = function(gl, model, attrProfileSet) {
     attrProfileSet = TentaGL.getDefaultAttrProfileSet();
   }
   
-//  console.log("Creating VBO data");
-  
   var attrData = [];
   this._byteOffsets = {};
   var vertices = model.getVertices();
-  
-//  console.log(vertices.length);
   
   for(var i=0; i < vertices.length; i++) {
     var vertex = vertices[i];
@@ -54,8 +50,6 @@ TentaGL.VBOData = function(gl, model, attrProfileSet) {
     for(var j in attrProfileSet) {
       var attr = attrProfileSet[j];
       var values = attr.getValues(vertex);
-      
-    //  console.log("  " + attr.id() + " : " + Util.Debug.arrayString(values));
       
       this._byteOffsets[j] = offset;
       offset += attr.sizeBytes();
@@ -70,7 +64,6 @@ TentaGL.VBOData = function(gl, model, attrProfileSet) {
   this._attrBuffer = gl.createBuffer();
   gl.bindBuffer(GL_ARRAY_BUFFER, this._attrBuffer);
   gl.bufferData(GL_ARRAY_BUFFER, new Float32Array(attrData), GL_STATIC_DRAW);
-//  console.log("Attr data array: " + attrData);
   
   var elemData = model.getIndices();
   
@@ -79,7 +72,6 @@ TentaGL.VBOData = function(gl, model, attrProfileSet) {
   gl.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._elemBuffer);
   gl.bufferData(GL_ELEMENT_ARRAY_BUFFER, new Uint16Array(elemData), GL_STATIC_DRAW);
   
-//  console.log("Elem data array: " + elemData);
   
   this._attrSet = attrProfileSet;
   this._stride = TentaGL.AttrProfiles.getStride(attrProfileSet);
@@ -169,6 +161,44 @@ TentaGL.VBOData.prototype = {
   clean:function(gl) {
     gl.deleteBuffer(this._attrBuffer);
     gl.deleteBuffer(this._elemBuffer);
+  },
+  
+  
+  
+  /** 
+   * Renders a Model with the ShaderProgram and Material currently in use. 
+   * @param {WebGLRenderingContext} gl
+   */
+  render:function(gl) {
+    var program = TentaGL.ShaderLib.current(gl);
+    
+    // Get the data buffers for the model and program, creating them if necessary.
+    var attrBuffer = this.getAttrBuffer();
+    var elemBuffer = this.getElemBuffer();
+    var stride = this.getStride();
+    
+    // Bind the vertex data.
+    gl.bindBuffer(GL_ARRAY_BUFFER, attrBuffer);
+    var attrs = program.getAttributes();
+    for(var i=0; i < attrs.length; i++) {
+      var attr = attrs[i];
+      var offset = this.getOffset(attr.getProfile());
+      
+      gl.vertexAttribPointer( attr.getLocation(), 
+                              attr.getSizeUnits(), attr.getUnitType(), 
+                              false, 
+                              stride, offset);
+    }
+    
+    var mode = TentaGL.DrawMode.mode(gl);
+    if(this.getDrawMode() == GL_LINES) {
+      mode = GL_LINES;
+    }
+    TentaGL.Cull.setMode(gl, this.getCullMode());
+    
+    // Bind the index data and draw.
+    gl.bindBuffer(GL_ELEMENT_ARRAY_BUFFER, elemBuffer);
+    gl.drawElements(mode, this.numIndices(), GL_UNSIGNED_SHORT, 0);
   }
 };
 
