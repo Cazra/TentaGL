@@ -129,7 +129,7 @@ TentaGL.Picker.prototype = {
       
       var pickColor = new TentaGL.Color.Hex(id);
       this._sprites[id] = sprite;
-      var rgba = pickColor.getRGBA();
+      var rgba = pickColor.rgba();
       TentaGL.ShaderLib.current(this._gl).setPickID(this._gl, rgba);
       
       return true;

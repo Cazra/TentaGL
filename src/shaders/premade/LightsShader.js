@@ -46,10 +46,10 @@ TentaGL.LightsShader.prototype = {
    * @param {TentaGL.Material.LightProps} matProps
    */
   setMaterialProps: function(gl, matProps) {
-    this._materialUni.diff.set(gl, matProps.diffuse().getRGBA());
-    this._materialUni.spec.set(gl, matProps.specular().getRGBA());
-    this._materialUni.amb.set(gl, matProps.ambient().getRGBA());
-    this._materialUni.emis.set(gl, matProps.emission().getRGBA());
+    this._materialUni.diff.set(gl, matProps.diffuse().rgba());
+    this._materialUni.spec.set(gl, matProps.specular().rgba());
+    this._materialUni.amb.set(gl, matProps.ambient().rgba());
+    this._materialUni.emis.set(gl, matProps.emission().rgba());
     this._materialUni.shininess.set(gl, [matProps.shininess()]);
   },
   
@@ -102,9 +102,9 @@ TentaGL.LightsShader.prototype = {
       }
       
       // diff, spec, amb (vec4 x3) 
-      lightUni.diff.set(gl, light.diffuse().getRGBA());
-      lightUni.spec.set(gl, light.specular().getRGBA());
-      lightUni.amb.set(gl, light.ambient().getRGBA());
+      lightUni.diff.set(gl, light.diffuse().rgba());
+      lightUni.spec.set(gl, light.specular().rgba());
+      lightUni.amb.set(gl, light.ambient().rgba());
       
       // attenA, attenB, atten C (float x3)
       if(light.isaPointLight) {

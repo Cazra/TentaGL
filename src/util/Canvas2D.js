@@ -129,7 +129,7 @@ TentaGL.Canvas2D = {
     var canvas = this.create(dims[0], dims[1]);
     var g = canvas.getContext("2d");
     
-    if(color.getRed() == 1 && color.getGreen() == 1 && color.getBlue() == 1) {
+    if(color.r() == 1 && color.g() == 1 && color.b() == 1) {
       g.fillStyle = "black";
       g.fillRect(0,0,dims[0], dims[1]);
     }

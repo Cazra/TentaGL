@@ -30,10 +30,14 @@
  * bind its uniform variable used to store the color's RGBA values using 
  * its bindColorUni method when the program is initialized.
  * @constructor
+ * @param {vec4} rgba   Optional. The color's components in normalized RGBA format.
+ *      If not provided the default value [0,0,0,1] will be used (opaque black).
  */
-TentaGL.Color = function() {
-  this._rgba = vec4.create();
-  this.setRGBA(0, 0, 0, 1);
+TentaGL.Color = function(rgba) {
+  if(!rgba) {
+    rgba = [0, 0, 0, 1];
+  }
+  this._rgba = rgba;
 };
 
 
@@ -65,11 +69,28 @@ TentaGL.Color.prototype = {
    * @return {TentaGL.Color}
    */
   clone: function() {
-    return TentaGL.Color.RGBA(this.getRed(), this.getGreen(), this.getBlue(), this.getAlpha());
+    return TentaGL.Color.RGBA(this.r(), this.g(), this.b(), this.a());
   },
   
   
   //////// RGBA color space
+  
+  
+  /** 
+   * Setter/getter for the color's components in normalized RGBA format.
+   * @param {vec4 || vec3} rgba   Optional. If given as a vec3, A will be assumed to be 1 (opaque).
+   * @return {vec4}
+   */
+  rgba: function(rgba) {
+    if(rgba !== undefined) {
+      if(rgba[3] === undefined) {
+        rgba[3] = 1;
+      }
+      this._rgba = vec4.copy([], rgba);
+    }
+    return this._rgba.slice(0);
+  },
+  
   
   /** 
    * Setter/getter for the normalized red component.
@@ -124,28 +145,20 @@ TentaGL.Color.prototype = {
   
   
   /** 
-   * Returns a copy of the color's normalized RGBA components. 
+   * Setter/getter for the color's components in uint8 format. 
+   * @param {vec4} rgba   Optional.
    * @return {vec4}
    */
-  getRGBA:function() {
-    return vec4.clone(this._rgba);
+  rgbaBytes: function(rgba) {
+    if(rgba) {
+      vec4.scale(this._rgba, rgba, 1/255);
+      return rgba;
+    }
+    else {
+      return [this.getRedByte(), this.getGreenByte(), this.getBlueByte(), this.getAlphaByte()];
+    }
   },
   
-  /** 
-   * Returns a copy of the color's uint8 RGBA components. 
-   * @return {vec4}
-   */
-  getRGBABytes:function() {
-    return vec4.fromValues(this.getRedByte(), this.getGreenByte(), this.getBlueByte(), this.getAlphaByte());
-  },
-  
-  /** 
-   * Returns the color's normalized red component.
-   * @return {Number}
-   */
-  getRed:function() {
-    return this._rgba[0];
-  },
   
   /** 
    * Returns the color's red component as a uint8 value.
@@ -155,13 +168,6 @@ TentaGL.Color.prototype = {
     return (this._rgba[0]*255) & 0xFF;
   },
   
-  /** 
-   * Returns the color's normalized green component.
-   * @return {Number}
-   */
-  getGreen:function() {
-    return this._rgba[1];
-  },
   
   /** 
    * Returns the color's green component as a uint8 value.
@@ -173,28 +179,11 @@ TentaGL.Color.prototype = {
   
   
   /** 
-   * Returns the color's normalized blue component.
-   * @return {Number}
-   */
-  getBlue:function() {
-    return this._rgba[2];
-  },
-  
-  
-  /** 
    * Returns the color's blue component as a uint8 value.
    * @return {uint8}
    */
   getBlueByte:function() {
     return (this._rgba[2]*255) & 0xFF;
-  },
-  
-  /** 
-   * Returns the color's normalized alpha component.
-   * @return {Number}
-   */
-  getAlpha:function() {
-    return this._rgba[3];
   },
   
   
@@ -206,90 +195,36 @@ TentaGL.Color.prototype = {
     return (this._rgba[3]*255) & 0xFF;
   },
   
-  /** 
-   * Sets the RGBA color components for this color. 
-   * @param {Number} r  red
-   * @param {Number} g  green
-   * @param {Number} b  blue
-   * @param {Number} a  alpha (Optional, will keep previous value if not provided)
-   * @return {TentaGL.Color} this
-   */
-  setRGBA:function(r, g, b, a) {
-    this._rgba[0] = r;
-    this._rgba[1] = g;
-    this._rgba[2] = b;
-    
-    if(a !== undefined) {
-      this._rgba[3] = a;
-    }
-    return this;
-  },
-  
-  /** 
-   * Sets the normalized red component of this color. 
-   * @param {Number} red
-   * @return {TentaGL.Color} this
-   */
-  setRed:function(red) {
-    this._rgba[0] = red;
-    return this;
-  },
-  
-  /** 
-   * Sets the normalized green component of this color. 
-   * @param {Number} green
-   * @return {TentaGL.Color} this
-   */
-  setGreen:function(green) {
-    this._rgba[1] = green;
-    return this;
-  },
-  
-  /** 
-   * Sets the normalized blue component of this color. 
-   * @param {Number} blue
-   * @return {TentaGL.Color} this
-   */
-  setBlue:function(blue) {
-    this._rgba[2] = blue;
-    return this;
-  },
-  
-  /** 
-   * Sets the normalized alpha component of this color. 
-   * @param {Number} alpha
-   * @return {TentaGL.Color} this
-   */
-  setAlpha:function(alpha) {
-    this._rgba[3] = alpha;
-    return this;
-  },
-  
   
   //////// Hex color conversion
   
-  /**
-   * Sets the RGBA components of this color, given a 32-bit unsigned integer 
-   * representing them in ARGB (alpha, red, green, blue) form.
-   * @param {int} argb  Bits 31-24 contain the color's alpha component. 
-   *      Bits 23-16 contain the color's red component. Bits 15-8 contain
-   *      the color's green component. Bits 7-0 contain the color's blue
-   *      component. The alpha bits are NOT optional. Alpha will be 0 (transparent).
-   * @return {TentaGL.Color} this
+  
+  /** 
+   * Setter/getter for the color's components in 32-bit ARGB hexadecimal format. 
+   * Bits 31-24 contain the color's alpha component. 
+   * Bits 23-16 contain the color's red component. Bits 15-8 contain
+   * the color's green component. Bits 7-0 contain the color's blue
+   * component. The alpha bits are NOT optional. Alpha will be 0 (transparent).
+   * @param {uint32} argb   Optional.
+   * @return {uint32}
    */
-  setHex:function(argb) {
-    var a = ((argb >>> 24) & 0x000000FF)/255;
-    var r = ((argb >>> 16) & 0x000000FF)/255;
-    var g = ((argb >>> 8) & 0x000000FF)/255;
-    var b = (argb & 0x000000FF)/255;
-    
-    return this.setRGBA(r, g, b, a);
-  },
-  
-  
-  /** Returns the ARGB hex representation of this color. */
-  getHex:function() {
-    return TentaGL.Color.nrgba2Hex(this.getRed(), this.getGreen(), this.getBlue(), this.getAlpha());
+  hex: function(argb) {
+    if(argb !== undefined) {
+      var a = ((argb >>> 24) & 0x000000FF)/255;
+      var r = ((argb >>> 16) & 0x000000FF)/255;
+      var g = ((argb >>> 8) & 0x000000FF)/255;
+      var b = (argb & 0x000000FF)/255;
+      
+      this.rgba([r, g, b, a]);
+      return argb;
+    }
+    else {
+      var hex = Math.floor(this.a()*255)<<24;
+      hex += Math.floor(this.r()*255)<<16;
+      hex += Math.floor(this.g()*255)<<8;
+      hex += Math.floor(this.b()*255);
+      return hex>>>0;
+    }
   },
   
   
@@ -301,15 +236,15 @@ TentaGL.Color.prototype = {
    * @param {Number} h  hue
    * @param {Number} s  saturation
    * @param {Number} b  brightness
-   * @param {Number} a  alpha (Optional, will keep previous value if not provided)
+   * @param {Number} a  alpha (Optional. Default 1 if not provided.)
    * @return {TentaGL.Color} this
    */
   setHSBA:function(h, s, b, a) {  
     if(a === undefined) {
-      a = this.getAlpha();
+      a = 1;
     }
     var rgba = TentaGL.Color.HSBAtoRGBA(h, s, b, a);
-    this.setRGBA(rgab[0], rgba[1], rgba[2], rgba[3]);
+    this.rgba(rgba);
   },
   
   
@@ -319,61 +254,143 @@ TentaGL.Color.prototype = {
    * @return {Array} The normalized HSBA components.
    */
   getHSBA:function() {
-    var r = this.getRed();
-    var g = this.getGreen();
-    var b = this.getBlue();
-    var a = this.getAlpha();
+    var r = this.r();
+    var g = this.g();
+    var b = this.b();
+    var a = this.a();
     
     return TentaGL.Color.RGBAtoHSBA(r, g, b, a);
   },
   
-  /** 
-   * Returns the hue of this color in the HSBA color model. 
-   * @return {Number}
-   */
-  getHue:function() {
-    return this.getHSBA()[0];
-  },
-  
-  
-  /** Sets the hue of this color. */
-  setHue:function(hue) {
-    var hsba = this.getHSBA();
-    this.setHSBA(hue, hsba[1], hsba[2], hsba[3]);
-  },
-  
   
   /** 
-   * Returns the saturation of this color in the HSBA color model. 
-   * @return {Number}
+   * Setter/getter for the color's components in the HSBA color model
+   * (Hue, Saturation, Brightness, Alpha), in normalized format.
+   * @param {vec4} hsba   Optional.
+   * @return {vec4}
    */
-  getSaturation:function() {
-    return this.getHSBA()[1];
-  },
-  
-  /** Sets the saturation of this color. */
-  setSaturation:function(sat) {
-    var hsba = this.getHSBA();
-    this.setHSBA(hsba[0], sat, hsba[2], hsba[3]);
+  hsba: function(hsba) {
+    if(hsba) {
+      if(hsba[3] === undefined) {
+        hsba[3] = 1;
+      }
+      
+      var h = hsba[0];
+      var s = hsba[1];
+      var b = hsba[2];
+      var a = hsba[3];
+      
+      var hp = (h-Math.floor(h))*6.0;
+      var chroma = s*b;
+      var x = chroma*(1-Math.abs(hp % 2 - 1));
+      var m = b-chroma;
+      
+      if(hp >= 0 && hp < 1) {
+        this.rgba([chroma + m, x + m, m, a]);
+      }
+      else if(hp >= 1 && hp < 2) {
+        this.rgba([x + m, chroma + m, m, a]);
+      }
+      else if(hp >= 2 && hp < 3) {
+        this.rgba([m, chroma + m, x + m, a]);
+      }
+      else if(hp >= 3 && hp < 4) {
+        this.rgba([m, x + m, chroma + m, a]);
+      }
+      else if(hp >= 4 && hp < 5) {
+        this.rgba([x + m, m, chroma + m, a]);
+      }
+      else if(hp >= 5 && hp < 6) {
+        this.rgba([chroma + m, m, x + m, a]);
+      }
+      else {
+        this.rgba([m, m, m, a]);
+      }
+      
+      return hsba;
+    }
+    else {
+      var r = this.r();
+      var g = this.g();
+      var b = this.b();
+      var a = this.a();
+      
+      var max = Math.max(r,g,b);
+      var min = Math.min(r,g,b);
+      var chroma = max-min;
+      
+      // compute the hue
+      var hue = 0;
+      if(chroma == 0) {
+        hue = 0;
+      }
+      else if(max == r) {
+        hue = ((g - b)/chroma) % 6;
+      }
+      else if(max = g) {
+        hue = ((b-r)/chroma) + 2;
+      }
+      else {
+        hue = ((r-g)/chroma) + 4;
+      }
+      hue /= 6.0;
+      
+      // compute the brightness/value
+      var brightness = max;
+      
+      // compute the saturation
+      var saturation = 0;
+      if(chroma != 0) {
+        saturation = chroma/brightness;
+      }
+          
+      return [hue, saturation, brightness, a];
+    }
   },
   
   
   /** 
-   * Returns the brightness of this color in the HSBA color model. 
-   * @return {Number}
+   * Setter/getter for the color's normalized hue. 
+   * @param {float} h   Optional.
+   * @return {float}
    */
-  getBrightness:function() {
-    return this.getHSBA()[2];
+  hue: function(h) {
+    var hsba = this.hsba();
+    if(h !== undefined) {
+      hsba[0] = h;
+      this.hsba(h, hsba[1], hsba[2], hsba[3]);
+    }
+    return hsba[0];
   },
   
   
-  /** Sets the brightness of this color. */
-  setBrightness:function(bright) {
-    var hsba = this.getHSBA();
-    this.setHSBA(hsba[0], hsba[1], bright, hsba[3]);
+  /** 
+   * Setter/getter for the color's normalized saturation.
+   * @param {float} s   Optional.
+   * @return {float}
+   */
+  saturation: function(s) {
+    var hsba = this.hsba();
+    if(s !== undefined) {
+      hsba[1] = s;
+      this.hsba(hsba[0], s, hsba[2], hsba[3]);
+    }
+    return hsba[1];
   },
   
-  
+  /** 
+   * Setter/getter for the color's normalized brightness.
+   * @param {float} b   Optional.
+   * @return {float}
+   */
+  brightness: function(b) {
+    var hsba = this.hsba();
+    if(b !== undefined) {
+      hsba[2] = b;
+      this.hsba(hsba[0], hsba[1], b, hsba[3]);
+    }
+    return hsba[2];
+  },
   
   //////// GL state
   
@@ -399,10 +416,10 @@ TentaGL.Color.prototype = {
    * @return {Boolean}
    */
   equals:function(other) {
-    return (  this.getRed() == other.getRed() && 
-              this.getGreen() == other.getGreen() &&
-              this.getBlue() == other.getBlue() &&
-              this.getAlpha() == other.getAlpha());
+    return (  this.r() == other.r() && 
+              this.g() == other.g() &&
+              this.b() == other.b() &&
+              this.a() == other.a());
   },
   
   
@@ -432,7 +449,7 @@ Util.Inheritance.inherit(TentaGL.Color, TentaGL.Material);
  * @param {Number} a  alpha (Optional, will be set to 1 if not provided)
  */
 TentaGL.Color.RGBA = function(r, g, b, a) {
-  return (new TentaGL.Color()).setRGBA(r, g, b, a);
+  return new TentaGL.Color([r, g, b, a]);
 };
 
 
@@ -448,7 +465,7 @@ TentaGL.Color.RGBABytes = function(r, g, b, a) {
   if(a === undefined) {
     a = 255;
   }
-  return (new TentaGL.Color()).setRGBA(r/255, g/255, b/255, a/255);
+  return new TentaGL.Color([r/255, g/255, b/255, a/255]);
 };
 
 
@@ -461,41 +478,27 @@ TentaGL.Color.RGBABytes = function(r, g, b, a) {
  *      component. The alpha component is NOT optional.
  */
 TentaGL.Color.Hex = function(argb) {
-  return (new TentaGL.Color()).setHex(argb);
+  var color = new TentaGL.Color();
+  color.hex(argb);
+  return color;
 };
 
 
 /** 
  * Returns a new Color, given its normalized HSBA 
  * (hue, saturation, brightness, alpha) color components.
- * @param {Number} h  hue
- * @param {Number} s  saturation
- * @param {Number} b  brightness
- * @param {Number} a  alpha (Optional, will be set to 1 if not provided)
+ * @param {vec3 || vec4} hsba   If given as a vec3, a will be set to 1.
+ * @return {TentaGL.Color}
  */
-TentaGL.Color.HSBA = function(h, s, b, a) {
-  return (new TentaGL.Color()).setHSBA(h, s, b, a);
+TentaGL.Color.HSBA = function(hsba) {
+  var color = new TentaGL.Color();
+  color.hsba([h, s, b, a]);
+  return color;
 };
 
 
 //////// Color format conversions
 
-/** 
- * Returns the ARGB hex representation of the color defined by the given 
- * normalized rgba color components. 
- * @param {Number} r
- * @param {Number} g
- * @param {Number} b
- * @param {Number} a
- * @return {uint32}
- */
-TentaGL.Color.nrgba2Hex = function(r, g, b, a) {
-    var hex = Math.floor(a*255)<<24;
-    hex += Math.floor(r*255)<<16;
-    hex += Math.floor(g*255)<<8;
-    hex += Math.floor(b*255);
-    return hex>>>0;
-};
 
 /** 
  * Returns the ARGB hex representation of the color defined by the given 

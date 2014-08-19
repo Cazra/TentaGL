@@ -53,7 +53,7 @@ TentaGL.ColorBuffer = {
   setClearColor:function(gl, color) {
     if(!TentaGL.Picker.isPicking(gl)) {
       gl._cbClear = color.clone();
-      gl.clearColor(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+      gl.clearColor(color.r(), color.g(), color.b(), color.a());
     }
   },
   

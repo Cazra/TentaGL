@@ -85,10 +85,10 @@ TentaGL.GradientShader.prototype = {
     var arr = [];
     
     for(var i=0; i<colors.length; i++) {
-      arr.push(colors[i].getRed());
-      arr.push(colors[i].getGreen());
-      arr.push(colors[i].getBlue());
-      arr.push(colors[i].getAlpha());
+      arr.push(colors[i].r());
+      arr.push(colors[i].g());
+      arr.push(colors[i].b());
+      arr.push(colors[i].a());
     }
     
     this._colorsUni.set(gl, arr);
