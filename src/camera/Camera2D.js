@@ -44,13 +44,13 @@ TentaGL.Camera2D = function(eye, width, height, yFlipped) {
   
   var ex = eye[0];
   var ey = eye[1];
-  this._eye = vec2.fromValues(ex, ey);
+  this._eye = [ex, ey];
   
   this._width = width;
   this._height = height;
   
   // By default, the anchor is located in the center of the viewport.
-  this._anchor = vec2.fromValues(Math.floor(this._width/2), Math.floor(this._height/2));
+  this._anchor = [Math.floor(this._width/2), Math.floor(this._height/2)];
   
   this._angle = 0.0;
   this._zoom = 1.0;
@@ -62,42 +62,30 @@ TentaGL.Camera2D.prototype = {
   constructor: TentaGL.Camera2D,
   
   
+  /** 
+   * Returns whether the y axis points down for this camera. 
+   * For most traditional 2D graphics systems, this is true.
+   * @return {boolean}
+   */
+  isYFlipped: function() {
+    return this._yFlipped;
+  },
+  
+  
   //////// Eye position
   
   /** 
-   * Returns the position of the camera's eye. This is camera's position in world space.
+   * Setter/getter for the camera's eye position.
+   * This is the point the camera is focused on in world coordinates.
+   * @param {vec2} xy   Optional.
    * @return {vec2}
    */
-  getEye:function() {
-    return vec2.clone(this._eye);
+  eye: function(xy) {
+    if(xy !== undefined) {
+      this._eye = vec2.copy([], xy);
+    }
+    return this._eye;
   },
-  
-  
-  /** 
-   * Returns the X coordinate of the camera's eye. 
-   * @return {Number}
-   */
-  getX:function() {
-    return this._eye[0];
-  },
-  
-  /** 
-   * Returns the Y coordinate of the camera's eye. 
-   * @return {Number}
-   */
-  getY:function() {
-    return this._eye[1];
-  },
-  
-  
-  /**
-   * Sets the position of the camera's eye in world space.
-   * @param {vec2} eye
-   */
-  setEye:function(eye) {
-    this._eye = vec2.fromValues(eye[0], eye[1]);
-  },
-  
   
   //////// View resolution
   
@@ -120,32 +108,28 @@ TentaGL.Camera2D.prototype = {
   
   //////// Anchor position
   
+  
   /** 
-   * Returns the camera's anchor position - the position of its eye in 
-   * viewport coordinates. 
+   * Setter/getter for the camera's anchor position.
+   * This is the point that the camera is focused on in viewport space. (y axis pointing down)
+   * @param {vec2} xy   Optional.
    * @return {vec2}
    */
-  getAnchor:function() {
+  anchor: function(xy) {
+    if(xy !== undefined) {
+      this._anchor = vec2.copy([], xy);
+    }
     return this._anchor;
-  },
-  
-  
-  /** 
-   * Sets the camera's anchor position. 
-   * @param {vec2} anchor
-   */
-  setAnchor:function(anchor) {
-    this._anchor = vec2.fromValues(anchor[0], anchor[1]);
   },
   
   
   /** 
    * Sets the camera's anchor position such that the camera's transform is 
    * unchanged. I.E., the camera appears to be at the same position.
-   * @param {vec2} anchor
+   * @param {vec2} xy
    */
-  moveAnchor: function(anchor) {
-    var df = [anchor[0] - this._anchor[0], anchor[1] - this._anchor[1]];
+  moveAnchor: function(xy) {
+    var df = [xy[0] - this._anchor[0], xy[1] - this._anchor[1]];
     
     var rsTransInv = mat4.invert(mat4.create(), this._getRotateScaleTransform());
     dfWorld = vec2.transformMat4(vec2.create(), df, rsTransInv);
@@ -153,59 +137,51 @@ TentaGL.Camera2D.prototype = {
     this._eye[0] += dfWorld[0];
     this._eye[1] += dfWorld[1];
     
-    this._anchor[0] = anchor[0];
-    this._anchor[1] = anchor[1];
+    this._anchor[0] = xy[0];
+    this._anchor[1] = xy[1];
   },
   
   
   //////// Angle
   
-  
   /** 
-   * Returns the clockwise rotation angle of the camera, in radians. 
-   * @return {Number}
+   * Setter/getter for the camera's clockwise rotation angle, in radians. 
+   * @param {number} rads   Optional.
+   * @return {number}
    */
-  getAngle:function() {
+  angle: function(rads) {
+    if(rads !== undefined) {
+      this._angle = rads;
+    }
     return this._angle;
   },
-  
-  
-  /** 
-   * Sets the camera's clockwise rotation angle, in radians.
-   * @param {Number} rads
-   */
-  setAngle:function(rads) {
-    this._angle = rads;
-  },
-  
   
   
   //////// Zoom
   
   /** 
-   * Returns the zoom of the camera.
-   * @return {Number}
-   */
-  getZoom:function() {
-    return this._zoom;
-  },
-  
-  /** 
-   * Sets the zoom of the camera. 
+   * Setter/getter for the zoom level of the camera. 
    * The default zoom level is 1.0.
    * The scene zooms in as zoom approaches positive infinity.
    * The scene zooms out as zoom approaches 0.
-   * @param {Number} zoom
    */
-  setZoom:function(zoom) {
-    this._zoom = zoom;
+  zoom: function(zoom) {
+    if(zoom !== undefined) {
+      this._zoom = zoom;
+    }
+    return this._zoom;
   },
   
   
   //////// controls
   
   
-  
+  /** 
+   * Executes default mouse controls for the camera.
+   * @param {TentaGL.Mouse} mouse
+   * @param {uint} viewWidth
+   * @param {uint} viewHeight
+   */
   controlWithMouse:function(mouse, viewWidth, viewHeight) {
     var mouseX = mouse.getX()*this.getWidth()/viewWidth;
     var mouseY = mouse.getY()*this.getHeight()/viewHeight;
@@ -217,7 +193,7 @@ TentaGL.Camera2D.prototype = {
     if(mouse.scrollUpAmount() > 0) {
       this.moveAnchor([mouseX, mouseY]);
       for(var i = 0; i < mouse.scrollUpAmount(); i++) {
-        this.setZoom(this.getZoom() * 10/9);
+        this.zoom(this.zoom() * 10/9);
       }
     }
     
@@ -225,7 +201,7 @@ TentaGL.Camera2D.prototype = {
     if(mouse.scrollDownAmount() > 0) {
       this.moveAnchor([mouseX, mouseY]);
       for(var i = 0; i < mouse.scrollDownAmount(); i++) {
-        this.setZoom(this.getZoom() * 9/10);
+        this.zoom(this.zoom() * 9/10);
       }
     }
     

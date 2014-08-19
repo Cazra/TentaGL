@@ -32,11 +32,11 @@ HelloWorldApp.MainLevel.prototype = {
   },
   
   
-  //////// Level abstract implementations
+  //////// Level implementations
   
   reset: function(gl) {
     this.cam2D = new TentaGL.Camera2D([0,0], gl.canvas.width, gl.canvas.height);
-    this.cam2D.setAnchor([0,0]);
+    this.cam2D.anchor([0,0]);
     
     this.camera = new TentaGL.ArcballCamera([10, 10, 10], [0, 0, 0]);
     this.rX = 0;
@@ -178,8 +178,8 @@ HelloWorldApp.MainLevel.prototype = {
     // Camera control
     this.camera.controlWithMouse(this.mouse(), this.getApp().getWidth(), this.getApp().getHeight());
     
-    this.axesGroup.get(3).xyz(this.camera.getCenter());
-    this.ptLight1.xyz(this.camera.getCenter());
+    this.axesGroup.get(3).xyz(this.camera.center());
+    this.ptLight1.xyz(this.camera.center());
     this.camGroup.setQuat(this.camera._orientation);
     
     var sprites = this.spriteGroup.getChildren();

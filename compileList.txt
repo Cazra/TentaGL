@@ -46,8 +46,6 @@ src/collisions/Picker.js
 src/event/AppResizeListener.js
 src/event/Event.js
   src/event/AppResizeEvent.js
-  src/event/PickEvent.js
-src/event/PickEventListener.js
 
 src/geom/Model.js
   src/geom/shapes/Cone.js
