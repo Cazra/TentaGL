@@ -38,22 +38,22 @@ TentaGL.Math.Quad.prototype = {
     
     var v0 = new TentaGL.Vertex(this._pts[0]);
     v0.normal(this._n);
-    v0.st([0,0]);
+    v0.texST([0,0]);
     this._model.addVertex(v0);
     
     var v1 = new TentaGL.Vertex(this._pts[1]);
     v1.normal(this._n);
-    v1.st(1, 0);
+    v1.texST(1, 0);
     this._model.addVertex(v1);
     
     var v2 = new TentaGL.Vertex(this._pts[2]);
     v2.normal(this._n);
-    v2.st(1,1);
+    v2.texST(1,1);
     this._model.addVertex(v2);
     
     var v3 = new TentaGL.Vertex(this._pts[3]);
     v3.normal(this._n);
-    v3.st(0, 1);
+    v3.texST(0, 1);
     this._model.addVertex(v3);
     
     this._model.addFaceQuad(0, 1, 2, 3);

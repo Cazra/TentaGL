@@ -50,9 +50,9 @@ TentaGL.Model.Cone = function(r, h, lonInc) {
     var s = (x/r+1)/2; //lon/TentaGL.TAU;
     var t = (z/r+1)/2;
     
-    var v = new TentaGL.Vertex(x, 0, z);
-    v.setNormal(0, -1, 0);
-    v.setTexST(s, t);
+    var v = new TentaGL.Vertex([x, 0, z]);
+    v.normal([0, -1, 0]);
+    v.texST([s, t]);
     model.addVertex(v);
   }
   
@@ -82,13 +82,13 @@ TentaGL.Model.Cone = function(r, h, lonInc) {
     vec3.normalize(nVec2, nVec2);
     
     // Create the vertices and add them to the model
-    var vBase = new TentaGL.Vertex(x1, 0, z1);
-    vBase.setTexST(lon1/TentaGL.TAU, 0);
-    vBase.setNormal(nVec1[0], nVec1[1], nVec1[2]);
+    var vBase = new TentaGL.Vertex([x1, 0, z1]);
+    vBase.texST([lon1/TentaGL.TAU, 0]);
+    vBase.normal(nVec1);
     
-    var vTop = new TentaGL.Vertex(0, h, 0);
-    vTop.setTexST(lon2/TentaGL.TAU, 1);
-    vTop.setNormal(nVec2[0], nVec2[1], nVec2[2]);
+    var vTop = new TentaGL.Vertex([0, h, 0]);
+    vTop.texST([lon2/TentaGL.TAU, 1]);
+    vTop.normal(nVec2);
     
     model.addVertex(vBase);
     model.addVertex(vTop);
@@ -105,9 +105,9 @@ TentaGL.Model.Cone = function(r, h, lonInc) {
   var nVec1 = vec3.cross(vec3.create(), uVec1, vVec1);
   vec3.normalize(nVec1, nVec1);
   
-  var vBase = new TentaGL.Vertex(x1, 0, z1);
-  vBase.setTexST(TentaGL.TAU, 0);
-  vBase.setNormal(nVec1[0], nVec1[1], nVec1[2]);
+  var vBase = new TentaGL.Vertex([x1, 0, z1]);
+  vBase.texST([TentaGL.TAU, 0]);
+  vBase.normal(nVec1);
   model.addVertex(vBase);
   
   // Bottom circle faces

@@ -40,10 +40,10 @@ TentaGL.PerVertexPhongShaderMac = function(gl) {
     console.log("\nCreating PerVertexPhongShaderMac");
     TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
     
-    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
-    self.setAttrGetter("vertexTang", TentaGL.Vertex.prototype.getTangental);
+    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.xyz);
+    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.normal);
+    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.texST);
+    self.setAttrGetter("vertexTang", TentaGL.Vertex.prototype.tangental);
     
     self._opacityUni = self.getUniform("opacity");
     

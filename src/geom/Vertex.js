@@ -35,95 +35,31 @@
  * To construct the vertex, each of the coordinates can be provided separately, 
  * or in a 3-element array.
  * @constructor
- * @param {Number || vec3} x
- * @param {Number} y
- * @param {Number} z
+ * @param {vec3} xyz
  */
-TentaGL.Vertex = function(x, y, z) {
-  if(x.length) {
-    z = x[2];
-    y = x[1];
-    x = x[0];
-  }
+TentaGL.Vertex = function(xyz) {
+  this._xyz = vec3.copy([], xyz);
+  this._xyz[3] = 1;
   
-  this._xyz = vec4.fromValues(x, y, z, 1);
-  this._texST = vec2.fromValues(0, 0);
-  this._normal = vec3.fromValues(0, 0, 0);
-  this._tangental = vec3.fromValues(0, 0, 0);
+  this._texST = [0, 0];
+  this._normal = [0, 0, 0];
+  this._tangental = [0, 0, 0];
 }
 
 TentaGL.Vertex.prototype = {
   
   constructor:TentaGL.Vertex, 
   
-  /** 
-   * Returns a copy of the vertex's homogeneous XYZW coordinates. 
-   * @return {vec4}
-   */
-  getXYZ:function() {
-    return vec4.clone(this._xyz);
-  },
-  
-  
-  /**
-   * Returns the vertex's X coordinate.
-   * @return {Number}
-   */
-  getX:function() {
-    return this._xyz[0];
-  },
-  
-  /**
-   * Returns the vertex's Y coordinate.
-   * @return {Number}
-   */
-  getY:function() {
-    return this._xyz[1];
-  },
-  
-  /**
-   * Returns the vertex's Z coordinate.
-   * @return {Number}
-   */
-  getZ:function() {
-    return this._xyz[2];
-  },
-  
-  
   
   /** 
-   * Sets the vertex's X coordinate. 
-   * @param {Number} x
-   */
-  setX:function(x) {
-    this._xyz[0] = x;
-  },
-  
-  /** 
-   * Sets the vertex's Y coordinate. 
-   * @param {Number} y
-   */
-  setY:function(y) {
-    this._xyz[1] = y;
-  },
-  
-  /** 
-   * Sets the vertex's Z coordinate. 
-   * @param {Number} z
-   */
-  setZ:function(z) {
-    this._xyz[2] = z;
-  },
-  
-  
-  /** 
-   * Setter/getter for the vertex's xyzw position. 
+   * Setter/getter for the vertex's xyzw position, with w=1. 
    * @param {vec3} xyz  Optional.
    * @return {vec4}
    */
   xyz: function(xyz) {
     if(xyz !== undefined) {
-      this._xyz = vec4.fromValues(xyz[0], xyz[1], xyz[2], 1);
+      this._xyz = vec3.copy([], xyz);
+      this._xyz[3] = 1;
     }
     return vec4.clone(this._xyz);
   },
@@ -131,92 +67,17 @@ TentaGL.Vertex.prototype = {
   
   
   /** 
-   * Returns a copy of this vertex's 2D texture coordinates array.
-   * If this vertex's 2D texture coordinates are undefined, an Error is thrown.
+   * Setter/getter for the texture coordinates. 
+   * @param {vec2} st   Optional.
    * @return {vec2}
    */
-  getTexST:function() {
-    return vec2.clone(this._texST);
-  },
-  
-  
-  /** 
-   * Returns true iff 2D texture coordsinates have been defined for this vertex. 
-   * @return {boolean}
-   */
-  hasTexST: function() {
-    return (this._texST != undefined);
-  },
-  
-  
-  /**
-   * Sets the 2D texture coordinates for this vertex.
-   * @param {Number} s
-   * @param {Number} t
-   */
-  setTexST:function(s, t) {
-    this._texST = vec2.fromValues(s, t);
-  },
-  
-  /** 
-   * Returns the vertex's 2D texture coordinate S. 
-   * @return {Number}
-   */
-  getTexS:function() {
-    return this._texST[0];
-  },
-  
-  /** 
-   * Returns the vertex's 2D texture coordinate T. 
-   * @return {Number}
-   */
-  getTexT:function() {
-    return this._texST[1];
-  },
-  
-  
-  /** 
-   * Setter/getter for the texture coordinates. 
-   */
-  st: function(st) {
+  texST: function(st) {
     if(st !== undefined) {
-      this._texST = vec2.fromValues(st[0], st[1]);
+      this._texST = vec2.copy([], st);
     }
     return vec2.clone(this._texST);
   },
   
-  
-  
-  /** 
-   * Returns a copy of this vertex's surface normal vector. If this vertex's 
-   * surface normal vector has not yet been defined, an Error is thrown.
-   * @return {vec3}
-   */
-  getNormal:function() {
-    return vec3.clone(this._normal);
-  },
-  
-  
-  /** 
-   * Returns true iff the surface normal vector has been defined for this vertex. 
-   * @return {boolean}
-   */
-  hasNormal: function() {
-    return (this._normal != undefined);
-  },
-  
-  
-  /** 
-   * Sets the surface normal vector for this vertex. The stored vector becomes 
-   * normalized.
-   * @param {Number} x  Normalized x component.
-   * @param {Number} y  Normalized y component.
-   * @param {Number} z  Normalized z component.
-   */
-  setNormal:function(x, y, z) {
-    this._normal = vec3.fromValues(x, y, z);
-    this._normal = vec3.normalize(this._normal, this._normal);
-  },
   
   
   /** 
@@ -226,29 +87,9 @@ TentaGL.Vertex.prototype = {
    */
   normal: function(xyz) {
     if(xyz !== undefined) {
-      this._normal = vec3.fromValues(xyz[0], xyz[1], xyz[2]);
+      this._normal = vec3.copy([], xyz);
     }
     return vec3.clone(this._normal);
-  },
-  
-  
-  
-  /** 
-   * Returns a copy of this vertex's surface tangental vector. If this vertex's
-   * surface tangental vector has not yet been defined, an Error is thrown.
-   * @return {vec3}
-   */
-  getTangental:function() {
-    return vec3.clone(this._tangental);
-  },
-  
-  
-  /** 
-   * Returns true iff this vertex's tangental vector is undefined. 
-   * @return {boolean}
-   */
-  hasTangental: function() {
-    return (this._tangental !== undefined);
   },
   
   
@@ -260,43 +101,32 @@ TentaGL.Vertex.prototype = {
    * @return {vec3}
    */
   computeTangental:function(v2, v3) {
-    var u = vec3.sub(vec3.create(), v2.xyz(), this.xyz());
-    var v = vec3.sub(vec3.create(), v3.xyz(), this.xyz());
+    var u = vec3.sub([], v2.xyz(), this.xyz());
+    var v = vec3.sub([], v3.xyz(), this.xyz());
     
-    var su = v2.getTexS() - this.getTexS();
-    var sv = v3.getTexS() - this.getTexS();
-    var tu = v2.getTexT() - this.getTexT();
-    var tv = v3.getTexT() - this.getTexT();
+    var su = v2._texST[0] - this._texST[0];
+    var sv = v3._texST[0] - this._texST[0];
+    var tu = v2._texST[1] - this._texST[1];
+    var tv = v3._texST[1] - this._texST[1];
     var dst = tv*su - tu*sv;
     if(dst == 0) {
-      return vec3.fromValues(1, 0, 0);
+      return [1, 0, 0];
     }
     else {
       var tang = vec3.create();
       vec3.scale(tang, u, tv);
-      vec3.sub(tang, tang, vec3.scale(vec3.create(), v, tu));
+      vec3.sub(tang, tang, vec3.scale([], v, tu));
       vec3.scale(tang, tang, 1/dst);
       
       var t = tang;
       if(vec3.length(tang) == 0) {
-        return vec3.fromValues(1, 0, 0);
+        return [1, 0, 0];
       }
       
       return tang;
     }
   },
   
-  
-  /** 
-   * Sets the tangental vector for this vertex. It is advised to set this by 
-   * using the result values from a call to computeTangental. The stored
-   * vector becomes normalized.
-   * @param {vec3} xyz
-   */
-  setTangental:function(xyz) {
-    this._tangental = vec3.fromValues(xyz[0], xyz[1], xyz[2]);
-    this._tangental = vec3.normalize(this._tangental, this._tangental);
-  },
   
   
   /** 
@@ -306,7 +136,7 @@ TentaGL.Vertex.prototype = {
    */
   tangental: function(xyz) {
     if(xyz !== undefined) {
-      this._tangental = vec3.fromValues(xyz[0], xyz[1], xyz[2]);
+      this._tangental = vec3.copy([], xyz);
     }
     return vec3.clone(this._tangental);
   },
@@ -330,35 +160,25 @@ TentaGL.Vertex.prototype = {
    *      this vertex.
    * @return {TentaGL.Vertex} The transformed copy of this vertex.
    */
-  transform:function(transform) {
-  //  console.log("transform vertex!");
-  //  console.log("  transform: " + Util.Debug.arrayString(transform));
-  //  console.log("  old XYZ: " + this.getX() + ", " + this.getY() + ", " + this.getZ());
+  transform:function(transform) {    
+    var xyz = vec4.transformMat4([], this.xyz(), transform);
+    var result = new TentaGL.Vertex(xyz);
     
-    var xyz = vec4.transformMat4(vec4.create(), this.xyz(), transform);
-    var result = new TentaGL.Vertex(xyz[0], xyz[1], xyz[2]);
+    // We need to turn normal from a vec3 into a vec4 before it can be matrix-multiplied.
+    // w=0 so that it doesn't get translated.
+    var normal = vec3.copy([], this.normal());
+    normal[3] = 0;
+    vec4.transformMat4(normal, normal, transform);
+    result.normal(normal);
     
-  //  console.log("  new XYZ: " + xyz[0] + ", " + xyz[1] + ", " + xyz[2]);
+    // We need to turn tangental from a vec3 into a vec4 before it can be matrix-multiplied.
+    // w=0 so that it doesn't get translated.
+    var tang = vec3.copy([], this.tangental());
+    tang[3] = 0;
+    vec4.transformMat4(tang, tang, transform);
+    result.tangental(tang);
     
-    if(this._normal !== undefined) {
-      // We need to turn normal from a vec3 into a vec4 before it can be matrix-multiplied.
-      var normal = this.getNormal();
-      normal = vec4.fromValues(normal[0], normal[1], normal[2], 0);
-      normal = vec4.transformMat4(normal, normal, transform);
-      result.setNormal(normal[0], normal[1], normal[2]);
-    }
-    
-    if(this._tangental !== undefined) {
-      // We need to turn tangental from a vec3 into a vec4 before it can be matrix-multiplied.
-      var tang = this.getTangental();
-      tang = vec4.fromValues(tang[0], tang[1], tang[2], 0);
-      tang = vec4.transformMat4(tang, tang, transform);
-      result.setTangental(tang[0], tang[1], tang[2]);
-    }
-    
-    if(this._texST !== undefined) {
-      result.setTexST(this.getTexS(), this.getTexT());
-    }
+    result.texST(this._texST);
     
     return result;
   }

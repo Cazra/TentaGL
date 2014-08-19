@@ -248,17 +248,17 @@ TentaGL.Math.Triangle2D.prototype = {
 
     var vertA = new TentaGL.Vertex(a);
     vertA.normal(n);
-    vertA.st([0,0]);
+    vertA.texST([0,0]);
     model.addVertex(vertA);
     
     var vertB = new TentaGL.Vertex(b);
     vertB.normal(n);
-    vertB.st([1,0]);
+    vertB.texST([1,0]);
     model.addVertex(vertB);
     
     var vertC = new TentaGL.Vertex(c);
     vertC.normal(n);
-    vertC.st([0.5, 1]);
+    vertC.texST([0.5, 1]);
     model.addVertex(vertC);
     
     model.addFace(0, 1, 2);

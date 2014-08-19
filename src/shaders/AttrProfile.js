@@ -178,19 +178,19 @@ TentaGL.AttrProfiles = {};
 TentaGL.AttrProfiles[TentaGL.POS_4F] = new TentaGL.AttrProfile( TentaGL.POS_4F, 
                                                                 GL_FLOAT, 
                                                                 4, 
-                                                                TentaGL.Vertex.prototype.getXYZ);
+                                                                TentaGL.Vertex.prototype.xyz);
 TentaGL.AttrProfiles[TentaGL.NORMAL_3F] = new TentaGL.AttrProfile(TentaGL.NORMAL_3F, 
                                                                   GL_FLOAT, 
                                                                   3, 
-                                                                  TentaGL.Vertex.prototype.getNormal);
+                                                                  TentaGL.Vertex.prototype.normal);
 TentaGL.AttrProfiles[TentaGL.TEX_2F] = new TentaGL.AttrProfile( TentaGL.TEX_2F, 
                                                                 GL_FLOAT, 
                                                                 2, 
-                                                                TentaGL.Vertex.prototype.getTexST);
+                                                                TentaGL.Vertex.prototype.texST);
 TentaGL.AttrProfiles[TentaGL.TANG_3F] = new TentaGL.AttrProfile(TentaGL.TANG_3F, 
                                                                 GL_FLOAT, 
                                                                 3, 
-                                                                TentaGL.Vertex.prototype.getTangental);
+                                                                TentaGL.Vertex.prototype.tangental);
 
 
 /** 

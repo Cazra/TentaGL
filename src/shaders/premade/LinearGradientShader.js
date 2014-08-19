@@ -39,9 +39,9 @@ TentaGL.LinearGradientShader = function(gl) {
     console.log("\nCreating linear gradient shader");
     TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
     
-    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.xyz);
+    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.normal);
+    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.texST);
     
     self._mvpUni = self.getUniform("mvpTrans");
     self._normalUni = self.getUniform("normalTrans");

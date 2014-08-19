@@ -97,7 +97,7 @@ TentaGL.Model.ObjReader = {
           var x = parseFloat(toks[1]);
           var y = parseFloat(toks[2]);
           var z = parseFloat(toks[3]);
-          curModel.addVertex(new TentaGL.Vertex(x, y, z));
+          curModel.addVertex(new TentaGL.Vertex([x, y, z]));
         }
         
         // Vertex normal
@@ -106,7 +106,7 @@ TentaGL.Model.ObjReader = {
           var x = parseFloat(toks[1]);
           var y = parseFloat(toks[2]);
           var z = parseFloat(toks[3]);
-          vertex.setNormal(x, y, z);
+          vertex.normal([x, y, z]);
         }
         
         // Vertex texture coordinates
@@ -114,7 +114,7 @@ TentaGL.Model.ObjReader = {
           var vertex = curModel.getVertex(index);
           var s = parseFloat(toks[1]);
           var t = parseFloat(toks[2]);
-          vertex.setTexST(s, t);
+          vertex.texST([s, t]);
         }
         
         // New face

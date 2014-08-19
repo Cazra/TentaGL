@@ -26,14 +26,14 @@
 TentaGL.Model.Line = function(xyz1, xyz2) {
   var model = new TentaGL.Model(GL_LINES);
   
-  var v1 = new TentaGL.Vertex(xyz1[0], xyz1[1], xyz1[2]);
-  v1.setNormal(0, 0, 1);
-  v1.setTexST(0,0);
+  var v1 = new TentaGL.Vertex(xyz1);
+  v1.normal([0, 0, 1]);
+  v1.texST([0,0]);
   model.addVertex(v1);
   
-  var v2 = new TentaGL.Vertex(xyz2[0], xyz2[1], xyz2[2]);
-  v2.setNormal(0, 0, 1);
-  v2.setTexST(1,0);
+  var v2 = new TentaGL.Vertex(xyz2);
+  v2.normal([0, 0, 1]);
+  v2.texST([1,0]);
   model.addVertex(v2);
   
   model.addLine(0, 1);

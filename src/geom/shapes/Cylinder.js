@@ -52,9 +52,9 @@ TentaGL.Model.Cylinder = function(r, h, lonInc) {
     var s = (x/r+1)/2; //lon/TentaGL.TAU;
     var t = (z/r+1)/2;
     
-    var v = new TentaGL.Vertex(x, 0, z);
-    v.setNormal(0, -1, 0);
-    v.setTexST(s, t);
+    var v = new TentaGL.Vertex([x, 0, z]);
+    v.normal([0, -1, 0]);
+    v.texST([s, t]);
     model.addVertex(v);
   }
   
@@ -67,9 +67,9 @@ TentaGL.Model.Cylinder = function(r, h, lonInc) {
     var z = xyz[2];
     var s = lon/TentaGL.TAU;
     
-    var v = new TentaGL.Vertex(x, 0, z);
-    v.setNormal(x, 0, z);
-    v.setTexST(s, 0);
+    var v = new TentaGL.Vertex([x, 0, z]);
+    v.normal([x, 0, z]);
+    v.texST([s, 0]);
     model.addVertex(v);
   }
   for(var i=0; i < numLonVerts; i++) {
@@ -80,9 +80,9 @@ TentaGL.Model.Cylinder = function(r, h, lonInc) {
     var z = xyz[2];
     var s = lon/TentaGL.TAU;
     
-    var v = new TentaGL.Vertex(x, h, z);
-    v.setNormal(x, 0, z);
-    v.setTexST(s, 1);
+    var v = new TentaGL.Vertex([x, h, z]);
+    v.normal([x, 0, z]);
+    v.texST([s, 1]);
     model.addVertex(v);
   }
   
@@ -96,9 +96,9 @@ TentaGL.Model.Cylinder = function(r, h, lonInc) {
     var s = (x/r+1)/2; //lon/TentaGL.TAU;
     var t = (z/r+1)/2;
     
-    var v = new TentaGL.Vertex(x, h, z);
-    v.setNormal(0, 1, 0);
-    v.setTexST(s, t);
+    var v = new TentaGL.Vertex([x, h, z]);
+    v.normal([0, 1, 0]);
+    v.texST([s, t]);
     model.addVertex(v);
   }
   

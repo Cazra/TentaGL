@@ -77,7 +77,7 @@ TentaGL.Math.Plane.prototype = {
    * @return number
    */
   distToPt: function(pt) {
-    var w = vec3.sub(vec3.create(), pt, this._pt);
+    var w = vec3.sub([], pt, this._pt);
     var wLen = vec3.len(w);
     if(wLen == 0) {
       return 0;
@@ -136,8 +136,8 @@ TentaGL.Math.Plane.prototype = {
       p2 = [x, y, z];
     }
     
-    var u = vec3.sub(vec3.create(), p2, p1);
-    var v = vec3.cross(vec3.create(), u, this._normal);
+    var u = vec3.sub([], p2, p1);
+    var v = vec3.cross([], u, this._normal);
     
     return [u, v];
   },
@@ -174,7 +174,7 @@ TentaGL.Math.Plane.prototype = {
    * @return {int}
    */
   ptRelative: function(pt) {
-    var u = vec3.sub(vec3.create(), pt, this._pt);
+    var u = vec3.sub([], pt, this._pt);
     vec3.normalize(u, u);
     
     var dot = vec3.dot(this._nHat, u);
@@ -227,7 +227,7 @@ TentaGL.Math.Plane.prototype = {
     var n = this.getNormal();
     var u = line.getVec3();
     
-    var numer = vec3.dot(n, vec3.sub(vec3.create(), q, p));
+    var numer = vec3.dot(n, vec3.sub([], q, p));
     var denom = vec3.dot(n, u);
     
     if(denom == 0) {
@@ -374,20 +374,10 @@ TentaGL.Math.Plane.prototype = {
       for(var i=0; i < iPts.length; i++) {
         var vertex = new TentaGL.Vertex(iPts[i]);
         vertex.normal(this._normal);
-        vertex.st([0, 0]);
+        vertex.texST([0, 0]);
         
         model.addVertex(vertex);
       }
-      
-      /*
-      for(var i=0; i < iPts.length-2; i++) {
-        for(var j=i+1; j < iPts.length-1; j++) {
-          for(var k=j+1; k < iPts.length; k++) {
-            model.addFace(i,j,k);
-          }
-        }
-      }
-      */
       
       // Create a set of faces for the plane that are non-overlapping.
       var iPtsTran = [];

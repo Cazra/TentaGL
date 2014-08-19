@@ -60,9 +60,9 @@ TentaGL.Model.Sphere = function(r, latInc, lonInc) {
       var s = lon/TentaGL.TAU;
       var t = lat/(TentaGL.TAU/2) + 0.5;
       
-      var v = new TentaGL.Vertex(x, y, z);
-      v.setNormal(x, y, z);
-      v.setTexST(s, t);
+      var v = new TentaGL.Vertex(xyz);
+      v.normal(xyz);
+      v.texST([s, t]);
       model.addVertex(v);
     }
   }

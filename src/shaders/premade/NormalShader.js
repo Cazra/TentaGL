@@ -45,9 +45,9 @@ TentaGL.NormalShader = function(gl) {
   
     console.log("\nCreating NormalShader...");
   
-    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
+    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.xyz);
+    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.normal);
+    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.texST);
     
     self._mvpUni = self.getUniform("mvpTrans");
     self._normalUni = self.getUniform("normalTrans");
@@ -55,23 +55,6 @@ TentaGL.NormalShader = function(gl) {
     self._texUni = self.getUniform("tex");
     self._useTexUni = self.getUniform("useTex");
   });
-  
-  /*
-  
-  var src = TentaGL.ShaderProgram.srcFromURL(gl, vertURL, fragURL);
-  
-  TentaGL.ShaderProgram.call(this, gl, src[0], src[1]);
-  
-  this.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.getXYZ);
-  this.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.getNormal);
-  this.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.getTexST);
-  
-  this._mvpUni = this.getUniform("mvpTrans");
-  this._normalUni = this.getUniform("normalTrans");
-  
-  this._texUni = this.getUniform("tex");
-  this._useTexUni = this.getUniform("useTex");
-  */
 };
 
 TentaGL.NormalShader.prototype = {

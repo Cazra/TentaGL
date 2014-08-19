@@ -39,54 +39,52 @@ TentaGL.Model.Plane = function(w, h, flipY) {
   flipY = flipY || false;
   
   // compute surface normal vector.
-  var u = vec3.fromValues(w, 0, 0);
-  var v = vec3.fromValues(0, h, 0);
-  var n = vec3.cross(vec3.create(), u, v);
+  var u = [w, 0, 0];
+  var v = [0, h, 0];
+  var n = vec3.cross([], u, v);
   
   if(flipY) {
     // Create vertices
-    var v0 = new TentaGL.Vertex(0, 0, 0);
-    v0.setNormal(n[0], n[1], n[2]);
-    v0.setTexST(0,1);
+    var v0 = new TentaGL.Vertex([0, 0, 0]);
+    v0.normal(n);
+    v0.texST([0,1]);
     model.addVertex(v0);
     
-    var v1 = new TentaGL.Vertex(0, -h, 0);
-    v1.setNormal(n[0], n[1], n[2]);
-    v1.setTexST(0,0);
+    var v1 = new TentaGL.Vertex([0, -h, 0]);
+    v1.normal(n);
+    v1.texST([0,0]);
     model.addVertex(v1);
     
-    var v2 = new TentaGL.Vertex(w, -h, 0);
-    v2.setNormal(n[0], n[1], n[2]);
-    v2.setTexST(1,0);
+    var v2 = new TentaGL.Vertex([w, -h, 0]);
+    v2.normal(n);
+    v2.texST([1,0]);
     model.addVertex(v2);
     
-    var v3 = new TentaGL.Vertex(w, 0, 0);
-    v3.setNormal(n[0], n[1], n[2]);
-    v3.setTexST(1,1);
+    var v3 = new TentaGL.Vertex([w, 0, 0]);
+    v3.normal(n);
+    v3.texST([1,1]);
     model.addVertex(v3);
-    
-    
   }
   else {
     // Create vertices
-    var v0 = new TentaGL.Vertex(0, 0, 0);
-    v0.setNormal(n[0], n[1], n[2]);
-    v0.setTexST(0,0);
+    var v0 = new TentaGL.Vertex([0, 0, 0]);
+    v0.normal(n);
+    v0.texST([0,0]);
     model.addVertex(v0);
     
-    var v1 = new TentaGL.Vertex(w, 0, 0);
-    v1.setNormal(n[0], n[1], n[2]);
-    v1.setTexST(1,0);
+    var v1 = new TentaGL.Vertex([w, 0, 0]);
+    v1.normal(n);
+    v1.texST([1,0]);
     model.addVertex(v1);
     
-    var v2 = new TentaGL.Vertex(w, h, 0);
-    v2.setNormal(n[0], n[1], n[2]);
-    v2.setTexST(1,1);
+    var v2 = new TentaGL.Vertex([w, h, 0]);
+    v2.normal(n);
+    v2.texST([1,1]);
     model.addVertex(v2);
     
-    var v3 = new TentaGL.Vertex(0, h, 0);
-    v3.setNormal(n[0], n[1], n[2]);
-    v3.setTexST(0,1);
+    var v3 = new TentaGL.Vertex([0, h, 0]);
+    v3.normal(n);
+    v3.texST([0,1]);
     model.addVertex(v3);
   }
   

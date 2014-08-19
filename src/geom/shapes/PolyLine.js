@@ -35,9 +35,9 @@ TentaGL.Model.PolyLine = function(xyzv, closed) {
   
   for(var i=0; i<xyzv.length; i++) {
     var xyz = xyzv[i];
-    var vertex = new TentaGL.Vertex(xyz[0], xyz[1], xyz[2]);
-    vertex.setNormal(0,0,1);
-    vertex.setTexST(i,0);
+    var vertex = new TentaGL.Vertex(xyz);
+    vertex.normal([0,0,1]);
+    vertex.texST([i,0]);
     model.addVertex(vertex);
     
     if(i>0) {

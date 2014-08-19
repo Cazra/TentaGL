@@ -216,10 +216,8 @@ TentaGL.Model.prototype = {
     var vert1 = this._vertices[v1];
     var vert2 = this._vertices[v2];
     
-    if(vert1.hasTexST() && vert2.hasTexST()) {
-      vert1.setTangental(vert1.computeTangental(vert2, vert2));
-      vert2.setTangental(vert2.computeTangental(vert1, vert1));
-    }
+    vert1.tangental(vert1.computeTangental(vert2, vert2));
+    vert2.tangental(vert2.computeTangental(vert1, vert1));
   },
   
   
@@ -321,11 +319,9 @@ TentaGL.Model.prototype = {
     var vert2 = this._vertices[v2];
     var vert3 = this._vertices[v3];
     
-    if(vert1.hasTexST() && vert2.hasTexST() && vert3.hasTexST()) {
-        vert1.setTangental(vert1.computeTangental(vert2, vert3));
-        vert2.setTangental(vert2.computeTangental(vert3, vert1));
-        vert3.setTangental(vert3.computeTangental(vert1, vert2));
-    }
+    vert1.tangental(vert1.computeTangental(vert2, vert3));
+    vert2.tangental(vert2.computeTangental(vert3, vert1));
+    vert3.tangental(vert3.computeTangental(vert1, vert2));
   },
   
   
@@ -449,7 +445,7 @@ TentaGL.Model.prototype = {
       }
       
       vec3.normalize(n, n);
-      vertex.setNormal(n[0], n[1], n[2]);
+      vertex.normal(n);
     }
   },
   
@@ -469,7 +465,7 @@ TentaGL.Model.prototype = {
       var s = TentaGL.Math.linearMap(thetaY, [0, TentaGL.TAU], [0, 1]);
       var t = TentaGL.Math.linearMap(polarCoords[2], [-Math.PI/2, Math.PI/2], [0, 1]);
       
-      vertex.setTexST(s, t);
+      vertex.texST([s, t]);
     }
     
   },
@@ -488,10 +484,8 @@ TentaGL.Model.prototype = {
         var vert1 = this._vertices[v1];
         var vert2 = this._vertices[v2];
         
-        if(vert1.hasTexST() && vert2.hasTexST()) {
-          vert1.setTangental(vert1.computeTangental(vert2, vert2));
-          vert2.setTangental(vert2.computeTangental(vert1, vert1));
-        }
+        vert1.tangental(vert1.computeTangental(vert2, vert2));
+        vert2.tangental(vert2.computeTangental(vert1, vert1));
       }
     }
     else {
@@ -504,11 +498,9 @@ TentaGL.Model.prototype = {
         var vert2 = this._vertices[v2];
         var vert3 = this._vertices[v3];
         
-        if(vert1.hasTexST() && vert2.hasTexST() && vert3.hasTexST()) {
-          vert1.setTangental(vert1.computeTangental(vert2, vert3));
-          vert2.setTangental(vert2.computeTangental(vert3, vert1));
-          vert3.setTangental(vert3.computeTangental(vert1, vert2));
-        }
+        vert1.tangental(vert1.computeTangental(vert2, vert3));
+        vert2.tangental(vert2.computeTangental(vert3, vert1));
+        vert3.tangental(vert3.computeTangental(vert1, vert2));
       }
     }
   },
@@ -723,8 +715,8 @@ TentaGL.Model.prototype = {
     var result = this.clone();
     for(var i in result._vertices) {
       var v = result._vertices[i];
-      var st = v.getTexST();
-      v.setTexST(st[0]*s, st[1]*t);
+      var st = v.texST();
+      v.texST([st[0]*s, st[1]*t]);
     }
     return result;
   },
@@ -740,8 +732,8 @@ TentaGL.Model.prototype = {
     var result = this.clone();
     for(var i in result._vertices) {
       var v = result._vertices[i];
-      var st = v.getTexST();
-      v.setTexST(st[0], 1-st[1]);
+      var st = v.texST();
+      v.texST([st[0], 1-st[1]]);
     }
     return result;
   },
