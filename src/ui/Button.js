@@ -23,15 +23,15 @@
 */
 
 /** 
- * A sprite within built-in mouse interaction logic. This allows the sprite
- * to function like buttons or other typical mouse-responsive UI components.
+ * A component that performs some action when clicked.
  * @constructor
+ * @abstract
  * @param {vec3} xyz
  * @param {function(): undefined} action    Optional. A callback that is 
  *      executed when the button is clicked. 
  */
-TentaGL.ButtonSprite = function(xyz, action) {
-  TentaGL.UIComponent.call(this, xyz);
+TentaGL.UI.Button = function(xyz, action) {
+  TentaGL.UI.Component.call(this, xyz);
   
   if(!action) {
     action = function() {};
@@ -41,14 +41,14 @@ TentaGL.ButtonSprite = function(xyz, action) {
   };
 };
 
-TentaGL.ButtonSprite.prototype = {
+TentaGL.UI.Button.prototype = {
   
-  constructor: TentaGL.ButtonSprite,
+  constructor: TentaGL.UI.Button,
   
   isaButtonSprite: true
 };
 
-Util.Inheritance.inherit(TentaGL.ButtonSprite, TentaGL.UIComponent);
+Util.Inheritance.inherit(TentaGL.UI.Button, TentaGL.UI.Component);
 
 
 
@@ -63,8 +63,8 @@ Util.Inheritance.inherit(TentaGL.ButtonSprite, TentaGL.UIComponent);
  * @param {TentaGL.MaterialProps} matProps    Optional. If not provided, a default MaterialProps is created.
  * @return {TentaGL.Sprite}
  */
-TentaGL.ButtonSprite.create = function(xyz, modelName, materialName, shaderName, matProps) {
-  var sprite = new TentaGL.ButtonSprite(xyz);
+TentaGL.UI.Button.create = function(xyz, modelName, materialName, shaderName, matProps) {
+  var sprite = new TentaGL.UI.Button(xyz);
   
   if(!matProps) {
     matProps = new TentaGL.MaterialProps();
@@ -81,7 +81,7 @@ TentaGL.ButtonSprite.create = function(xyz, modelName, materialName, shaderName,
       // console.log("sprite resource not ready: " + e.message);
     }
     
-    TentaGL.ButtonSprite.prototype.draw.call(this, gl);
+    TentaGL.UI.Button.prototype.draw.call(this, gl);
   };
   
   return sprite;

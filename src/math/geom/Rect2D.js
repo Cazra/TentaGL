@@ -72,6 +72,7 @@ TentaGL.Math.Rect2D.prototype = {
   
   /** 
    * Setter/getter for the y position of the rectangle's bottom edge. 
+   * (assuming y increases upwards)
    * @param {number} y    Optional.
    * @return {number}
    */
@@ -208,6 +209,28 @@ TentaGL.Math.Rect2D.prototype = {
               line.intersects(new TentaGL.Math.Line2D([left, top], [left, bottom])) ||
               line.intersects(new TentaGL.Math.Line2D([right, top], [right, bottom])));     
     }
+  },
+  
+  
+  /** 
+   * Returns the smallest rectangle containing both this and another rectangle. 
+   * @param {TentaGL.Math.Rect2D} rect
+   * @return {TentaGL.Math.Rect2D}
+   */
+  commonRect: function(rect) {
+    if(!rect) {
+      return this.clone();
+    }
+    
+    var left = Math.min(this._xy[0], rect._xy[0]);
+    var right = Math.max(this._xy[0] + this._w, rect._xy[0] + rect._w);
+    var bottom = Math.min(this._xy[1], rect._xy[1]);
+    var top = Math.max(this._xy[1] + this._h, rect._xy[1] + rect._h);
+    
+    var width = right - left;
+    var height = top - bottom;
+    
+    return new TentaGL.Math.Rect2D([left, bottom], width, height);
   },
   
   

@@ -27,25 +27,116 @@
  * Such UI components are responsive to mouse interaction and provide 
  * handlers for various mouse input related events.
  * @constructor
+ * @abstract
+ * @param {vec3} xyz
  */
-TentaGL.UIComponent = function(xyz) {
+TentaGL.UI.Component = function(xyz) {
   if(!xyz) {
     xyz = [0,0,0];
   }
   TentaGL.Sprite.call(this, xyz);
   
-  
-  this._parentComponent = undefined;
-  
+  this._parentContainer = undefined;
   this.enabled(true);
   this._resetMouseState();
 };
 
-TentaGL.UIComponent.prototype = {
+TentaGL.UI.Component.prototype = {
   
-  constructor: TentaGL.UIComponent, 
+  constructor: TentaGL.UI.Component, 
   
-  isaUIComponent: true,
+  isaComponent: true,
+  
+  
+  /** 
+   * Returns this component's parent container (if it has one). 
+   * Returns undefined if this has no parent container.
+   * @return {TentaGL.UI.Container}
+   */
+  getParentContainer: function() {
+    return this._parentContainer;
+  },
+  
+  
+  //////// Metrics
+  
+  /** 
+   * Setter/getter for the preferred minimum size of the component, used to 
+   * help with layout and rendering computations.
+   * @param {[width: number, height: number]} dims
+   * @return {[width: number, height: number]}
+   */
+  minimumSize: function(dims) {
+    if(dims !== undefined) {
+      this._minSize = dims;
+    }
+    return this._minSize;
+  },
+  
+  /** 
+   * Setter/getter for the preferred size of the component, used to 
+   * help with layout and rendering computations. The actual computed size 
+   * should be returned by the component's implementation of getDimensions.
+   * @param {[width: number, height: number]} dims
+   * @return {[width: number, height: number]}
+   */
+  preferredSize: function(dims) {
+    if(dims !== undefined) {
+      this._prefSize = dims;
+    }
+    return this._prefSize;
+  },
+  
+  /** 
+   * Setter/getter for the preferred maximum size of the component, used to 
+   * help with layout and rendering computations.
+   * @param {[width: number, height: number]} dims
+   * @return {[width: number, height: number]}
+   */
+  maximumSize: function(dims) {
+    if(dims !== undefined) {
+      this._maxSize = dims;
+    }
+    return this._maxSize;
+  },
+  
+  
+  //////// Look & Feel
+  
+  /** 
+   * Setter/getter for the blittered font used to render text contents of this
+   * component. If set to undefined, it will inherit the font of its parent.
+   * @param {TentaGL.BlitteredFont} blitFont    Optional.
+   * @return {TentaGL.BlitteredFont}
+   */
+  font: function(blitFont) {
+    if(font !== undefined) {
+      this._font = blitFont;
+    }
+    
+    if(this._font) {
+      return this._front;
+    }
+    else if(this._parentContainer) {
+      return this._parentContainer.font();
+    }
+    else {
+      return undefined;
+    }
+  },
+  
+  
+  /** 
+   * Setter/getter for the component's mouse cursor style. 
+   * @param {string} cursor   Optional. Any valid CSS cursor style value. 
+   * @return {string}
+   */
+  cursor: function(cursor) {
+    if(cursor !== undefined) {
+      this._cursorStyle = cursor;
+    }
+    return this._cursorStyle;
+  },
   
   
   //////// Interactions
@@ -57,7 +148,12 @@ TentaGL.UIComponent.prototype = {
     this._isLeftPressed = false;
     this._isRightPressed = false;
     this._mouseOverStart = -1;
-    this._tooltipPosition = undefined;
+    this._tooltipPos = undefined;
+    
+    if(this._tooltip && this._tooltip.component() == this) {
+      this._tooltip.reset();
+      console.log("stop tooltip");
+    }
   },
   
   
@@ -95,15 +191,24 @@ TentaGL.UIComponent.prototype = {
           }
           this._isRightPressed = false;
         }
+        
+        mouse.getCanvas().style.cursor = this._cursorStyle;
       }
       
-      this._tooltipPosition = mouse.getXY();
-      vec2.add(this._tooltipPosition, this._tooltipPosition, [0, 16]);
+      // Update the tooltip if we've hovered long enough.
+      if(this._tooltip && this.timeMouseOvered() >= this._tooltip.delay()) {
+        this._tooltip.component(this);
+        this._tooltip.xy(vec2.add([], mouse.getXY(), [0, 16]));
+        this._tooltip.text(this._tooltipText);
+        
+        console.log(this._tooltip);
+      }
     }
     else {
       if(this._mouseOverStart >= 0 && this._enabled) {
         this.onMouseExit(mouse);
       }
+      console.log("no longer mouseover.");
       this._resetMouseState();
     }
   },
@@ -162,13 +267,12 @@ TentaGL.UIComponent.prototype = {
   /**  
    * Registers text to be displayed for this component as a tooltip.
    * @param {string} text
-   * @param {TentaGL.Tooltip} tooltip   Optional. If not provided, TentaGL's default Tooltip will be used.
+   * @param {TentaGL.UI.Tooltip} tooltip
    */
   setTooltip: function(text, tooltip) {
     this._tooltip = tooltip;
     this._tooltipText = text;
   },
-  
   
   ////// abstract methods
   
@@ -199,5 +303,5 @@ TentaGL.UIComponent.prototype = {
   
 };
 
-Util.Inheritance.inherit(TentaGL.UIComponent, TentaGL.Sprite);
+Util.Inheritance.inherit(TentaGL.UI.Component, TentaGL.Sprite);
 

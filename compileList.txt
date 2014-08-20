@@ -141,6 +141,10 @@ src/time/Timer.js
 src/util/Align.js
 src/util/Canvas2D.js
 
-src/ui/UIComponent.js
-  src/ui/ButtonSprite.js
-src/ui/Tooltip.js
+src/ui/UI.js
+  src/ui/Component.js
+    src/ui/Button.js
+    src/ui/Container.js
+      src/ui/Panel.js
+  src/ui/Insets.js
+  src/ui/Tooltip.js

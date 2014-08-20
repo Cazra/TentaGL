@@ -48,6 +48,10 @@ HelloWorldApp.MainLevel.prototype = {
     
     this._frames = 0;
     
+    
+    this.tooltip = new TentaGL.UI.Tooltip(this.getApp().blitFont, "blue", 8, 1000, 12);
+    
+    
     var matProps1 = new TentaGL.MaterialProps();
     matProps1.shininess(10);
     matProps1.specular(TentaGL.Color.YELLOW);
@@ -96,13 +100,14 @@ HelloWorldApp.MainLevel.prototype = {
     this.gradSprite = TentaGL.Sprite.create([0, 0, -1], "unitPlane", "grad1", "gradientShader");
     this.gradSprite.scale([4,3,1]);
     
-    this.gradSprite2 = TentaGL.ButtonSprite.create([4, 0, -1], "unitPlane", "grad2", "gradientShader2"); 
+    this.gradSprite2 = TentaGL.UI.Button.create([4, 0, -1], "unitPlane", "grad2", "gradientShader2"); 
     this.gradSprite2.scale([4,3,1]);
     this.gradSprite2.onRightClick = function(mouse) {
       this.setVisible(false);
       console.log("gradSprite 2 was clicked");
     };
-    this.gradSprite2.setTooltip("I will disappear if you right-click me.");
+    this.gradSprite2.setTooltip("I will disappear if you right-click me.", this.tooltip);
+    this.gradSprite2.cursor("pointer");
     
     this.teapotSprite = TentaGL.Sprite.create([0, 0, 0], "teapot", "green", "normalShader");
     
@@ -144,6 +149,7 @@ HelloWorldApp.MainLevel.prototype = {
   
   update: function(gl) {
     this._frames++;
+    this.getApp().getCanvas().style.cursor = "default";
     
     // Group rotation
     if(this.keyboard().isPressed(KeyCode.W)) {
@@ -196,7 +202,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.shadedSprite3.rotate([0, 1, 0], 0.01);
     
     // Picker test
-    if(this.mouse().isLeftPressed() || this.mouse().justLeftReleased()) {
+    if(this.mouse().isLeftPressed() || this.mouse().justLeftReleased() || this.mouse().justRightReleased() || this.mouse().justRightPressed()) {
       var picker = this.getApp().getPicker();
       picker.update(gl, this.render.bind(this), false);
       
@@ -211,6 +217,9 @@ HelloWorldApp.MainLevel.prototype = {
       if(sprite && sprite.isaTextSprite) {
         sprite.setText("X__X You clicked me...\nI am dead now.");
       }
+    }
+    else {
+      this.tooltip.reset();
     }
   },
   
@@ -319,6 +328,11 @@ HelloWorldApp.MainLevel.prototype = {
     
     
     this.spriteGroup.render(gl, this.camera);
+    
+    // Tooltip test
+    TentaGL.ShaderLib.use(gl, "simpleShader");
+    TentaGL.ViewTrans.setCamera(gl, this.cam2D, aspect);
+    this.tooltip.render(gl);
     
     // ClippingArea test
     /*
