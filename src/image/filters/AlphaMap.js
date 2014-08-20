@@ -62,8 +62,6 @@ TentaGL.RGBAFilter.AlphaMap.prototype = {
 };
 
 
-
-
 Util.Inheritance.inherit(TentaGL.RGBAFilter.AlphaMap, TentaGL.RGBAFilter);
 
 

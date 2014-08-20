@@ -111,7 +111,7 @@ HelloWorldApp.MainLevel.prototype = {
     // Lighting test objects
     this.lights = new TentaGL.LightManager(TentaGL.PhongShader.MAX_LIGHTS);
     this.ptLight1 = new TentaGL.PointLight([0,0,0]);
-    this.ptLight1.ambient(TentaGL.Color.RGBA(0.2, 0.2, 0.2, 1));
+    this.ptLight1.ambient(new TentaGL.Color([0.2, 0.2, 0.2, 1]));
     this.lights.add(this.ptLight1);
     
     
@@ -209,9 +209,7 @@ HelloWorldApp.MainLevel.prototype = {
       console.log(sprite);
       
       if(sprite && sprite.isaTextSprite) {
-      //  sprite.setColor(new TentaGL.Color.RGBA(0.5,0,0,1));
         sprite.setText("X__X You clicked me...\nI am dead now.");
-      //  sprite.scaleToHeight(1);
       }
     }
   },
@@ -239,7 +237,7 @@ HelloWorldApp.MainLevel.prototype = {
     TentaGL.ViewTrans.setCamera(gl, this.camera, aspect);
     
     // Clear the scene. 
-    TentaGL.clear(gl, TentaGL.Color.RGBA(0.1, 0.1, 0.3, 1));
+    TentaGL.clear(gl, new TentaGL.Color([0.1, 0.1, 0.3, 1]));
     
     // Draw the objects in the scene.
     this.getApp().blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [10,10,0], false, 1);

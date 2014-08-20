@@ -418,10 +418,10 @@ TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
   // Create a canvas for the fontmap.
   var bgColor;
   if(color.r() + color.g() + color.b() > 1.5) {
-    bgColor = new TentaGL.Color.RGBA(0,0,0,1);
+    bgColor = TentaGL.Color.BLACK;
   }
   else {
-    bgColor = new TentaGL.Color.RGBA(1,1,1,1);
+    bgColor = TentaGL.Color.WHITE;
   }
   
   var canvas = TentaGL.Canvas2D.create((charW + 2)*16, (charH + 2)*6, bgColor);

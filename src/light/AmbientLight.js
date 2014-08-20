@@ -29,7 +29,7 @@
  * @param {TentaGL.Color} color   The ambient light color.
  */
 TentaGL.AmbientLight = function(color) {
-  TentaGL.Light.call(this, TentaGL.Color.RGBA(0,0,0,1), TentaGL.Color.RGBA(0,0,0,1), color);
+  TentaGL.Light.call(this, TentaGL.Color.BLACK, TentaGL.Color.BLACK, color);
 };
 
 TentaGL.AmbientLight.prototype = {

@@ -74,7 +74,7 @@ TentaGL.Picker.prototype = {
     
     // Set up the GL state for picker rendering. 
     TentaGL.Blend.setEnabled(gl, false);
-    TentaGL.ColorBuffer.setClearColor(gl, TentaGL.Color.RGBA(0, 0, 0, 0));
+    TentaGL.ColorBuffer.setClearColor(gl, new TentaGL.Color([0, 0, 0, 0]));
     TentaGL.MaterialLib.useNone(gl);
     TentaGL.ShaderLib.use(gl, TentaGL.Picker.SHADER_ID);
     
@@ -167,7 +167,7 @@ TentaGL.Picker.prototype = {
   getSpriteAt:function(x, y) {
     if(this._pixels) {
       var pixel = this._getPixelAt(x, y);
-      var id = TentaGL.Color.rgba2Hex(pixel[0], pixel[1], pixel[2], pixel[3]);
+      var id = TentaGL.Color.rgba2hex(pixel);
       return this._sprites[id];
     }
     else {

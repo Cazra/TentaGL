@@ -17,7 +17,7 @@ TentaGL.Tooltip = function(blitFont, bgMaterialName, padding, delay) {
 TentaGL.Tooltip.getDefault = function(gl) {
   if(!gl._defaultTooltip) {
     var font = new TentaGL.Font("Arial", "sans-serif", 10);
-    var fColor = TentaGL.Color.RGBA(0.8, 0.8, 0.8, 1);
+    var fColor = new TentaGL.Color([0.8, 0.8, 0.8, 1]);
     var blitFont = TentaGL.BlitteredFont.fromFont(font, fColor, 1, 1, function(pixels) {
       pixels = pixels.filter(TentaGL.RGBAFilter.OutlineColor.RGBBytes(150,150,200));
       return pixels;

@@ -42,7 +42,7 @@ HelloWorldApp.prototype = {
     var gl = this.getGL();
     var self = this;
 
-    TentaGL.MaterialLib.add(gl, "myColor", TentaGL.Color.RGBA(1, 0, 0, 1));
+    TentaGL.MaterialLib.add(gl, "myColor", new TentaGL.Color([1, 0, 0, 1]));
     
     var coinBlock = TentaGL.Texture.fromURL(gl, "../../images/sampleTex.png");
     TentaGL.MaterialLib.add(gl, "coinBlock", coinBlock);
@@ -52,7 +52,8 @@ HelloWorldApp.prototype = {
     
     var icon = TentaGL.Texture.fromURL(gl, "../../images/iconNew.png", 
       function(pixelData) {
-        pixelData = pixelData.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,200,255));
+        var tColor = TentaGL.Color.RGBABytes([255,200,255]);
+        pixelData = pixelData.filter(new TentaGL.RGBAFilter.TransparentColor(tColor));
         pixelData = pixelData.crop(7,6, 17,21);
         return pixelData;
       }
@@ -61,7 +62,7 @@ HelloWorldApp.prototype = {
     
     
     // Canvas doodling
-    var canvas = TentaGL.Canvas2D.createRoundedRect(100, 100, 32,TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1)); // TentaGL.Canvas2D.createCircle(100, TentaGL.Color.RGBA(0.5,0,0,1), 5, TentaGL.Color.RGBA(1,0,0,1));
+    var canvas = TentaGL.Canvas2D.createRoundedRect(100, 100, 32, new TentaGL.Color([0.5,0,0,1]), 5, new TentaGL.Color([1,0,0,1])); 
     TentaGL.Canvas2D.removeAlpha(canvas);
 
     var circle = TentaGL.Texture.fromCanvas(gl, canvas);
@@ -69,31 +70,32 @@ HelloWorldApp.prototype = {
     
     
     // solid colors
-    TentaGL.MaterialLib.add(gl, "green", TentaGL.Color.RGBA(0, 1, 0, 1));
-    TentaGL.MaterialLib.add(gl, "blue", TentaGL.Color.RGBA(0, 0, 1, 1)); 
-    TentaGL.MaterialLib.add(gl, "red", TentaGL.Color.RGBA(1, 0, 0, 1));
-    TentaGL.MaterialLib.add(gl, "white", TentaGL.Color.RGBA(1, 1, 1, 1)); 
-    TentaGL.MaterialLib.add(gl, "black", TentaGL.Color.RGBA(0, 0, 0, 1));
+    TentaGL.MaterialLib.add(gl, "green", TentaGL.Color.GREEN);
+    TentaGL.MaterialLib.add(gl, "blue", TentaGL.Color.BLUE); 
+    TentaGL.MaterialLib.add(gl, "red", TentaGL.Color.RED);
+    TentaGL.MaterialLib.add(gl, "white", TentaGL.Color.WHITE); 
+    TentaGL.MaterialLib.add(gl, "black", TentaGL.Color.BLACK);
     
     // Gradients
     var grad1 = new TentaGL.Gradient([0,0], [1,0]);
-    grad1.addBreakPt(0, TentaGL.Color.RGBA(1,0,0,1))
-    grad1.addBreakPt(0.6, TentaGL.Color.RGBA(1,1,0,1))
-    grad1.addBreakPt(0.9, TentaGL.Color.RGBA(1,1,1,1));
+    for(var i=0; i < 10; i++) {
+      var hue = i/10;
+      grad1.addBreakPt(hue, TentaGL.Color.HSBA([hue, 0.5, 1, 1]));
+    }
     TentaGL.MaterialLib.add(gl, "grad1", grad1);
     
     var grad2 = new TentaGL.Gradient([0.3,0.3], [0.5,0]);
-    grad2.addBreakPt(0, TentaGL.Color.RGBA(0,0,1,1))
-    grad2.addBreakPt(0.6, TentaGL.Color.RGBA(0,1,1,1))
-    grad2.addBreakPt(1, TentaGL.Color.RGBA(0.5,0.5,1,1));
+    grad2.addBreakPt(0, new TentaGL.Color([0,0,1,1]))
+    grad2.addBreakPt(0.6, new TentaGL.Color([0,1,1,1]))
+    grad2.addBreakPt(1, new TentaGL.Color([0.5,0.5,1,1]));
     TentaGL.MaterialLib.add(gl, "grad2", grad2);
     
     // Label BG icon
-    var canvas = TentaGL.Canvas2D.createRoundedRect(300, 100, 32, false, 0, TentaGL.Color.RGBA(0.3, 0.3, 0.3, 1));
+    var canvas = TentaGL.Canvas2D.createRoundedRect(300, 100, 32, false, 0, new TentaGL.Color([0.3, 0.3, 0.3, 1]));
     TentaGL.Canvas2D.removeAlpha(canvas);
     
     var pixels = TentaGL.PixelData.fromCanvas(canvas);
-    pixels = pixels.filter(TentaGL.RGBAFilter.MulColor.RGBA(1, 1, 1, 1));
+    pixels = pixels.filter(new TentaGL.RGBAFilter.MulColor(new TentaGL.Color([1, 1, 1, 1]))); // ID mul
     var labelBG = TentaGL.Texture.fromPixelData(gl, pixels);
     TentaGL.MaterialLib.add(gl, "labelBG", labelBG);
     
@@ -102,15 +104,16 @@ HelloWorldApp.prototype = {
     this.blitFont = TentaGL.BlitteredFont.fromURL("../../images/finalFontasy.png", 
       false, 10, 10, 1, 1, 
       function(pixels) {
-        return pixels.filter(TentaGL.RGBAFilter.TransparentColor.RGBBytes(255,0,255));
+        var color = TentaGL.Color.RGBBytes([255, 0, 255]);
+        return pixels.filter(new TentaGL.RGBAFilter.TransparentColor(color));
       }
     );
     
     var font = new TentaGL.Font("Arial", "sans-serif", 36);
-    var fColor = TentaGL.Color.RGBA(1,1,1,1);
+    var fColor = new TentaGL.Color([1,1,1,1]);
     this.blitFont2 = TentaGL.BlitteredFont.fromFont(font, fColor, 1, 1, function(pixels) {
-      pixels = pixels.filter(TentaGL.RGBAFilter.OutlineColor.RGBBytes(150,150,200));
-      return pixels;
+      var color = TentaGL.Color.RGBBytes([150,150,200]);
+      return pixels.filter(new TentaGL.RGBAFilter.OutlineColor(color));
     });
     
     

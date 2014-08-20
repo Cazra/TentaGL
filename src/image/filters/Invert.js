@@ -27,15 +27,12 @@
  * An RGBA filter that inverts the RGB values of the pixels.
  * @constructor
  */
-TentaGL.RGBAFilter.Invert = function() {
-};
+TentaGL.RGBAFilter.Invert = function() {};
 
 
 TentaGL.RGBAFilter.Invert.prototype = {
   
   constructor:TentaGL.RGBAFilter.Invert,
-  
-  
 
   /** See TentaGL.RGBAFilter.apply */
   filter:function(dstData, srcData, index, width, height) {

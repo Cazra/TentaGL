@@ -33,7 +33,7 @@ TentaGL.ColorBuffer = {
    * @param {WebGLRenderingContext} gl
    */
   reset: function(gl) {
-    gl._cbClear = TentaGL.Color.RGBA(0,0,0,0);
+    gl._cbClear = new TentaGL.Color([0,0,0,0]);
     
     gl._cbWriteRed = true;
     gl._cbWriteGreen = true;

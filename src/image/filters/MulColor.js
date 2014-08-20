@@ -26,9 +26,13 @@
 /** 
  * An RGBA filter that multiplies a color's normalized RGB values by all pixels.
  * @constructor
- * @param {TentaGL.Color} color  The multiplicative color.
+ * @param {vec4 || TentaGL.Color} color  The multiplicative color. 
+ *      If given as a vec4, this is expected to be in normalized RGBA format.
  */
 TentaGL.RGBAFilter.MulColor = function(color) {
+  if(!color.isaColor) {
+    color = new TentaGL.Color(color);
+  }
   this._color = color;
 };
 
@@ -62,24 +66,6 @@ TentaGL.RGBAFilter.MulColor.prototype = {
     this.setPixel(dstData, index, r, g, b, a);
   }
 };
-
-
-/** 
- * Creates a MulColor filter for a color defined by normalized rgb values. 
- * @param {Number} r
- * @param {Number} g
- * @param {Number} b
- * @param {Number} a  Optional. Default 1.
- * @return {TentaGL.RGBAFilter.MulColor}
- */
-TentaGL.RGBAFilter.MulColor.RGBA = function(r, g, b, a) {
-  var color = TentaGL.Color.RGBA(r, g, b, a);
-  return new TentaGL.RGBAFilter.MulColor(color);
-};
-
-
-
-
 
 
 

@@ -33,7 +33,6 @@ TentaGL.RGBAFilter.AlphaRemoval.prototype = {
   
   constructor:TentaGL.RGBAFilter.AlphaRemoval,
   
-  
 
   /** See TentaGL.RGBAFilter.apply */
   filter:function(dstData, srcData, index, width, height) {

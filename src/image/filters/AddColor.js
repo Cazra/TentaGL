@@ -26,9 +26,13 @@
 /** 
  * An RGBA filter that adds a color's RGB value to all pixels.
  * @constructor
- * @param {TentaGL.Color} color  The additive color.
+ * @param {vec4 || TentaGL.Color} color  The additive color. If given as a
+ *      vec4, this is expected to be in normalized RGBA format.
  */
 TentaGL.RGBAFilter.AddColor = function(color) {
+  if(!color.isaColor) {
+    color = new TentaGL.Color(color);
+  }
   this._color = color;
 };
 
@@ -60,19 +64,6 @@ TentaGL.RGBAFilter.AddColor.prototype = {
     
     this.setPixel(dstData, index, r, g, b, a);
   }
-};
-
-
-/** 
- * Creates a AddColor filter for a color defined by uint8 rgb values. 
- * @param {uint8} r
- * @param {uint8} g
- * @param {uint8} b
- * @return {TentaGL.RGBAFilter.AddColor}
- */
-TentaGL.RGBAFilter.AddColor.RGBBytes = function(r, g, b) {
-  var color = TentaGL.Color.RGBABytes(r, g, b);
-  return new TentaGL.RGBAFilter.AddColor(color);
 };
 
 

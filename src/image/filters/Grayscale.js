@@ -27,8 +27,7 @@
  * An RGBA filter that converts pixels to greyscale.
  * @constructor
  */
-TentaGL.RGBAFilter.Grayscale = function() {
-};
+TentaGL.RGBAFilter.Grayscale = function() {};
 
 
 TentaGL.RGBAFilter.Grayscale.prototype = {
@@ -46,7 +45,7 @@ TentaGL.RGBAFilter.Grayscale.prototype = {
     
     var y = 0.2126*r + 0.7152*g + 0.0722*b;
     
-    var rgba = TentaGL.Color.HSBAtoRGBA(0, 0, y, a);
+    var rgba = TentaGL.Color.hsba2rgba([0, 0, y, a]);
   //  console.log(rgba);
     r = (rgba[0]*255)&0xFF;
     g = (rgba[1]*255)&0xFF;

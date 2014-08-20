@@ -33,13 +33,13 @@
  */
 TentaGL.Light = function(diffuse, specular, ambient) {
   if(!diffuse) {
-    diffuse = TentaGL.Color.RGBA(1, 1, 1, 1);
+    diffuse = TentaGL.Color.WHITE;
   }
   if(!specular) {
-    specular = TentaGL.Color.RGBA(1, 1, 1, 1);
+    specular = TentaGL.Color.WHITE;
   }
   if(!ambient) {
-    ambient = TentaGL.Color.RGBA(0, 0, 0, 1);
+    ambient = TentaGL.Color.BLACK;
   }
   
   this._diffuse = diffuse;

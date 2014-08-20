@@ -27,10 +27,14 @@
  * An RGBA filter that causes all pixels with some RGB value to become 
  * completely transparent.
  * @constructor
- * @param {TentaGL.Color} transparentColor  The color to be made transparent.
+ * @param {vec4 || TentaGL.Color} color  The color to be made transparent. If 
+ *      given as a vec4, this is expected to be in normalized RGBA format.
  */
-TentaGL.RGBAFilter.TransparentColor = function(transparentColor) {
-  this._tColor = transparentColor;
+TentaGL.RGBAFilter.TransparentColor = function(color) {
+  if(!color.isaColor) {
+    color = new TentaGL.Color(color);
+  }
+  this._tColor = color;
 };
 
 
@@ -66,20 +70,6 @@ TentaGL.RGBAFilter.TransparentColor.prototype = {
     this.setPixel(dstData, index, r, g, b, a);
   }
 };
-
-
-/** 
- * Creates a TransparentColor filter for a color defined by uint8 rgb values. 
- * @param {uint8} r
- * @param {uint8} g
- * @param {uint8} b
- * @return {TentaGL.RGBAFilter.TransparentColor}
- */
-TentaGL.RGBAFilter.TransparentColor.RGBBytes = function(r, g, b) {
-  var tColor = TentaGL.Color.RGBABytes(r, g, b);
-  return new TentaGL.RGBAFilter.TransparentColor(tColor);
-};
-
 
 
 Util.Inheritance.inherit(TentaGL.RGBAFilter.TransparentColor, TentaGL.RGBAFilter);

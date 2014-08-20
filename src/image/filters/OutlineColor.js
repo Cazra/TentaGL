@@ -26,9 +26,13 @@
 /** 
  * An RGBA filter that adds a colored outline around the opaque parts of an image.
  * @constructor
- * @param {TentaGL.Color} color  The color used for the outline.
+ * @param {vec4 || TentaGL.Color} color  The color used for the outline. 
+ *      If given as a vec4, this is expected to be in normalized RGBA format.
  */
 TentaGL.RGBAFilter.OutlineColor = function(color) {
+  if(!color.isaColor) {
+    color = new TentaGL.Color(color);
+  }
   this._color = color;
 };
 
@@ -89,19 +93,6 @@ TentaGL.RGBAFilter.OutlineColor.prototype = {
     // Not on the outline region. Use existing pixel color.
     this.setPixel(dstData, index, r, g, b, a);
   }
-};
-
-
-/** 
- * Creates a OutlineColor filter for a color defined by uint8 rgb values. 
- * @param {uint8} r
- * @param {uint8} g
- * @param {uint8} b
- * @return {TentaGL.RGBAFilter.OutlineColor}
- */
-TentaGL.RGBAFilter.OutlineColor.RGBBytes = function(r, g, b) {
-  var color = TentaGL.Color.RGBABytes(r, g, b);
-  return new TentaGL.RGBAFilter.OutlineColor(color);
 };
 
 

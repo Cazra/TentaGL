@@ -171,7 +171,7 @@ TentaGL.Blend = {
     gl._blendSrcFunc = GL_ONE;
     gl._blendDstFunc = GL_ZERO;
     
-    gl._blendColor = TentaGL.Color.RGBA(0,0,0,0);
+    gl._blendColor = new TentaGL.Color([0,0,0,0]);
     
     gl._blendStack = [];
   },

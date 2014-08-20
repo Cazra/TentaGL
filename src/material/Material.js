@@ -49,5 +49,7 @@ TentaGL.Material.prototype = {
    * have finished loading. Returns true by default.
    * @return Boolean
    */
-  isLoaded:function() {}
+  isLoaded:function() {
+    return true;
+  }
 };

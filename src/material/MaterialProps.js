@@ -40,19 +40,19 @@
  */
 TentaGL.MaterialProps = function(diffuse, specular, shininess, ambient, emission) {
   if(!diffuse) {
-    diffuse = TentaGL.Color.RGBA(1, 1, 1, 1); // all diffuse
+    diffuse = new TentaGL.Color([1, 1, 1, 1]); // all diffuse
   }
   if(!specular) {
-    specular = TentaGL.Color.RGBA(1, 1, 1, 1); // all specular
+    specular = new TentaGL.Color([1, 1, 1, 1]); // all specular
   }
   if(!shininess) {
     shininess = 10;
   }
   if(!ambient) {
-    ambient = TentaGL.Color.RGBA(1, 1, 1, 1); // all ambient
+    ambient = new TentaGL.Color([1, 1, 1, 1]); // all ambient
   }
   if(!emission) {
-    emission = TentaGL.Color.RGBA(0, 0, 0, 1); // no emission
+    emission = new TentaGL.Color([0, 0, 0, 1]); // no emission
   }
   
   this._diffuse = diffuse;

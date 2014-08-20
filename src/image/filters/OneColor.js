@@ -28,10 +28,15 @@
  * Those pixels are set to RGBA = [0,0,0,0]. All matching pixels are kept and
  * have their alpha components set to 255.
  * @constructor
- * @param {TentaGL.Color} color
+ * @param {vec4 || TentaGL.Color} color
+ *      If given as a vec4, this is expected to be in normalized RGBA format.
  * @param {Number} tolerance  Optional. A tolerance level in range [0, 1]. Default 0.
  */
 TentaGL.RGBAFilter.OneColor = function(color, tolerance) {
+  if(!color.isaColor) {
+    color = new TentaGL.Color(color);
+  }
+  
   if(!tolerance) {
     tolerance = 0;
   }

@@ -37,7 +37,7 @@
 TentaGL.BufferTexture = function(gl, width, height, clearColor) {
   this._width = width;
   this._height = height;
-  this._clearColor = clearColor || TentaGL.Color.RGBA(0, 0, 0, 0);
+  this._clearColor = clearColor || new TentaGL.Color([0, 0, 0, 0]);
   
   // Create the frame buffer.
   this._frameBuffer = gl.createFramebuffer();
