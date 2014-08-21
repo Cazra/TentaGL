@@ -35,6 +35,8 @@ HelloWorldApp.MainLevel.prototype = {
   //////// Level implementations
   
   reset: function(gl) {
+    var self = this;
+    
     this.cam2D = new TentaGL.Camera2D([0,0], gl.canvas.width, gl.canvas.height);
     this.cam2D.anchor([0,0]);
     
@@ -143,6 +145,11 @@ HelloWorldApp.MainLevel.prototype = {
     this.tri2DSprite.draw = function(gl) {
       (new TentaGL.Math.Triangle2D([0,0], [2,1], [1,2])).render(gl, "green");
     };
+    
+    // Audio // May hang in some browsers due to compatibility.
+    TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
+      self.horseAudio = audio;
+    });
   },
   
   

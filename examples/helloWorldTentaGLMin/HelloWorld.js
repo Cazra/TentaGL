@@ -120,12 +120,6 @@ HelloWorldApp.prototype = {
     // bump map and bump-mapped texture.
     TentaGL.MaterialLib.add(gl, "brickBumpMap", TentaGL.Texture.fromURL(gl, "../../images/sampleTexBump.png"));
     TentaGL.MaterialLib.add(gl, "bumpedRed", new TentaGL.BumpMappedTexture("red", "brickBumpMap"));
-    
-    
-    // Audio // May hang in some browsers due to compatibility.
-  //  TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
-  //    self.horseAudio = audio;
-  //  });
   },
   
   
