@@ -69,6 +69,11 @@ TentaGL.LevelManager.prototype = {
       
       this._curLevel = this._nextLevel;
       this._nextLevel = undefined;
+      
+      var tooltip = TentaGL.UI.Tooltip.defaultTooltip(gl);
+      if(tooltip) {
+        tooltip.reset();
+      }
     }
     
     this._curLevel.update(gl);

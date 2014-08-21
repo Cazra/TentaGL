@@ -46,6 +46,34 @@ TentaGL.UI.Tooltip = function(blitFont, bgMaterialName, padding, delay, charHeig
 };
 
 
+/** 
+ * Setter/getter for the default tooltip used for some gl context. 
+ * No tooltip is provided by default. It must be set by the user first.
+ * @param {WebGLRenderingContext} gl
+ * @param {TentaGL.UI.Tooltip} tooltip    Optional
+ * @return {TentaGL.UI.Tooltip}
+ */
+TentaGL.UI.Tooltip.defaultTooltip = function(gl, tooltip) {
+  if(tooltip !== undefined) {
+    gl._defaultTooltip = tooltip;
+  }
+  return gl._defaultTooltip;
+};
+
+
+/** 
+ * Renders the default tooltip. 
+ * @param {WebGLRenderingContext} gl
+ */
+TentaGL.UI.Tooltip.render = function(gl) {
+  var tooltip = TentaGL.UI.Tooltip.defaultTooltip(gl);
+  if(tooltip) {
+    tooltip.render(gl);
+  }
+};
+
+
+
 TentaGL.UI.Tooltip.prototype = {
   
   constructor: TentaGL.UI.Tooltip,
@@ -149,9 +177,14 @@ TentaGL.UI.Tooltip.prototype = {
     }
     TentaGL.ViewTrans.push(gl);
     
-    TentaGL.ViewTrans.translate(gl, this._xy);
-    
     var dims = this.getDimensions();
+    
+    var maxY = gl.canvas.height - dims[1];
+    if(this._xy[1] > maxY) {
+      this._xy[1] = maxY;
+    }
+    
+    TentaGL.ViewTrans.translate(gl, this._xy);
     
     TentaGL.MaterialLib.use(gl, this._bgMatName);
     

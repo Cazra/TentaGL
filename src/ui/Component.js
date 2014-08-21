@@ -263,9 +263,14 @@ TentaGL.UI.Component.prototype = {
   /**  
    * Registers text to be displayed for this component as a tooltip.
    * @param {string} text
-   * @param {TentaGL.UI.Tooltip} tooltip
+   * @param {TentaGL.UI.Tooltip || WebGLRenderingContext} tooltip   If a WebGLRenderingContext
+   *      is provided, then it will use the default tooltip for that context.
    */
   setTooltip: function(text, tooltip) {
+    if(!tooltip.isaTooltip) {
+      tooltip = TentaGL.UI.Tooltip.defaultTooltip(tooltip);
+    }
+    
     this._tooltip = tooltip;
     this._tooltipText = text;
   },
