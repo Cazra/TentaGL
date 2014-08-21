@@ -20,6 +20,7 @@ src/state/Viewport.js
 
 src/math/Math.js
   src/math/geom/Shape2D.js
+    src/math/geom/BezierCurve2D.js
     src/math/geom/Ellipse2D.js
     src/math/geom/Line2D.js
     src/math/geom/Rect2D.js
