@@ -403,7 +403,7 @@ TentaGL.Color.HSB = function(hsb) {
 
 /** 
  * Returns the ARGB hex representation of the color defined by the given 
- * uint8 rgba color components. 
+ * normalized rgba color components. 
  * Bits 31-24 contain the color's alpha component. 
  * Bits 23-16 contain the color's red component. Bits 15-8 contain
  * the color's green component. Bits 7-0 contain the color's blue
@@ -413,9 +413,33 @@ TentaGL.Color.HSB = function(hsb) {
  */
 TentaGL.Color.rgba2hex = function(rgba) {
   if(rgba[3] === undefined) {
+    rgba[3] = 1;
+  }
+  var bytes = vec4.scale([], rgba, 255);
+  
+  var hex = (bytes[3])<<24;
+  hex += (bytes[0])<<16;
+  hex += (bytes[1])<<8;
+  hex += bytes[2];
+  return hex>>>0;
+};
+
+
+
+/** 
+ * Returns the ARGB hex representation of the color defined by the given 
+ * uint8 rgba color components. 
+ * Bits 31-24 contain the color's alpha component. 
+ * Bits 23-16 contain the color's red component. Bits 15-8 contain
+ * the color's green component. Bits 7-0 contain the color's blue
+ * component. The alpha bits are NOT optional. Alpha will be 0 (transparent).
+ * @param {vec3 || vec4} rgba   If provided as a vec3, alpha is assumed to be 255.
+ * @return {uint32}
+ */
+TentaGL.Color.rgbaBytes2hex = function(rgba) {
+  if(rgba[3] === undefined) {
     rgba[3] = 255;
   }
-  
   var hex = (rgba[3])<<24;
   hex += (rgba[0])<<16;
   hex += (rgba[1])<<8;

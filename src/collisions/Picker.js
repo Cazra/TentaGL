@@ -127,11 +127,11 @@ TentaGL.Picker.prototype = {
       var id = this._nextID; //(0xFF000000 | this._nextID);
       this._nextID++;
       
-      var pickColor = new TentaGL.Color.Hex(id);
+      var pickColor = TentaGL.Color.Hex(id);
       this._sprites[id] = sprite;
       var rgba = pickColor.rgba();
-      TentaGL.ShaderLib.current(this._gl).setPickID(this._gl, rgba);
       
+      TentaGL.ShaderLib.current(this._gl).setPickID(this._gl, rgba);
       return true;
     }
     else {
@@ -167,7 +167,8 @@ TentaGL.Picker.prototype = {
   getSpriteAt:function(x, y) {
     if(this._pixels) {
       var pixel = this._getPixelAt(x, y);
-      var id = TentaGL.Color.rgba2hex(pixel);
+      var id = TentaGL.Color.rgbaBytes2hex(pixel);
+      
       return this._sprites[id];
     }
     else {

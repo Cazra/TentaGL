@@ -152,7 +152,6 @@ TentaGL.UI.Component.prototype = {
     
     if(this._tooltip && this._tooltip.component() == this) {
       this._tooltip.reset();
-      console.log("stop tooltip");
     }
   },
   
@@ -200,15 +199,12 @@ TentaGL.UI.Component.prototype = {
         this._tooltip.component(this);
         this._tooltip.xy(vec2.add([], mouse.getXY(), [0, 16]));
         this._tooltip.text(this._tooltipText);
-        
-        console.log(this._tooltip);
       }
     }
     else {
       if(this._mouseOverStart >= 0 && this._enabled) {
         this.onMouseExit(mouse);
       }
-      console.log("no longer mouseover.");
       this._resetMouseState();
     }
   },
