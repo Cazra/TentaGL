@@ -421,6 +421,7 @@ TentaGL.Math = {
   
   /** 
    * Returns the result of n!.
+   * This can handle values up n up to 170.
    * @param {uint} n
    * @return {uint}
    */
@@ -447,7 +448,6 @@ TentaGL.Math = {
       return this.factorial(n)/(this.factorial(n-k)*this.factorial(k));
     }
   },
-  
   
   
   

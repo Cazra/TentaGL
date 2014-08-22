@@ -87,6 +87,11 @@ TentaGL.Math.BezierCurve2D.prototype = {
   },
   
   
+  /** 
+   * Setter/getter for the end point of the curve. 
+   * @param {vec2} xy   Optional.
+   * @return {vec2}
+   */
   end: function(xy) {
     if(xy !== undefined) {
       this._endPt = xy;
@@ -133,11 +138,153 @@ TentaGL.Math.BezierCurve2D.prototype = {
   },
   
   
+  /** 
+   * Returns the alpha value of the closest point on this curve to some point, 
+   * using numerical methods. 
+   * @param {vec2} xy
+   * @param {float} tolerance   Optional. Default 0.0001.
+   * @return {float}
+   */
+  closestAlpha: function(xy, tolerance) {
+    if(tolerance === undefined) {
+      tolerance = 0.001;
+    }
+    
+    var numPts = this.getDegree()*10;
+    var pts = this._approxPts(numPts);
+    
+    var distStart = vec2.dist(pts[0], xy);
+    var distEnd = vec2.dist(pts[pts.length-1], xy);
+    var nearestDist = Math.min(distStart, distEnd);
+    
+    var nearestAlpha;
+    if(nearestDist == distStart) {
+      nearestAlpha = 0;
+    }
+    else {
+      nearestAlpha = 1;
+    }
+    
+    for(var i=1; i<pts.length-1; i++) {
+      var prev = pts[i-1];
+      var cur = pts[i];
+      var next = pts[i+1];
+      
+      var prevDist = vec2.dist(prev, xy);
+      var curDist = vec2.dist(cur, xy);
+      var nextDist = vec2.dist(next, xy);
+      
+      if(curDist == Math.min(prevDist, curDist, nextDist)) {
+        var curAlpha = i/(pts.length-1);
+        var result;
+        
+        if(prevDist < nextDist) {
+          var prevAlpha = (i-1)/(pts.length-1);
+          result = this._closestAlphaRec(xy, tolerance, [prevAlpha, curAlpha], [prev, cur], curDist);
+        }
+        else {
+          var nextAlpha = (i+1)/(pts.length-1);
+          result = this._closestAlphaRec(xy, tolerance, [curAlpha, nextAlpha], [cur, next], curDist);
+        }
+        
+        if(result[1] < nearestDist) {
+          nearestDist = result[1];
+          nearestAlpha = result[0];
+        }
+      }
+    }
+    
+    return nearestAlpha;
+  },
+  
+  
+  /** 
+   * Recursively approach the closest point between two alpha values 
+   * using shooting method. 
+   */
+  _closestAlphaRec: function(xy, tolerance, alphas, pts, lastDist) {
+    var prevAlpha = alphas[0];
+    var curAlpha = (alphas[0] + alphas[1])/2;
+    var nextAlpha = alphas[1];
+    
+    var prev = pts[0];
+    var cur = this.interpolate(curAlpha);
+    var next = pts[1];
+    
+    var dist = vec2.dist(cur, xy);
+    var distPrev = vec2.dist(prev, xy);
+    var distNext = vec2.dist(next, xy);
+    
+    if(Math.abs(dist - lastDist) <= tolerance) {
+      return [curAlpha, dist];
+    }
+    else if(distPrev < distNext) {
+      return this._closestAlphaRec(xy, tolerance, [prevAlpha, curAlpha], [prev, cur], dist);
+    }
+    else {
+      return this._closestAlphaRec(xy, tolerance, [curAlpha, nextAlpha], [cur, next], dist);
+    }
+  },
+  
+  
+  /** 
+   * Returns the point on this curve closest to the given point, 
+   * using numerical methods.
+   * @param {vec2} xy
+   * @param {float} tolerance   Optional. Default 0.0001.
+   * @return {vec2}
+   */
+  closestPt: function(xy, tolerance) {
+    var alpha = this.closestAlpha(xy, tolerance);
+    return this.interpolate(alpha);
+  },
+  
+  
+  /** 
+   * Approximates the distance of a point to this curve, 
+   * using numerical methods.
+   * @param {vec2} xy
+   * @param {float} tolerance   Optional. Default 0.0001.
+   * @return {number}
+   */
+  distToPt: function(xy, tolerance) {
+    var pt = this.closestPt(xy, tolerance);
+    return vec2.dist(pt, xy);
+  },
+  
+  
+  
+  /**  
+   * Returns an approximation of the curve consisting of n points.
+   * @param {uint} n
+   * @return {array: vec2}
+   */
+  _approxPts: function(n) {
+    var pts = [];
+    pts.push(this.start());
+    var alphaInc = 1/(n - 1);
+    for(var alpha=alphaInc; alpha < 1; alpha += alphaInc) {
+      pts.push(this.interpolate(alpha));
+    }
+    pts.push(this.end());
+    
+    return pts;
+  },
+  
   
   //////// Shape2D implementations
   
-  containsPt: function(xy) {
-    return undefined;
+  /** 
+   * Returns whether the curve contains some point within a given 
+   * tolerance for distance. 
+   * @param {vec2} xy
+   * @param {float} tolerance   Optional. Default 0.0001.
+   */
+  containsPt: function(xy, tolerance) {
+    if(tolerance === undefined) {
+      tolerance = 0.0001;
+    }
+    return (this.distToPt(xy, tolerance) <= tolerance);
   },
   
   
@@ -182,13 +329,7 @@ TentaGL.Math.BezierCurve2D.prototype = {
     }
     
     // Create the interpolated points.
-    var pts = [];
-    pts.push(this.start());
-    var alphaInc = 1/(numPts - 1);
-    for(var alpha=alphaInc; alpha < 1; alpha += alphaInc) {
-      pts.push(this.interpolate(alpha));
-    }
-    pts.push(this.end());
+    var pts = this._approxPts(numPts);
     
     // Use the points to render a series of lines.
     for(var i=0; i < pts.length - 1; i++ ) {

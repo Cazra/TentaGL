@@ -152,7 +152,17 @@ HelloWorldApp.MainLevel.prototype = {
       var start = [0,0];
       var ctrls = [[-2,5], [3,-10], [4,10], [1,1]];
       var end = [1,0];
-      (new TentaGL.Math.BezierCurve2D(start, ctrls, end)).render(gl, "blue");
+      
+      var curve = new TentaGL.Math.BezierCurve2D(start, ctrls, end);
+      curve.render(gl, "blue");
+      
+      // Test closest point algorithm.
+      var pt = new TentaGL.Math.Sphere(0.1, [2, 2, 0]);
+      pt.render(gl, "blue");
+      
+      var closest = curve.closestPt(pt.getPoint());
+      pt = new TentaGL.Math.Sphere(0.1, [closest[0], closest[1], 0]);
+      pt.render(gl, "blue");
     };
     
     // Audio // May hang in some browsers due to compatibility.
