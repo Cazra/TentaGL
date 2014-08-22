@@ -23,13 +23,6 @@
 */
 
 
-// Construct the Util namespace if it doesn't exist.
-var Util;
-if(!Util) {
-  Util = {};
-}
-
-
 /** 
  * This utility object contains a bunch of helpful debugging methods.
  */

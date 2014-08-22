@@ -153,6 +153,8 @@ HelloWorldApp.prototype = {
   
   /** We are required to override TentaGL.Application.reset */
   reset:function() {
+    console.log("You are running " + Util.Browser.type() + " in " + Util.Browser.os() + " using the " + Util.Browser.jsEngine() + " js engine. \nSecure connection: " + Util.Browser.isSecure());
+    
     this.setLevel(new HelloWorldApp.MainLevel(this));
   },
   

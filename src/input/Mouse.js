@@ -66,7 +66,7 @@ TentaGL.Mouse = function(canvas) {
   var self = this; // closure magic!
   
   canvas.onmousemove = function(evt) {
-    var xy = TentaGL.DOM.getAbsolutePosition(this);
+    var xy = Util.DOM.getAbsolutePosition(this);
     var rect = canvas.getBoundingClientRect();
     var left = TentaGL.Math.clamp(Math.floor(rect.left), 0, canvas.width);
     var top = TentaGL.Math.clamp(Math.floor(rect.top), 0, canvas.height);

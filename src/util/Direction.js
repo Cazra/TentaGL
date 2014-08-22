@@ -23,48 +23,18 @@
 */
 
 
-
-Util.DOM = {
+/** 
+ * A collection of enumerations for cardinal directions.
+ */
+TentaGL.Direction = {
   
-  /** 
-   * Gets the absolute position of a DOM element in the document. 
-   * @param {DOM element}
-   * @return {length-2 array} The XY coordinates.
-   */
-  getAbsolutePosition: function(element) {
-    // get the absolute position of the canvas element in the document.
-    var obj = element;
-    var offX = 0;
-    var offY = 0;
-    while( obj.nodeName != "BODY") {
-      offX += obj.offsetLeft;
-      offY += obj.offsetTop;
-      
-      obj = obj.parentNode;
-    }
-    
-    return [offX, offY];
-  },
+  NORTH: 1,
   
+  SOUTH: 2,
   
-  /** Returns the string for a DOM script element's text content. */
-  extractScriptText:function(scriptID) {
-    var shaderScript = document.getElementById(scriptID);
-    if(!shaderScript) {
-      throw new Error("Script ID " + scriptID + " doesn't exist in the document.");
-    }
-    
-    // Extract the shader source code from the DOM script element.
-    var str = "";
-    var k = shaderScript.firstChild;
-    console.log(shaderScript);
-    while(k) {
-      if(k.nodeType == Node.TEXT_NODE) {
-        str += k.textContent;
-      }
-      k = k.nextSibling;
-    }
-    
-    return str;
-  }
+  EAST: 3,
+  
+  WEST: 4,
+  
+  CENTER: 5
 };

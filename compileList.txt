@@ -1,10 +1,13 @@
 src/GL_.js
 src/TentaGL.js
 
-src/util/Debug.js
-src/util/DOM.js
-src/util/Downloader.js
-src/util/Inheritance.js
+src/util/Util.js
+  src/util/Browser.js
+  src/util/Debug.js
+  src/util/DOM.js
+  src/util/Downloader.js
+  src/util/Geolocation.js
+  src/util/Inheritance.js
 
 src/scene/Renderable.js
 
@@ -141,6 +144,7 @@ src/time/Timer.js
 
 src/util/Align.js
 src/util/Canvas2D.js
+src/util/Direction.js
 
 src/ui/UI.js
   src/ui/Component.js
