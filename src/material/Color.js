@@ -420,7 +420,7 @@ TentaGL.Color.rgba2hex = function(rgba) {
   var hex = (bytes[3])<<24;
   hex += (bytes[0])<<16;
   hex += (bytes[1])<<8;
-  hex += bytes[2];
+  hex += bytes[2]<<0;
   return hex>>>0;
 };
 

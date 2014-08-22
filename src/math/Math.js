@@ -401,6 +401,7 @@ TentaGL.Math = {
   
   //////// Exponents
   
+  
   /** 
    * Returns the first power of two >= to value.
    * @param {Number} value
@@ -412,6 +413,39 @@ TentaGL.Math = {
       pow *= 2;
     }
     return pow;
+  },
+  
+  
+  //////// Prob/stat
+  
+  
+  /** 
+   * Returns the result of n!.
+   * @param {uint} n
+   * @return {uint}
+   */
+  factorial: function(n) {
+    var result = 1;
+    for(var i=2; i <= n; i++) {
+      result *= i;
+    }
+    return result;
+  },
+  
+  
+  /** 
+   * Returns the binomial coefficient, n choose k. 
+   * @param {uint} n
+   * @param {uint} k
+   * @return {uint}
+   */
+  binomial: function(n, k) {
+    if(k < 0 || k >= n) {
+      return 0;
+    }
+    else {
+      return this.factorial(n)/(this.factorial(n-k)*this.factorial(k));
+    }
   },
   
   

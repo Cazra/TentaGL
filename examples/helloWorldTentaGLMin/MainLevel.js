@@ -146,6 +146,15 @@ HelloWorldApp.MainLevel.prototype = {
       (new TentaGL.Math.Triangle2D([0,0], [2,1], [1,2])).render(gl, "green");
     };
     
+    
+    this.bezier2DSprite = new TentaGL.Sprite([0,0,4]);
+    this.bezier2DSprite.draw = function(gl) {
+      var start = [0,0];
+      var ctrls = [[-2,5], [3,-10], [4,10], [1,1]];
+      var end = [1,0];
+      (new TentaGL.Math.BezierCurve2D(start, ctrls, end)).render(gl, "blue");
+    };
+    
     // Audio // May hang in some browsers due to compatibility.
     TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
       self.horseAudio = audio;
@@ -297,6 +306,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.imageSprite.render(gl);
     this.rect3DSprite.render(gl);
     this.tri2DSprite.render(gl);
+    this.bezier2DSprite.render(gl);
     
     // this.drawClipPts(gl);
     

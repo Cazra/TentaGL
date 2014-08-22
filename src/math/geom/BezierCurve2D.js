@@ -83,7 +83,7 @@ TentaGL.Math.BezierCurve2D.prototype = {
    * @return {uint}
    */
   getDegree: function() {
-    return this._controlPts.length;
+    return this._controlPts.length+1;
   },
   
   
@@ -137,17 +137,63 @@ TentaGL.Math.BezierCurve2D.prototype = {
   //////// Shape2D implementations
   
   containsPt: function(xy) {
-    // TODO
+    return undefined;
   },
   
   
+  /** 
+   * An approximation of the curve's bounding box is constructed from its 
+   * start, end, and ctrl points. This box contains all points on the curve
+   * since the curve is contained by the convex hull of its control points. 
+   * However, this may not be the smallest bounding box.
+   * @return {TentaGL.Math.Rect2D}
+   */
   getBounds2D: function() {
-    // TODO
+    var left = Math.min(this._startPt[0], this._endPt[0]);
+    var right = Math.max(this._startPt[0], this._endPt[0]);
+    var bottom = Math.min(this._startPt[1], this._endPt[1]);
+    var top = Math.max(this._startPt[1], this._endPt[1]);
+    
+    for(var i=0; i<this._controlPts; i++) {
+      var ctrlPt = this._controlPts[i];
+      
+      left = Math.min(left, ctrlPt[0]);
+      right = Math.max(right, ctrlPt[0]);
+      bottom = Math.min(bottom, ctrlPt[1]);
+      top = Math.max(top, ctrlPt[1]);
+    }
   },
   
   
-  render: function(gl, materialName) {
-    // TODO
+  /** 
+   * Renders an approximation of the curve from a number of interpolated points. 
+   * 
+   */
+  render: function(gl, materialName, numPts) {
+    if(materialName) {
+      TentaGL.MaterialLib.use(gl, materialName);
+    }
+    
+    if(numPts === undefined) {
+      numPts = this.getDegree()*10;
+    }
+    if(numPts < 2) {
+      numPts = 2;
+    }
+    
+    // Create the interpolated points.
+    var pts = [];
+    pts.push(this.start());
+    var alphaInc = 1/(numPts - 1);
+    for(var alpha=alphaInc; alpha < 1; alpha += alphaInc) {
+      pts.push(this.interpolate(alpha));
+    }
+    pts.push(this.end());
+    
+    // Use the points to render a series of lines.
+    for(var i=0; i < pts.length - 1; i++ ) {
+      (new TentaGL.Math.Line2D(pts[i], pts[i+1])).render(gl);
+    }
   }
   
 };
