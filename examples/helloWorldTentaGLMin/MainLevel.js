@@ -157,11 +157,24 @@ HelloWorldApp.MainLevel.prototype = {
       curve.render(gl, "blue");
       
       // Test closest point algorithm.
-      var pt = new TentaGL.Math.Sphere(0.1, [2, 2, 0]);
-      pt.render(gl, "blue");
-      
-      var closest = curve.closestPt(pt.getPoint());
+      var closest = curve.closestPt(self.camera.center());
       pt = new TentaGL.Math.Sphere(0.1, [closest[0], closest[1], 0]);
+      pt.render(gl, "blue");
+    };
+    
+    
+    this.bezier3DSprite = new TentaGL.Sprite([0,0,5]);
+    this.bezier3DSprite.draw = function(gl) {
+      var start = [0,0, 0];
+      var ctrls = [[-2,5, 5], [3,-10, -2], [4,10,4], [1,1,-2]];
+      var end = [1,0,0];
+      
+      var curve = new TentaGL.Math.BezierCurve3D(start, ctrls, end);
+      curve.render(gl, "blue");
+      
+      // Test closest point algorithm.
+      var closest = curve.closestPt(vec3.add([], self.camera.center(), [0,0,-5]));
+      pt = new TentaGL.Math.Sphere(0.1, closest);
       pt.render(gl, "blue");
     };
     
@@ -317,6 +330,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.rect3DSprite.render(gl);
     this.tri2DSprite.render(gl);
     this.bezier2DSprite.render(gl);
+    this.bezier3DSprite.render(gl);
     
     // this.drawClipPts(gl);
     

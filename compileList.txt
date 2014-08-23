@@ -29,6 +29,7 @@ src/math/Math.js
     src/math/geom/Rect2D.js
     src/math/geom/Triangle2D.js
   src/math/geom/Shape3D.js
+    src/math/geom/BezierCurve3D.js
     src/math/geom/Line3D.js
     src/math/geom/Plane.js
     src/math/geom/Quad.js

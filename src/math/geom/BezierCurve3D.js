@@ -22,39 +22,42 @@
  SOFTWARE.
 */
 
+
 /** 
- * A 2D Bezier curve of arbitrary degree.
+ * A 3D Bezier curve of arbitrary degree.
  * @constructor
- * @param {vec2} startPt
- * @param {array: vec2} controlPts
- * @param {vec2} endPt
+ * @param {vec3} startPt
+ * @param {array: vec3} controlPts
+ * @param {vec3} endPt
  */
-TentaGL.Math.BezierCurve2D = function(startPt, controlPts, endPt) {
-  this._startPt = vec2.copy([], startPt);
+TentaGL.Math.BezierCurve3D = function(startPt, controlPts, endPt) {
+  this._startPt = vec3.copy([], startPt);
   
   this._controlPts = [];
   for(var i=0; i < controlPts.length; i++) {
-    this._controlPts[i] = vec2.copy([], controlPts[i]);
+    this._controlPts[i] = vec3.copy([], controlPts[i]);
   }
   
-  this._endPt = vec2.copy([], endPt);
+  this._endPt = vec3.copy([], endPt);
 };
 
 
-TentaGL.Math.BezierCurve2D.prototype = {
+
+TentaGL.Math.BezierCurve3D.prototype = {
   
-  constructor: TentaGL.Math.BezierCurve2D,
+  constructor: TentaGL.Math.BezierCurve3D,
   
-  isaBezierCurve2D: true, 
+  isaBezierCurve3D: true, 
+  
   
   /** 
    * Setter/getter for the start point of the Bezier curve.
-   * @param {vec2} xy   Optional.
-   * @return {vec2}
+   * @param {vec3} xyz   Optional.
+   * @return {vec3}
    */
-  start: function(xy) {
-    if(xy !== undefined) {
-      this._startPt = xy;
+  start: function(xyz) {
+    if(xyz !== undefined) {
+      this._startPt = xyz;
     }
     return this._startPt;
   },
@@ -63,16 +66,16 @@ TentaGL.Math.BezierCurve2D.prototype = {
   /** 
    * Setter/getter for the nth control point.
    * @param {uint} n
-   * @param {vec2} xy   Optional.
-   * @return {vec2}
+   * @param {vec3} xyz   Optional.
+   * @return {vec3}
    */
-  control: function(n, xy) {
+  control: function(n, xyz) {
     if(n < 0 || n >= this._controlPts.length) {
       throw new Error("Control point index out of bounds.");
     }
     
-    if(xy !== undefined) {
-      this._controlPts[n] = xy;
+    if(xyz !== undefined) {
+      this._controlPts[n] = xyz;
     }
     return this._controlPts[n];
   },
@@ -89,21 +92,22 @@ TentaGL.Math.BezierCurve2D.prototype = {
   
   /** 
    * Setter/getter for the end point of the curve. 
-   * @param {vec2} xy   Optional.
-   * @return {vec2}
+   * @param {vec3} xyz   Optional.
+   * @return {vec3}
    */
-  end: function(xy) {
-    if(xy !== undefined) {
-      this._endPt = xy;
+  end: function(xyz) {
+    if(xyz !== undefined) {
+      this._endPt = xyz;
     }
     return this._endPt;
   },
   
   
+  
   /** 
    * Gets the point interpolated to some parametric value for the curve. 
    * @param {float} alpha
-   * @return {vec2}
+   * @return {vec3}
    */
   interpolate: function(alpha) {
     var pts = [];
@@ -128,7 +132,7 @@ TentaGL.Math.BezierCurve2D.prototype = {
         var p1 = points[i];
         var p2 = points[i+1];
         
-        var tween = vec2.add([], vec2.scale([], p1, 1-alpha), vec2.scale([], p2, alpha));
+        var tween = vec3.add([], vec3.scale([], p1, 1-alpha), vec3.scale([], p2, alpha));
         
         newPts.push(tween);
       }
@@ -141,11 +145,11 @@ TentaGL.Math.BezierCurve2D.prototype = {
   /** 
    * Returns the alpha value of the closest point on this curve to some point, 
    * using numerical methods. 
-   * @param {vec2} xy
+   * @param {vec3} xyz
    * @param {float} tolerance   Optional. Default 0.0001.
    * @return {float}
    */
-  closestAlpha: function(xy, tolerance) {
+  closestAlpha: function(xyz, tolerance) {
     if(tolerance === undefined) {
       tolerance = 0.001;
     }
@@ -153,8 +157,8 @@ TentaGL.Math.BezierCurve2D.prototype = {
     var numPts = this.getDegree()*10;
     var pts = this._approxPts(numPts);
     
-    var distStart = vec2.dist(pts[0], xy);
-    var distEnd = vec2.dist(pts[pts.length-1], xy);
+    var distStart = vec3.dist(pts[0], xyz);
+    var distEnd = vec3.dist(pts[pts.length-1], xyz);
     var nearestDist = Math.min(distStart, distEnd);
     
     var nearestAlpha;
@@ -170,9 +174,9 @@ TentaGL.Math.BezierCurve2D.prototype = {
       var cur = pts[i];
       var next = pts[i+1];
       
-      var prevDist = vec2.dist(prev, xy);
-      var curDist = vec2.dist(cur, xy);
-      var nextDist = vec2.dist(next, xy);
+      var prevDist = vec3.dist(prev, xyz);
+      var curDist = vec3.dist(cur, xyz);
+      var nextDist = vec3.dist(next, xyz);
       
       if(curDist == Math.min(prevDist, curDist, nextDist)) {
         var curAlpha = i/(pts.length-1);
@@ -180,11 +184,11 @@ TentaGL.Math.BezierCurve2D.prototype = {
         
         if(prevDist < nextDist) {
           var prevAlpha = (i-1)/(pts.length-1);
-          result = this._closestAlphaRec(xy, tolerance, [prevAlpha, curAlpha], [prev, cur], curDist);
+          result = this._closestAlphaRec(xyz, tolerance, [prevAlpha, curAlpha], [prev, cur], curDist);
         }
         else {
           var nextAlpha = (i+1)/(pts.length-1);
-          result = this._closestAlphaRec(xy, tolerance, [curAlpha, nextAlpha], [cur, next], curDist);
+          result = this._closestAlphaRec(xyz, tolerance, [curAlpha, nextAlpha], [cur, next], curDist);
         }
         
         if(result[1] < nearestDist) {
@@ -202,7 +206,7 @@ TentaGL.Math.BezierCurve2D.prototype = {
    * Recursively approach the closest point between two alpha values 
    * using shooting method. 
    */
-  _closestAlphaRec: function(xy, tolerance, alphas, pts, lastDist) {
+  _closestAlphaRec: function(xyz, tolerance, alphas, pts, lastDist) {
     var prevAlpha = alphas[0];
     var curAlpha = (alphas[0] + alphas[1])/2;
     var nextAlpha = alphas[1];
@@ -211,18 +215,18 @@ TentaGL.Math.BezierCurve2D.prototype = {
     var cur = this.interpolate(curAlpha);
     var next = pts[1];
     
-    var dist = vec2.dist(cur, xy);
-    var distPrev = vec2.dist(prev, xy);
-    var distNext = vec2.dist(next, xy);
+    var dist = vec3.dist(cur, xyz);
+    var distPrev = vec3.dist(prev, xyz);
+    var distNext = vec3.dist(next, xyz);
     
     if(Math.abs(dist - lastDist) <= tolerance) {
       return [curAlpha, dist];
     }
     else if(distPrev < distNext) {
-      return this._closestAlphaRec(xy, tolerance, [prevAlpha, curAlpha], [prev, cur], dist);
+      return this._closestAlphaRec(xyz, tolerance, [prevAlpha, curAlpha], [prev, cur], dist);
     }
     else {
-      return this._closestAlphaRec(xy, tolerance, [curAlpha, nextAlpha], [cur, next], dist);
+      return this._closestAlphaRec(xyz, tolerance, [curAlpha, nextAlpha], [cur, next], dist);
     }
   },
   
@@ -230,12 +234,12 @@ TentaGL.Math.BezierCurve2D.prototype = {
   /** 
    * Returns the point on this curve closest to the given point, 
    * using numerical methods.
-   * @param {vec2} xy
+   * @param {vec3} xyz
    * @param {float} tolerance   Optional. Default 0.0001.
-   * @return {vec2}
+   * @return {vec3}
    */
-  closestPt: function(xy, tolerance) {
-    var alpha = this.closestAlpha(xy, tolerance);
+  closestPt: function(xyz, tolerance) {
+    var alpha = this.closestAlpha(xyz, tolerance);
     return this.interpolate(alpha);
   },
   
@@ -243,13 +247,13 @@ TentaGL.Math.BezierCurve2D.prototype = {
   /** 
    * Approximates the distance of a point to this curve, 
    * using numerical methods.
-   * @param {vec2} xy
+   * @param {vec3} xyz
    * @param {float} tolerance   Optional. Default 0.0001.
    * @return {number}
    */
-  distToPt: function(xy, tolerance) {
-    var pt = this.closestPt(xy, tolerance);
-    return vec2.dist(pt, xy);
+  distToPt: function(xyz, tolerance) {
+    var pt = this.closestPt(xyz, tolerance);
+    return vec3.dist(pt, xyz);
   },
   
   
@@ -257,7 +261,7 @@ TentaGL.Math.BezierCurve2D.prototype = {
   /**  
    * Returns an approximation of the curve consisting of n points.
    * @param {uint} n
-   * @return {array: vec2}
+   * @return {array: vec3}
    */
   _approxPts: function(n) {
     var pts = [];
@@ -272,19 +276,19 @@ TentaGL.Math.BezierCurve2D.prototype = {
   },
   
   
-  //////// Shape2D implementations
+  //////// Shape3D implementations
   
   /** 
    * Returns whether the curve contains some point within a given 
    * tolerance for distance. 
-   * @param {vec2} xy
+   * @param {vec3} xyz
    * @param {float} tolerance   Optional. Default 0.0001.
    */
-  containsPt: function(xy, tolerance) {
+  containsPt: function(xyz, tolerance) {
     if(tolerance === undefined) {
       tolerance = 0.0001;
     }
-    return (this.distToPt(xy, tolerance) <= tolerance);
+    return (this.distToPt(xyz, tolerance) <= tolerance);
   },
   
   
@@ -293,13 +297,15 @@ TentaGL.Math.BezierCurve2D.prototype = {
    * start, end, and ctrl points. This box contains all points on the curve
    * since the curve is contained by the convex hull of its control points. 
    * However, this may not be the smallest bounding box.
-   * @return {TentaGL.Math.Rect2D}
+   * @return {TentaGL.Math.Rect3D}
    */
-  getBounds2D: function() {
+  getBounds3D: function() {
     var left = Math.min(this._startPt[0], this._endPt[0]);
     var right = Math.max(this._startPt[0], this._endPt[0]);
     var bottom = Math.min(this._startPt[1], this._endPt[1]);
     var top = Math.max(this._startPt[1], this._endPt[1]);
+    var back = Math.min(this._startPt[2], this._endPt[2]);
+    var front = Math.max(this._startPt[2], this._endPt[2]);
     
     for(var i=0; i<this._controlPts; i++) {
       var ctrlPt = this._controlPts[i];
@@ -308,6 +314,9 @@ TentaGL.Math.BezierCurve2D.prototype = {
       right = Math.max(right, ctrlPt[0]);
       bottom = Math.min(bottom, ctrlPt[1]);
       top = Math.max(top, ctrlPt[1]);
+      back = Math.min(back, ctrlPt[2]);
+      front = Math.max(front, ctrlPt[2]);
+      
     }
   },
   
@@ -333,11 +342,11 @@ TentaGL.Math.BezierCurve2D.prototype = {
     
     // Use the points to render a series of lines.
     for(var i=0; i < pts.length - 1; i++ ) {
-      (new TentaGL.Math.Line2D(pts[i], pts[i+1])).render(gl);
+      (new TentaGL.Math.Line3D(pts[i], pts[i+1])).render(gl);
     }
   }
-  
 };
 
 
-Util.Inheritance.inherit(TentaGL.Math.BezierCurve2D, TentaGL.Math.Shape2D);
+Util.Inheritance.inherit(TentaGL.Math.BezierCurve3D, TentaGL.Math.Shape3D);
+
