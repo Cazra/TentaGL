@@ -70,11 +70,11 @@ TentaGL.Application.prototype = {
     TentaGL.ModelLib.reset(gl);
     TentaGL.MaterialLib.reset(gl);
     
-    this.initShaders();
-    this.initMaterials();
-    this.initModels();
+    this.initShaders(gl);
+    this.initMaterials(gl);
+    this.initModels(gl);
     
-    this.reset();
+    this.reset(gl);
   },
   
   
@@ -115,7 +115,7 @@ TentaGL.Application.prototype = {
     this._mouse.poll();
     
     // Run an iteration of the application logic.
-    this.update();
+    this.update(gl);
     
     this._lastTimestamp = timestamp;
     this._fpsCount++;
@@ -390,32 +390,32 @@ TentaGL.Application.prototype = {
    * Initializes shaders for the application. 
    * Override this. 
    */
-  initShaders:function() {},
+  initShaders:function(gl) {},
   
   /** 
    * Initializes materials for the application. 
    * Override this. 
    */
-  initMaterials:function() {},
+  initMaterials:function(gl) {},
   
   /** 
    * Initializes models for the application. 
    * Override this. 
    */
-  initModels:function() {},
+  initModels:function(gl) {},
   
   /** 
    * Sets any other initial state of the application after other resources 
    * have been initialized. 
    * Override this.
    */
-  reset:function() {},
+  reset:function(gl) {},
   
   /** 
    * Runs an iteration of the application loop and renders the application. 
    * Override this. 
    */
-  update:function() {}
+  update:function(gl) {}
   
   
   
