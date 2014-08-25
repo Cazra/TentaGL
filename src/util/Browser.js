@@ -45,7 +45,7 @@ Util.Browser = {
     // Detecting Internet Explorer is different... of course...
     var msie = /msie [^;]+/i.exec(ua);
     if(msie) {
-      this._ie = msie[0].substring(match[0].indexOf(" ") + 1);
+      this._ie = msie[0].substring(msie[0].indexOf(" ") + 1);
     }
     
     

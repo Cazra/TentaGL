@@ -36,19 +36,46 @@ TentaGL.Application = function(container, attrs) {
   
   this._container = container;
   var canvas = TentaGL.createCanvas(container);
-  this._gl = TentaGL.createGL(canvas, attrs);
-  this._canvas = this._gl.canvas;
   
-  this._keyboard = new TentaGL.Keyboard(container);
-  this._mouse = new TentaGL.Mouse(canvas);
-  this._picker = new TentaGL.Picker(this);
-  this._levelManager = new TentaGL.LevelManager();
+  try {
+    this._gl = TentaGL.createGL(canvas, attrs);
+    
+    this._canvas = this._gl.canvas;
   
-  container.onresize = function() {
-    console.log(container.offsetWidth, container.offsetHeight);
-  };
-  
-  this._resizeListeners = [];
+    this._keyboard = new TentaGL.Keyboard(container);
+    this._mouse = new TentaGL.Mouse(canvas);
+    this._picker = new TentaGL.Picker(this);
+    this._levelManager = new TentaGL.LevelManager();
+    
+    container.onresize = function() {
+      console.log(container.offsetWidth, container.offsetHeight);
+    };
+    
+    this._resizeListeners = [];
+  }
+  catch(err) {
+    var divText = "WebGL is not enabled in your browser.<br/><br/>";
+    
+    if(Util.Browser.chrome()) {
+      divText += "To enable WebGL in Chrome, go to chrome://flags, scroll to the Disable WebGL flag, and click disable.";
+    }
+    else if(Util.Browser.firefox()) {
+      divText += "To enable WebGL in Firefox, go to about:config, scroll to the webgl.disabled preference, set it to false.";
+    }
+    else if(Util.Browser.safari()) {
+      divText += "To enable WebGL in Safari, go to the Develop menu and check Enable WebGL.";
+    }
+    else if(Util.Browser.ie()) {
+      divText += "Sorry, but TentaGL does not support Internet Explorer.";
+    }
+    else {
+      divText += "I'd try to help you enable WebGL, but I can't tell what browser you're using. :(";
+    }
+    
+    container.innerHTML = divText;
+    container.style.border = "solid black 2px";
+    container.style.padding = "16px";
+  }
 };
 
 

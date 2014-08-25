@@ -39,6 +39,7 @@ Util.Downloader = {
     var link = document.createElement("a");
     link.href = "data:text/plain;charset=utf-8," + encodeURIComponent(content);
     link.download = fileName;
+    link.target = "_blank";
     link.click();
   },
   

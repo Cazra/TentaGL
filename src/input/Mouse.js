@@ -74,9 +74,14 @@ TentaGL.Mouse = function(canvas) {
     xy = [evt.clientX - left, evt.clientY - top];
     var xyPage = [evt.pageX, evt.pageY];
     
+    var lastXY = self._xy;
     self._xy = xy;
     self._xyPage = xyPage;
-    self._mouseMovedSinceLast = true;
+    
+    // Mouse clicks also fire mousemoved events, so check if we actually moved.
+    if(lastXY[0] != self._xy[0] || lastXY[1] != self._xy[1]) {
+      self._mouseMovedSinceLast = true;
+    }
   };
   
   
