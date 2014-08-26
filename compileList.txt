@@ -23,18 +23,19 @@ src/state/Viewport.js
 
 src/math/Math.js
   src/math/geom/Shape2D.js
-    src/math/geom/BezierCurve2D.js
-    src/math/geom/Ellipse2D.js
-    src/math/geom/Line2D.js
-    src/math/geom/Rect2D.js
-    src/math/geom/Triangle2D.js
+    src/math/geom/2D/BezierCurve2D.js
+    src/math/geom/2D/Ellipse2D.js
+    src/math/geom/2D/Line2D.js
+    src/math/geom/2D/Rect2D.js
+    src/math/geom/2D/Triangle2D.js
   src/math/geom/Shape3D.js
-    src/math/geom/BezierCurve3D.js
-    src/math/geom/Line3D.js
-    src/math/geom/Plane.js
-    src/math/geom/Quad.js
-    src/math/geom/Rect3D.js
-    src/math/geom/Sphere.js
+    src/math/geom/3D/BezierCurve3D.js
+    src/math/geom/3D/Line3D.js
+    src/math/geom/3D/Plane.js
+    src/math/geom/3D/Quad.js
+    src/math/geom/3D/Rect3D.js
+    src/math/geom/3D/Sphere.js
+    src/math/geom/3D/Triangle3D.js
   
 src/app/Application.js
 src/app/Level.js

@@ -1,9 +1,34 @@
+/* 
+ @preserve Copyright (c) 2014 Stephen "Cazra" Lindberg
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ The Software shall be used for Good, not Evil.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+*/
+
+
 /** 
  * A 2D triangle defined by 3 points A, B, and C.
  * @constructor
  * @param {vec2} a
  * @param {vec2} b
- * @param {vec3} c
+ * @param {vec2} c
  */
 TentaGL.Math.Triangle2D = function(a, b, c) {
   this._a = vec2.copy([], a);
@@ -192,9 +217,9 @@ TentaGL.Math.Triangle2D.prototype = {
    * @return {boolean}
    */
   containsPt: function(pt) {
-    var coeffs = vec3.sub([], pt, this._a);
-    var u = vec3.sub([], this._b, this._a);
-    var v = vec3.sub([], this._c, this._a);
+    var coeffs = vec2.sub([], pt, this._a);
+    var u = vec2.sub([], this._b, this._a);
+    var v = vec2.sub([], this._c, this._a);
     
     var m = [];
     m = m.concat(u);

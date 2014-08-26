@@ -178,6 +178,27 @@ HelloWorldApp.MainLevel.prototype = {
       pt.render(gl, "blue");
     };
     
+    
+    this.tri3DSprite = new TentaGL.Sprite([0, 0, 0]);
+    this.tri3DSprite.draw = function(gl) {
+      var tri = new TentaGL.Math.Triangle3D([0,0,8], [3,0,11], [3,3,8]);
+      
+      // Color the triangle green if the camera's center is touching its radius 1 sphere.
+      // Color the triangle red if the camera's center is directly in front of it.
+      // Otherwise, color it white.
+      if(tri.containsPt(self.camera.center(), 1)) {
+        tri.render(gl, "green");
+      }
+      else if(tri.isPtAbove(self.camera.center())) {
+        tri.render(gl, "red");
+      }
+      else {
+        tri.render(gl, "white");
+      }
+      
+    };
+    
+    
     // Audio // May hang in some browsers due to compatibility.
   //  TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
   //    self.horseAudio = audio;
@@ -334,6 +355,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.tri2DSprite.render(gl);
     this.bezier2DSprite.render(gl);
     this.bezier3DSprite.render(gl);
+    this.tri3DSprite.render(gl);
     
     // this.drawClipPts(gl);
     
