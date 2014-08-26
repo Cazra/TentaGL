@@ -23,9 +23,39 @@
 */
 
 /** 
- * Base class for shaders that render gradients.
+ * A ShaderProgram for rendering linear and radial gradients.
+ * @param {WebGLRenderingContext} gl
  */
-TentaGL.GradientShader = function() {};
+TentaGL.GradientShader = function(gl) {
+  var shaderRoot = TentaGL.ShaderLib.getDefaultShaderPath(gl);
+  
+  var vertURL = shaderRoot + "simple.vert";
+  var fragURL = shaderRoot + "gradient.frag";
+  
+  var self = this;
+  TentaGL.ShaderLoader.load(vertURL, fragURL, function(vertSrc, fragSrc) {
+    console.log("\nCreating gradient shader");
+    TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
+    
+    self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.xyz);
+    self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.normal);
+    self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.texST);
+    
+    self._fogEqUni = self.getUniform("fogEquation");
+    self._fogColorUni = self.getUniform("fogColor");
+    self._fogDensityUni = self.getUniform("fogDensity");
+    
+    self._mvpUni = self.getUniform("mvpTrans");
+    self._normalUni = self.getUniform("normalTrans");
+    
+    self._gradTypeUni = self.getUniform("gradientType");
+    self._startPtUni = self.getUniform("p");
+    self._gradVectorUni = self.getUniform("u");
+    self._colorsUni = self.getUniform("colors[0]");
+    self._breakPtsUni = self.getUniform("breakPts[0]");
+    self._breakPtCountUni = self.getUniform("breakPtCount");
+  });
+};
 
 TentaGL.GradientShader.prototype = {
   
@@ -52,6 +82,16 @@ TentaGL.GradientShader.prototype = {
    */
   setNormalTrans: function(gl, value) {
     this._normalUni.set(gl, value);
+  },
+  
+  
+  /** 
+   * Sets the type of gradient to use: linear or radial.
+   * @param {WebGLRenderingContext} gl
+   * @param {enum: TentaGL.Gradient}
+   */
+  setGradientType: function(gl, type) {
+    this._gradTypeUni.set(gl, [type]);
   },
   
   
@@ -108,6 +148,21 @@ TentaGL.GradientShader.prototype = {
   }
   
 };
+
+
+/** 
+ * Loads GradientShader into the ShaderLib, with the specified name. 
+ * @param {WebGLRenderingContext} gl
+ * @param {name}  The name used to reference the shader program from the ShaderLib.
+ * @return {TentaGL.ShaderProgram}
+ */
+TentaGL.GradientShader.load = function(gl, name) {
+  var program = new TentaGL.GradientShader(gl);
+  TentaGL.ShaderLib.add(gl, name, program);
+  
+  return program;
+};
+
 
 Util.Inheritance.inherit(TentaGL.GradientShader, TentaGL.FogShader);
 

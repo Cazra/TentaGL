@@ -129,19 +129,17 @@ src/shaders/ShaderLoader.js
 src/shaders/ShaderProgram.js
   src/shaders/premade/DefaultShader.js
   src/shaders/premade/FogShader.js
-  src/shaders/premade/GradientShader.js
-    src/shaders/premade/LinearGradientShader.js
-    src/shaders/premade/RadialGradientShader.js
-  src/shaders/premade/NormalShader.js
+    src/shaders/premade/GradientShader.js
+    src/shaders/premade/NormalShader.js
+    src/shaders/premade/SimpleShader.js
+      src/shaders/premade/CircleShader.js
+      src/shaders/premade/LightsShader.js
+        src/shaders/premade/PerVertexPhongShader.js
+          src/shaders/premade/PerVertexPhongShaderMac.js
+        src/shaders/premade/PhongShader.js
+          src/shaders/premade/PhongShaderMac.js 
   src/shaders/premade/PickShader.js
   src/shaders/premade/PlaneShader.js
-  src/shaders/premade/SimpleShader.js
-    src/shaders/premade/CircleShader.js
-    src/shaders/premade/LightsShader.js
-      src/shaders/premade/PerVertexPhongShader.js
-        src/shaders/premade/PerVertexPhongShaderMac.js
-      src/shaders/premade/PhongShader.js
-        src/shaders/premade/PhongShaderMac.js 
     src/shaders/premade/PlaneSimpleShader.js
   
 src/time/Timer.js

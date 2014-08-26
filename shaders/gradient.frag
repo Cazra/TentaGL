@@ -12,8 +12,8 @@ uniform vec4 fogColor;
 uniform int fogEquation;
 uniform float fogDensity;
 
-const int GRAD_LINEAR = 0;
-const ubt GRAD_RADIAL = 1;
+const int GRAD_LINEAR = 1;
+const int GRAD_RADIAL = 2;
 uniform int gradientType;
 
 // The array of colors for each break point in the gradient.
@@ -77,7 +77,6 @@ void main(void) {
     // Compute the projected parametric value for our gradient line.
     float s = sqrt((radV*radV)/(radU*radU));
     
-    vec4 color;
     for(int i=0; i < 16; i++) {
       if(i == 0 && s < breakPts[0]) {
         color = colors[0];
@@ -98,6 +97,9 @@ void main(void) {
         break;
       }
     }
+  }
+  else {
+    color = vec4(1,1,1,1);
   }
   
   

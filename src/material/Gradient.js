@@ -29,13 +29,27 @@
  * @param {vec2} startPt    The starting point for the gradient.
  * @param {vec2} vector     The vector giving the direction and length 
  *      (or radius) of the gradient.
+ * @param {boolean} isRadial    Optional. Whether this is a radial gradient, 
+ *      instead of a linear gradient. Default false.
  */
-TentaGL.Gradient = function(startPt, vector) {
+TentaGL.Gradient = function(startPt, vector, isRadial) {
   this._pt = vec2.clone(startPt);
   this._vec = vec2.clone(vector);
   
   this._breakPts = [];
+  
+  if(isRadial) {
+    this._type = TentaGL.Gradient.RADIAL;
+  }
+  else {
+    this._type = TentaGL.Gradient.LINEAR;
+  }
 };
+
+
+TentaGL.Gradient.LINEAR = 1;
+TentaGL.Gradient.RADIAL = 2;
+
 
 TentaGL.Gradient.prototype = {
   
@@ -148,11 +162,18 @@ TentaGL.Gradient.prototype = {
   /** 
    * Uses the gradient in the current shader.
    * @param {WebGLRenderingContext} gl
+   * @param {enum: TentaGL.Gradient} type   Optional. Overrides the gradient's 
+   *      default type. (linear or radial)
    */
-  useMe: function(gl) {
+  useMe: function(gl, type) {
     var program = TentaGL.ShaderLib.current(gl);
     
-    if(program.setStartPoint) {
+    if(type === undefined) {
+      type = this._type;
+    }
+    
+    if(program.setGradientType) {
+      program.setGradientType(gl, type);
       program.setStartPoint(gl, this._pt);
       program.setGradVector(gl, this._vec);
       program.setColors(gl, this.getColors());

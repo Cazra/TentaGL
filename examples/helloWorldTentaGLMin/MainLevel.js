@@ -102,7 +102,7 @@ HelloWorldApp.MainLevel.prototype = {
     this.gradSprite = TentaGL.Sprite.create([0, 0, -1], "unitPlane", "grad1", "gradientShader");
     this.gradSprite.scale([4,3,1]);
     
-    this.gradSprite2 = TentaGL.UI.Button.create([4, 0, -1], "unitPlane", "grad2", "gradientShader2"); 
+    this.gradSprite2 = TentaGL.UI.Button.create([4, 0, -1], "unitPlane", "grad2", "gradientShader"); 
     this.gradSprite2.scale([4,3,1]);
     this.gradSprite2.onRightClick = function(mouse) {
       this.setVisible(false);
@@ -286,9 +286,6 @@ HelloWorldApp.MainLevel.prototype = {
     
     
     TentaGL.ShaderLib.use(gl, "gradientShader");
-    this.fog.useMe(gl);
-    
-    TentaGL.ShaderLib.use(gl, "gradientShader2");
     this.fog.useMe(gl);
     
     TentaGL.ShaderLib.use(gl, "simpleShader");

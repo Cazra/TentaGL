@@ -23,8 +23,9 @@ HelloWorldApp.prototype = {
     try {
       TentaGL.SimpleShader.load(gl, "simpleShader");
       TentaGL.NormalShader.load(gl, "normalShader");
-      TentaGL.LinearGradientShader.load(gl, "gradientShader");
-      TentaGL.RadialGradientShader.load(gl, "gradientShader2");
+      TentaGL.GradientShader.load(gl, "gradientShader");
+    //  TentaGL.LinearGradientShader.load(gl, "gradientShader");
+    //  TentaGL.RadialGradientShader.load(gl, "gradientShader2");
       TentaGL.PhongShaderMac.load(gl, "phong");
       TentaGL.PerVertexPhongShaderMac.load(gl, "phongPerVertex");
       TentaGL.CircleShader.load(gl, "circle");
@@ -77,14 +78,14 @@ HelloWorldApp.prototype = {
     TentaGL.MaterialLib.add(gl, "black", TentaGL.Color.BLACK);
     
     // Gradients
-    var grad1 = new TentaGL.Gradient([0,0], [1,0]);
+    var grad1 = new TentaGL.Gradient([0,0], [1,0], false);
     for(var i=0; i < 10; i++) {
       var hue = i/10;
       grad1.addBreakPt(hue, TentaGL.Color.HSBA([hue, 0.5, 1, 1]));
     }
     TentaGL.MaterialLib.add(gl, "grad1", grad1);
     
-    var grad2 = new TentaGL.Gradient([0.3,0.3], [0.5,0]);
+    var grad2 = new TentaGL.Gradient([0.3,0.3], [0.5,0], true);
     grad2.addBreakPt(0, new TentaGL.Color([0,0,1,1]))
     grad2.addBreakPt(0.6, new TentaGL.Color([0,1,1,1]))
     grad2.addBreakPt(1, new TentaGL.Color([0.5,0.5,1,1]));
