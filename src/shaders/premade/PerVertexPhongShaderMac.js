@@ -32,7 +32,7 @@ TentaGL.PerVertexPhongShaderMac = function(gl) {
   var shaderRoot = TentaGL.ShaderLib.getDefaultShaderPath(gl);
   
   var vertURL = shaderRoot + "phongPerVertexMac.vert";
-  var fragURL = shaderRoot + "phongPerVertexMac.frag";
+  var fragURL = shaderRoot + "phongPerVertex.frag";
   
   var self = this;
   

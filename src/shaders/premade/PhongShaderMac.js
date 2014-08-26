@@ -33,7 +33,7 @@
 TentaGL.PhongShaderMac = function(gl) {
   var shaderRoot = TentaGL.ShaderLib.getDefaultShaderPath(gl);
   
-  var vertURL = shaderRoot + "phongMac.vert";
+  var vertURL = shaderRoot + "phong.vert";
   var fragURL = shaderRoot + "phongMac.frag";
   
   var self = this;
