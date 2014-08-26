@@ -45,6 +45,10 @@ TentaGL.CircleShader = function(gl) {
     
     self._opacityUni = self.getUniform("opacity");
     
+    self._fogEqUni = self.getUniform("fogEquation");
+    self._fogColorUni = self.getUniform("fogColor");
+    self._fogDensityUni = self.getUniform("fogDensity");
+    
     self._mvpUni = self.getUniform("mvpTrans");
     self._normalUni = self.getUniform("normalTrans");
     

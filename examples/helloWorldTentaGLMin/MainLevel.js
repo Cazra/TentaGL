@@ -182,6 +182,9 @@ HelloWorldApp.MainLevel.prototype = {
     TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
       self.horseAudio = audio;
     });
+    
+    
+    this.fog = new TentaGL.Fog(TentaGL.Fog.LINEAR, TentaGL.Color.Hex(0xFFFFFFFF));
   },
   
   
@@ -275,11 +278,14 @@ HelloWorldApp.MainLevel.prototype = {
     
     TentaGL.ShaderLib.use(gl, "phong");
     this.lights.useMe(gl);
+    this.fog.useMe(gl);
     
     TentaGL.ShaderLib.use(gl, "phongPerVertex");
     this.lights.useMe(gl);
+    this.fog.useMe(gl);
     
     TentaGL.ShaderLib.use(gl, "simpleShader");
+    this.fog.useMe(gl);
     TentaGL.RenderMode.set3DOpaque(gl);
     
     TentaGL.ViewTrans.setCamera(gl, this.camera, aspect);
@@ -357,6 +363,7 @@ HelloWorldApp.MainLevel.prototype = {
     
     TentaGL.ShaderLib.push(gl);
     TentaGL.ShaderLib.use(gl, "plane");
+    this.fog.useMe(gl);
     var planeShader = TentaGL.ShaderLib.current(gl);
     if(planeShader.isaPlaneShader) {
       planeShader.setSFunc(gl, [1/10, 0, 0, this._frames/200]);

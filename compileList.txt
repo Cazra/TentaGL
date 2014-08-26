@@ -40,6 +40,7 @@ src/app/Application.js
 src/app/Level.js
 src/app/LevelManager.js
 
+src/audio/Audio.js
 src/audio/AudioLoader.js
 
 src/camera/Camera.js
@@ -104,6 +105,7 @@ src/material/MaterialLib.js
 src/material/MaterialProps.js
 
 src/scene/ClippingArea.js
+src/scene/Fog.js
 src/scene/SceneNode.js
   src/scene/SceneGroup.js
   src/sprite/Sprite.js

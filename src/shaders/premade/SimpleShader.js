@@ -45,6 +45,10 @@ TentaGL.SimpleShader = function(gl) {
     
     self._opacityUni = self.getUniform("opacity");
     
+    self._fogEqUni = self.getUniform("fogEquation");
+    self._fogColorUni = self.getUniform("fogColor");
+    self._fogDensityUni = self.getUniform("fogDensity");
+    
     self._mvpUni = self.getUniform("mvpTrans");
     self._normalUni = self.getUniform("normalTrans");
     
@@ -111,7 +115,31 @@ TentaGL.SimpleShader.prototype = {
   setTex: function(gl, value) {
     this._texUni.set(gl, [value]);
     this._useTexUni.set(gl, [1]);
-  }
+  },
+  
+  
+  //////// Fog
+  
+  
+  /** 
+   * Sets the fog color and attenuation for the scene. 
+   * Set rgba to undefined to turn fog off.
+   * @param {WebGLRenderingContext} gl
+   * @param {enum: Fog} eq
+   * @param {vec4} rgba       Optional. The normalized color components for the fog.
+   * @param {float} density   Optional.
+   */
+  setFog: function(gl, eq, rgba, density) {
+    if(density === undefined) {
+      density = 1;
+    }
+    
+    this._fogEqUni.set(gl, [eq]);
+    if(eq !== TentaGL.Fog.NONE) {
+      this._fogColorUni.set(gl, rgba);
+      this._fogDensityUni.set(gl, [density]);
+    }
+  },
 };
 
 

@@ -9,6 +9,15 @@ const int LIGHT_SPOT = 4;
 
 uniform float opacity;
 
+// fog
+const int FOG_NONE = 0;
+const int FOG_LINEAR = 1;
+const int FOG_EXP = 2;
+const int FOG_EXP2 = 3;
+uniform vec4 fogColor;
+uniform int fogEquation;
+uniform float fogDensity;
+
 // View transform (for lights)
 uniform mat4 vTrans;
 
@@ -191,7 +200,32 @@ void main(void) {
     iAmb += ambAmt*(m.amb*lights[i].amb);
   }
   
+  
+  
   vec4 color = texColor*(iDiff+iAmb) + iSpec + m.emis.a*m.emis;
+  
+  // Use distance from eye to compute fog blending.
+  if(fogEquation != FOG_NONE) {
+    float z = gl_FragCoord.z/gl_FragCoord.w;
+    
+    float fogFactor;
+    if(fogEquation == FOG_LINEAR) {
+      fogFactor = (gl_DepthRange.far - z)/(gl_DepthRange.far - gl_DepthRange.near);
+    }
+    else if(fogEquation == FOG_EXP) {
+      fogFactor = -(fogDensity*z);
+      fogFactor = exp(fogFactor);
+    }
+    else if(fogEquation == FOG_EXP2) {
+      fogFactor = pow(-(fogDensity*z), 2);
+      fogFactor = exp(fogFactor);
+    }
+    fogFactor = clamp(fogFactor, 0, 1);
+    
+    color = (1.0-fogFactor)*color + fogFactor*fogColor;
+  }
+  
+  
   gl_FragColor = vec4(color.rgb, texAlpha);
 }
 
