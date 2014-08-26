@@ -128,6 +128,7 @@ src/shaders/ShaderLib.js
 src/shaders/ShaderLoader.js
 src/shaders/ShaderProgram.js
   src/shaders/premade/DefaultShader.js
+  src/shaders/premade/FogShader.js
   src/shaders/premade/GradientShader.js
     src/shaders/premade/LinearGradientShader.js
     src/shaders/premade/RadialGradientShader.js

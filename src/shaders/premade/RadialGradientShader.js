@@ -43,6 +43,10 @@ TentaGL.RadialGradientShader = function(gl) {
     self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.normal);
     self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.texST);
     
+    self._fogEqUni = self.getUniform("fogEquation");
+    self._fogColorUni = self.getUniform("fogColor");
+    self._fogDensityUni = self.getUniform("fogDensity");
+    
     self._mvpUni = self.getUniform("mvpTrans");
     self._normalUni = self.getUniform("normalTrans");
     

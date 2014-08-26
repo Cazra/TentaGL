@@ -139,7 +139,7 @@ TentaGL.SimpleShader.prototype = {
       this._fogColorUni.set(gl, rgba);
       this._fogDensityUni.set(gl, [density]);
     }
-  },
+  }
 };
 
 
@@ -157,5 +157,5 @@ TentaGL.SimpleShader.load = function(gl, name) {
 };
 
 
-Util.Inheritance.inherit(TentaGL.SimpleShader, TentaGL.ShaderProgram);
+Util.Inheritance.inherit(TentaGL.SimpleShader, TentaGL.FogShader);
 

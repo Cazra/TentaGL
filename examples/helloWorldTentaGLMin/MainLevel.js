@@ -184,7 +184,7 @@ HelloWorldApp.MainLevel.prototype = {
     });
     
     
-    this.fog = new TentaGL.Fog(TentaGL.Fog.LINEAR, TentaGL.Color.Hex(0xFFFFFFFF));
+    this.fog = new TentaGL.Fog(TentaGL.Fog.EXP, TentaGL.Color.Hex(0xFFFFFFFF), 0.005);
   },
   
   
@@ -284,6 +284,13 @@ HelloWorldApp.MainLevel.prototype = {
     this.lights.useMe(gl);
     this.fog.useMe(gl);
     
+    
+    TentaGL.ShaderLib.use(gl, "gradientShader");
+    this.fog.useMe(gl);
+    
+    TentaGL.ShaderLib.use(gl, "gradientShader2");
+    this.fog.useMe(gl);
+    
     TentaGL.ShaderLib.use(gl, "simpleShader");
     this.fog.useMe(gl);
     TentaGL.RenderMode.set3DOpaque(gl);
@@ -291,7 +298,7 @@ HelloWorldApp.MainLevel.prototype = {
     TentaGL.ViewTrans.setCamera(gl, this.camera, aspect);
     
     // Clear the scene. 
-    TentaGL.clear(gl, new TentaGL.Color([0.1, 0.1, 0.3, 1]));
+    TentaGL.clear(gl, TentaGL.Color.WHITE);//new TentaGL.Color([0.1, 0.1, 0.3, 1]));
     
     // Draw the objects in the scene.
     this.getApp().blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [10,10,0], false, 1);
@@ -315,6 +322,7 @@ HelloWorldApp.MainLevel.prototype = {
     
     // Render a sphere, using the normal vector shader.
     TentaGL.ShaderLib.use(gl, "normalShader");
+    this.fog.useMe(gl);
     (new TentaGL.Math.Sphere(1, [5,0,5])).render(gl, "white");
     TentaGL.ShaderLib.use(gl, "simpleShader");
     
@@ -368,7 +376,7 @@ HelloWorldApp.MainLevel.prototype = {
     if(planeShader.isaPlaneShader) {
       planeShader.setSFunc(gl, [1/10, 0, 0, this._frames/200]);
       planeShader.setTFunc(gl, [0, 0, 1/10, this._frames/400]);
-      planeShader.setOpacity(gl, 0.25);
+      planeShader.setOpacity(gl, 0.5);
     }
     
     testPlane.render(gl, "blueTile");

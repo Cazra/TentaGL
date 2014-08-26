@@ -27,11 +27,16 @@
  * An object defining fog for a scene. 
  * @param {enum: TentaGL.Fog} equation
  * @param {TentaGL.Color} color
- * @param {float} density
+ * @param {float} density (for linear fog, this is the distance at which fog becomes completely opaque)
  */
 TentaGL.Fog = function(equation, color, density) {
   if(density === undefined) {
-    density = 1;
+    if(equation == TentaGL.Fog.LINEAR) {
+      density = 1000;
+    }
+    else {
+      density = 0.005;
+    }
   }
   
   this._eq = equation;

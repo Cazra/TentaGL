@@ -109,5 +109,5 @@ TentaGL.GradientShader.prototype = {
   
 };
 
-Util.Inheritance.inherit(TentaGL.GradientShader, TentaGL.ShaderProgram);
+Util.Inheritance.inherit(TentaGL.GradientShader, TentaGL.FogShader);
 

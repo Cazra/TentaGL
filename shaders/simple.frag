@@ -35,23 +35,27 @@ void main(void) {
   
   // Use distance from eye to compute fog blending.
   if(fogEquation != FOG_NONE) {
-    float z = gl_FragCoord.z/gl_FragCoord.w;
+    float depth = gl_FragCoord.z/gl_FragCoord.w;
     
     float fogFactor;
     if(fogEquation == FOG_LINEAR) {
-      fogFactor = (gl_DepthRange.far - z)/(gl_DepthRange.far - gl_DepthRange.near);
+      fogFactor = depth*fogDensity/1000.0;
+      
+      fogFactor = clamp(fogFactor, 0.0, 1.0);
+      color = mix(color, fogColor, fogFactor);
     }
     else if(fogEquation == FOG_EXP) {
-      fogFactor = -(fogDensity*z);
-      fogFactor = exp(fogFactor);
+      fogFactor = exp(-(fogDensity*depth));
+      
+      fogFactor = clamp(fogFactor, 0.0, 1.0);
+      color = mix(fogColor, color, fogFactor);
     }
     else if(fogEquation == FOG_EXP2) {
-      fogFactor = pow(-(fogDensity*z), 2.0);
-      fogFactor = exp(fogFactor);
+      fogFactor = exp(-pow((fogDensity*depth), 2.0));
+      
+      fogFactor = clamp(fogFactor, 0.0, 1.0);
+      color = mix(fogColor, color, fogFactor);
     }
-    fogFactor = clamp(fogFactor, 0.0, 1.0);
-    
-    color = (1.0-fogFactor)*color + fogFactor*fogColor;
   }
   
   gl_FragColor = vec4(color.rgb, alpha);

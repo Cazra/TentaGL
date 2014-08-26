@@ -27,8 +27,6 @@ varying vec3 worldCoords;
 void main(void) {
   vec4 color;
   
-//  float s = fract(worldCoords.x/10.0);
-//  float t = fract(worldCoords.z/10.0);
   float s = fract(worldCoords.x*sFunc.x + worldCoords.y*sFunc.y + worldCoords.z*sFunc.z + sFunc.w);
   float t = fract(worldCoords.x*tFunc.x + worldCoords.y*tFunc.y + worldCoords.z*tFunc.z + tFunc.w);
   
@@ -47,25 +45,28 @@ void main(void) {
   
   // Use distance from eye to compute fog blending.
   if(fogEquation != FOG_NONE) {
-    float z = gl_FragCoord.z/gl_FragCoord.w;
+    float depth = gl_FragCoord.z/gl_FragCoord.w;
     
     float fogFactor;
     if(fogEquation == FOG_LINEAR) {
-      fogFactor = gl_FragCoord.z/gl_DepthRange.far;
+      fogFactor = depth*fogDensity/1000.0;
+      
+      fogFactor = clamp(fogFactor, 0.0, 1.0);
+      color = mix(color, fogColor, fogFactor);
     }
     else if(fogEquation == FOG_EXP) {
-      fogFactor = -(fogDensity*z);
-      fogFactor = exp(fogFactor);
+      fogFactor = exp(-(fogDensity*depth));
+      
+      fogFactor = clamp(fogFactor, 0.0, 1.0);
+      color = mix(fogColor, color, fogFactor);
     }
     else if(fogEquation == FOG_EXP2) {
-      fogFactor = pow(-(fogDensity*z), 2.0);
-      fogFactor = exp(fogFactor);
+      fogFactor = exp(-pow((fogDensity*depth), 2.0));
+      
+      fogFactor = clamp(fogFactor, 0.0, 1.0);
+      color = mix(fogColor, color, fogFactor);
     }
-    fogFactor = clamp(fogFactor, 0.0, 1.0);
-    
-    color = fogColor;
-    color = vec4(0, fogFactor, fogFactor, 1.0); // mix(color, fogColor, fogFactor);
   }
   
-  gl_FragColor = vec4(color.rgb, 1);
+  gl_FragColor = vec4(color.rgb, alpha);
 }

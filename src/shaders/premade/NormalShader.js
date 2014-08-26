@@ -41,13 +41,16 @@ TentaGL.NormalShader = function(gl) {
   var self = this;
   
   TentaGL.ShaderLoader.load(vertURL, fragURL, function(vertSrc, fragSrc) {
-    TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
-  
     console.log("\nCreating NormalShader...");
-  
+    TentaGL.ShaderProgram.call(self, gl, vertSrc, fragSrc);
+    
     self.setAttrGetter("vertexPos", TentaGL.Vertex.prototype.xyz);
     self.setAttrGetter("vertexNormal", TentaGL.Vertex.prototype.normal);
     self.setAttrGetter("vertexTexCoords", TentaGL.Vertex.prototype.texST);
+    
+    self._fogEqUni = self.getUniform("fogEquation");
+    self._fogColorUni = self.getUniform("fogColor");
+    self._fogDensityUni = self.getUniform("fogDensity");
     
     self._mvpUni = self.getUniform("mvpTrans");
     self._normalUni = self.getUniform("normalTrans");
@@ -120,5 +123,5 @@ TentaGL.NormalShader.load = function(gl, name) {
 };
 
 
-Util.Inheritance.inherit(TentaGL.NormalShader, TentaGL.ShaderProgram);
+Util.Inheritance.inherit(TentaGL.NormalShader, TentaGL.FogShader);
 
