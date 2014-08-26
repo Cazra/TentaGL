@@ -38,6 +38,9 @@ TentaGL.Fog = function(equation, color, density) {
       density = 0.005;
     }
   }
+  if(color === undefined) {
+    color = TentaGL.Color.WHITE;
+  }
   
   this._eq = equation;
   this._color = color;

@@ -179,12 +179,17 @@ HelloWorldApp.MainLevel.prototype = {
     };
     
     // Audio // May hang in some browsers due to compatibility.
-    TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
-      self.horseAudio = audio;
-    });
+  //  TentaGL.AudioLoader.load("http://www.w3schools.com/jsref/horse.ogg", function(audio) {
+  //    self.horseAudio = audio;
+  //  });
+    this.horseAudio = new TentaGL.Audio("http://www.w3schools.com/jsref/horse.ogg");
     
     
     this.fog = new TentaGL.Fog(TentaGL.Fog.EXP, TentaGL.Color.Hex(0xFFFFFFFF), 0.005);
+    
+    this.sceneProps = new TentaGL.SceneProps();
+    this.sceneProps.lights(this.lights);
+    this.sceneProps.fog(this.fog);
   },
   
   
@@ -271,35 +276,22 @@ HelloWorldApp.MainLevel.prototype = {
     var self = this;
     var aspect = gl.canvas.width/gl.canvas.height;
     
+    this.sceneProps.useMe(gl);
+    
   //  TentaGL.DrawMode.mode(gl, GL_LINES);
     
   //  TentaGL.Scissor.enabled(gl, true);
   //  TentaGL.Scissor.xywh(gl, [100, 100, 640, 480]);
     
-    TentaGL.ShaderLib.use(gl, "phong");
-    this.lights.useMe(gl);
-    this.fog.useMe(gl);
-    
-    TentaGL.ShaderLib.use(gl, "phongPerVertex");
-    this.lights.useMe(gl);
-    this.fog.useMe(gl);
-    
-    
-    TentaGL.ShaderLib.use(gl, "gradientShader");
-    this.fog.useMe(gl);
-    
-    TentaGL.ShaderLib.use(gl, "simpleShader");
-    this.fog.useMe(gl);
     TentaGL.RenderMode.set3DOpaque(gl);
-    
     TentaGL.ViewTrans.setCamera(gl, this.camera, aspect);
     
     // Clear the scene. 
     TentaGL.clear(gl, TentaGL.Color.WHITE);//new TentaGL.Color([0.1, 0.1, 0.3, 1]));
     
     // Draw the objects in the scene.
+    TentaGL.ShaderLib.use(gl, "simpleShader");
     this.getApp().blitFont.renderString(gl, "The quick, brown fox \njumped over the lazy dog.", [10,10,0], false, 1);
-    
     
     this.axesGroup.render(gl);
     this.camGroup.render(gl);
@@ -319,7 +311,7 @@ HelloWorldApp.MainLevel.prototype = {
     
     // Render a sphere, using the normal vector shader.
     TentaGL.ShaderLib.use(gl, "normalShader");
-    this.fog.useMe(gl);
+  //  this.fog.useMe(gl);
     (new TentaGL.Math.Sphere(1, [5,0,5])).render(gl, "white");
     TentaGL.ShaderLib.use(gl, "simpleShader");
     
@@ -368,7 +360,7 @@ HelloWorldApp.MainLevel.prototype = {
     
     TentaGL.ShaderLib.push(gl);
     TentaGL.ShaderLib.use(gl, "plane");
-    this.fog.useMe(gl);
+  //  this.fog.useMe(gl);
     var planeShader = TentaGL.ShaderLib.current(gl);
     if(planeShader.isaPlaneShader) {
       planeShader.setSFunc(gl, [1/10, 0, 0, this._frames/200]);

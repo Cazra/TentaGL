@@ -115,6 +115,7 @@ src/scene/SceneNode.js
     src/sprite/LabelledIconSprite.js
     src/sprite/TextSprite.js
       src/sprite/TextIconSprite.js
+src/scene/SceneProps.js
 src/scene/ViewTrans.js
 
 src/text/BlitteredFont.js
