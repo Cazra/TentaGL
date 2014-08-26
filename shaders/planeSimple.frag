@@ -51,7 +51,7 @@ void main(void) {
     
     float fogFactor;
     if(fogEquation == FOG_LINEAR) {
-      fogFactor = (gl_DepthRange.far - z)/(gl_DepthRange.far - gl_DepthRange.near);
+      fogFactor = gl_FragCoord.z/gl_DepthRange.far;
     }
     else if(fogEquation == FOG_EXP) {
       fogFactor = -(fogDensity*z);
@@ -64,8 +64,8 @@ void main(void) {
     fogFactor = clamp(fogFactor, 0.0, 1.0);
     
     color = fogColor;
-    color = vec4(fogFactor, fogFactor, fogFactor, 1.0); // (1.0-fogFactor)*color + fogFactor*fogColor;
+    color = vec4(0, fogFactor, fogFactor, 1.0); // mix(color, fogColor, fogFactor);
   }
   
-  gl_FragColor = vec4(color.rgb, alpha);
+  gl_FragColor = vec4(color.rgb, 1);
 }
