@@ -24,8 +24,9 @@
 
 
 /** 
- * An object describing an animation of 2D images bound by some 
- * time interval, [0, t).
+ * A base class for animations defined by an ordered list of keyframes 
+ * and a time duration. 
+ * @abstract
  * @constructor
  * @param {array: TentaGL.Keyframe} keyframes
  * @param {uint} duration        In milliseconds.
@@ -61,13 +62,64 @@ TentaGL.Animation.prototype = {
   },
   
   
+  
+  /** 
+   * Setter/getter for whether the animation loops. 
+   * @param {boolean} loop    Optional.
+   * @return {boolean}
+   */
+  loop: function(loop) {
+    if(loop !== undefined) {
+      this._loop = loop;
+    }
+    return this._loop;
+  },
+  
+  
+  
+  /** 
+   * Returns the nth keyframe in this animation. 
+   * @param {uint} n
+   * @return {TentaGL.Keyframe}
+   */
+  getKeyframe: function(n) {
+    if(n < 0 || n >= this._keyframes.length) {
+      throw new Error("Index out of bounds.");
+    }
+    return this._keyframes[n];
+  },
+  
+  
   /** 
    * Returns a list of the animation's keyframes. 
    * @return {array: TentaGL.Keyframe}
    */
   getKeyframes: function() {
     return this._keyframes.slice(0);
-  }
+  },
   
+  
+  
+  /** 
+   * Returns the tween defining an interpolation between two keyframes for
+   * some point of time since the start of the animation.
+   * @param {uint} time     Time ellapsed since the animation started.
+   * @return {TentaGL.Tween} 
+   */
+  getTween: function(time) {
+    time = time/this._duration;
+    
+    var current = this._keyframes[0];
+    var next = this._keyframes[1];
+    
+    for(var i=1; i<this._keyframes.length; i++) {
+      var curFrame = this._keyframes[i];
+      if(time >= curFrame.getTime()) {
+        current = curFrame;
+      }
+    }
+    
+    return new TentaGL.Tween(current, next, alpha);
+  }
 };
 

@@ -24,33 +24,14 @@
 
 
 /** 
- * A collection of enumerations for directions.
+ * An interpolation between two keyframes in an animation.
+ * @constructor
+ * @param {TentaGL.Keyframe} startFrame
+ * @param {TentaGL.Keyframe} endFrame
+ * @param {float} alpha         Must be in range [0,1].
  */
-TentaGL.Direction = {
-  
-  NORTH: 1,
-  
-  SOUTH: 2,
-  
-  EAST: 3,
-  
-  WEST: 4,
-  
-  CENTER: 5,
-  
-  LEFT: 6,
-  
-  RIGHT: 7,
-  
-  UP: 8,
-  
-  DOWN: 9,
-  
-  ABOVE: 10,
-  
-  BELOW: 11,
-  
-  START: 12,
-  
-  END: 13
+TentaGL.Tween = function(startFrame, endFrame, alpha) {
+  this._start = startFrame;
+  this._end = endFrame;
 };
+

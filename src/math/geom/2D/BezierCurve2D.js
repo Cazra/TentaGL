@@ -106,11 +106,19 @@ TentaGL.Math.BezierCurve2D.prototype = {
    * @return {vec2}
    */
   interpolate: function(alpha) {
-    var pts = [];
-    pts.push(this._startPt);
-    pts = pts.concat(this._controlPts);
-    pts.push(this._endPt);
-    return this._interpolate(alpha, pts);
+    if(alpha == 0) {
+      return this._startPt.slice(0);
+    }
+    else if(alpha == 1) {
+      return this._endPt.slice(0);
+    }
+    else {
+      var pts = [];
+      pts.push(this._startPt);
+      pts = pts.concat(this._controlPts);
+      pts.push(this._endPt);
+      return this._interpolate(alpha, pts);
+    }
   },
   
   

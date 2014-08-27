@@ -133,6 +133,67 @@ TentaGL.Math = {
   },
   
   
+  /** 
+   * Returns the result of a linear blend from x to y. 
+   * Equivalent to GLSL's mix function.
+   * @param {number} x
+   * @param {number} y
+   * @param {float} alpha   Must be in the range [0,1] for linear interpolation, 
+   *      but can be outside this range for linear extrapolation.
+   */
+  mix: function(x, y, alpha) {
+    return (1-alpha)*x + alpha*y;
+  },
+  
+  
+  /** 
+   * Returns 0 if x < edge, else 1. 
+   * Equivalent to GLSL's step function.
+   * @param {number} edge
+   * @param {number} x
+   * @return {number}
+   */
+  step: function(edge, x) {
+    if(x < edge) {
+      return 0;
+    }
+    else {
+      return 1;
+    }
+  },
+  
+  /** 
+   * Returns the result of a smooth Hermite interpolation from 0 to 1 
+   * when edge0 < x < edge1. 
+   * If x <= edge0, 0 is returned. If x >= edge1, 1 is returned.
+   * An error is thrown if edge0 >= edge1.
+   * Equivalent to GLSL's smoothstep function.
+   * @param {number} edge0
+   * @param {number} edge1
+   * @param {number} x
+   * @return {number}
+   */
+  smoothstep: function(edge0, edge1, x) {
+    if(edge0 >= edge1) {
+      throw new Error("Invalid edge values for smoothstep: " + edge0 + ", " + edge1);
+    }
+    
+    var t = this.clamp((x - edge0)/(edge1 - edge0), 0, 1);
+    return t*t*(3-2*t);
+  },
+  
+  
+  /** 
+   * Returns the fractional part of x. 
+   * Equivalent to GLSL's fract function.
+   * @param {number} x
+   * @return {float}
+   */
+  fract: function(x) {
+    return x - Math.floor(x);
+  },
+  
+  
   //////// Points
   
   /** 

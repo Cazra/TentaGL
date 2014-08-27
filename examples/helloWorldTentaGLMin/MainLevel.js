@@ -160,6 +160,23 @@ HelloWorldApp.MainLevel.prototype = {
       var closest = curve.closestPt(self.camera.center());
       pt = new TentaGL.Math.Sphere(0.1, [closest[0], closest[1], 0]);
       pt.render(gl, "blue");
+      
+      TentaGL.ViewTrans.translate(gl, [2.1,0,0]);
+      (new TentaGL.Math.Rect2D([0,0], 1, 1)).render(gl,"white");
+      TentaGL.ViewTrans.translate(gl, [0,0,0.01]);
+      var curve = new TentaGL.Math.BezierCurve2D([0,0], [[0,0], [1,1]], [1,1]);
+      curve.render(gl, "blue");
+      
+      var pt = curve.interpolate(0.0);
+      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
+      var pt = curve.interpolate(0.25);
+      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
+      var pt = curve.interpolate(0.5);
+      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
+      var pt = curve.interpolate(0.75);
+      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
+      var pt = curve.interpolate(1.0);
+      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
     };
     
     

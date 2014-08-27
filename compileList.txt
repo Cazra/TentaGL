@@ -36,7 +36,9 @@ src/math/Math.js
     src/math/geom/3D/Rect3D.js
     src/math/geom/3D/Sphere.js
     src/math/geom/3D/Triangle3D.js
-  
+
+src/animation/TimingFunction.js
+    
 src/app/Application.js
 src/app/Level.js
 src/app/LevelManager.js
