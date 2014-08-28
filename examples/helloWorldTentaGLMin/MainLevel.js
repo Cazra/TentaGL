@@ -51,7 +51,6 @@ HelloWorldApp.MainLevel.prototype = {
     this._timer = new TentaGL.Timer();
     this._timer.start()
     
-    
     this.tooltip = new TentaGL.UI.Tooltip(this.getApp().blitFont, "blue", 8, 1000, 12);
     
     
@@ -70,6 +69,12 @@ HelloWorldApp.MainLevel.prototype = {
       }
     }
     */
+    
+    var frame1 = new TentaGL.ScalarKeyframe(0, 0.0);
+    var frame2 = new TentaGL.ScalarKeyframe(TentaGL.TAU, 1.0);
+    var spinAnim = new TentaGL.ScalarAnimation([frame1, frame2], 8000);
+    this._spinAnimator = spinAnim.getAnimator();
+    this._spinAnimator.start();
     
     var group = this.spriteGroup;
     group.add(this.createTestSprite([0,0,0]));
@@ -128,17 +133,38 @@ HelloWorldApp.MainLevel.prototype = {
     this.shadedSprite3 = TentaGL.Sprite.create([5, 20, 0], "unitSphere", "bumpedRed", "phong", matProps1); 
     this.shadedSprite3.scale([4, 4, 4]);
     
+    var frames = [
+      new TentaGL.DiscreteKeyframe("coinBlock", 0.0),
+      new TentaGL.DiscreteKeyframe("iconNew", 0.5)
+    ];
+    var texAnim = new TentaGL.DiscreteAnimation(frames, 2000);
+    var texAnimator = texAnim.getAnimator();
+    texAnimator.start();
     
     this.imageSprite = new TentaGL.Sprite([0,0,1]);
     this.imageSprite.draw = function(gl) {
-      var tex = TentaGL.MaterialLib.get(gl, "coinBlock");
+      var texName = texAnimator.animate();
+      var tex = TentaGL.MaterialLib.get(gl, texName);
       tex.render(gl, false, 1);
     };
     
+    var frames = [
+      new TentaGL.VectorKeyframe(TentaGL.Color.HSB([0.0, 1.0, 1.0]).rgba(), 0.0),
+      new TentaGL.VectorKeyframe(TentaGL.Color.HSB([0.2, 1.0, 1.0]).rgba(), 0.2),
+      new TentaGL.VectorKeyframe(TentaGL.Color.HSB([0.4, 1.0, 1.0]).rgba(), 0.4),
+      new TentaGL.VectorKeyframe(TentaGL.Color.HSB([0.6, 1.0, 1.0]).rgba(), 0.6),
+      new TentaGL.VectorKeyframe(TentaGL.Color.HSB([0.8, 1.0, 1.0]).rgba(), 0.8),
+      new TentaGL.VectorKeyframe(TentaGL.Color.HSB([1.0, 1.0, 1.0]).rgba(), 1.0)
+    ];
+    var rainbowAnim = new TentaGL.VectorAnimation(frames, 4000);
+    var rainbowAnimator = rainbowAnim.getAnimator();
+    rainbowAnimator.start();
     
     this.rect3DSprite = new TentaGL.Sprite([0,0,0]);
     this.rect3DSprite.draw = function(gl) {
-      (new TentaGL.Math.Rect3D([0,0,2], 2, 1, 0.5)).render(gl, "red");
+      var rgba = rainbowAnimator.animate();
+      (new TentaGL.Color(rgba)).useMe(gl);
+      (new TentaGL.Math.Rect3D([0,0,2], 2, 1, 0.5)).render(gl);
     };
     
     
@@ -147,6 +173,16 @@ HelloWorldApp.MainLevel.prototype = {
       (new TentaGL.Math.Triangle2D([0,0], [2,1], [1,2])).render(gl, "green");
     };
     
+    
+    var ease = TentaGL.TimingFunction.easeInOut();
+    var frames = [
+      new TentaGL.ScalarKeyframe(0.0, 0.0, ease),
+      new TentaGL.ScalarKeyframe(1.0, 0.5, ease),
+      new TentaGL.ScalarKeyframe(0.0, 1.0, ease)
+    ];
+    var bezierAnim = new TentaGL.ScalarAnimation(frames, 4000);
+    var bezierAnimator = bezierAnim.getAnimator();
+    bezierAnimator.start();
     
     this.bezier2DSprite = new TentaGL.Sprite([0,0,4]);
     this.bezier2DSprite.draw = function(gl) {
@@ -160,24 +196,12 @@ HelloWorldApp.MainLevel.prototype = {
       // Test closest point algorithm.
       var closest = curve.closestPt(self.camera.center());
       pt = new TentaGL.Math.Sphere(0.1, [closest[0], closest[1], 0]);
+      pt.render(gl, "red");
+      
+      var alpha = bezierAnimator.animate();
+      var pt = curve.interpolate(alpha);
+      pt = new TentaGL.Math.Sphere(0.1, [pt[0], pt[1], 0]);
       pt.render(gl, "blue");
-      
-      TentaGL.ViewTrans.translate(gl, [2.1,0,0]);
-      (new TentaGL.Math.Rect2D([0,0], 1, 1)).render(gl,"white");
-      TentaGL.ViewTrans.translate(gl, [0,0,0.01]);
-      var curve = new TentaGL.Math.BezierCurve2D([0,0], [[0,0], [1,1]], [1,1]);
-      curve.render(gl, "blue");
-      
-      var pt = curve.interpolate(0.0);
-      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
-      var pt = curve.interpolate(0.25);
-      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
-      var pt = curve.interpolate(0.5);
-      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
-      var pt = curve.interpolate(0.75);
-      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
-      var pt = curve.interpolate(1.0);
-      (new TentaGL.Math.Sphere(0.05, [pt[0], pt[1], 0])).render(gl, "blue");
     };
     
     
@@ -193,6 +217,11 @@ HelloWorldApp.MainLevel.prototype = {
       // Test closest point algorithm.
       var closest = curve.closestPt(vec3.add([], self.camera.center(), [0,0,-5]));
       pt = new TentaGL.Math.Sphere(0.1, closest);
+      pt.render(gl, "red");
+      
+      var alpha = bezierAnimator.animate();
+      var pt = curve.interpolate(alpha);
+      pt = new TentaGL.Math.Sphere(0.1, pt);
       pt.render(gl, "blue");
     };
     
@@ -273,18 +302,21 @@ HelloWorldApp.MainLevel.prototype = {
     this.ptLight1.xyz(this.camera.center());
     this.camGroup.setQuat(this.camera._orientation);
     
+    var angle = this._spinAnimator.animate();
     var sprites = this.spriteGroup.getChildren();
     for(var i = 0; i < sprites.length; i++) {
       var sprite = sprites[i];
       
       // spin slowly around their local group's Y axis.
-      sprite.rotate([0, 1, 0], 0.01);
+      //sprite.rotate([0, 1, 0], 0.01);
+      
+      sprite.setQuat(quat.setAxisAngle([], [0, 1, 0], angle));
       //sprite.billboardWorldAxis(camEye);
     }
     
     
-    this.shadedSprite1.rotate([0, 1, 0], 0.01);
-    this.shadedSprite3.rotate([0, 1, 0], 0.01);
+    this.shadedSprite1.setQuat(quat.setAxisAngle([], [0, 1, 0], angle)); //rotate([0, 1, 0], 0.01);
+    this.shadedSprite3.setQuat(quat.setAxisAngle([], [0, 1, 0], angle)); //rotate([0, 1, 0], 0.01);
     
     // Picker test
     if(this.mouse().isLeftPressed() || this.mouse().justLeftReleased() || this.mouse().justRightReleased() || this.mouse().justRightPressed()) {

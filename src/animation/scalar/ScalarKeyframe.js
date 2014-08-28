@@ -24,57 +24,36 @@
 
 
 /** 
- * Base class for keyframes in animations. A keyframe is defined by
- * some set of animation properties (an image, vector, color, angle, point, 
- * etc.) and a parameterized value in the range [0, 1] for when the keyframe 
- * occurs during the animation's duration. 
- * @abstract
+ * A keyframe with some scalar property value.
  * @constructor
+ * @param {number} value
  * @param {float} time    Must be in the range [0,1].
  * @param {TentaGL.TimingFunction} timeFunc   Optional. By default, it 
  *      will use the linear timing function for transitions.
  */
-TentaGL.Keyframe = function(time, timeFunc) {
-  if(timeFunc === undefined) {
-    timeFunc = TentaGL.TimingFunction.linear();
-  }
-  
-  this._time = time;
-  this._timeFunc = timeFunc;
+TentaGL.ScalarKeyframe = function(value, time, timeFunc) {
+  TentaGL.Keyframe.call(this, time, timeFunc);
+  this._value = value;
 };
 
-TentaGL.Keyframe.prototype = {
+TentaGL.ScalarKeyframe.prototype = {
   
-  constructor: TentaGL.Keyframe,
+  constructor: TentaGL.ScalarKeyframe,
   
-  /** 
-   * Returns the paramterized time value for the keyframe. 
-   * @return {float}
-   */
-  getTime: function() {
-    return this._time;
-  },
+  isaScalarKeyframe: true,
   
+  
+  //////// Keyframe implementation
   
   /** 
-   * Returns the timing function used to compute tweens for the animation's 
-   * transition from this frame to the next.
-   * @return {TentaGL.TimingFunction}
+   * Returns the scalar value of the keyframe. 
+   * @return {number}
    */
-  getTimingFunction: function() {
-    return this._timeFunc;
-  },
-  
-  
-  //////// Abstract methods
-  
-  
-  /** 
-   * Returns the property value(s) associated with this keyframe. 
-   * The type of this value depends on the implementation.
-   * @return {object}
-   */
-  getValue: function() {}
-  
+  getValue: function() {
+    return this._value;
+  }
 };
+
+
+Util.Inheritance.inherit(TentaGL.ScalarKeyframe, TentaGL.Keyframe);
 

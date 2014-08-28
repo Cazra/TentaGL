@@ -24,16 +24,13 @@
 
 
 /**  
- * The base class for Animators, used to play animations.
- * @abstract
+ * An object used to play an animation.
  * @constructor
  * @param {TentaGL.Animation} animation
  */
 TentaGL.Animator = function(animation) {
   this._animation = animation;
-  this._ellapsed = 0;
-  
-  this.
+  this._timer = new TentaGL.Timer();
 };
 
 TentaGL.Animator.prototype = {
@@ -44,20 +41,37 @@ TentaGL.Animator.prototype = {
   
   
   /** 
-   * Starts playing the animation. 
+   * Starts playing the animation from the beginning. 
    * @param {uint} startOffset    Optional. A starting time offset for the 
    *                              animation. Default 0.
    */
   start: function(startOffset) {
-    if(startOffset === undefined) {
-      startOffset = 0;
-    }
-    this._startTime = startOffset;
+    this._timer.start(startOffset);
   },
   
   
   /** 
-   * Advances the animation. 
+   * Pauses the animation. 
+   */
+  pause: function() {
+    if(this._timer.isRunning()) {
+      this._timer.pause();
+    }
+  },
+  
+  
+  /** 
+   * Resumes playing the animation.
+   */
+  resume: function() {
+    if(this._timer.isPaused()) {
+      this._timer.resume();
+    }
+  },
+  
+  
+  /** 
+   * Setter/getter for the rate of play for the animation. 
    * @param {float} speed   Optional. The rate of play for the animation.
    *      The default speed is 1.
    *      If 0 < speed < 1, then the animation will be slowed down.
@@ -65,11 +79,43 @@ TentaGL.Animator.prototype = {
    *      If speed = 0, then the animation is stopped.
    *      If speed < 0, then the animation will play in reverse, with -1 
    *      playing it in reverse at normal speed.
-   * @return {TentaGL.Tween}
+   * @return {float}
    */
-  animate: function(speed) {
+  speed: function(speed) {
+    return this._timer.speed(speed);
+  },
+  
+  
+  
+  /** 
+   * Returns the current value of the animation's properties. 
+   * The type of this value depends upon the Animator implementation. 
+   * If the animation was paused, then it is resumed.
+   * @return {object}
+   */
+  animate: function() {
+    this.resume();
     
-  };
+    var time = this._timer.timeElapsed();
+    var tween = this._animation.getTween(time);
+    return this.getTweenValue(tween);
+  },
+  
+  
+  
+  //////// Abstract methods
+  
+  
+  /** 
+   * Returns the interpolated value for a tween. 
+   * If the tween's end keyframe is undefined, 
+   * return the value of its start keyframe.
+   * @param {TentaGL.Tween} tween
+   * @return {object}
+   */
+  getTweenValue: function(tween) {}
+  
+  
 };
 
 

@@ -24,57 +24,66 @@
 
 
 /** 
- * Base class for keyframes in animations. A keyframe is defined by
- * some set of animation properties (an image, vector, color, angle, point, 
- * etc.) and a parameterized value in the range [0, 1] for when the keyframe 
- * occurs during the animation's duration. 
- * @abstract
- * @constructor
+ * A keyframe with a vector of arbitrary dimension.
+ * @param {array: number} vector
  * @param {float} time    Must be in the range [0,1].
  * @param {TentaGL.TimingFunction} timeFunc   Optional. By default, it 
  *      will use the linear timing function for transitions.
  */
-TentaGL.Keyframe = function(time, timeFunc) {
-  if(timeFunc === undefined) {
-    timeFunc = TentaGL.TimingFunction.linear();
-  }
-  
-  this._time = time;
-  this._timeFunc = timeFunc;
+TentaGL.VectorKeyframe = function(vector, time, timeFunc) {
+  TentaGL.Keyframe.call(this, time, timeFunc);
+  this._vector = vector.slice(0);
 };
 
-TentaGL.Keyframe.prototype = {
+
+TentaGL.VectorKeyframe.prototype = {
   
-  constructor: TentaGL.Keyframe,
+  cosntructor: TentaGL.VectorKeyframe,
+  
+  isaVectorKeyframe: true,
+  
   
   /** 
-   * Returns the paramterized time value for the keyframe. 
-   * @return {float}
+   * Returns the keyframe's vector as a 2D vector 
+   * (Components past the first 2 are dropped).
+   * @return {vec2}
    */
-  getTime: function() {
-    return this._time;
+  getVec2: function() {
+    return this._vector.slice(0,2);
   },
   
   
   /** 
-   * Returns the timing function used to compute tweens for the animation's 
-   * transition from this frame to the next.
-   * @return {TentaGL.TimingFunction}
+   * Returns the keyframe's vector as a 3D vector 
+   * (Components past the first 3 are dropped).
+   * @return {vec3}
    */
-  getTimingFunction: function() {
-    return this._timeFunc;
+  getVec3: function() {
+    return this._vector.slice(0,3);
   },
   
   
-  //////// Abstract methods
+  /** 
+   * Returns the keyframe's vector as a 4D vector 
+   * (Components past the first 4 are dropped).
+   * @return {vec4}
+   */
+  getVec4: function() {
+    return this._vector.slice(0,4);
+  },
   
+  
+  //////// Keyframe implementation
   
   /** 
-   * Returns the property value(s) associated with this keyframe. 
-   * The type of this value depends on the implementation.
-   * @return {object}
+   * Returns the vector for this keyframe.
+   * @return {array: number}
    */
-  getValue: function() {}
-  
+  getValue: function() {
+    return this._vector.slice(0);
+  }
+
 };
+
+Util.Inheritance.inherit(TentaGL.VectorKeyframe, TentaGL.Keyframe);
 

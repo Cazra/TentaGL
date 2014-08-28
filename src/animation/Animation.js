@@ -43,7 +43,7 @@ TentaGL.Animation = function(keyframes, duration, loop, loopStart) {
     loopStart = 0;
   }
   
-  this._keyframes = keyframes.slice(0);
+  this._keyframes = keyframes;
   this._duration = duration;
   this._loop = loop;
   this._loopStart = loopStart;
@@ -128,6 +128,13 @@ TentaGL.Animation.prototype = {
    * @return {TentaGL.Tween} 
    */
   getTween: function(time) {
+    if(this._loop && time >= this._duration) {
+      time -= this._duration;
+      
+      var loopDuration = this._duration - this._loopStart;
+      var numLoops = Math.floor(time/loopDuration);
+      time += this._loopStart - loopDuration*numLoops;
+    }
     time = time/this._duration;
     
     var start = this._keyframes[0];
@@ -142,11 +149,11 @@ TentaGL.Animation.prototype = {
     }
     
     var alpha;
-    if(end ==== undefined) {
+    if(end === undefined) {
       alpha = 0;
     }
     else {
-      alpha = (time - start.getTime())/(end.getTime() - startTime());
+      alpha = (time - start.getTime())/(end.getTime() - start.getTime());
       alpha = start.getTimingFunction().ease(alpha);
     }
     
@@ -154,16 +161,13 @@ TentaGL.Animation.prototype = {
   },
   
   
-  //////// abstract methods
-  
+  //////// Abstract methods
   
   /** 
    * Returns an animator instance that can be used to play this animation. 
-   * @param {uint} startOffset    Optional. A starting time offset for playing 
-   *                              the animation. Default 0.
    * @return {TentaGL.Animator}
    */
-  getAnimator: function(startOffset) {};
+  getAnimator: function() {}
   
 };
 

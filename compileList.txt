@@ -37,7 +37,19 @@ src/math/Math.js
     src/math/geom/3D/Sphere.js
     src/math/geom/3D/Triangle3D.js
 
-src/animation/TimingFunction.js
+src/animation/Animation.js
+  src/animation/discrete/DiscreteAnimation.js
+  src/animation/scalar/ScalarAnimation.js
+  src/animation/vector/VectorAnimation.js
+src/animation/Animator.js
+  src/animation/discrete/DiscreteAnimator.js
+  src/animation/scalar/ScalarAnimator.js
+  src/animation/vector/VectorAnimator.js
+src/animation/Keyframe.js
+  src/animation/discrete/DiscreteKeyframe.js
+  src/animation/scalar/ScalarKeyframe.js
+  src/animation/vector/VectorKeyframe.js
+src/animation/Tween.js
     
 src/app/Application.js
 src/app/Level.js
@@ -148,6 +160,7 @@ src/shaders/ShaderProgram.js
     src/shaders/premade/PlaneSimpleShader.js
   
 src/time/Timer.js
+src/time/TimingFunction.js
 
 src/util/Align.js
 src/util/Canvas2D.js
