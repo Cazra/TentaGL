@@ -27,20 +27,20 @@
  * Base class for keyframes in animations. A keyframe is defined by
  * some set of animation properties (an image, vector, color, angle, point, 
  * etc.) and a parameterized value in the range [0, 1] for when the keyframe 
- * occurs during the animation's duration. A type of interpolation for tweens 
- * from between this frame to the next can also be defined. 
+ * occurs during the animation's duration. 
  * @abstract
  * @constructor
  * @param {float} time    Must be in the range [0,1].
- * @param {TentaGL.Math.Interpolation} interpolation   Optional. By default, there is no interpolation.
+ * @param {TentaGL.TimingFunction} timeFunc   Optional. By default, it 
+ *      will use the linear timing function for transitions.
  */
-TentaGL.Keyframe = function(time, interpolation) {
-  if(interpolation === undefined) {
-    interpolation = TentaGL.Math.Interpolation.none();
+TentaGL.Keyframe = function(time, timeFunc) {
+  if(timeFunc === undefined) {
+    timeFunc = TentaGL.TimingFunction.linear();
   }
   
   this._time = time;
-  this._interpolation = interpolation;
+  this._timeFunc = timeFunc;
 };
 
 TentaGL.Keyframe.prototype = {
@@ -57,12 +57,12 @@ TentaGL.Keyframe.prototype = {
   
   
   /** 
-   * Returns the type of interpolation used for tweens from this frame to the 
-   * next. 
-   * @return {enum: TentaGL.Tween}
+   * Returns the timing function used to compute tweens for the animation's 
+   * transition from this frame to the next.
+   * @return {TentaGL.TimingFunction}
    */
-  getInterpolation: function() {
-    return this._interpolation;
+  getTimingFunction: function() {
+    return this._timeFunc;
   }
 };
 

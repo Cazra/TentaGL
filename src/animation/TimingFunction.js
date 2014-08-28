@@ -37,21 +37,6 @@ TentaGL.TimingFunction.prototype = {
   
   isaTimingFunction: true,
   
-  /** 
-   * At time = 0, start is returned. At time = 1, end is returned. 
-   * For values 0 < time < 1, this returns an interpolated value between the 
-   * specified start and end values. 
-   * @param {number} start
-   * @param {number} end
-   * @param {float} time    The parameterized time value, 
-   *                        typically in the range [0,1].
-   */
-  get: function(start, end, time) {
-    var alpha = this.ease(time);
-    return TentaGL.Math.mix(start, end, alpha);
-  },
-  
-  
   //////// Abstract methods
   
   /** 

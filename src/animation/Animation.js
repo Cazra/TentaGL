@@ -24,22 +24,29 @@
 
 
 /** 
- * A base class for animations defined by an ordered list of keyframes 
- * and a time duration. 
+ * A base class for animations defined by an ordered list of keyframes and 
+ * a time duration. 
  * @abstract
  * @constructor
  * @param {array: TentaGL.Keyframe} keyframes
- * @param {uint} duration        In milliseconds.
- * @param {boolean} loop     Optional. Default true.
+ * @param {uint} duration       In milliseconds.
+ * @param {boolean} loop        Optional. Default true.
+ * @param {uint} loopStart      Optional. The starting time offset for the loop.
+ *      When the animation finishes a loop, it goes back to this time offset.
+ *      Default 0.
  */
-TentaGL.Animation = function(keyframes, duration, loop) {
+TentaGL.Animation = function(keyframes, duration, loop, loopStart) {
   if(loop === undefined) {
     loop = true;
+  }
+  if(loopStart === undefined) {
+    loopStart = 0;
   }
   
   this._keyframes = keyframes.slice(0);
   this._duration = duration;
   this._loop = loop;
+  this._loopStart = loopStart;
 };
 
 
@@ -76,6 +83,20 @@ TentaGL.Animation.prototype = {
   },
   
   
+  /** 
+   * Setter/getter for the animation's loop start offset. When the animation
+   * finishes a loop, it will go back to this time offset instead of back to 
+   * the beginning. 
+   * @param {uint} offset     Optional.
+   * @return {uint}
+   */
+  loopStart: function(offset) {
+    if(offset !== undefined) {
+      this._loopStart = offset;
+    }
+    return this._loopStart;
+  },
+  
   
   /** 
    * Returns the nth keyframe in this animation. 
@@ -109,17 +130,40 @@ TentaGL.Animation.prototype = {
   getTween: function(time) {
     time = time/this._duration;
     
-    var current = this._keyframes[0];
-    var next = this._keyframes[1];
+    var start = this._keyframes[0];
+    var end = this._keyframes[1];
     
     for(var i=1; i<this._keyframes.length; i++) {
       var curFrame = this._keyframes[i];
       if(time >= curFrame.getTime()) {
-        current = curFrame;
+        start = curFrame;
+        end = this._keyframes[i+1];
       }
     }
     
-    return new TentaGL.Tween(current, next, alpha);
-  }
+    var alpha;
+    if(end ==== undefined) {
+      alpha = 0;
+    }
+    else {
+      alpha = (time - start.getTime())/(end.getTime() - startTime());
+      alpha = start.getTimingFunction().ease(alpha);
+    }
+    
+    return new TentaGL.Tween(start, end, alpha);
+  },
+  
+  
+  //////// abstract methods
+  
+  
+  /** 
+   * Returns an animator instance that can be used to play this animation. 
+   * @param {uint} startOffset    Optional. A starting time offset for playing 
+   *                              the animation. Default 0.
+   * @return {TentaGL.Animator}
+   */
+  getAnimator: function(startOffset) {};
+  
 };
 

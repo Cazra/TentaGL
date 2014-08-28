@@ -23,53 +23,53 @@
 */
 
 
-/** 
- * An interpolation between two keyframes in an animation.
+/**  
+ * The base class for Animators, used to play animations.
+ * @abstract
  * @constructor
- * @param {TentaGL.Keyframe} startFrame
- * @param {TentaGL.Keyframe} endFrame
- * @param {float} alpha         Must be in range [0,1].
+ * @param {TentaGL.Animation} animation
  */
-TentaGL.Tween = function(startFrame, endFrame, alpha) {
-  this._start = startFrame;
-  this._end = endFrame;
-  this._alpha = alpha;
+TentaGL.Animator = function(animation) {
+  this._animation = animation;
+  this._ellapsed = 0;
+  
+  this.
 };
 
-
-TentaGL.Tween.prototype = {
+TentaGL.Animator.prototype = {
   
-  constructor: TentaGL.Tween,
+  constructor: TentaGL.Animator,
   
-  isaTween: true,
+  isaAnimator: true,
   
   
   /** 
-   * Returns the start keyframe.
-   * @return {TentaGL.Keyframe}
+   * Starts playing the animation. 
+   * @param {uint} startOffset    Optional. A starting time offset for the 
+   *                              animation. Default 0.
    */
-  getStartFrame: function() {
-    return this._start;
+  start: function(startOffset) {
+    if(startOffset === undefined) {
+      startOffset = 0;
+    }
+    this._startTime = startOffset;
   },
   
   
   /** 
-   * Returns the end keyframe.
-   * @return {TentaGL.Keyframe}
+   * Advances the animation. 
+   * @param {float} speed   Optional. The rate of play for the animation.
+   *      The default speed is 1.
+   *      If 0 < speed < 1, then the animation will be slowed down.
+   *      If speed > 1, then the animation will be sped up.
+   *      If speed = 0, then the animation is stopped.
+   *      If speed < 0, then the animation will play in reverse, with -1 
+   *      playing it in reverse at normal speed.
+   * @return {TentaGL.Tween}
    */
-  getEndFrame: function() {
-    return  this._end;
-  },
-  
-  
-  /** 
-   * Returns the parameterized value for transitioning between the frames.
-   * @return {float}
-   */
-  getAlpha: function() {;
-    return this._alpha;
-  }
-  
-  
+  animate: function(speed) {
+    
+  };
 };
+
 

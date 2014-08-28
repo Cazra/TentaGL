@@ -32,6 +32,7 @@ TentaGL.Timer = function(startTime) {
   this._startTime = startTime;
   this._accumulated = 0;
   this._countdown = undefined;
+  this._speed = 1;
   
   if(startTime !== undefined) {
     this._state = TentaGL.Timer.RUNNING;
@@ -114,10 +115,15 @@ TentaGL.Timer.prototype = {
   
   /** 
    * Resets and starts the timer. The timestamp for the start time is returned.
+   * @param {uint} startOffset    Optional. An offset for the amount of time 
+   *      ellapsed when the timer starts, in milliseconds. Default 0.
    * @return {uint}
    */
-  start: function() {
-    this._startTime = Date.now();
+  start: function(startOffset) {
+    if(startOffset === undefined) {
+      startOffset = 0;
+    }
+    this._startTime = Date.now() - startOffset;
     this._accumulated = 0;
     
     this._state = TentaGL.Timer.RUNNING;
@@ -132,7 +138,7 @@ TentaGL.Timer.prototype = {
   pause: function() {
     if(this._state == TentaGL.Timer.RUNNING) {
       var curTime = Date.now();
-      this._accumulated += curTime - this._startTime;
+      this._accumulate(curTime);
       
       this._state = TentaGL.Timer.PAUSED;
     }
@@ -147,6 +153,7 @@ TentaGL.Timer.prototype = {
   resume: function() {
     if(this._state == TentaGL.Timer.PAUSED) {
       this._startTime = Date.now();
+      
       this._state = TentaGL.Timer.RUNNING;
     }
     else {
@@ -159,10 +166,44 @@ TentaGL.Timer.prototype = {
    */
   stop: function() {
     var curTime = Date.now();
-    this._accumulated += curTime - this._startTime;
+    this._accumulate(curTime);
     
     this._state = TentaGL.Timer.STOPPED;
     
+  },
+  
+  
+  /** Updates the accumulated time. */
+  _accumulate: function(curTime) {
+    this._accumulated += (curTime - this._startTime)*this._speed;
+  },
+  
+  
+  ////// Speed
+  
+  
+  /** 
+   * Setter/getter for the rate at which time progresses for the timer, 
+   * relative to real time. 
+   * @param {float} speed   Optional. The rate of play for the animation.
+   *      The default speed is 1.
+   *      If 0 < speed < 1, then the animation will be slowed down.
+   *      If speed > 1, then the animation will be sped up.
+   *      If speed = 0, then the animation is stopped.
+   *      If speed < 0, then the animation will play in reverse, with -1 
+   *      playing it in reverse at normal speed.
+   * @return {float}
+   */
+  speed: function(speed) {
+    if(speed !== undefined) {
+      if(this._state == TentaGL.Timer.RUNNING) {
+        var curTime = Date.now();
+        this._accumulate(curTime);
+        this._startTime = curTime;
+      }
+      this._speed = speed;
+    }
+    return this._speed;
   },
   
   
@@ -177,7 +218,7 @@ TentaGL.Timer.prototype = {
     var result = this._accumulated;
     if(this._state == TentaGL.Timer.RUNNING) {
       var curTime = Date.now();
-      result += curTime - this._startTime;
+      result += (curTime - this._startTime)*this._speed;
     }
     return result;
   },

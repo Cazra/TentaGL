@@ -2,7 +2,6 @@ HelloWorldApp.MainLevel = function(app) {
   TentaGL.Level.call(this, app);
 };
 
-
 HelloWorldApp.MainLevel.prototype = {
   
   /** 
@@ -49,6 +48,8 @@ HelloWorldApp.MainLevel.prototype = {
     this.drZ = 0;
     
     this._frames = 0;
+    this._timer = new TentaGL.Timer();
+    this._timer.start()
     
     
     this.tooltip = new TentaGL.UI.Tooltip(this.getApp().blitFont, "blue", 8, 1000, 12);
@@ -348,7 +349,6 @@ HelloWorldApp.MainLevel.prototype = {
     
     // Render a sphere, using the normal vector shader.
     TentaGL.ShaderLib.use(gl, "normalShader");
-  //  this.fog.useMe(gl);
     (new TentaGL.Math.Sphere(1, [5,0,5])).render(gl, "white");
     TentaGL.ShaderLib.use(gl, "simpleShader");
     
@@ -398,11 +398,10 @@ HelloWorldApp.MainLevel.prototype = {
     
     TentaGL.ShaderLib.push(gl);
     TentaGL.ShaderLib.use(gl, "plane");
-  //  this.fog.useMe(gl);
     var planeShader = TentaGL.ShaderLib.current(gl);
     if(planeShader.isaPlaneShader) {
-      planeShader.setSFunc(gl, [1/10, 0, 0, this._frames/200]);
-      planeShader.setTFunc(gl, [0, 0, 1/10, this._frames/400]);
+      planeShader.setSFunc(gl, [1/10, 0, 0, this._timer.timeElapsed()/3000]);
+      planeShader.setTFunc(gl, [0, 0, 1/10, this._timer.timeElapsed()/6000]);
       planeShader.setOpacity(gl, 0.5);
     }
     
