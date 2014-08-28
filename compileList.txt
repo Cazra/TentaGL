@@ -45,6 +45,7 @@ src/app/LevelManager.js
 
 src/audio/Audio.js
 src/audio/AudioLoader.js
+src/audio/Midi.js
 
 src/camera/Camera.js
   src/camera/Camera2D.js

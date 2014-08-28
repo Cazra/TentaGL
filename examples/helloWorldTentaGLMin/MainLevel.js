@@ -222,7 +222,6 @@ HelloWorldApp.MainLevel.prototype = {
   //  });
     this.horseAudio = new TentaGL.Audio("http://www.w3schools.com/jsref/horse.ogg");
     
-    
     this.fog = new TentaGL.Fog(TentaGL.Fog.EXP, TentaGL.Color.Hex(0xFFFFFFFF), 0.005);
     
     this.sceneProps = new TentaGL.SceneProps();
