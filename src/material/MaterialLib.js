@@ -88,7 +88,8 @@ TentaGL.MaterialLib = {
    */
   add:function(gl, name, material) {
     if(gl._materialLib[name] !== undefined) {
-      throw new Error("Material " + name + " already exists.");
+      console.log("Material " + name + " already exists.");
+      return;
     }
     if(!material.isaMaterial) {
       throw new Error("Object for " + name + " isn't a material!");
@@ -109,7 +110,8 @@ TentaGL.MaterialLib = {
   remove:function(gl, name) {
     var material = gl._materialLib[name];
     if(material === undefined) {
-      throw new Error("Material " + name + " doesn't exist.");
+      console.log("Material " + name + " doesn't exist.");
+      return;
     }
     
     material.clean(gl);
@@ -123,7 +125,7 @@ TentaGL.MaterialLib = {
    * @param {string} name
    */
   use:function(gl, name) {
-    if(gl._materialLibCurrentName === name) {
+    if(gl._materialLibCurrentName === name || TentaGL.Outliner.isOutlining(gl)) {
       return;
     }
     

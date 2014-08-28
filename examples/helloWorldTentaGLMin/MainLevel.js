@@ -390,6 +390,8 @@ HelloWorldApp.MainLevel.prototype = {
     this.gradSprite.render(gl);
     this.gradSprite2.render(gl);
     
+    var outliner = new TentaGL.Outliner("black", 0.1);
+    outliner.renderOutline(gl, this.teapotSprite.render.bind(this.teapotSprite), GL_BACK);
     this.teapotSprite.render(gl);
     
     TentaGL.ShaderLib.use(gl, "phong");

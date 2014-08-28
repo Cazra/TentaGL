@@ -33,7 +33,7 @@ TentaGL.Cull = {
    * @param {glEnum} mode   Any allowed value for gl.cullFace.
    */
   setMode:function(gl, mode) {
-    if(gl._cullMode != mode) {
+    if(gl._cullMode != mode && !TentaGL.Outliner.isOutlining(gl)) {
       gl._cullMode = mode;
       
       if(mode == GL_NONE) {

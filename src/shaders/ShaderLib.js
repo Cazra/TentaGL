@@ -111,7 +111,7 @@ TentaGL.ShaderLib = {
    * @return {TentaGL.ShaderProgram} The shader program now being used.
    */
   use:function(gl, name) {
-    if(TentaGL.Picker.isPicking(gl) || gl._shaderLibCurrentName === name) {
+    if(TentaGL.Picker.isPicking(gl) || TentaGL.Outliner.isOutlining(gl) || gl._shaderLibCurrentName === name) {
       return;
     }
     

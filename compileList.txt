@@ -122,6 +122,7 @@ src/material/MaterialProps.js
 
 src/scene/ClippingArea.js
 src/scene/Fog.js
+src/scene/Outliner.js
 src/scene/SceneNode.js
   src/scene/SceneGroup.js
   src/sprite/Sprite.js
@@ -155,6 +156,7 @@ src/shaders/ShaderProgram.js
           src/shaders/premade/PerVertexPhongShaderMac.js
         src/shaders/premade/PhongShader.js
           src/shaders/premade/PhongShaderMac.js 
+      src/shaders/premade/OutlineShader.js
   src/shaders/premade/PickShader.js
   src/shaders/premade/PlaneShader.js
     src/shaders/premade/PlaneSimpleShader.js
