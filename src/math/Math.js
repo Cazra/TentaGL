@@ -315,7 +315,7 @@ TentaGL.Math = {
   
   
   /**
-   * Returns the angle from u to v, rotated around their cross product. 
+   * Returns the magnitude of the shortest angle from u to v, in radians. 
    * @param {vec3} u
    * @param {vec3} v
    * @return {number}   Range [0, PI].
@@ -327,6 +327,31 @@ TentaGL.Math = {
     return Math.acos(vec3.dot(uHat, vHat));
   },
   
+  /** 
+   * Returns the shortest signed angle from u to v, in radians.
+   * If the result is positive, then u must be rotated counter-clockwise to 
+   * get to v.
+   * If the result is negative, then u must be rotated clockwise to get to v.
+   * If the result is 0, then u is pointing in the same direction as v.
+   * @param {vec2} u
+   * @param {vec2} v
+   * @return {number}   Range [-PI, PI]
+   */
+  vectorAngle2D: function(u, v) {
+    var uHat = vec2.normalize([], u);
+    var vHat = vec2.normalize([], v);
+    
+    var sin = vec2.cross([], uHat, vHat)[2];
+    if(sin == 0) {
+      return 0;
+    }
+    else if(sin < 0) {
+      return -Math.acos(vec2.dot(uHat, vHat));
+    }
+    else {
+      return Math.acos(vec2.dot(uHat, vHat));
+    }
+  },
   
   
   /** 

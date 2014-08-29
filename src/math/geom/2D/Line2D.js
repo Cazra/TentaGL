@@ -43,10 +43,24 @@ TentaGL.Math.Line2D.prototype = {
   
   /** 
    * Returns a clone of the line. 
-   * @return TentaGL.Math.Line2D
+   * @return {TentaGL.Math.Line2D}
    */
   clone: function() {
     return new TentaGL.Math.Line2D(this._p1, this._p2);
+  },
+  
+  
+  /** 
+   * Returns the line as a Line3D, with z = 0. 
+   * @return {TentaGL.Math.Line3D}
+   */
+  toLine3D: function() {
+    var p1 = vec3.copy([], this._p1);
+    p1[2] = 0;
+    var p2 = vec3.copy([], this._p2);
+    p2[2] = 0;
+    
+    return new TentaGL.Math.Line3D(p1, p2);
   },
   
   

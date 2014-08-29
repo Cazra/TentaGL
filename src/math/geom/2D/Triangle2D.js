@@ -45,6 +45,32 @@ TentaGL.Math.Triangle2D.prototype = {
   isaTriangle2D: true,
   
   
+  /** 
+   * Returns a cloned copy of this triangle. 
+   * @return {TentaGL.Math.Triangle2D}
+   */
+  clone: function() {
+    return new TentaGL.Math.Triangle2D(this._a, this._b, this._c);
+  },
+  
+  
+  /** 
+   * Returns the triangle as a Triangle3D, with z=0.
+   * @return {TentaGL.Math.Triangle3D}
+   */
+  toTriangle3D: function() {
+    var a = vec3.copy([], this._a);
+    a[2] = 0;
+    var b = vec3.copy([], this._b);
+    b[2] = 0;
+    var c = vec3.copy([], this._c);
+    c[2] = 0;
+    
+    return new TentaGL.Math.Triangle3D(a, b, c);
+  },
+  
+  
+  
   _updateMetrics: function() {
     this._angleA = this._computeAngle(this._a, this._b, this._c);
     this._angleB = this._computeAngle(this._b, this._a, this._c);

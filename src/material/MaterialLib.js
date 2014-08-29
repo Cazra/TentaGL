@@ -122,20 +122,26 @@ TentaGL.MaterialLib = {
   /** 
    * Sets the current shader program to use the specified material.
    * @param {WebGLRenderingContext} gl
-   * @param {string} name
+   * @param {string || TentaGL.Material} name
    */
   use:function(gl, name) {
     if(gl._materialLibCurrentName === name || TentaGL.Outliner.isOutlining(gl)) {
       return;
     }
     
-    var material = gl._materialLib[name];
-    if(material === undefined) {
-      throw new Error("Material " + name + " doesn't exist.");
+    if(name.isaMaterial) {
+      gl._materialLibCurrentName = undefined;
+      name.useMe(gl);
     }
-    
-    material.useMe(gl);
-    gl._materialLibCurrentName = name;
+    else {
+      var material = gl._materialLib[name];
+      if(material === undefined) {
+        throw new Error("Material " + name + " doesn't exist.");
+      }
+      
+      material.useMe(gl);
+      gl._materialLibCurrentName = name;
+    }
   },
   
   
