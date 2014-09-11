@@ -162,6 +162,7 @@ src/shaders/ShaderProgram.js
     src/shaders/premade/PlaneSimpleShader.js
   
 src/time/Timer.js
+  src/time/FrameTimer.js
 src/time/TimingFunction.js
 
 src/util/Align.js

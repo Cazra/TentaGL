@@ -84,6 +84,16 @@ TentaGL.Timer.prototype = {
   isaTimer: true,
   
   
+  /** 
+   * Returns the actual current time, which this timer's underlying mechanics 
+   * are based upon.
+   * @return {uint}
+   */
+  getTime: function() {
+    return Date.now();
+  },
+  
+  
   //////// State
   
   /** 
@@ -123,7 +133,7 @@ TentaGL.Timer.prototype = {
     if(startOffset === undefined) {
       startOffset = 0;
     }
-    this._startTime = Date.now() - startOffset;
+    this._startTime = this.getTime() - startOffset;
     this._accumulated = 0;
     
     this._state = TentaGL.Timer.RUNNING;
@@ -137,7 +147,7 @@ TentaGL.Timer.prototype = {
    */
   pause: function() {
     if(this._state == TentaGL.Timer.RUNNING) {
-      var curTime = Date.now();
+      var curTime = this.getTime();
       this._accumulate(curTime);
       
       this._state = TentaGL.Timer.PAUSED;
@@ -152,7 +162,7 @@ TentaGL.Timer.prototype = {
    */
   resume: function() {
     if(this._state == TentaGL.Timer.PAUSED) {
-      this._startTime = Date.now();
+      this._startTime = this.getTime();
       
       this._state = TentaGL.Timer.RUNNING;
     }
@@ -165,7 +175,7 @@ TentaGL.Timer.prototype = {
    * Stops the timer. It cannot be resumed after it is stopped.
    */
   stop: function() {
-    var curTime = Date.now();
+    var curTime = this.getTime();
     this._accumulate(curTime);
     
     this._state = TentaGL.Timer.STOPPED;
@@ -197,7 +207,7 @@ TentaGL.Timer.prototype = {
   speed: function(speed) {
     if(speed !== undefined) {
       if(this._state == TentaGL.Timer.RUNNING) {
-        var curTime = Date.now();
+        var curTime = this.getTime();
         this._accumulate(curTime);
         this._startTime = curTime;
       }
@@ -217,7 +227,7 @@ TentaGL.Timer.prototype = {
   timeElapsed: function() {
     var result = this._accumulated;
     if(this._state == TentaGL.Timer.RUNNING) {
-      var curTime = Date.now();
+      var curTime = this.getTime();
       result += (curTime - this._startTime)*this._speed;
     }
     return result;
