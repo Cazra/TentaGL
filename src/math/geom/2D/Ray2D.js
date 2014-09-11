@@ -56,7 +56,13 @@ TentaGL.Math.Ray2D.prototype = {
    * @return {TentaGL.Math.Ray3D}
    */
   toRay3D: function() {
-    // TODO
+    var pt = vec3.copy(this._pt);
+    pt[2] = 0;
+    
+    var vec = vec3.copy(this._vec);
+    vec[2] = 0;
+    
+    return new TentaGL.Math.Ray3D(pt, vec);
   },
   
   
@@ -87,6 +93,18 @@ TentaGL.Math.Ray2D.prototype = {
     }
     return this._vec;
   },
+  
+  
+  
+  /** 
+   * Returns a point on the ray corresponding to a parametric value. 
+   * @param {float} alpha
+   * @return {vec2}
+   */
+  interpolate: function(alpha) {
+    return vec2.add([], this._pt, vec2.scale([], this._vec, coeffs[0]));
+  },
+  
   
   
   //////// Collisions
@@ -141,18 +159,36 @@ TentaGL.Math.Ray2D.prototype = {
    * If the rays overlap in opposite directions, a Line2D of the overlapping segment is returned.
    * Otherwise, undefined is returned.
    * @param {TentaGL.Math.Ray2D} ray
+   * @param {float} tolerance
    * @return {vec2 || TentaGL.Math.Line2D || TentaGL.Math.Ray2D}
    */
-  intersectionRay: function(ray) {
+  intersectionRay: function(ray, tolerance) {
+    if(!tolerance) {
+      tolerance = 0;
+    }
+    
     var p = this._pt;
     var q = ray._pt;
     
     var u = this._vec;
     var v = ray._vec;
     
-    
     if(TentaGL.Math.vectorsParallel(u, v)) {
-      // TODO: parallel rays
+      var overlapP = ray.containsPt(p, tolerance);
+      var overlapQ = this.containsPt(q, tolerance);
+      
+      if(overlapP && overlapQ) {
+        return new TentaGL.Math.Line2D(p, q);
+      }
+      else if(overlapP) {
+        return this;
+      }
+      else if(overlapQ) {
+        return ray;
+      }
+      else {
+        return undefined;
+      }
     }
     else {
       var w = vec2.sub([], q, p);
@@ -170,6 +206,30 @@ TentaGL.Math.Ray2D.prototype = {
         return undefined;
       }
     }
+  },
+  
+  
+  /** 
+   * Returns the intersection of this ray with a line segment.
+   * If they intersect at a single point, that point is returned.
+   * If the line segment lies somewhere on the ray, the part of the segment 
+   * overlapping the ray is returned.
+   * Otherwise, undefined is returned.
+   * @param {TentaGL.Math.Line2D} line
+   * @return {vec2 || TentaGL.Math.Line2D}
+   */
+  intersectionLine: function(line) {
+    // TODO
+  },
+  
+  
+  
+  /** 
+   * Renders the ray clipped within the bounds of the view volume. 
+   * @param {WebGLRenderingContext} gl
+   */
+  render: function(gl) {
+    // TODO
   }
   
   

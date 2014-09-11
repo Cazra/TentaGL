@@ -146,6 +146,16 @@ TentaGL.Math.Line2D.prototype = {
   },
   
   
+  /** 
+   * Returns the point on the line corresponding to a parametric value.
+   * @param {float} alpha
+   * @return {vec2}
+   */
+  interpolate: function(alpha) {
+    var u = this.getVec2();
+    return vec2.add([], this._p1, vec2.scale([], u, alpha));
+  },
+  
   
   //////// Distance
   

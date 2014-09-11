@@ -30,6 +30,10 @@
  * @param {uint} startTime    Optional. The start timestamp. If provided, the  *                            timer begins in a running state.
  */
 TentaGL.FrameTimer = function(frameRate, startTime) {
+  if(frameRate === undefined) {
+    frameRate = 60;
+  }
+  
   TentaGL.Timer.call(this, startTime);
   this._frameRate = frameRate;
   this._millis = 0;
