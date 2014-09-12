@@ -165,9 +165,10 @@ TentaGL.Animation.prototype = {
   
   /** 
    * Returns an animator instance that can be used to play this animation. 
+   * @param {TentaGL.Timer} timer   Optional. Use an alternate timer implementation.
    * @return {TentaGL.Animator}
    */
-  getAnimator: function() {}
+  getAnimator: function(timer) {}
   
 };
 

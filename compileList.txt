@@ -23,9 +23,11 @@ src/state/Viewport.js
 
 src/math/Math.js
   src/math/geom/Shape2D.js
+    src/math/geom/2D/Axis2D.js
     src/math/geom/2D/BezierCurve2D.js
     src/math/geom/2D/Ellipse2D.js
     src/math/geom/2D/Line2D.js
+    src/math/geom/2D/Ray2D.js
     src/math/geom/2D/Rect2D.js
     src/math/geom/2D/Triangle2D.js
   src/math/geom/Shape3D.js

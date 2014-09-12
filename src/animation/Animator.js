@@ -27,10 +27,15 @@
  * An object used to play an animation.
  * @constructor
  * @param {TentaGL.Animation} animation
+ * @param {TentaGL.Timer} timer   Optional. Use an alternate timer implementation.
  */
-TentaGL.Animator = function(animation) {
+TentaGL.Animator = function(animation, timer) {
+  if(timer === undefined) {
+    timer = new TentaGL.Timer();
+  }
+  
   this._animation = animation;
-  this._timer = new TentaGL.Timer();
+  this._timer = timer
 };
 
 TentaGL.Animator.prototype = {
