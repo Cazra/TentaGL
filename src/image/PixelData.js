@@ -154,7 +154,11 @@ TentaGL.PixelData.prototype = {
    * @param {int} w
    * @param {int h}
    */
-  crop:function(x, y, w, h) {
+  crop:function(x, y, w, h, flipY) {
+    if(flipY) {
+      y = this.height-1-y;
+    }
+    
     var data = new Uint8Array(w*h*4);
     for(var dx=x; dx < x+w; dx++) {
       for(var dy=y; dy < y+h; dy++) {
