@@ -82,6 +82,11 @@ TentaGL.PixelData.prototype = {
   },
   
   
+  _getFlippedY: function(y) {
+    
+  },
+  
+  
   /** 
    * Extracts the RGBA values of the pixel at the specified coordinates in the 
    * source data. 
@@ -94,7 +99,7 @@ TentaGL.PixelData.prototype = {
    */
   getPixelAt:function(x, y, flipY) {
     if(flipY) {
-      y = this.height-1-y;
+      y = this._height-1-y;
     }
     
     var index = (this._width*y + x)*4;
@@ -117,7 +122,7 @@ TentaGL.PixelData.prototype = {
    */
   setPixelAt:function(x, y, rgba, flipY) {
     if(flipY) {
-      y = this.height-1-y;
+      y = this._height-1-y;
     }
     
     var index = (this._width*y + x)*4;
@@ -156,7 +161,7 @@ TentaGL.PixelData.prototype = {
    */
   crop:function(x, y, w, h, flipY) {
     if(flipY) {
-      y = this.height-1-y;
+      y = this._height - y - h;
     }
     
     var data = new Uint8Array(w*h*4);
