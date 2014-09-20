@@ -200,6 +200,22 @@ TentaGL.SceneNode.prototype = {
     return this._xyz;
   },
   
+  
+  /** 
+   * Setter/getter for the node's XY position. The Z coordinate is not modified.
+   * @param {vec2} xy   Optional.
+   * @return {vec2}
+   */
+  xy: function(xy) {
+    if(xy !== undefined) {
+      this._xyz[0] = xy[0];
+      this._xyz[1] = xy[1];
+      this._tranDirty = true;
+    }
+    return this._xyz.slice(0,2);
+  },
+  
+  
   /** 
    * Shorthand getter/setter for the node's x position.
    */
@@ -255,7 +271,44 @@ TentaGL.SceneNode.prototype = {
   },
   
   /** 
-   * Returns the quaternion representing this node's orietnation 
+   * Sets the quaternion for this sprite. 
+   * @param {quat} q
+   */
+  setQuat:function(q) {
+    this._quat = q;
+    this._tranDirty = true;
+  },
+  
+  /** 
+   * Setter/getter for the sprite's quaternion for 3D rotation/orientation.
+   * @param {quat} q    Optional.
+   * @return {quat}
+   */
+  quat: function(q) {
+    if(q !== undefined) {
+      this._quat = q;
+      this._tranDirty = true;
+    }
+    return this._quat;
+  },
+  
+  
+  /** 
+   * Shortcut for setting the sprite's quaternion to a rotation around some 
+   * axis.
+   * @param axis      The axis of rotation.
+   * @param radians   The number of degrees to rotate counter-clockwise around 
+   *                  the axis.
+   * @return {quat}   The resulting quaternion.
+   */
+  setAxisRotation: function(axis, radians) {
+    var q = quat.setAxisAngle([], axis, radians);
+    return this.quat(q);
+  },
+  
+  
+  /** 
+   * Returns the quaternion representing this node's orientation 
    * in world coordinates. 
    * @return {quat}
    */
@@ -273,16 +326,13 @@ TentaGL.SceneNode.prototype = {
     }
   },
   
+  
+  
   /** 
-   * Sets the quaternion for this sprite. 
-   * @param {quat} q
+   * Returns the parent node's quaternion in world coordinates, or the 
+   * ID quaternion if this node has no parent.
+   * @return {quat}
    */
-  setQuat:function(q) {
-    this._quat = q;
-    this._tranDirty = true;
-  },
-  
-  
   getParentWorldQuat:function() {
     if(this._parent) {
       return this._parent.getWorldQuat();
@@ -440,6 +490,30 @@ TentaGL.SceneNode.prototype = {
     return this._objUp;
   },
   
+  /** 
+   * Sets and normalizes the base up vector for the node. 
+   * @param {vec3} up
+   */
+  setBaseUp:function(up) {
+    vec3.normalize(this._objUp, up);
+    this._correctUpVector();
+  },
+  
+  
+  /** 
+   * Setter/getter for the node's base unit up vector. This is used as the Y 
+   * axis in the node's look space.
+   * @param {vec3} up   Optional.
+   * @return {vec3}
+   */
+  baseUp: function(up) {
+    if(up !== undefined) {
+      vec3.normalize(this._objUp, up);
+      this._correctUpVector();
+    }
+    return this._objUp;
+  },
+  
   
   /** 
    * Returns the node's unit up vector in world space. This is used as the Y
@@ -452,14 +526,7 @@ TentaGL.SceneNode.prototype = {
   },
   
 
-  /** 
-   * Sets and normalizes the base up vector for the node. 
-   * @param {vec3} up
-   */
-  setBaseUp:function(up) {
-    vec3.normalize(this._objUp, up);
-    this._correctUpVector();
-  },
+  
   
   /** 
    * Corrects the base up vector so that it forms a right angle with the base 
@@ -726,7 +793,7 @@ TentaGL.SceneNode.prototype = {
   
   /** 
    * Setter getter for the node's scale on the X, Y, and Z axes.
-   * @param {vec3} xyz    Optional.
+   * @param {vec3} xyz    Optional. If Z is not provided, it is set to 0.
    * @return {vec3}
    */
   scale: function(xyz) {
