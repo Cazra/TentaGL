@@ -23,29 +23,43 @@
 */
 
 /** 
- * Interface for a 3D shape. 
+ * An API for handling collisions between various geometries.
  */
-TentaGL.Math.Shape3D = function() {};
-
-TentaGL.Math.Shape3D.prototype = {
-  
-  constructor: TentaGL.Math.Shape3D,
-  
-  isaShape3D: true,
+TentaGL.Collisions = {
   
   /** 
-   * Returns true iff this shape contains the specified point, within some tolerance. 
-   * @param {vec3} pt
-   * @param {float} tolerance   Optional.
-   * @return {boolean}
+   * Returns true iff the two shapes are overlapping. 
+   * @param {TentaGL.Shape} shape1
+   * @param {TentaGL.Shape} shape2
    */
-  containsPt: function(pt, tolerance) {},
+  overlapping: function(shape1, shape2) {
+    if(shape1.isaShape2D && shape2.isaShape2D) {
+      return TentaGL.Collisions._overlapping2D(shape1, shape2);
+    }
+    else {
+      if(shape1.isaShape2D) {
+        shape1 = shape1.to3D();
+      }
+      if(shape2.isaShape2D) {
+        shape2 = shape2.to3D();
+      }
+      return TentaGL.Collisions._overlapping3D(shape1, shape2);
+    }
+  },
   
-  /** 
-   * Returns the smallest 3D box completely containing this shape.
-   * @return {TentaGL.Math.Rect3D}
-   */
-  getBounds3D: function() {}
-};
+  
+  
+  _overlapping2D: function(shape1, shape2) {
+    // TODO
+    return false;
+  },
+  
+  
+  _overlapping3D: function(shape1, shape2) {
+    // TODO
+    return false;
+  }
+  
+  
+}
 
-Util.Inheritance.inherit(TentaGL.Math.Shape3D, TentaGL.Math.Shape);

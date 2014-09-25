@@ -82,8 +82,14 @@ TentaGL.PixelData.prototype = {
   },
   
   
+  /** 
+   * Returns the y coordinate of a pixel in a traditional 2D system, given its
+   * OpenGL system coordinate.
+   * @param {number} y
+   * @return {number}
+   */
   _getFlippedY: function(y) {
-    
+    return this._height-1-y;
   },
   
   
@@ -214,6 +220,36 @@ TentaGL.PixelData.prototype = {
     }
     
     return canvas;
+  },
+  
+  
+  /** 
+   * Divides the pixel data into individual animation frames for a sprite.
+   * The resulting frames are read from the source data left-to-right, top-to-bottom.
+   * @param {uint} frameW   The width of an individual frame.
+   * @param {uint} frameH   The height of an individual frame.
+   * @param {uint} borderWidth    Optional. The number of pixels between each frame.
+   * @return {array: TentaGL.PixelData}
+   */
+  toSpriteSheet: function(frameW, frameH, borderWidth) {
+    if(borderWidth === undefined) {
+      borderWidth = 0;
+    }
+    
+    var frames = [];
+    
+    var maxX = this._width - frameW - borderWidth;
+    var maxY = this._height - frameH - borderWidth;
+    
+    
+    for(var y=borderWidth; y <= maxY; y += frameH + borderWidth) {
+      for(var x=borderWidth; x <= maxX; x += frameW + borderWidth) {
+        var frame = this.crop(x, y, frameW, frameH, true);
+        frames.push(frame);
+      }
+    }
+    
+    return frames;
   }
 };
 

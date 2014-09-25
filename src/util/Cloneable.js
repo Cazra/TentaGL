@@ -22,30 +22,17 @@
  SOFTWARE.
 */
 
-/** 
- * Interface for a 3D shape. 
- */
-TentaGL.Math.Shape3D = function() {};
+TentaGL.Cloneable = function() {};
 
-TentaGL.Math.Shape3D.prototype = {
+TentaGL.Cloneable.prototype = {
   
-  constructor: TentaGL.Math.Shape3D,
+  constructor: TentaGL.Cloneable,
   
-  isaShape3D: true,
-  
-  /** 
-   * Returns true iff this shape contains the specified point, within some tolerance. 
-   * @param {vec3} pt
-   * @param {float} tolerance   Optional.
-   * @return {boolean}
-   */
-  containsPt: function(pt, tolerance) {},
+  isaCloneable: true,
   
   /** 
-   * Returns the smallest 3D box completely containing this shape.
-   * @return {TentaGL.Math.Rect3D}
+   * Returns a deep copy of the object.
    */
-  getBounds3D: function() {}
+  clone: function() {}
+  
 };
-
-Util.Inheritance.inherit(TentaGL.Math.Shape3D, TentaGL.Math.Shape);

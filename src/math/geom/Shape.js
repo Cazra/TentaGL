@@ -23,29 +23,27 @@
 */
 
 /** 
- * Interface for a 3D shape. 
+ * Interface for a shape of arbitrary dimension.
+ * @abstract
  */
-TentaGL.Math.Shape3D = function() {};
+TentaGL.Math.Shape = function() {};
 
-TentaGL.Math.Shape3D.prototype = {
+TentaGL.Math.Shape.prototype = {
   
-  constructor: TentaGL.Math.Shape3D,
+  constructor: TentaGL.Math.Shape,
   
-  isaShape3D: true,
-  
-  /** 
-   * Returns true iff this shape contains the specified point, within some tolerance. 
-   * @param {vec3} pt
-   * @param {float} tolerance   Optional.
-   * @return {boolean}
-   */
-  containsPt: function(pt, tolerance) {},
+  isaShape: true,
   
   /** 
-   * Returns the smallest 3D box completely containing this shape.
-   * @return {TentaGL.Math.Rect3D}
+   * Renders the shape. Some shapes use a specialized shader to render 
+   * themselves on a rectangular area.
+   * @param {WebGLRenderingContext} gl
+   * @param {string} materialName   Optional.
    */
-  getBounds3D: function() {}
+  render: function(gl, materialName) {}
 };
 
-Util.Inheritance.inherit(TentaGL.Math.Shape3D, TentaGL.Math.Shape);
+
+Util.Inheritance.inherit(TentaGL.Math.Shape, TentaGL.Cloneable);
+Util.Inheritance.inherit(TentaGL.Math.Shape, TentaGL.Renderable);
+
