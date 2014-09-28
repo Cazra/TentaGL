@@ -31,25 +31,23 @@
  *      each character image in the map has the same dimensions and has a 
  *      1-pixel border. See the example font map at images/finalFontasy.png.
  * @param {boolean} monospaced    Whether the font is monospaced.
- * @param {uint} charW            The width of each character image in the sprite map.
- * @param {uint} charH            The height of each character image in the sprite map.
- * @param {int} hPad              The horizontal padding between rendered characters, in pixels.
- * @param {int} vPad              The vertical padding between rendered characters, in pixels.
+ * @param {[uint, uint]} charDims The dimensions of each character image in the sprite map.
+ * @param {[int, int]} padding    Optional. The horizontal and vertical padding between rendered 
+ *                                characters, in pixels. Default [1,1].
+ * @param {int} charBorder        Optional. The width of the border surrounding each letter
+ *                                in our sprite map. The borders don't overlap, so 
+ *                                by effect the number of pixels between each frame 
+ *                                is twice this amount. Default 1. 
  */
-TentaGL.BlitteredFont = function(pixelData, monospaced, charW, charH, hPad, vPad) {
+TentaGL.BlitteredFont = function(pixelData, monospaced, charDims, padding, charBorder) {
   if(pixelData) {
-    this._createChars(pixelData, monospaced, charW, charH);
+    this._createChars(pixelData, monospaced, charDims, charBorder);
   }
   
-  if(hPad === undefined) {
-    hPad = 1;
+  if(padding === undefined) {
+    padding = [1, 1];
   }
-  if(vPad === undefined) {
-    vPad = 1;
-  }
-  
-  this._hPad = hPad;
-  this._vPad = vPad;
+  this._padding = padding;
   
   this._texIDPrefix = "bfont" + TentaGL.BlitteredFont._count + ":";
   TentaGL.BlitteredFont._count++;
@@ -80,23 +78,31 @@ TentaGL.BlitteredFont.prototype = {
    * Creates the pixel data for each of the characters in this blittered font.
    * @param {TentaGL.PixelData} pixelData   The pixel data for the font map image.
    * @param {boolean} monospaced    Whether the blittered font is monospaced.
-   * @param {uint} charW            The width of a single character image in the font map.
-   * @param {uint} charH            The height of a single character image in the font map.
+   * @param {[uint, uint]} charDims The dimensions of each character image in the sprite map.
+   * @param {int} charBorder        Optional. The width of the border surrounding each letter
+   *                                in our sprite map. The borders don't overlap, so 
+   *                                by effect the number of pixels between each frame 
+   *                                is twice this amount. Default 1. 
    */
-  _createChars: function(pixelData, monospaced, charW, charH) {
+  _createChars: function(pixelData, monospaced, charDims, charBorder) {
     this._charPixData = {};
     this._charWidths = {};
     
     this._monospaced = monospaced;
-    this._charW = charW;
-    this._charH = charH;
+    this._charDims = charDims;
+    var charW = charDims[0];
+    var charH = charDims[1];
+    
+    if(charBorder === undefined) {
+      charBorder = 1;
+    }
     
     for(var c = 32; c < 128; c++) {
       var i = (c-32)%16;
       var j = Math.floor((c-32)/16);
       
-      var x = 1 + i*(charW + 2);
-      var y = pixelData.getHeight() - (1 + charH + j*(2 + charH));
+      var x = charBorder + i*(charW + charBorder*2);
+      var y = pixelData.getHeight() - (charBorder + charH + j*(charBorder*2 + charH));
       
       var charID = String.fromCharCode(c);
       var charPix = pixelData.crop(x, y, charW, charH);
@@ -176,7 +182,7 @@ TentaGL.BlitteredFont.prototype = {
    * @return {uint}
    */
   getLineHeight: function() {
-    return this._charH;
+    return this._charDims[1];
   },
   
   
@@ -207,7 +213,7 @@ TentaGL.BlitteredFont.prototype = {
    * @return {uint}
    */
   getHorizontalPadding: function() {
-    return this._hPad;
+    return this._padding[0];
   },
   
   
@@ -215,7 +221,7 @@ TentaGL.BlitteredFont.prototype = {
    * Returns the 
    */
   getVerticalPadding: function() {
-    return this._vPad;
+    return this._padding[1];
   },
   
   
@@ -287,11 +293,11 @@ TentaGL.BlitteredFont.prototype = {
   /** 
    * Renders a string using the blittered font.
    * @param {WebGLRenderingContext} gl
-   * @param {string} text     The text to be rendered.
-   * @param {vec3} xyz        The position to render the text at.
+   * @param {string} text         The text to be rendered.
+   * @param {vec3} xyz            The position to render the text at.
    * @param {boolean} yFlipped    Optional. Whether the y axis is flipped.  
    *      If true, y increases down. Else, y increases up. Default false.
-   * @param {number} charH    Optional. If provided, the text will be uniformly 
+   * @param {number} charH        Optional. If provided, the text will be uniformly 
    *      scaled such that every character's height is charH units. If omitted, 
    *      each character's height in units will be equal to the character pixel 
    *      height for this blittered font.
@@ -373,24 +379,27 @@ TentaGL.BlitteredFont.prototype = {
  * Produces a BlitteredFont from an fontmap image at some url. 
  * @param {string} url
  * @param {boolean} monospaced    Whether the font is monospaced.
- * @param {uint} charW            The width of each character image in the sprite map.
- * @param {uint} charH            The height of each character image in the sprite map.
- * @param {int} hPad              The horizontal padding between rendered characters, in pixels.
- * @param {int} vPad              The vertical padding between rendered characters, in pixels.
+ * @param {[uint, uint]} charDims The dimensions of each character image in the sprite map.
+ * @param {[int, int]} padding    Optional. The horizontal and vertical padding between rendered 
+ *                                characters, in pixels. Default [1,1].
+ * @param {int} charBorder        Optional. The width of the border surrounding each letter
+ *                                in our sprite map. The borders don't overlap, so 
+ *                                by effect the number of pixels between each frame 
+ *                                is twice this amount. Default 1. 
  * @param {function(pixels: TentaGL.PixelData): TentaGL.PixelData} pixelsCB  
  *      Optional. A callback function that manipulates the pixel data from the 
  *      fontmap image before using it to create the data for the blittered font.
  * @return {TentaGL.BlitteredFont}
  */
-TentaGL.BlitteredFont.fromURL = function(url, monospaced, charW, charH, hPad, vPad, pixelsCB) {
-  var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charW, charH, hPad, vPad);
+TentaGL.BlitteredFont.fromURL = function(url, monospaced, charDims, padding, charBorder, pixelsCB) {
+  var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charDims, padding);
   
   TentaGL.PixelData.fromURL(url, function(pixels) {
     if(pixelsCB) {
       pixels = pixelsCB(pixels);
     }
     
-    bFont._createChars(pixels, monospaced, charW, charH);
+    bFont._createChars(pixels, monospaced, charDims, charBorder);
   });
   
   return bFont;
@@ -402,20 +411,23 @@ TentaGL.BlitteredFont.fromURL = function(url, monospaced, charW, charH, hPad, vP
  * Produces a BlitteredFont from a Font with some Color.
  * @param {TentaGL.Font} font
  * @param {TentaGL.Color} color
+ * @param {[int, int]} padding    Optional. The horizontal and vertical padding between rendered 
+ *                                characters, in pixels. Default [1,1]. 
  * @param {function(pixels: TentaGL.PixelData): TentaGL.PixelData} pixelsCB  
  *      Optional. A callback function that manipulates the pixel data from the 
  *      fontmap image before using it to create the data for the blittered font.
  * @return {TentaGL.BlitteredFont}
  */
-TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
+TentaGL.BlitteredFont.fromFont = function(font, color, padding, pixelsCB) {
   var monospaced = (font.getType() == "monospace");
   var dimsEm = font.getStringDimensions("W");
   var charW = Math.floor(dimsEm[0]);
   var charH = Math.floor(dimsEm[1]);
+  var charDims = [charW, charH];
   
-  var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charW, charH, hPad, vPad);
+  var bFont = new TentaGL.BlitteredFont(undefined, monospaced, charDims, padding);
   
-  // Create a canvas for the fontmap.
+  // Create a canvas for the fontmap with 2 pixels between each character frame.
   var bgColor;
   if(color.r() + color.g() + color.b() > 1.5) {
     bgColor = TentaGL.Color.BLACK;
@@ -425,7 +437,6 @@ TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
   }
   
   var canvas = TentaGL.Canvas2D.create((charW + 2)*16, (charH + 2)*6, bgColor);
-  
   for(var c = 32; c < 128; c++) {
     var i = (c-32)%16;
     var j = Math.floor((c-32)/16);
@@ -440,10 +451,7 @@ TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
     
     TentaGL.Canvas2D.drawImage(canvas, charCanvas, x, y);
   }
-  
-  
-  
-  
+
   // Convert our fontmap canvas to PixelData. Make the bgColor transparent
   // and use the pixelsCB to apply any other filters provided by the user.
   var pixels = TentaGL.PixelData.fromCanvas(canvas);
@@ -453,7 +461,7 @@ TentaGL.BlitteredFont.fromFont = function(font, color, hPad, vPad, pixelsCB) {
   }
   
   // Set the pixel data for the blittered font.
-  bFont._createChars(pixels, monospaced, charW, charH);
+  bFont._createChars(pixels, monospaced, charDims, 1);
   
   return bFont;
 };

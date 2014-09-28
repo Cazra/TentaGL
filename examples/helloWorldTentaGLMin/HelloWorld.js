@@ -104,7 +104,7 @@ HelloWorldApp.prototype = {
     
     // blittered font: Final Fontasy
     this.blitFont = TentaGL.BlitteredFont.fromURL("../../images/finalFontasy.png", 
-      false, 10, 10, 1, 1, 
+      false, [10, 10], [1, 1], 1, 
       function(pixels) {
         var color = TentaGL.Color.RGBBytes([255, 0, 255]);
         return pixels.filter(new TentaGL.RGBAFilter.TransparentColor(color));
@@ -113,7 +113,7 @@ HelloWorldApp.prototype = {
     
     var font = new TentaGL.Font("Arial", "sans-serif", 36);
     var fColor = new TentaGL.Color([1,1,1,1]);
-    this.blitFont2 = TentaGL.BlitteredFont.fromFont(font, fColor, 1, 1, function(pixels) {
+    this.blitFont2 = TentaGL.BlitteredFont.fromFont(font, fColor, [1, 1], function(pixels) {
       var color = TentaGL.Color.RGBBytes([150,150,200]);
       return pixels.filter(new TentaGL.RGBAFilter.OutlineColor(color));
     });
