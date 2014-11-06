@@ -129,7 +129,7 @@ HelloWorldApp.prototype = {
   initModels:function() {
     var gl = this.getGL();
     
-    var cubeModel = TentaGL.Model.Cube(2, 2, 2);//.cloneCentered();
+    var cubeModel = TentaGL.Model.Cube(2, 2, 2); //.cloneCentered();
     TentaGL.ModelLib.add(gl, "cube", cubeModel);
     
     var lineModel = TentaGL.Model.Line([0,0,0],[1,1,0]);

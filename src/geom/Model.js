@@ -498,13 +498,10 @@ TentaGL.Model.prototype = {
         var v2 = this._vertices[this._indices[i-1]];
         var v3 = this._vertices[this._indices[i]];
         
-        var u = vec3.fromValues(v2.getX() - v1.getX(),
-                                v2.getY() - v1.getY(),
-                                v2.getZ() - v1.getZ());
-        var v = vec3.fromValues(v3.getX() - v1.getX(),
-                                v3.getY() - v1.getY(),
-                                v3.getZ() - v1.getZ());
-        var n = vec3.cross(vec3.create(), u, v);
+        var u = vec3.sub([], v2.xyz(), v1.xyz());
+        var v = vec3.sub([], v3.xyz(), v1.xyz());
+        
+        var n = vec3.cross([], u, v);
         this._faceNormals.push(n);
       }
     }
@@ -537,22 +534,18 @@ TentaGL.Model.prototype = {
    */
   getModelCentroid:function() {
     if(this._centroid === undefined) {
-      var x = 0;
-      var y = 0;
-      var z = 0;
+      var xyz = [0, 0, 0, 1];
+      var m = mat4.create();
       
       for(var i = 0; i < this._vertices.length; i++) {
         var v = this._vertices[i];
-        x += v.getX();
-        y += v.getY();
-        z += v.getZ();
+        mat4.translate(m, m, v.xyz());
       }
       
-      x /= this._vertices.length;
-      y /= this._vertices.length;
-      z /= this._vertices.length;
+      mat4.scale(m, m, 1/this._vertices.length);
+      vec4.transformMat4(xyz, xyz, m);
       
-      this._centroid = vec4.fromValues(x, y, z, 1);
+      this._centroid = xyz;
     }
     return this._centroid;
   },
@@ -572,11 +565,13 @@ TentaGL.Model.prototype = {
         var v2 = this._vertices[this._indices[i-1]];
         var v3 = this._vertices[this._indices[i]];
         
-        var x = (v1.getX() + v2.getX() + v3.getX())/3;
-        var y = (v1.getY() + v2.getY() + v3.getY())/3;
-        var z = (v1.getZ() + v2.getZ() + v3.getZ())/3;
+        var xyz = [0, 0, 0, 1];
+        vec3.add(xyz, xyz, v1.xyz());
+        vec3.add(xyz, xyz, v2.xyz());
+        vec3.add(xyz, xyz, v3.xyz());
+        vec3.add(xyz, xyz, 1/3);
         
-        this._faceCentroids.push(vec4.fromValues(x, y, z, 1));
+        this._faceCentroids.push(xyz);
       }
     }
     return this._faceCentroids;
